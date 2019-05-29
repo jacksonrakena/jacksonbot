@@ -1,0 +1,11 @@
+obj/
+bin/
+.idea/
+.DS_Store
+katbot.json
+logs/**
+.vscode/
+/.vs
+Katbot.csproj.DotSettings
+*.user
+StyleCop.Cache
