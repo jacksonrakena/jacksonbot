@@ -1,6 +1,6 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Katbot", "Katbot.csproj", "{F94991CA-F7FD-4257-A57D-780CB81A6036}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abyss", "Abyss.csproj", "{F94991CA-F7FD-4257-A57D-780CB81A6036}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
