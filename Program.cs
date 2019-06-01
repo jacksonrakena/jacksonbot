@@ -1,17 +1,17 @@
-﻿using System;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Discord;
-using Discord.WebSocket;
-using Abyss.Common;
+﻿using Abyss.Common;
 using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Services;
+using Discord;
+using Discord.WebSocket;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
-using Microsoft.Extensions.Caching.Memory;
+using System;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Abyss
 {

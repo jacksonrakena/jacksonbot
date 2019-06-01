@@ -1,8 +1,8 @@
+using Humanizer;
+using Qmmands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Humanizer;
-using Qmmands;
 
 namespace Abyss.Extensions
 {

@@ -1,17 +1,17 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Discord;
-using Discord.WebSocket;
-using Humanizer;
 using Abyss.Attributes;
 using Abyss.Entities;
 using Abyss.Helpers;
 using Abyss.Results;
 using Abyss.Services;
+using Discord;
+using Discord.WebSocket;
+using Humanizer;
 using Qmmands;
 using SpotifyAPI.Web.Enums;
 using SpotifyAPI.Web.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Abyss.Modules
 {
@@ -164,7 +164,7 @@ namespace Abyss.Modules
                 DateTime.TryParse(album.ReleaseDate, out var dt) ? dt.ToString("D") : album.ReleaseDate, true);
 
             var length = TimeSpan.FromMilliseconds(album.Tracks.Items.Sum(a => a.DurationMs));
-            
+
             embed.AddField("Length", $"{length.Hours} hours, {length.Minutes} minutes", true);
             if (album.Genres.Count > 0) embed.AddField("Genres", album.Genres.Humanize(), true);
             return Ok(embed);

@@ -1,10 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Discord;
 using Abyss.Attributes;
 using Abyss.Checks.Command;
 using Abyss.Entities;
@@ -12,9 +5,16 @@ using Abyss.Extensions;
 using Abyss.Helpers;
 using Abyss.Results;
 using Abyss.Services;
+using Discord;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Qmmands;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Abyss.Modules
 {

@@ -1,18 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Discord;
-using Discord.WebSocket;
-using Humanizer;
 using Abyss.Attributes;
 using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Helpers;
 using Abyss.Results;
+using Discord;
+using Discord.WebSocket;
+using Humanizer;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Qmmands;
-using Microsoft.Extensions.Caching.Memory;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Abyss.Services
 {
@@ -31,7 +31,7 @@ namespace Abyss.Services
             _responseCache = cache;
         }
 
-        private readonly IMemoryCache _responseCache; 
+        private readonly IMemoryCache _responseCache;
 
         // Externals
         private readonly ILogger<CommandExecutor> _commandsTracking;
@@ -231,7 +231,7 @@ namespace Abyss.Services
 
                         if (cfr.FailedChecks.Count == 1 && cfr.FailedChecks.FirstOrDefault().Check.GetType()
                                 .CustomAttributes.Any(a => a.AttributeType == typeof(SilentCheckAttribute))) break;
-                        
+
                         await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
                             .WithTitle(
                                 $"The following check{(cfr.FailedChecks.Count == 1 ? "" : "s")} failed, so I couldn't execute the command!")

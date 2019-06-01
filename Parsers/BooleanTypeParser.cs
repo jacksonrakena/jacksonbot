@@ -1,7 +1,7 @@
+using Qmmands;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Qmmands;
 
 namespace Abyss.Parsers
 {
@@ -20,7 +20,7 @@ namespace Abyss.Parsers
         public override ValueTask<TypeParserResult<bool>> ParseAsync(Parameter parameter, string value, CommandContext context, IServiceProvider provider)
         {
             if (bool.TryParse(value, out var r)) return TypeParserResult<bool>.Successful(r);
-            
+
             if (MatchingTrueValues.Exists(a => a.Equals(value, StringComparison.OrdinalIgnoreCase)))
             {
                 return TypeParserResult<bool>.Successful(true);

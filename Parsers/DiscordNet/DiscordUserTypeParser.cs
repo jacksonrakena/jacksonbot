@@ -1,13 +1,13 @@
+using Abyss.Entities;
+using Abyss.Extensions;
+using Discord;
+using Discord.WebSocket;
+using Qmmands;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Discord;
-using Discord.WebSocket;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Qmmands;
 
 namespace Abyss.Parsers.DiscordNet
 {

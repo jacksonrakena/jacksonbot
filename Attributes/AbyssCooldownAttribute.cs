@@ -1,6 +1,6 @@
-using System;
 using Abyss.Entities;
 using Qmmands;
+using System;
 
 namespace Abyss.Attributes
 {

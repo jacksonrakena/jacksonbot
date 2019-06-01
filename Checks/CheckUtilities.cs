@@ -1,5 +1,5 @@
-using System;
 using Discord.WebSocket;
+using System;
 
 namespace Abyss.Checks
 {

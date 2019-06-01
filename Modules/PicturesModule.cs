@@ -1,14 +1,8 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Discord;
 using Abyss.Attributes;
-using Abyss.Checks.Parameter;
 using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Results;
+using Discord;
 using Newtonsoft.Json.Linq;
 using Qmmands;
 using SixLabors.ImageSharp.Formats;
@@ -17,6 +11,11 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using SixLabors.Primitives;
+using System;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Abyss.Modules
 {

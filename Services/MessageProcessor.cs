@@ -1,15 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Discord;
-using Discord.WebSocket;
-using Abyss.Entities;
+﻿using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Parsers;
 using Abyss.Parsers.DiscordNet;
+using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using Qmmands;
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Abyss.Services
 {
@@ -23,6 +22,7 @@ namespace Abyss.Services
 
         // Type parsers
         private readonly DiscordEmoteTypeParser _emoteParser = new DiscordEmoteTypeParser();
+
         private readonly DiscordUserTypeParser _guildUserParser = new DiscordUserTypeParser();
         private readonly DiscordRoleTypeParser _socketRoleParser = new DiscordRoleTypeParser();
         private readonly BooleanTypeParser _boolTypeParser = new BooleanTypeParser();
@@ -41,7 +41,7 @@ namespace Abyss.Services
             _services = services;
             _config = config;
             _commandExecutor = commandExecutor;
-            
+
             commandService.AddTypeParser(_guildUserParser);
             commandService.AddTypeParser(_socketRoleParser);
             commandService.AddTypeParser(_emoteParser);
@@ -54,7 +54,7 @@ namespace Abyss.Services
             logger.LogInformation(
                 $"{modulesLoaded.Count} modules loaded, {modulesLoaded.Sum(a => a.Commands.Count)} commands loaded");
         }
-        
+
         public async Task ProcessMessageAsync(SocketMessage incomingMessage)
         {
             if (!(incomingMessage is SocketUserMessage message) || message.Author is SocketWebhookUser

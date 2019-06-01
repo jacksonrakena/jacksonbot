@@ -1,24 +1,24 @@
-using System;
-using System.Threading.Tasks;
-using Discord;
 using Abyss.Entities;
 using Abyss.Extensions;
+using Discord;
+using System;
+using System.Threading.Tasks;
 
 namespace Abyss.Results
 {
-    public class BadRequestResult: ActionResult
+    public class BadRequestResult : ActionResult
     {
         public static readonly Color ErrorColor = Color.Red;
-        
+
         public BadRequestResult(string reason)
         {
             Reason = reason;
         }
-     
+
         public string Reason { get; set; }
-        
+
         public override bool IsSuccessful => false;
-        
+
         public override async Task<ResultCompletionData> ExecuteResultAsync(AbyssCommandContext context)
         {
             var message = await context.Channel.SendMessageAsync(null, false, new EmbedBuilder()

@@ -1,9 +1,9 @@
+using Abyss.Entities;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Abyss.Entities;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Abyss.Extensions
 {
@@ -21,7 +21,7 @@ namespace Abyss.Extensions
             await service.InitializeAsync();
             return service;
         }
-        
+
         public static bool TryGetService(this IServiceProvider provider, Type type, out object result)
         {
             var query = provider.GetService(type);

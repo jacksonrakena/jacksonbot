@@ -1,8 +1,8 @@
+using Discord;
+using Qmmands;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Discord;
-using Qmmands;
 
 namespace Abyss.Parsers.DiscordNet
 {

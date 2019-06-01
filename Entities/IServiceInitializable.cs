@@ -5,6 +5,7 @@ namespace Abyss.Entities
     public interface IServiceInitializable
     {
         Task InitializeAsync();
+
         Task DeinitializeAsync();
     }
 }

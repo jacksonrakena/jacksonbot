@@ -1,8 +1,8 @@
-using System;
-using System.Threading.Tasks;
 using Abyss.Entities;
 using Abyss.Extensions;
 using Qmmands;
+using System;
+using System.Threading.Tasks;
 
 namespace Abyss.Checks.Command
 {

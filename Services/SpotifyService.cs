@@ -1,14 +1,14 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Discord;
-using Humanizer;
 using Abyss.Entities;
 using Abyss.Helpers;
+using Discord;
+using Humanizer;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Auth;
 using SpotifyAPI.Web.Enums;
 using SpotifyAPI.Web.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Abyss.Services
 {

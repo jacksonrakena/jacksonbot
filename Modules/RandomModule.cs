@@ -1,15 +1,14 @@
-﻿using System;
+﻿using Abyss.Attributes;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Results;
+using Discord.WebSocket;
+using Qmmands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Discord.WebSocket;
-using Abyss.Attributes;
-using Abyss.Checks.Parameter;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Results;
-using Qmmands;
 
 namespace Abyss.Modules
 {

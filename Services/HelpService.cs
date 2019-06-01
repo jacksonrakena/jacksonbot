@@ -1,3 +1,10 @@
+using Abyss.Attributes;
+using Abyss.Checks;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Parsers;
+using Discord;
+using Qmmands;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -5,13 +12,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Discord;
-using Abyss.Attributes;
-using Abyss.Checks;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Parsers;
-using Qmmands;
 
 namespace Abyss.Services
 {
@@ -39,7 +39,7 @@ namespace Abyss.Services
         {
             // Check if enum type first, to avoid reflection logic
             if (info.Type.IsEnum) return info.Type.GetEnumNames().HumanizeChoiceCollection();
-            
+
             (string Singular, string Multiple, string Remainder) friendlyNameSet = (null, null, null);
 
             // Look for friendly name data in the above table (unimplemented primitive parsers)
@@ -129,7 +129,7 @@ namespace Abyss.Services
         private static async Task<string> FormatCheck(CheckAttribute cba, AbyssCommandContext context)
         {
             var message = (cba.Cast<IAbyssCheck>() ?? throw new InvalidOperationException($"The provided check is not of the Abyss check type, {typeof(IAbyssCheck).Name}.")).Description;
-            
+
             return
                 $"- {((await cba.CheckAsync(context, context.Services).ConfigureAwait(false)).IsSuccessful ? BotService.AbyssYesEmoji : BotService.AbyssNoEmoji)} {message}";
         }

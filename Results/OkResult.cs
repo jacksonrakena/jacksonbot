@@ -1,14 +1,13 @@
-using System.Linq;
-using System.Net.Mime;
-using System.Threading.Tasks;
-using Discord;
 using Abyss.Entities;
+using Discord;
 using Discord.Rest;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Abyss.Results
 {
-    public class OkResult: ActionResult
+    public class OkResult : ActionResult
     {
         public OkResult(string text, params FileAttachment[] attachments)
         {
@@ -23,13 +22,13 @@ namespace Abyss.Results
             Embed = embed;
             Attachments = attachments;
         }
-        
+
         public override bool IsSuccessful => true;
 
         private string Message { get; }
         private EmbedBuilder Embed { get; }
         private FileAttachment[] Attachments { get; }
-        
+
         public override async Task<ResultCompletionData> ExecuteResultAsync(AbyssCommandContext context)
         {
             var messages = new List<RestUserMessage>();
@@ -54,7 +53,7 @@ namespace Abyss.Results
             }
             return new ResultCompletionData(messages.ToArray());
         }
-        
+
         public override async Task<ResultCompletionData> UpdateResultAsync(AbyssUpdateContext context)
         {
             await context.Response.DeleteAsync().ConfigureAwait(false);

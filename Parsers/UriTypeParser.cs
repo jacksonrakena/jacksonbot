@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Qmmands;
+using System;
 using System.Threading.Tasks;
-using Qmmands;
 
 namespace Abyss.Parsers
 {

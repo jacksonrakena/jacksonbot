@@ -1,12 +1,12 @@
+using Abyss.Entities;
+using Abyss.Extensions;
+using Discord;
+using Humanizer;
+using Qmmands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Discord;
-using Humanizer;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Qmmands;
 
 namespace Abyss.Checks.Command
 {

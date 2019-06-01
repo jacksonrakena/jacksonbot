@@ -1,9 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Discord.WebSocket;
 using Abyss.Entities;
 using Abyss.Extensions;
+using Discord.WebSocket;
 using Qmmands;
+using System;
+using System.Threading.Tasks;
 
 namespace Abyss.Checks.Parameter
 {
@@ -26,7 +26,7 @@ namespace Abyss.Checks.Parameter
         }
 
         public string Description => "This user must not be you, or the invoker of the command.";
-        
+
         public MustNotBeInvokerAttribute() : base(CheckUtilities.UserTypes)
         {
         }

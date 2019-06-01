@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Discord;
-using Discord.WebSocket;
 using Abyss.Entities;
 using Abyss.Extensions;
+using Discord;
+using Discord.WebSocket;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Abyss.Services
 {

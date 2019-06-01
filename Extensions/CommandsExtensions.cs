@@ -1,6 +1,6 @@
+using Qmmands;
 using System;
 using System.Linq;
-using Qmmands;
 
 namespace Abyss.Extensions
 {

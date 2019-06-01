@@ -1,7 +1,7 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using NLog;
+using System;
+using System.Collections.Generic;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using MSLogLevel = Microsoft.Extensions.Logging.LogLevel;
 using NLogLevel = NLog.LogLevel;

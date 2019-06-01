@@ -1,16 +1,16 @@
-﻿using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Discord;
-using Discord.Net;
-using Discord.WebSocket;
-using Abyss.Attributes;
+﻿using Abyss.Attributes;
 using Abyss.Checks.Command;
 using Abyss.Checks.Parameter;
 using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Results;
+using Discord;
+using Discord.Net;
+using Discord.WebSocket;
 using Qmmands;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Abyss.Modules
 {

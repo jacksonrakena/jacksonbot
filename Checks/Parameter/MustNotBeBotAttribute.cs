@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Discord.WebSocket;
 using Abyss.Entities;
 using Abyss.Extensions;
+using Discord.WebSocket;
 using Qmmands;
+using System;
+using System.Threading.Tasks;
 
 namespace Abyss.Checks.Parameter
 {

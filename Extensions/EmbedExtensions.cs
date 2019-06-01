@@ -1,5 +1,5 @@
-using Discord;
 using Abyss.Entities;
+using Discord;
 
 namespace Abyss.Extensions
 {

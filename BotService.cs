@@ -1,13 +1,13 @@
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Services;
+using Discord;
+using Discord.WebSocket;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Discord;
-using Discord.WebSocket;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Services;
-using Microsoft.Extensions.Logging;
 
 namespace Abyss
 {
@@ -102,7 +102,7 @@ namespace Abyss
                     await Task.Delay(TimeSpan.FromMinutes(1));
                 }
             });
-             
+
             return Task.CompletedTask;
         }
 

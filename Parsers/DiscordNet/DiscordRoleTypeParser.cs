@@ -1,13 +1,13 @@
+using Abyss.Entities;
+using Abyss.Extensions;
+using Discord;
+using Discord.WebSocket;
+using Qmmands;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Discord;
-using Discord.WebSocket;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Qmmands;
 
 namespace Abyss.Parsers.DiscordNet
 {
@@ -46,7 +46,7 @@ namespace Abyss.Parsers.DiscordNet
 
             if (results.Count > 0 && results.Values.Count > 0)
             {
-                return 
+                return
                    new TypeParserResult<SocketRole>(results.Values.OrderBy(a => a.Score).FirstOrDefault()?.Value);
             }
 

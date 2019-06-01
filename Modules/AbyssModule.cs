@@ -1,4 +1,13 @@
-﻿using System;
+﻿using Abyss.Attributes;
+using Abyss.Checks.Command;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Results;
+using Discord;
+using Discord.WebSocket;
+using Humanizer;
+using Qmmands;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -6,15 +15,6 @@ using System.Reflection;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
-using Discord;
-using Discord.WebSocket;
-using Humanizer;
-using Abyss.Attributes;
-using Abyss.Checks.Command;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Results;
-using Qmmands;
 
 namespace Abyss.Modules
 {
