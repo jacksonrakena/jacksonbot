@@ -13,10 +13,10 @@ namespace Abyss
 {
     public class BotService
     {
-        public const string AbyssYesEmoji = "<:AbyssYes:550195992088018944>";
-        public const string AbyssNoEmoji = "<:AbyssNo:550195972928569366>";
+        public const string AbyssYesEmoji = "<:AbyssYes:584262861585645591>";
+        public const string AbyssNoEmoji = "<:AbyssNo:584262872121606147>";
         public const string ZeroWidthSpace = "​";
-        public static readonly Color DefaultEmbedColour = new Color(0x72d4a6);
+        public static readonly Color DefaultEmbedColour = new Color(0xB2F7EF);
         private readonly AbyssConfig _config;
         private readonly DiscordSocketClient _discordClient;
 
@@ -47,6 +47,7 @@ namespace Abyss
 
             _serviceProvider.InitializeService<IMessageProcessor>(); // start MessageProcessor
             _serviceProvider.InitializeService<ApiStatisticsCollectionService>(); // start ApiStatsService
+            _serviceProvider.InitializeService<ResponseCacheService>();
         }
 
         private async Task DiscordClientOnJoinedGuild(SocketGuild arg)

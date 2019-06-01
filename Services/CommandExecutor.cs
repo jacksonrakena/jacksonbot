@@ -12,13 +12,14 @@ using Abyss.Helpers;
 using Abyss.Results;
 using Microsoft.Extensions.Logging;
 using Qmmands;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Abyss.Services
 {
     public sealed class CommandExecutor : ICommandExecutor
     {
         public CommandExecutor(ICommandService commandService, HelpService help, ILogger<CommandExecutor> logger,
-            DiscordSocketClient discordClient)
+            DiscordSocketClient discordClient, IMemoryCache cache)
         {
             _commandService = commandService;
             _helpService = help;
@@ -26,7 +27,11 @@ namespace Abyss.Services
             _discordClient = discordClient;
 
             _commandService.CommandExecuted += HandleCommandExecutedAsync;
+
+            _responseCache = cache;
         }
+
+        private readonly IMemoryCache _responseCache; 
 
         // Externals
         private readonly ILogger<CommandExecutor> _commandsTracking;
@@ -138,7 +143,13 @@ namespace Abyss.Services
 
             if (baseResult == null) return;
 
-            await baseResult.ExecuteResultAsync(context).ConfigureAwait(false);
+            var data = await baseResult.ExecuteResultAsync(context).ConfigureAwait(false);
+
+            _responseCache.Set(context.Message.Id, data, new MemoryCacheEntryOptions
+            {
+                Size = 1,
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
+            });
 
             if (baseResult.IsSuccessful)
             {

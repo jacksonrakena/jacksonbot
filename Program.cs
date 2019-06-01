@@ -11,6 +11,7 @@ using Abyss.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Abyss
 {
@@ -67,6 +68,11 @@ namespace Abyss
             serviceCollection.AddSingleton<SpotifyService>();
             serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();
+            serviceCollection.AddSingleton<ResponseCacheService>();
+            serviceCollection.AddSingleton<IMemoryCache>(new MemoryCache(new MemoryCacheOptions
+            {
+                SizeLimit = 100
+            }));
 
             return serviceCollection.BuildServiceProvider();
         }

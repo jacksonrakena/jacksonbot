@@ -6,14 +6,14 @@ namespace Abyss.Results
     public class NoResult: ActionResult
     {
         public override bool IsSuccessful => true;
-        public override Task ExecuteResultAsync(AbyssCommandContext context)
+        public override Task<ResultCompletionData> ExecuteResultAsync(AbyssCommandContext context)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(new ResultCompletionData());
         }
         
-        public override Task UpdateResultAsync(AbyssUpdateContext context)
+        public override Task<ResultCompletionData> UpdateResultAsync(AbyssUpdateContext context)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(new ResultCompletionData());
         }
     }
 }

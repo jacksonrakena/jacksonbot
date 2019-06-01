@@ -3,6 +3,8 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using Discord;
 using Abyss.Entities;
+using Discord.Rest;
+using System.Collections.Generic;
 
 namespace Abyss.Results
 {
@@ -28,33 +30,35 @@ namespace Abyss.Results
         private EmbedBuilder Embed { get; }
         private FileAttachment[] Attachments { get; }
         
-        public override async Task ExecuteResultAsync(AbyssCommandContext context)
+        public override async Task<ResultCompletionData> ExecuteResultAsync(AbyssCommandContext context)
         {
+            var messages = new List<RestUserMessage>();
             if (Attachments.Length == 1)
             {
                 var attach0 = Attachments.First();
-                await context.Channel.SendFileAsync(attach0.Stream, attach0.Filename, Message, false, Embed?.Build());
+                messages.Add(await context.Channel.SendFileAsync(attach0.Stream, attach0.Filename, Message, false, Embed?.Build()));
             }
             else if (Attachments.Length > 0)
             {
                 foreach (var attach in Attachments)
                 {
-                    await context.Channel.SendFileAsync(attach.Stream, attach.Filename, null);
+                    messages.Add(await context.Channel.SendFileAsync(attach.Stream, attach.Filename, null));
                 }
 
                 if (Message != null || Embed != null)
-                    await context.Channel.SendMessageAsync(Message, false, Embed?.Build());
+                    messages.Add(await context.Channel.SendMessageAsync(Message, false, Embed?.Build()));
             }
             else
             {
-                await context.Channel.SendMessageAsync(Message, false, Embed?.Build());
+                messages.Add(await context.Channel.SendMessageAsync(Message, false, Embed?.Build()));
             }
+            return new ResultCompletionData(messages.ToArray());
         }
         
-        public override async Task UpdateResultAsync(AbyssUpdateContext context)
+        public override async Task<ResultCompletionData> UpdateResultAsync(AbyssUpdateContext context)
         {
             await context.Response.DeleteAsync().ConfigureAwait(false);
-            await ExecuteResultAsync(context.Request).ConfigureAwait(false);
+            return await ExecuteResultAsync(context.Request).ConfigureAwait(false);
         }
     }
 }
