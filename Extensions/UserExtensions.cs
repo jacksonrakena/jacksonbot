@@ -59,7 +59,7 @@ namespace Abyss.Extensions
 
         public static string Format(this SocketGuildUser sgu)
         {
-            return sgu.Nickname != null ? $"{sgu.Nickname} ({sgu.Username}#{sgu.Discriminator})" : sgu.Username;
+            return sgu.Nickname != null ? $"{sgu.Nickname} ({sgu.Username}#{sgu.Discriminator})" : $"{sgu.Username}#{sgu.Discriminator}";
         }
     }
 }
