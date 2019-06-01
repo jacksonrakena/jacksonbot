@@ -4,21 +4,21 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Humanizer;
-using Katbot.Attributes;
-using Katbot.Entities;
-using Katbot.Helpers;
-using Katbot.Results;
-using Katbot.Services;
+using Abyss.Attributes;
+using Abyss.Entities;
+using Abyss.Helpers;
+using Abyss.Results;
+using Abyss.Services;
 using Qmmands;
 using SpotifyAPI.Web.Enums;
 using SpotifyAPI.Web.Models;
 
-namespace Katbot.Modules
+namespace Abyss.Modules
 {
     [Name("Spotify")]
     [Description(
         "Commands that relate to Spotify, a digital music service that gives you access to millions of songs.")]
-    public class SpotifyModule : KatbotModuleBase
+    public class SpotifyModule : AbyssModuleBase
     {
         public const string SpotifyIconUrl = "https://i.imgur.com/d7HQlA9.png";
 

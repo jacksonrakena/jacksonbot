@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Discord.WebSocket;
 
-namespace Katbot.Services
+namespace Abyss.Services
 {
     public interface IMessageProcessor
     {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Qmmands;
 
-namespace Katbot.Parsers
+namespace Abyss.Parsers
 {
-    public class BooleanTypeParser : TypeParser<bool>, IKatbotTypeParser
+    public class BooleanTypeParser : TypeParser<bool>, IAbyssTypeParser
     {
         private static readonly List<string> MatchingTrueValues = new List<string>
         {

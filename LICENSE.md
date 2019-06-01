@@ -1,4 +1,4 @@
-Copyright (c) 2019 Kat
+Copyright (c) 2019 abyssal512
 
 MIT License
 

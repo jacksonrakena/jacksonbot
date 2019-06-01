@@ -4,19 +4,19 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Net;
 using Discord.WebSocket;
-using Katbot.Attributes;
-using Katbot.Checks.Command;
-using Katbot.Checks.Parameter;
-using Katbot.Entities;
-using Katbot.Extensions;
-using Katbot.Results;
+using Abyss.Attributes;
+using Abyss.Checks.Command;
+using Abyss.Checks.Parameter;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Results;
 using Qmmands;
 
-namespace Katbot.Modules
+namespace Abyss.Modules
 {
     [Name("Moderation")]
     [Description("Commands that help you moderate and protect your server.")]
-    public class ModeratorModule : KatbotModuleBase
+    public class ModeratorModule : AbyssModuleBase
     {
         [Command("Ban", "B")]
         [Description("Bans a member from this server.")]

@@ -1,6 +1,6 @@
 using System;
 
-namespace Katbot.Entities
+namespace Abyss.Entities
 {
     public enum CooldownType
     {

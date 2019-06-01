@@ -1,6 +1,6 @@
 using SpotifyAPI.Web.Models;
 
-namespace Katbot.Helpers
+namespace Abyss.Helpers
 {
     public static class UrlHelper
     {

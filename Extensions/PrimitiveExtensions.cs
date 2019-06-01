@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Katbot.Extensions
+namespace Abyss.Extensions
 {
     public static class PrimitiveExtensions
     {

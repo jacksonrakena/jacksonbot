@@ -4,18 +4,18 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord.WebSocket;
-using Katbot.Attributes;
-using Katbot.Checks.Parameter;
-using Katbot.Entities;
-using Katbot.Extensions;
-using Katbot.Results;
+using Abyss.Attributes;
+using Abyss.Checks.Parameter;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Results;
 using Qmmands;
 
-namespace Katbot.Modules
+namespace Abyss.Modules
 {
     [Name("Random")]
     [Description("Commands that involve a computerised RNG calculator.")]
-    public class RandomModule : KatbotModuleBase
+    public class RandomModule : AbyssModuleBase
     {
         public enum DiceExpressionOptions
         {

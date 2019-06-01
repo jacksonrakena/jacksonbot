@@ -1,4 +1,4 @@
-namespace Katbot.Extensions
+namespace Abyss.Extensions
 {
     public static class ObjectExtensions
     {

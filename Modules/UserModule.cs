@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Humanizer;
-using Katbot.Attributes;
-using Katbot.Entities;
-using Katbot.Extensions;
-using Katbot.Results;
+using Abyss.Attributes;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Results;
 using Qmmands;
 
-namespace Katbot.Modules
+namespace Abyss.Modules
 {
     [Name("User Information")]
     [Description("Commands that help you interact with other Discord users.")]
-    public class UserModule : KatbotModuleBase
+    public class UserModule : AbyssModuleBase
     {
         [Command("Avatar")]
         [Description("Grabs the avatar for a user.")]

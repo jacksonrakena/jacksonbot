@@ -6,11 +6,11 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
 
-namespace Katbot.Entities
+namespace Abyss.Entities
 {
-    public class KatbotCommandContext : CommandContext
+    public class AbyssCommandContext : CommandContext
     {
-        public KatbotCommandContext(SocketUserMessage message, IServiceProvider services)
+        public AbyssCommandContext(SocketUserMessage message, IServiceProvider services)
         {
             Message = message;
             Channel = (SocketTextChannel) message.Channel;
@@ -41,7 +41,7 @@ namespace Katbot.Entities
 
         public string GetPrefix()
         {
-            return Services.GetRequiredService<KatbotConfig>().CommandPrefix;
+            return Services.GetRequiredService<AbyssConfig>().CommandPrefix;
         }
 
         public Task<RestUserMessage> ReplyAsync(string content = null, EmbedBuilder embed = null,

@@ -6,9 +6,9 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 using MSLogLevel = Microsoft.Extensions.Logging.LogLevel;
 using NLogLevel = NLog.LogLevel;
 
-namespace Katbot.Common
+namespace Abyss.Common
 {
-    public class KatbotLogger : ILogger
+    public class AbyssLogger : ILogger
     {
         private static readonly Dictionary<MSLogLevel, NLogLevel> LogLevelMap = new Dictionary<MSLogLevel, NLogLevel>
         {
@@ -23,7 +23,7 @@ namespace Katbot.Common
 
         private readonly Logger _nlog;
 
-        internal KatbotLogger(string categoryName)
+        internal AbyssLogger(string categoryName)
         {
             _nlog = LogManager.GetLogger(categoryName);
         }

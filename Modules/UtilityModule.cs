@@ -2,19 +2,19 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
-using Katbot.Attributes;
-using Katbot.Checks.Command;
-using Katbot.Entities;
-using Katbot.Extensions;
-using Katbot.Results;
-using Katbot.Services;
+using Abyss.Attributes;
+using Abyss.Checks.Command;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Results;
+using Abyss.Services;
 using Qmmands;
 
-namespace Katbot.Modules
+namespace Abyss.Modules
 {
     [Name("Utility")]
     [Description("Commands that provide useful utilities.")]
-    public class UtilityModule : KatbotModuleBase
+    public class UtilityModule : AbyssModuleBase
     {
         private readonly SpoilerService _spoilerService;
 

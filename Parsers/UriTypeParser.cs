@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Qmmands;
 
-namespace Katbot.Parsers
+namespace Abyss.Parsers
 {
-    public class UriTypeParser : TypeParser<Uri>, IKatbotTypeParser
+    public class UriTypeParser : TypeParser<Uri>, IAbyssTypeParser
     {
         public override ValueTask<TypeParserResult<Uri>> ParseAsync(Parameter parameter, string value, CommandContext context,
             IServiceProvider provider)

@@ -5,11 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using Katbot.Entities;
-using Katbot.Extensions;
+using Abyss.Entities;
+using Abyss.Extensions;
 using Qmmands;
 
-namespace Katbot.Parsers.DiscordNet
+namespace Abyss.Parsers.DiscordNet
 {
     // Source: https://github.com/RogueException/Discord.Net/blob/dev/src/Discord.Net.Commands/Readers/RoleTypeReader.cs
     // Copyright (c) 2018 Discord.Net contributors
@@ -20,25 +20,25 @@ namespace Katbot.Parsers.DiscordNet
         public SocketRole Value { get; set; }
     }
 
-    public class DiscordRoleTypeParser : TypeParser<SocketRole>, IKatbotTypeParser
+    public class DiscordRoleTypeParser : TypeParser<SocketRole>, IAbyssTypeParser
     {
         public override ValueTask<TypeParserResult<SocketRole>> ParseAsync(Parameter parameter, string value, CommandContext context,
             IServiceProvider provider)
         {
-            var katbotContext = context.Cast<KatbotCommandContext>();
+            var AbyssContext = context.Cast<AbyssCommandContext>();
 
-            if (katbotContext.Guild == null)
+            if (AbyssContext.Guild == null)
                 return new TypeParserResult<SocketRole>("Not applicable in a DM.");
             var results = new Dictionary<ulong, RoleParseResult>();
-            var roles = katbotContext.Guild.Roles;
+            var roles = AbyssContext.Guild.Roles;
 
             //By Mention (1.0)
             if (MentionUtils.TryParseRole(value, out var id))
-                AddResult(results, katbotContext.Guild.GetRole(id), 1.00f);
+                AddResult(results, AbyssContext.Guild.GetRole(id), 1.00f);
 
             //By Id (0.9)
             if (ulong.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out id))
-                AddResult(results, katbotContext.Guild.GetRole(id), 0.90f);
+                AddResult(results, AbyssContext.Guild.GetRole(id), 0.90f);
 
             //By Name (0.7-0.8)
             foreach (var role in roles.Where(x => string.Equals(value, x.Name, StringComparison.OrdinalIgnoreCase)))

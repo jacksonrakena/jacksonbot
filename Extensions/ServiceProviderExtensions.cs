@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Katbot.Entities;
+using Abyss.Entities;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Katbot.Extensions
+namespace Abyss.Extensions
 {
     public static class ServiceProviderExtensions
     {

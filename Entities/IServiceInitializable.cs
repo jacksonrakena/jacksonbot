@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Katbot.Entities
+namespace Abyss.Entities
 {
     public interface IServiceInitializable
     {

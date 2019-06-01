@@ -1,4 +1,4 @@
-# Katbot
+# Abyss
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
 **A Discord bot.** 
@@ -7,14 +7,14 @@
   
 ### Requirements
 - .NET Core 2.2 SDK for building (or Runtime for a pre-compiled version)
-- `katbot.json` configuration file set out as below
+- `Abyss.json` configuration file set out as below
 
 ### Example config file
-Here's an example Katbot configuration file, taken from my main public instance.
+Here's an example Abyss configuration file, taken from my main public instance.
 ```json
 {
-    "Name": "Katbot",
-    "CommandPrefix": "k.",
+    "Name": "Abyss",
+    "CommandPrefix": "a.",
     "Startup": {
       "Activity": [
         {
@@ -39,4 +39,4 @@ The bot will rotate through each Activity provided under the Startup.Activity pr
   
 
 ### Copyright
-Copyright (c) 2019 Kat under the MIT License, available at [the LICENSE file.](LICENSE.md)
+Copyright (c) 2019 abyssal512 under the MIT License, available at [the LICENSE file.](LICENSE.md)

@@ -6,14 +6,14 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Discord;
-using Katbot.Attributes;
-using Katbot.Checks;
-using Katbot.Entities;
-using Katbot.Extensions;
-using Katbot.Parsers;
+using Abyss.Attributes;
+using Abyss.Checks;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Parsers;
 using Qmmands;
 
-namespace Katbot.Services
+namespace Abyss.Services
 {
     public sealed class HelpService
     {
@@ -52,7 +52,7 @@ namespace Katbot.Services
             {
                 var rawParserObject = _getTypeParserMethod.MakeGenericMethod(info.Type)
                     .Invoke(_commandService, new object[] { info.Type.IsPrimitive });
-                if (rawParserObject is IKatbotTypeParser iptp)
+                if (rawParserObject is IAbyssTypeParser iptp)
                 {
                     friendlyNameSet = iptp.FriendlyName;
                 }
@@ -69,7 +69,7 @@ namespace Katbot.Services
             return info.Type.Name;
         }
 
-        public async Task<Embed> CreateCommandEmbedAsync(Command command, KatbotCommandContext context)
+        public async Task<Embed> CreateCommandEmbedAsync(Command command, AbyssCommandContext context)
         {
             var prefix = context.GetPrefix();
 
@@ -126,12 +126,12 @@ namespace Katbot.Services
             return embed.Build();
         }
 
-        private static async Task<string> FormatCheck(CheckAttribute cba, KatbotCommandContext context)
+        private static async Task<string> FormatCheck(CheckAttribute cba, AbyssCommandContext context)
         {
-            var message = (cba.Cast<IKatbotCheck>() ?? throw new InvalidOperationException($"The provided check is not of the Katbot check type, {typeof(IKatbotCheck).Name}.")).Description;
+            var message = (cba.Cast<IAbyssCheck>() ?? throw new InvalidOperationException($"The provided check is not of the Abyss check type, {typeof(IAbyssCheck).Name}.")).Description;
             
             return
-                $"- {((await cba.CheckAsync(context, context.Services).ConfigureAwait(false)).IsSuccessful ? BotService.KatbotYesEmoji : BotService.KatbotNoEmoji)} {message}";
+                $"- {((await cba.CheckAsync(context, context.Services).ConfigureAwait(false)).IsSuccessful ? BotService.AbyssYesEmoji : BotService.AbyssNoEmoji)} {message}";
         }
 
         private string FormatParameter(Parameter parameterInfo)
@@ -167,7 +167,7 @@ namespace Katbot.Services
                     sb.AppendLine(" - Default: None");
             }
 
-            foreach (var check in parameterInfo.Checks.OfType<IKatbotCheck>())
+            foreach (var check in parameterInfo.Checks.OfType<IAbyssCheck>())
             {
                 sb.AppendLine(" - " + check.Description);
             }

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Katbot.Helpers
+namespace Abyss.Helpers
 {
     public static class LoggingHelper
     {

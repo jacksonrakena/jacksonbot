@@ -4,15 +4,15 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using Katbot.Common;
-using Katbot.Entities;
-using Katbot.Extensions;
-using Katbot.Services;
+using Abyss.Common;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
 
-namespace Katbot
+namespace Abyss
 {
     public static class Program
     {
@@ -45,7 +45,7 @@ namespace Katbot
             serviceCollection.AddSingleton(configurationRoot);
 
             // Logging
-            serviceCollection.AddLogging(builder => builder.AddKatbot());
+            serviceCollection.AddLogging(builder => builder.AddAbyss());
 
             // Discord
             var (discordClient, discordConfig) = ConfigureDiscord();
@@ -71,14 +71,14 @@ namespace Katbot
             return serviceCollection.BuildServiceProvider();
         }
 
-        private static (IConfigurationRoot configurationRoot, KatbotConfig configurationModel) ConfigureOptions()
+        private static (IConfigurationRoot configurationRoot, AbyssConfig configurationModel) ConfigureOptions()
         {
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("katbot.json", false, true);
+                .AddJsonFile("Abyss.json", false, true);
             var builtConfiguration = configurationBuilder.Build();
 
-            var configurationModel = new KatbotConfig();
+            var configurationModel = new AbyssConfig();
             builtConfiguration.Bind(configurationModel);
 
             return (builtConfiguration, configurationModel);
@@ -115,7 +115,7 @@ namespace Katbot
                            $"Cooldown bucket type is incorrect. Expected {typeof(CooldownType)}, received {t.GetType().Name}.");
                     }
 
-                    var discordContext = ctx.Cast<KatbotCommandContext>();
+                    var discordContext = ctx.Cast<AbyssCommandContext>();
 
                     if (discordContext.InvokerIsOwner)
                         return null; // Owners have no cooldown

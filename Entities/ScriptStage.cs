@@ -1,4 +1,4 @@
-namespace Katbot.Entities
+namespace Abyss.Entities
 {
     public enum ScriptStage
     {

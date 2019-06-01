@@ -3,18 +3,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Humanizer;
-using Katbot.Entities;
-using Katbot.Helpers;
+using Abyss.Entities;
+using Abyss.Helpers;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Auth;
 using SpotifyAPI.Web.Enums;
 using SpotifyAPI.Web.Models;
 
-namespace Katbot.Services
+namespace Abyss.Services
 {
     public sealed class SpotifyService
     {
-        public SpotifyService(KatbotConfig config)
+        public SpotifyService(AbyssConfig config)
         {
             Api = new SpotifyWebAPI { UseAuth = true };
             Credentials = new ClientCredentialsAuth

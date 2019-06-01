@@ -4,14 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Humanizer;
-using Katbot.Entities;
-using Katbot.Extensions;
+using Abyss.Entities;
+using Abyss.Extensions;
 using Qmmands;
 
-namespace Katbot.Checks.Command
+namespace Abyss.Checks.Command
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-    public class RequireBotPermissionAttribute : CheckAttribute, IKatbotCheck
+    public class RequireBotPermissionAttribute : CheckAttribute, IAbyssCheck
     {
         public readonly List<ChannelPermission> ChannelPermissions = new List<ChannelPermission>();
         public readonly List<GuildPermission> GuildPermissions = new List<GuildPermission>();
@@ -28,12 +28,12 @@ namespace Katbot.Checks.Command
 
         public override ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
         {
-            var katbotContext = context.Cast<KatbotCommandContext>();
+            var AbyssContext = context.Cast<AbyssCommandContext>();
 
-            var cperms = katbotContext.BotUser.GetPermissions(katbotContext.Channel);
+            var cperms = AbyssContext.BotUser.GetPermissions(AbyssContext.Channel);
             foreach (var gperm in GuildPermissions)
             {
-                if (!katbotContext.BotUser.GuildPermissions.Has(gperm))
+                if (!AbyssContext.BotUser.GuildPermissions.Has(gperm))
                 {
                     return new CheckResult(
                         $"This command requires **me** to have the \"{gperm.Humanize()}\" server-level permission, but I do not have it!");

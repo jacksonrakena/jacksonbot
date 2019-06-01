@@ -3,7 +3,7 @@ using System.Linq;
 using Discord;
 using Discord.WebSocket;
 
-namespace Katbot.Extensions
+namespace Abyss.Extensions
 {
     public static class UserExtensions
     {

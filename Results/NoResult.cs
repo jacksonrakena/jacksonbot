@@ -1,17 +1,17 @@
 using System.Threading.Tasks;
-using Katbot.Entities;
+using Abyss.Entities;
 
-namespace Katbot.Results
+namespace Abyss.Results
 {
     public class NoResult: ActionResult
     {
         public override bool IsSuccessful => true;
-        public override Task ExecuteResultAsync(KatbotCommandContext context)
+        public override Task ExecuteResultAsync(AbyssCommandContext context)
         {
             return Task.CompletedTask;
         }
         
-        public override Task UpdateResultAsync(KatbotUpdateContext context)
+        public override Task UpdateResultAsync(AbyssUpdateContext context)
         {
             return Task.CompletedTask;
         }

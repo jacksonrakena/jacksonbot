@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using Discord;
-using Katbot.Entities;
-using Katbot.Extensions;
+using Abyss.Entities;
+using Abyss.Extensions;
 
-namespace Katbot.Results
+namespace Abyss.Results
 {
     public class BadRequestResult: ActionResult
     {
@@ -19,7 +19,7 @@ namespace Katbot.Results
         
         public override bool IsSuccessful => false;
         
-        public override Task ExecuteResultAsync(KatbotCommandContext context)
+        public override Task ExecuteResultAsync(AbyssCommandContext context)
         {
             return context.Channel.SendMessageAsync(null, false, new EmbedBuilder()
                 .WithTitle("Welp, that didn't work.")
@@ -30,7 +30,7 @@ namespace Katbot.Results
                 .Build());
         }
 
-        public override async Task UpdateResultAsync(KatbotUpdateContext context)
+        public override async Task UpdateResultAsync(AbyssUpdateContext context)
         {
             await context.Response.DeleteAsync().ConfigureAwait(false);
             await ExecuteResultAsync(context.Request).ConfigureAwait(false);

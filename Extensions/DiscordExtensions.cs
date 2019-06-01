@@ -4,7 +4,7 @@ using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 
-namespace Katbot.Extensions
+namespace Abyss.Extensions
 {
     public static class DiscordExtensions
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Katbot.Attributes
+namespace Abyss.Attributes
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class ThumbnailAttribute : Attribute

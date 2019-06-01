@@ -1,6 +1,6 @@
-namespace Katbot.Parsers
+namespace Abyss.Parsers
 {
-    public interface IKatbotTypeParser
+    public interface IAbyssTypeParser
     {
         (string Singular, string Multiple, string Remainder) FriendlyName { get; }
     }

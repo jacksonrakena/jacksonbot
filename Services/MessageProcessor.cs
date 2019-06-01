@@ -4,14 +4,14 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using Katbot.Entities;
-using Katbot.Extensions;
-using Katbot.Parsers;
-using Katbot.Parsers.DiscordNet;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Parsers;
+using Abyss.Parsers.DiscordNet;
 using Microsoft.Extensions.Logging;
 using Qmmands;
 
-namespace Katbot.Services
+namespace Abyss.Services
 {
     public sealed class MessageProcessor : IMessageProcessor
     {
@@ -19,7 +19,7 @@ namespace Katbot.Services
         private readonly DiscordSocketClient _client;
 
         // Domain objects
-        private readonly KatbotConfig _config;
+        private readonly AbyssConfig _config;
 
         // Type parsers
         private readonly DiscordEmoteTypeParser _emoteParser = new DiscordEmoteTypeParser();
@@ -35,7 +35,7 @@ namespace Katbot.Services
 
         public MessageProcessor(DiscordSocketClient client, ICommandService commandService,
             IServiceProvider services, ILogger<MessageProcessor> logger,
-            KatbotConfig config, ICommandExecutor commandExecutor)
+            AbyssConfig config, ICommandExecutor commandExecutor)
         {
             _client = client;
             _services = services;
@@ -75,7 +75,7 @@ namespace Katbot.Services
 
             if (!await HasPrefixAsync(message, ref argPos).ConfigureAwait(false)) return;
 
-            var context = new KatbotCommandContext(message, _services);
+            var context = new AbyssCommandContext(message, _services);
 
             await _commandExecutor.ExecuteAsync(context, message.Content.Substring(argPos)).ConfigureAwait(false);
         }

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Qmmands;
 
-namespace Katbot.Extensions
+namespace Abyss.Extensions
 {
     public static class CommandsExtensions
     {

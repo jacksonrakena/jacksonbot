@@ -4,7 +4,7 @@ using System.Linq;
 using Humanizer;
 using Qmmands;
 
-namespace Katbot.Extensions
+namespace Abyss.Extensions
 {
     public static class LinqExtensions
     {

@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Discord;
 using Qmmands;
 
-namespace Katbot.Parsers.DiscordNet
+namespace Abyss.Parsers.DiscordNet
 {
-    public class DiscordEmoteTypeParser : TypeParser<IEmote>, IKatbotTypeParser
+    public class DiscordEmoteTypeParser : TypeParser<IEmote>, IAbyssTypeParser
     {
         public override ValueTask<TypeParserResult<IEmote>> ParseAsync(Parameter parameter, string value, CommandContext context, IServiceProvider provider)
         {

@@ -2,14 +2,14 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.Rest;
-using Katbot.Attributes;
-using Katbot.Extensions;
-using Katbot.Results;
+using Abyss.Attributes;
+using Abyss.Extensions;
+using Abyss.Results;
 using Qmmands;
 
-namespace Katbot.Entities
+namespace Abyss.Entities
 {
-    public abstract class KatbotModuleBase : ModuleBase<KatbotCommandContext>
+    public abstract class AbyssModuleBase : ModuleBase<AbyssCommandContext>
     {
         public Task<RestUserMessage> ReplyAsync(string content = null, EmbedBuilder embed = null,
             RequestOptions options = null)

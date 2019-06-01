@@ -2,9 +2,9 @@ using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using Discord;
-using Katbot.Entities;
+using Abyss.Entities;
 
-namespace Katbot.Results
+namespace Abyss.Results
 {
     public class OkResult: ActionResult
     {
@@ -28,7 +28,7 @@ namespace Katbot.Results
         private EmbedBuilder Embed { get; }
         private FileAttachment[] Attachments { get; }
         
-        public override async Task ExecuteResultAsync(KatbotCommandContext context)
+        public override async Task ExecuteResultAsync(AbyssCommandContext context)
         {
             if (Attachments.Length == 1)
             {
@@ -51,7 +51,7 @@ namespace Katbot.Results
             }
         }
         
-        public override async Task UpdateResultAsync(KatbotUpdateContext context)
+        public override async Task UpdateResultAsync(AbyssUpdateContext context)
         {
             await context.Response.DeleteAsync().ConfigureAwait(false);
             await ExecuteResultAsync(context.Request).ConfigureAwait(false);

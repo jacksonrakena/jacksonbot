@@ -5,23 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord;
-using Katbot.Attributes;
-using Katbot.Checks.Command;
-using Katbot.Entities;
-using Katbot.Extensions;
-using Katbot.Helpers;
-using Katbot.Results;
-using Katbot.Services;
+using Abyss.Attributes;
+using Abyss.Checks.Command;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Helpers;
+using Abyss.Results;
+using Abyss.Services;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Qmmands;
 
-namespace Katbot.Modules
+namespace Abyss.Modules
 {
     [Name("Owner")]
     [Description("Provides commands for my creator.")]
     [RequireOwner]
-    public class OwnerModule : KatbotModuleBase
+    public class OwnerModule : AbyssModuleBase
     {
         private readonly ApiStatisticsCollectionService _apiStatisticsCollection;
         private readonly ICommandExecutor _executor;
@@ -65,7 +65,7 @@ namespace Katbot.Modules
 
         [Command("Game", "SetGame")]
         [Description("Sets my current Discord activity.")]
-        [Example("game Playing \"with Katbot\"", "setgame Streaming \"Just programming!\" http://twitch.tv/twitch")]
+        [Example("game Playing \"with Abyss\"", "setgame Streaming \"Just programming!\" http://twitch.tv/twitch")]
         public async Task<ActionResult> Command_SetGameAsync(
             [Description("The verb to act.")] [Name("Type")]
             ActivityType type,

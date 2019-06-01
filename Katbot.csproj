@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="Katbot.json" />
+      <None Remove="abyss.json" />
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="katbot.json">
+      <Content Include="abyss.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>

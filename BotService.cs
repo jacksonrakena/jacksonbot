@@ -4,28 +4,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using Katbot.Entities;
-using Katbot.Extensions;
-using Katbot.Services;
-using Microsoft.Extensions.DependencyInjection;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Services;
 using Microsoft.Extensions.Logging;
 
-namespace Katbot
+namespace Abyss
 {
     public class BotService
     {
-        public const string KatbotYesEmoji = "<:KatbotYes:550195992088018944>";
-        public const string KatbotNoEmoji = "<:KatbotNo:550195972928569366>";
+        public const string AbyssYesEmoji = "<:AbyssYes:550195992088018944>";
+        public const string AbyssNoEmoji = "<:AbyssNo:550195972928569366>";
         public const string ZeroWidthSpace = "​";
         public static readonly Color DefaultEmbedColour = new Color(0x72d4a6);
-        private readonly KatbotConfig _config;
+        private readonly AbyssConfig _config;
         private readonly DiscordSocketClient _discordClient;
 
         private readonly ILogger<BotService> _logger;
         private readonly IServiceProvider _serviceProvider;
 
         public BotService(
-            IServiceProvider services, ILoggerFactory logFac, KatbotConfig config, DiscordSocketClient socketClient)
+            IServiceProvider services, ILoggerFactory logFac, AbyssConfig config, DiscordSocketClient socketClient)
         {
             _logger = logFac.CreateLogger<BotService>();
             _discordClient = socketClient;
@@ -36,7 +35,7 @@ namespace Katbot
         public async Task StartAsync()
         {
             _logger.LogInformation(
-                $"Katbot bot on {Environment.OSVersion.VersionString} with CLR {Environment.Version}");
+                $"Abyss bot on {Environment.OSVersion.VersionString} with CLR {Environment.Version}");
             _discordClient.Log += DiscordClientOnLog;
             _discordClient.Ready += DiscordClientOnReady;
             _discordClient.JoinedGuild += DiscordClientOnJoinedGuild;
@@ -101,7 +100,6 @@ namespace Katbot
                     await _discordClient.SetGameAsync(message, null, activityType).ConfigureAwait(false);
                     await Task.Delay(TimeSpan.FromMinutes(1));
                 }
-                // ReSharper disable once FunctionNeverReturns
             });
              
             return Task.CompletedTask;

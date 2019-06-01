@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using Katbot.Entities;
-using Katbot.Extensions;
+using Abyss.Entities;
+using Abyss.Extensions;
 
-namespace Katbot.Services
+namespace Abyss.Services
 {
     public sealed class SpoilerService
     {
@@ -56,13 +56,13 @@ namespace Katbot.Services
             return Task.CompletedTask;
         }
 
-        public async Task CreateSpoilerMessageAsync(KatbotCommandContext context, string safe, string spoiler,
+        public async Task CreateSpoilerMessageAsync(AbyssCommandContext context, string safe, string spoiler,
             string emote = "🛂")
         {
             await context.Message.DeleteAsync(new RequestOptions
             {
                 AuditLogReason =
-                    $"Katbot Spoiler Command - spoiler created by {context.Invoker} (ID {context.Invoker.Id})"
+                    $"Abyss Spoiler Command - spoiler created by {context.Invoker} (ID {context.Invoker.Id})"
             }).ConfigureAwait(false);
 
             var embed = new EmbedBuilder();

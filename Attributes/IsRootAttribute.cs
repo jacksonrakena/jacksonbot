@@ -1,6 +1,6 @@
 using System;
 
-namespace Katbot.Attributes
+namespace Abyss.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class IsRootAttribute : Attribute

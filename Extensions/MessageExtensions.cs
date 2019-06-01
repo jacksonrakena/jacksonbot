@@ -1,7 +1,7 @@
 using System;
 using Discord;
 
-namespace Katbot.Extensions
+namespace Abyss.Extensions
 {
     public static class MessageExtensions
     {

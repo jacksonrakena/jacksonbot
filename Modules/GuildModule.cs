@@ -8,22 +8,22 @@ using Discord;
 using Discord.Net;
 using Discord.WebSocket;
 using Humanizer;
-using Katbot.Attributes;
-using Katbot.Checks.Command;
-using Katbot.Entities;
-using Katbot.Extensions;
-using Katbot.Helpers;
-using Katbot.Results;
+using Abyss.Attributes;
+using Abyss.Checks.Command;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Helpers;
+using Abyss.Results;
 using Qmmands;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
-namespace Katbot.Modules
+namespace Abyss.Modules
 {
     [Name("Server Information")]
     [Description("Commands that help you interact with your server in useful and efficient ways.")]
-    public class GuildModule : KatbotModuleBase
+    public class GuildModule : AbyssModuleBase
     {
         [Command("Nickname", "SetNick", "SetNickname", "Nick")]
         [Description("Sets the current nickname for a user.")]

@@ -7,20 +7,20 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Rest;
-using Katbot.Entities;
+using Abyss.Entities;
 using Qmmands;
 
-namespace Katbot.Helpers
+namespace Abyss.Helpers
 {
     [DoNotAdd]
-    public class EvaluationHelper : KatbotModuleBase
+    public class EvaluationHelper : AbyssModuleBase
     {
-        public EvaluationHelper(KatbotCommandContext context)
+        public EvaluationHelper(AbyssCommandContext context)
         {
             Context = context;
         }
 
-        public new KatbotCommandContext Context { get; }
+        public new AbyssCommandContext Context { get; }
 
         public Task<RestUserMessage> ReplyAsync(string content, Embed embed = null)
         {

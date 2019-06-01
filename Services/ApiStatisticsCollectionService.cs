@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 
-namespace Katbot.Services
+namespace Abyss.Services
 {
     public sealed class ApiStatisticsCollectionService
     {

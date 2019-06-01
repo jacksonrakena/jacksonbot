@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
-using Katbot.Attributes;
-using Katbot.Entities;
-using Katbot.Extensions;
-using Katbot.Results;
-using Katbot.Services;
+using Abyss.Attributes;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Results;
+using Abyss.Services;
 using Qmmands;
 
-namespace Katbot.Modules
+namespace Abyss.Modules
 {
     [Name("Help")]
     [Description("Contains helpful commands to help you discover your way around my commands and modules.")]
-    public class HelpModule : KatbotModuleBase
+    public class HelpModule : AbyssModuleBase
     {
         private readonly ICommandService _commandService;
         private readonly HelpService _help;

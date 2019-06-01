@@ -1,13 +1,13 @@
 using System;
 using System.Threading.Tasks;
-using Katbot.Entities;
+using Abyss.Entities;
 using Qmmands;
 
-namespace Katbot.Services
+namespace Abyss.Services
 {
     public interface ICommandExecutor
     {
-        Task ExecuteAsync(KatbotCommandContext context, string content);
+        Task ExecuteAsync(AbyssCommandContext context, string content);
 
         Task HandleCommandExecutedAsync(CommandExecutedEventArgs args);
 

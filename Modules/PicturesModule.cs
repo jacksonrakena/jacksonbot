@@ -4,11 +4,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Discord;
-using Katbot.Attributes;
-using Katbot.Checks.Parameter;
-using Katbot.Entities;
-using Katbot.Extensions;
-using Katbot.Results;
+using Abyss.Attributes;
+using Abyss.Checks.Parameter;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Results;
 using Newtonsoft.Json.Linq;
 using Qmmands;
 using SixLabors.ImageSharp.Formats;
@@ -18,11 +18,11 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using SixLabors.Primitives;
 
-namespace Katbot.Modules
+namespace Abyss.Modules
 {
     [Name("Pictures")]
     [Description("Commands that let you access pictures from various websites.")]
-    public class PicturesModule : KatbotModuleBase
+    public class PicturesModule : AbyssModuleBase
     {
         //private const string BowsetteApi = "https://lewd.bowsette.pictures/api/request";
         private const string CatApi = "http://aws.random.cat/meow";
@@ -37,7 +37,7 @@ namespace Katbot.Modules
         [Command("Cat", "Meow")]
         [Description("Meow.")]
         [Example("cat")]
-        [KatbotCooldown(1, 5, CooldownMeasure.Seconds, CooldownType.User)]
+        [AbyssCooldown(1, 5, CooldownMeasure.Seconds, CooldownType.User)]
         public async Task<ActionResult> Command_GetCatPictureAsync()
         {
             var url = JToken.Parse(await (await _httpApi.GetAsync(CatApi).ConfigureAwait(false)).Content.ReadAsStringAsync().ConfigureAwait(false))
@@ -50,7 +50,7 @@ namespace Katbot.Modules
         [RunMode(RunMode.Parallel)]
         [Example("bigmoji :ablobcatparhteyboyes:", "bigmoji :apple:")]
         [Description("Shows an enlarged form of an emoji.")]
-        [KatbotCooldown(1, 5, CooldownMeasure.Seconds, CooldownType.User)]
+        [AbyssCooldown(1, 5, CooldownMeasure.Seconds, CooldownType.User)]
         public async Task<ActionResult> Command_GetBigEmojiAsync([Name("Emoji")] [Description("The emoji to enlarge.")]
             IEmote emote0)
         {
@@ -84,7 +84,7 @@ namespace Katbot.Modules
 
         [Command("Resize", "Upscale", "Downscale")]
         [Description("Resizes an image from a URL to specified dimensions.")]
-        [KatbotCooldown(1, 30, CooldownMeasure.Seconds, CooldownType.User)]
+        [AbyssCooldown(1, 30, CooldownMeasure.Seconds, CooldownType.User)]
         [Example("resize https://i.imgur.com/N8VZJI1.jpg 250 250", "resize https://i.imgur.com/N8VZJI1.jpg 500 500")]
         [RunMode(RunMode.Parallel)]
         public async Task<ActionResult> Command_ResizeImageAsync(

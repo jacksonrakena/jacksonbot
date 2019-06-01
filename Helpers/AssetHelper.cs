@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Katbot.Helpers
+namespace Abyss.Helpers
 {
     public static class AssetHelper
     {

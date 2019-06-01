@@ -6,23 +6,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using Katbot.Entities;
+using Abyss.Entities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 
-namespace Katbot.Services
+namespace Abyss.Services
 {
     public sealed class ScriptingService
     {
         public static readonly IReadOnlyList<string> Imports = new ReadOnlyCollection<string>(new List<string>
         {
             "System", "System.Math", "System.Linq", "Discord", "System.Diagnostics", "System.Collections.Generic",
-            "Discord.WebSocket", "Katbot", "Katbot.Common", "Katbot.Entities",
+            "Discord.WebSocket", "Abyss", "Abyss.Common", "Abyss.Entities",
             "Qmmands",
-            "Microsoft.Extensions.DependencyInjection", "System.Text", "Katbot.Services",
+            "Microsoft.Extensions.DependencyInjection", "System.Text", "Abyss.Services",
             "System.Globalization", "Microsoft.Extensions.Options",
-            "Katbot.Modules", "System.Reflection"
+            "Abyss.Modules", "System.Reflection"
         });
 
         public async Task<ScriptingResult> EvaluateScriptAsync<T>(string code, T properties)

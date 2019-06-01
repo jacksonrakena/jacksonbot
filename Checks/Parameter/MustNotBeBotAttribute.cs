@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord.WebSocket;
-using Katbot.Entities;
-using Katbot.Extensions;
+using Abyss.Entities;
+using Abyss.Extensions;
 using Qmmands;
 
-namespace Katbot.Checks.Parameter
+namespace Abyss.Checks.Parameter
 {
     [AttributeUsage(AttributeTargets.Parameter)]
-    public class MustNotBeBotAttribute : ParameterCheckAttribute, IKatbotCheck
+    public class MustNotBeBotAttribute : ParameterCheckAttribute, IAbyssCheck
     {
         public override ValueTask<CheckResult> CheckAsync(object argument, CommandContext context,
             IServiceProvider provider)
@@ -21,7 +21,7 @@ namespace Katbot.Checks.Parameter
                    $"Provided argument, {argument.GetType().Name}, is not a {nameof(SocketUser)}!");
             }
 
-            return user.Id == context.Cast<KatbotCommandContext>().Bot.Id
+            return user.Id == context.Cast<AbyssCommandContext>().Bot.Id
                 ? new CheckResult("Must not be me!")
                 : CheckResult.Successful;
         }

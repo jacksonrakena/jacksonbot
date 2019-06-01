@@ -1,7 +1,7 @@
 using System;
 using Discord.WebSocket;
 
-namespace Katbot.Checks
+namespace Abyss.Checks
 {
     public class CheckUtilities
     {

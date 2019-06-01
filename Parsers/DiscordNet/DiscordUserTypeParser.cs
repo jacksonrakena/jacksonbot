@@ -5,11 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using Katbot.Entities;
-using Katbot.Extensions;
+using Abyss.Entities;
+using Abyss.Extensions;
 using Qmmands;
 
-namespace Katbot.Parsers.DiscordNet
+namespace Abyss.Parsers.DiscordNet
 {
     internal class UserParseResolveResult
     {
@@ -17,15 +17,15 @@ namespace Katbot.Parsers.DiscordNet
         public SocketGuildUser Value { get; set; }
     }
 
-    public class DiscordUserTypeParser : TypeParser<SocketGuildUser>, IKatbotTypeParser
+    public class DiscordUserTypeParser : TypeParser<SocketGuildUser>, IAbyssTypeParser
     {
         public override ValueTask<TypeParserResult<SocketGuildUser>> ParseAsync(Parameter parameter, string value, CommandContext context,
             IServiceProvider provider)
         {
-            var katbotContext = context.Cast<KatbotCommandContext>();
-            var channel = katbotContext.Channel;
+            var AbyssContext = context.Cast<AbyssCommandContext>();
+            var channel = AbyssContext.Channel;
             var results = new Dictionary<ulong, UserParseResolveResult>();
-            var channelUsers = katbotContext.Guild.Users;
+            var channelUsers = AbyssContext.Guild.Users;
 
             // Parse mention
             if (MentionUtils.TryParseUser(value, out var id))
@@ -36,7 +36,7 @@ namespace Katbot.Parsers.DiscordNet
             }
 
             // by Discord snowflake ID
-            if (ulong.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out id) && katbotContext.Guild != null)
+            if (ulong.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out id) && AbyssContext.Guild != null)
             {
                 AddResult(results,
                     channel.GetUser(id), 0.90f);

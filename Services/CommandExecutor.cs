@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Humanizer;
-using Katbot.Attributes;
-using Katbot.Entities;
-using Katbot.Extensions;
-using Katbot.Helpers;
-using Katbot.Results;
+using Abyss.Attributes;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Helpers;
+using Abyss.Results;
 using Microsoft.Extensions.Logging;
 using Qmmands;
 
-namespace Katbot.Services
+namespace Abyss.Services
 {
     public sealed class CommandExecutor : ICommandExecutor
     {
@@ -48,7 +48,7 @@ namespace Katbot.Services
         #region Logging Helpers
 
         /**
-         * Katbot bot logging codes - found in Katbot.Helpers.LoggingHelper
+         * Abyss bot logging codes - found in Abyss.Helpers.LoggingHelper
          * 1 - Command executed
          *
          * 1xx Series - Internal Error
@@ -133,7 +133,7 @@ namespace Katbot.Services
             var ctx = args.Context;
             var services = args.Provider;
             var command = ctx.Command;
-            var context = ctx.Cast<KatbotCommandContext>();
+            var context = ctx.Cast<AbyssCommandContext>();
             var baseResult = result.Cast<ActionResult>();
 
             if (baseResult == null) return;
@@ -152,7 +152,7 @@ namespace Katbot.Services
             }
         }
 
-        public async Task ExecuteAsync(KatbotCommandContext context, string content)
+        public async Task ExecuteAsync(AbyssCommandContext context, string content)
         {
             try
             {
@@ -226,7 +226,7 @@ namespace Katbot.Services
                                 $"The following check{(cfr.FailedChecks.Count == 1 ? "" : "s")} failed, so I couldn't execute the command!")
                             .WithDescription(string.Join("\n",
                                 cfr.FailedChecks.Where(a => a.Check.GetType().CustomAttributes.All(b => b.AttributeType != typeof(SilentCheckAttribute)))
-                                    .Select(a => $"- {BotService.KatbotNoEmoji} {a.Result.Reason}")))
+                                    .Select(a => $"- {BotService.AbyssNoEmoji} {a.Result.Reason}")))
                             .WithColor(context.Invoker.GetHighestRoleColourOrDefault())
                             .WithFooter(
                                 $"{(cfr.Command == null ? $"Module {cfr.Module.Name}" : $"Command {cfr.Command.Name}")}, executed by {context.Invoker.Format()}")

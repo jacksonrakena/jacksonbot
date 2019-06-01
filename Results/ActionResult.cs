@@ -1,14 +1,14 @@
 using System.Threading.Tasks;
 using Discord;
-using Katbot.Entities;
+using Abyss.Entities;
 using Qmmands;
 
-namespace Katbot.Results
+namespace Abyss.Results
 {
     public abstract class ActionResult : CommandResult
     {
-        public abstract Task ExecuteResultAsync(KatbotCommandContext context);
-        public abstract Task UpdateResultAsync(KatbotUpdateContext context);
+        public abstract Task ExecuteResultAsync(AbyssCommandContext context);
+        public abstract Task UpdateResultAsync(AbyssUpdateContext context);
         
         public static implicit operator Task<ActionResult>(ActionResult res)
         {

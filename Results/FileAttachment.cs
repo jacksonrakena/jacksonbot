@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Katbot.Results
+namespace Abyss.Results
 {
     public struct FileAttachment
     {

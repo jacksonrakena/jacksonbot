@@ -1,20 +1,20 @@
 using System;
 using System.Threading.Tasks;
-using Katbot.Entities;
-using Katbot.Extensions;
+using Abyss.Entities;
+using Abyss.Extensions;
 using Qmmands;
 
-namespace Katbot.Checks.Command
+namespace Abyss.Checks.Command
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-    public class RequireOwnerAttribute : CheckAttribute, IKatbotCheck
+    public class RequireOwnerAttribute : CheckAttribute, IAbyssCheck
     {
         public override async ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
         {
-            var katbotContext = context.Cast<KatbotCommandContext>();
+            var AbyssContext = context.Cast<AbyssCommandContext>();
 
-            var owner = (await katbotContext.Client.GetApplicationInfoAsync().ConfigureAwait(false)).Owner;
-            var invokerId = katbotContext.Invoker.Id;
+            var owner = (await AbyssContext.Client.GetApplicationInfoAsync().ConfigureAwait(false)).Owner;
+            var invokerId = AbyssContext.Invoker.Id;
 
             return owner.Id == invokerId
                 ? CheckResult.Successful

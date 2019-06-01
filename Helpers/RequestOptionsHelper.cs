@@ -1,6 +1,6 @@
 using Discord;
 
-namespace Katbot.Helpers
+namespace Abyss.Helpers
 {
     public static class RequestOptionsHelper
     {

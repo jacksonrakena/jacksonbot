@@ -9,23 +9,23 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Humanizer;
-using Katbot.Attributes;
-using Katbot.Checks.Command;
-using Katbot.Entities;
-using Katbot.Extensions;
-using Katbot.Results;
+using Abyss.Attributes;
+using Abyss.Checks.Command;
+using Abyss.Entities;
+using Abyss.Extensions;
+using Abyss.Results;
 using Qmmands;
 
-namespace Katbot.Modules
+namespace Abyss.Modules
 {
-    [Name("Katbot")]
+    [Name("Abyss")]
     [Description("Provides commands related to me.")]
-    public class KatbotModule : KatbotModuleBase
+    public class AbyssModule : AbyssModuleBase
     {
         private readonly ICommandService _commandService;
-        private readonly KatbotConfig _config;
+        private readonly AbyssConfig _config;
 
-        public KatbotModule(ICommandService commandService, KatbotConfig config)
+        public AbyssModule(ICommandService commandService, AbyssConfig config)
         {
             _commandService = commandService;
             _config = config;
@@ -39,11 +39,11 @@ namespace Katbot.Modules
             return Ok($"**Uptime:** {(DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize(20)}");
         }
 
-        [Command("Info", "Katbot", "About")]
+        [Command("Info", "Abyss", "About")]
         [Example("info")]
         [RunMode(RunMode.Parallel)]
         [Description("Shows some information about me.")]
-        public async Task<ActionResult> Command_GetKatbotInfoAsync()
+        public async Task<ActionResult> Command_GetAbyssInfoAsync()
         {
             var dotnetVersion =
                 Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ??
@@ -67,7 +67,7 @@ namespace Katbot.Modules
                 .AddField("Commands", _commandService.GetAllCommands().Count(), true)
                 .AddField("Modules", _commandService.GetAllModules().Count(), true)
                 .AddField("Support Server", "Unavailable", true)
-                .AddField("Source", $"https://github.com/thecatitude/Katbot")
+                .AddField("Source", $"https://github.com/thecatitude/Abyss")
                 .AddField("Language",
                     $"C# 7.1 ({dotnetVersion})")
                 .AddField("Libraries", $"Discord.Net {DiscordConfig.Version} w/ Qmmands");
@@ -78,7 +78,7 @@ namespace Katbot.Modules
         [Command("Feedback", "Request")]
         [Example("feedback Bot is great!", "feedback Add more cats!!!")]
         [Description("Sends feedback to the developer.")]
-        [KatbotCooldown(1, 24, CooldownMeasure.Hours, CooldownType.User)]
+        [AbyssCooldown(1, 24, CooldownMeasure.Hours, CooldownType.User)]
         public async Task<ActionResult> Command_SendFeedbackAsync([Remainder] string feedback)
         {
             var app = await Context.Client.GetApplicationInfoAsync().ConfigureAwait(false);
@@ -90,7 +90,7 @@ namespace Katbot.Modules
 
         [Command("Ping")]
         [Description("Benchmarks the connection to the Discord servers.")]
-        [KatbotCooldown(1, 3, CooldownMeasure.Seconds, CooldownType.User)]
+        [AbyssCooldown(1, 3, CooldownMeasure.Seconds, CooldownType.User)]
         public async Task<ActionResult> Command_PingAsync()
         {
             var sw = Stopwatch.StartNew();

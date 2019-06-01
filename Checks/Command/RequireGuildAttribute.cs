@@ -1,14 +1,14 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Katbot.Entities;
-using Katbot.Extensions;
+using Abyss.Entities;
+using Abyss.Extensions;
 using Qmmands;
 
-namespace Katbot.Checks.Command
+namespace Abyss.Checks.Command
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class RequireGuildAttribute : CheckAttribute, IKatbotCheck
+    public class RequireGuildAttribute : CheckAttribute, IAbyssCheck
     {
         public ulong[] Id { get; }
         
@@ -21,7 +21,7 @@ namespace Katbot.Checks.Command
         
         public override ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
         {
-            var ctx = context.Cast<KatbotCommandContext>();
+            var ctx = context.Cast<AbyssCommandContext>();
             var guild = ctx.Client.GetGuild(Id.FirstOrDefault());
             
             return Id.Contains(ctx.Guild.Id)

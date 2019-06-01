@@ -1,6 +1,6 @@
 using System;
 
-namespace Katbot.Common
+namespace Abyss.Common
 {
     public class EmptyDisposable : IDisposable
     {
