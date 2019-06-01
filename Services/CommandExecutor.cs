@@ -145,11 +145,14 @@ namespace Abyss.Services
 
             var data = await baseResult.ExecuteResultAsync(context).ConfigureAwait(false);
 
-            _responseCache.Set(context.Message.Id, data, new MemoryCacheEntryOptions
+            if (!command.HasAttribute<DontTrackAttribute>(out var _))
             {
-                Size = 1,
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
-            });
+                _responseCache.Set(context.Message.Id, data, new MemoryCacheEntryOptions
+                {
+                    Size = 1,
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
+                });
+            }
 
             if (baseResult.IsSuccessful)
             {

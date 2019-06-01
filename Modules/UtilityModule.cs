@@ -26,6 +26,7 @@ namespace Abyss.Modules
         [Command("Spoiler", "CreateSpoiler")]
         [Description("Creates a spoiler message, direct messaging users who would like to see the spoiler.")]
         [Example("spoiler \"The Best Bot\" I AM THE BEST BOT!", "spoiler hello_world hello world!")]
+        [DontTrack]
         public async Task<ActionResult> Command_CreateSpoilerAsync(
             [Name("Safe Text")] [Description("A name for the spoiler, that everyone will be able to see.")]
             string safe, [Name("Spoiler")] [Description("The content of the spoiler.")] [Remainder]
@@ -41,6 +42,7 @@ namespace Abyss.Modules
         [DontAttachFooter]
         [DontAttachTimestamp]
         [DontEmbed]
+        [DontTrack]
         public Task<ActionResult> Command_EchoAsync([Name("Text")] [Remainder] string echocontent)
         {
             return Ok(Context.InvokerIsOwner
@@ -53,6 +55,7 @@ namespace Abyss.Modules
         [Description("Attempts to delete the source message, and then echoes the input text.")]
         [Example("echod THIS IS THE BEST BOT!")]
         [DontEmbed]
+        [DontTrack]
         public async Task<ActionResult> Command_EchoDeleteAsync([Name("Text")] [Remainder] string echocontent)
         {
             try
@@ -76,6 +79,7 @@ namespace Abyss.Modules
         [Example("delete 525827581371613184 yes", "delete 525827581371613184 no", "delete 525827581371613184")]
         [DontAttachFooter]
         [DontAttachTimestamp]
+        [DontTrack]
         public async Task<ActionResult> Command_DeleteMessageAsync(
             [Name("Message")] [Description("The ID of the message to delete.")]
             ulong messageId,
