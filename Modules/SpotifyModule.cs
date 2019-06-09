@@ -3,12 +3,11 @@ using Abyss.Entities;
 using Abyss.Helpers;
 using Abyss.Results;
 using Abyss.Services;
+using AbyssalSpotify;
 using Discord;
 using Discord.WebSocket;
 using Humanizer;
 using Qmmands;
-using SpotifyAPI.Web.Enums;
-using SpotifyAPI.Web.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,9 +21,9 @@ namespace Abyss.Modules
     {
         public const string SpotifyIconUrl = "https://i.imgur.com/d7HQlA9.png";
 
-        private readonly SpotifyService _spotify;
+        private readonly SpotifyClient _spotify;
 
-        public SpotifyModule(SpotifyService spotify)
+        public SpotifyModule(SpotifyClient spotify)
         {
             _spotify = spotify;
         }
@@ -41,26 +40,29 @@ namespace Abyss.Modules
             [DefaultValueDescription("The track that you're currently listening to.")]
             string trackQuery = null)
         {
-            FullTrack track;
+            SpotifyTrack track;
             if (trackQuery != null)
             {
-                var tracks = await _spotify.RequestAsync(api => api.SearchItemsAsync(trackQuery, SearchType.Track)).ConfigureAwait(false);
-
-                if (tracks.Error != null)
-                    return BadRequest($"Spotify returned error code {tracks.Error.Status}: {tracks.Error.Message}");
-
-                track = tracks.Tracks.Items.FirstOrDefault();
+                try
+                {
+                    var tracks = await _spotify.SearchAsync(trackQuery, SearchType.Track).ConfigureAwait(false);
+                    track = tracks.Tracks.Items.FirstOrDefault();
+                }
+                catch (Exception)
+                {
+                    return BadRequest("An error occurred while searching.");
+                }
             }
             else
             {
                 if (!(Context.Invoker.Activity is SpotifyGame spot))
                     return BadRequest("You didn't supply a track, and you're not currently listening to anything!");
 
-                track = await _spotify.RequestAsync(a => a.GetTrackAsync(spot.TrackId)).ConfigureAwait(false);
+                track = await _spotify.GetTrackAsync(spot.TrackId).ConfigureAwait(false);
             }
 
             if (track == null) return BadRequest("Cannot find a track by that name.");
-            return Ok(SpotifyService.CreateTrackEmbed(track));
+            return Ok(CreateTrackEmbed(track));
         }
 
         [Command("Spotify")]
@@ -80,8 +82,8 @@ namespace Abyss.Modules
             if (user.Activity == null || !(user.Activity is SpotifyGame spotify))
                 return BadRequest("User is not listening to anything~!");
 
-            var track = await _spotify.RequestAsync(a => a.GetTrackAsync(spotify.TrackId)).ConfigureAwait(false);
-            return Ok(SpotifyService.CreateTrackEmbed(track));
+            var track = await _spotify.GetTrackAsync(spotify.TrackId).ConfigureAwait(false);
+            return Ok(CreateTrackEmbed(track));
         }
 
         [Command("Album")]
@@ -96,7 +98,7 @@ namespace Abyss.Modules
             [DefaultValueDescription("The album of the track you're currently listening to.")]
             string albumQuery = null)
         {
-            FullAlbum album;
+            SpotifyAlbum album;
             if (albumQuery == null)
             {
                 if (!(Context.Invoker.Activity is SpotifyGame spot))
@@ -105,21 +107,24 @@ namespace Abyss.Modules
                        "You didn't supply an album name, and you're not currently listening to anything!");
                 }
 
-                album = await _spotify.RequestAsync(async ab =>
-                    await ab.GetAlbumAsync((await _spotify.RequestAsync(a => a.GetTrackAsync(spot.TrackId)).ConfigureAwait(false)).Album.Id).ConfigureAwait(false)).ConfigureAwait(false);
+                var track = await _spotify.GetTrackAsync(spot.TrackId).ConfigureAwait(false);
+                album = await track.Album.GetFullEntityAsync().ConfigureAwait(false);
             }
             else
             {
-                var result = await _spotify.RequestAsync(a => a.SearchItemsAsync(albumQuery, SearchType.Album)).ConfigureAwait(false);
+                try
+                {
+                    var result = await _spotify.SearchAsync(albumQuery, SearchType.Album).ConfigureAwait(false);
+                    var sa0 = result.Albums.Items.FirstOrDefault();
 
-                if (result.Error != null)
-                    return BadRequest($"Spotify returned error code {result.Error.Status}: {result.Error.Message}");
+                    if (sa0 == null) return BadRequest("Cannot find album by that name.");
 
-                var sa0 = result.Albums.Items.FirstOrDefault();
-
-                if (sa0 == null) return BadRequest("Cannot find album by that name.");
-
-                album = await _spotify.RequestAsync(a => a.GetAlbumAsync(sa0.Id)).ConfigureAwait(false);
+                    album = await _spotify.GetAlbumAsync(sa0.Id.Id).ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                    return BadRequest("An error occurred while searching for the album.");
+                }
             }
 
             var embed = new EmbedBuilder
@@ -129,7 +134,7 @@ namespace Abyss.Modules
                 {
                     Name = album.Artists.Select(a => a.Name).Humanize(),
                     IconUrl = album.Images.FirstOrDefault()?.Url,
-                    Url = album.Artists.FirstOrDefault()?.GetArtistUrl()
+                    Url = album.Artists.FirstOrDefault()?.Id.Url
                 },
                 Title = album.Name,
                 ThumbnailUrl = album.Images.FirstOrDefault()?.Url,
@@ -137,7 +142,7 @@ namespace Abyss.Modules
                 {
                     Text = string.Join("\n",
                         album.Copyrights.Distinct().Select(a =>
-                            $"[{(a.Type == "C" ? "Copyright" : a.Type == "P" ? "Recording Copyright" : a.Type == "T" ? "Trademark" : a.Type == "R" ? "Registered Trademark" : a.Type)}] {a.Text}"))
+                            $"[{a.CopyrightType.Humanize()}] {a.CopyrightText}"))
                 }
             };
 
@@ -148,11 +153,11 @@ namespace Abyss.Modules
                 {
                     if (size > 2000) return false;
                     var st =
-                        $"{len + 1} - {UrlHelper.CreateMarkdownUrl(track.Name, track.GetTrackUrl())} by {track.Artists.Select(ab => ab.Name).Humanize()}";
+                        $"{len + 1} - {UrlHelper.CreateMarkdownUrl(track.Name, track.Id.Url)} by {track.Artists.Select(ab => ab.Name).Humanize()}";
                     size += st.Length;
                     return size <= 2000;
                 }).Select((track, b) =>
-                    $"{b + 1} - {UrlHelper.CreateMarkdownUrl(track.Name, track.GetTrackUrl())} by {track.Artists.Select(ab => ab.Name).Humanize()}")
+                    $"{b + 1} - {UrlHelper.CreateMarkdownUrl(track.Name, track.Id.Url)} by {track.Artists.Select(ab => ab.Name).Humanize()}")
                 .ToList();
 
             if (tracksOutput.Count != tracks.Count)
@@ -160,14 +165,37 @@ namespace Abyss.Modules
 
             embed.Description = string.Join("\n", tracksOutput);
 
-            embed.AddField("Release Date",
-                DateTime.TryParse(album.ReleaseDate, out var dt) ? dt.ToString("D") : album.ReleaseDate, true);
+            embed.AddField("Release Date", album.ReleaseDate.ToString("D"), true);
 
-            var length = TimeSpan.FromMilliseconds(album.Tracks.Items.Sum(a => a.DurationMs));
+            var length = TimeSpan.FromMilliseconds(album.Tracks.Items.Sum(a => a.Duration.TotalMilliseconds));
 
             embed.AddField("Length", $"{length.Hours} hours, {length.Minutes} minutes", true);
-            if (album.Genres.Count > 0) embed.AddField("Genres", album.Genres.Humanize(), true);
             return Ok(embed);
+        }
+
+        private static EmbedBuilder CreateTrackEmbed(SpotifyTrack track)
+        {
+            var embed = new EmbedBuilder
+            {
+                Color = BotService.DefaultEmbedColour,
+                Author = new EmbedAuthorBuilder
+                {
+                    Name = track.Artists.Select(a => a.Name).Humanize(),
+                    IconUrl = track.Album.Images.FirstOrDefault()?.Url,
+                    Url = track.Artists.FirstOrDefault()?.Id.Url
+                },
+                Title = track.Name,
+                ThumbnailUrl = track.Album.Images.FirstOrDefault()?.Url
+            };
+
+            embed.AddField("Length", $"{track.Duration.Minutes} minutes, {track.Duration.Seconds} seconds", true);
+            embed.AddField("Release Date", track.Album.ReleaseDate.ToString("D"), true);
+            embed.AddField("Album", UrlHelper.CreateMarkdownUrl(track.Album.Name, track.Album.Id.Url), true);
+            embed.AddField("Is Explicit", track.HasExplicitLyrics ? "Yes" : "No", true);
+
+            embed.AddField("\u200B", UrlHelper.CreateMarkdownUrl("Click to listen!", track.Id.Url));
+
+            return embed;
         }
     }
 }

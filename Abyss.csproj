@@ -29,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="AbyssalSpotify" Version="1.0.0-20190609.20" />
         <PackageReference Include="Discord.Net.WebSocket" Version="2.0.2-dev-20190326.4" />
         <PackageReference Include="Humanizer.Core.uk" Version="2.5.16" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="2.10.0" />
@@ -40,7 +41,6 @@
         <PackageReference Include="NLog" Version="4.5.11" />
         <PackageReference Include="Qmmands" Version="3.0.0-nightly-00181" />
         <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
-        <PackageReference Include="SpotifyAPI-NET" Version="2.19.0" />
     </ItemGroup>
     <ItemGroup>
         <None Update="nlog.config">

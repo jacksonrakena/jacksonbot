@@ -2,6 +2,7 @@
 using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Services;
+using AbyssalSpotify;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Caching.Memory;
@@ -65,7 +66,7 @@ namespace Abyss
             serviceCollection.AddSingleton<ICommandExecutor, CommandExecutor>();
             serviceCollection.AddSingleton<ScriptingService>();
             serviceCollection.AddSingleton<SpoilerService>();
-            serviceCollection.AddSingleton<SpotifyService>();
+            serviceCollection.AddSingleton(SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret));
             serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<ResponseCacheService>();
