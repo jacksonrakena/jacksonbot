@@ -160,8 +160,8 @@ namespace Abyss.Modules
                     $"{b + 1} - {UrlHelper.CreateMarkdownUrl(track.Name, track.Id.Url)} by {track.Artists.Select(ab => ab.Name).Humanize()}")
                 .ToList();
 
-            if (tracksOutput.Count != tracks.Count)
-                tracksOutput.Add($"And {tracks.Count - tracksOutput.Count} more...");
+            if (tracksOutput.Count != tracks.Length)
+                tracksOutput.Add($"And {tracks.Length - tracksOutput.Count} more...");
 
             embed.Description = string.Join("\n", tracksOutput);
 
