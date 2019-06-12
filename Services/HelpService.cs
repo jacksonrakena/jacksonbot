@@ -155,7 +155,7 @@ namespace Abyss.Services
                 sb.AppendLine($"- Remarks: {parameterInfo.Remarks}");
 
             sb.AppendLine(
-                $"- Optional: {(parameterInfo.HasAttribute<ParameterArrayOptionalAttribute>() ? "Yes" : parameterInfo.IsOptional ? "Yes" : "No")}");
+                $"- Optional: {(parameterInfo.IsOptional ? "Yes" : "No")}");
 
             if (parameterInfo.IsOptional)
             {
