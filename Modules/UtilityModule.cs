@@ -115,8 +115,7 @@ namespace Abyss.Modules
         public async Task<ActionResult> Command_QuoteMessageAsync([Name("ID")] [Description("The ID of the message.")]
             ulong messageId)
         {
-            var message = Context.Channel.GetCachedMessage(messageId) ??
-                          await Context.Channel.GetMessageAsync(messageId).ConfigureAwait(false);
+            var message = await Context.Channel.GetMessageAsync(messageId).ConfigureAwait(false);
 
             if (message == null) return BadRequest("Cannot find message.");
 
