@@ -11,7 +11,7 @@ namespace Abyss.Entities
 {
     public abstract class AbyssModuleBase : ModuleBase<AbyssCommandContext>
     {
-        public Task<RestUserMessage> ReplyAsync(string content = null, EmbedBuilder embed = null,
+        public Task ReplyAsync(string content = null, EmbedBuilder embed = null,
             RequestOptions options = null)
         {
             return Context.ReplyAsync(content, embed, options);

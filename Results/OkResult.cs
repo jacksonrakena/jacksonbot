@@ -31,6 +31,9 @@ namespace Abyss.Results
 
         public override async Task<ResultCompletionData> ExecuteResultAsync(AbyssCommandContext context)
         {
+            if (!context.BotUser.GetPermissions(context.Channel).SendMessages) return new ResultCompletionData();
+            if (Attachments.Length > 0 && !context.BotUser.GetPermissions(context.Channel).AttachFiles) return new ResultCompletionData();
+
             var messages = new List<RestUserMessage>();
             if (Attachments.Length == 1)
             {

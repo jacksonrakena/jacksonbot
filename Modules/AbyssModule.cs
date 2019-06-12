@@ -92,8 +92,9 @@ namespace Abyss.Modules
         [AbyssCooldown(1, 3, CooldownMeasure.Seconds, CooldownType.User)]
         public async Task<ActionResult> Command_PingAsync()
         {
+            if (!Context.BotUser.GetPermissions(Context.Channel).SendMessages) return NoResult();
             var sw = Stopwatch.StartNew();
-            var initial = await ReplyAsync("Pinging...").ConfigureAwait(false);
+            var initial = await Context.Channel.SendMessageAsync("Pinging...").ConfigureAwait(false);
             var restTime = sw.ElapsedMilliseconds.ToString();
 
             Task Handler(SocketMessage msg)

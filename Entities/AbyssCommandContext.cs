@@ -44,9 +44,10 @@ namespace Abyss.Entities
             return Services.GetRequiredService<AbyssConfig>().CommandPrefix;
         }
 
-        public Task<RestUserMessage> ReplyAsync(string content = null, EmbedBuilder embed = null,
+        public Task ReplyAsync(string content = null, EmbedBuilder embed = null,
             RequestOptions options = null)
         {
+            if (!BotUser.GetPermissions(Channel).SendMessages) return null;
             return Channel.SendMessageAsync(content, false, embed?.Build(), options);
         }
     }
