@@ -60,7 +60,6 @@ namespace Abyss
             serviceCollection.AddSingleton(commandServiceConfiguration);
 
             // Other services
-            serviceCollection.AddSingleton<ApiStatisticsCollectionService>();
             serviceCollection.AddSingleton<HelpService>();
             serviceCollection.AddSingleton<IMessageProcessor, MessageProcessor>();
             serviceCollection.AddSingleton<ICommandExecutor, CommandExecutor>();
@@ -70,10 +69,6 @@ namespace Abyss
             serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<ResponseCacheService>();
-            serviceCollection.AddSingleton<IMemoryCache>(new MemoryCache(new MemoryCacheOptions
-            {
-                SizeLimit = 100
-            }));
 
             return serviceCollection.BuildServiceProvider();
         }

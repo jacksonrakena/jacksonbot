@@ -1,18 +1,32 @@
 ﻿using Abyss.Results;
 using Discord.WebSocket;
 using Microsoft.Extensions.Caching.Memory;
+using System;
 using System.Threading.Tasks;
 
 namespace Abyss.Services
 {
     public class ResponseCacheService
     {
-        public ResponseCacheService(IMemoryCache responseCache, DiscordSocketClient client)
+        public ResponseCacheService(DiscordSocketClient client)
         {
-            _responseCache = responseCache;
+            _responseCache = new MemoryCache(new MemoryCacheOptions
+            {
+                SizeLimit = 100
+            });
+
             _client = client;
 
             _client.MessageDeleted += OnMessageDeleted;
+        }
+
+        public void Add(ulong id, ResultCompletionData data)
+        {
+            _responseCache.Set(id, data, new MemoryCacheEntryOptions
+            {
+                Size = 1,
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
+            });
         }
 
         private async Task OnMessageDeleted(Discord.Cacheable<Discord.IMessage, ulong> message, ISocketMessageChannel arg2)

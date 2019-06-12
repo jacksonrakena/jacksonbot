@@ -19,7 +19,7 @@ namespace Abyss.Services
     public sealed class CommandExecutor : ICommandExecutor
     {
         public CommandExecutor(ICommandService commandService, HelpService help, ILogger<CommandExecutor> logger,
-            DiscordSocketClient discordClient, IMemoryCache cache)
+            DiscordSocketClient discordClient, ResponseCacheService responseCache)
         {
             _commandService = commandService;
             _helpService = help;
@@ -28,10 +28,10 @@ namespace Abyss.Services
 
             _commandService.CommandExecuted += HandleCommandExecutedAsync;
 
-            _responseCache = cache;
+            _responseCache = responseCache;
         }
 
-        private readonly IMemoryCache _responseCache;
+        private readonly ResponseCacheService _responseCache;
 
         // Externals
         private readonly ILogger<CommandExecutor> _commandsTracking;
@@ -145,13 +145,13 @@ namespace Abyss.Services
 
             var data = await baseResult.ExecuteResultAsync(context).ConfigureAwait(false);
 
-            if (!command.HasAttribute<DontTrackAttribute>(out var _))
+            bool cache = true;
+            if (command.HasAttribute<ResponseFormatOptionsAttribute>(out var at) && at.Options.HasFlag(ResponseFormatOptions.DontCache))
+                cache = false;
+
+            if (cache)
             {
-                _responseCache.Set(context.Message.Id, data, new MemoryCacheEntryOptions
-                {
-                    Size = 1,
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
-                });
+                _responseCache.Add(context.Message.Id, data);
             }
 
             if (baseResult.IsSuccessful)

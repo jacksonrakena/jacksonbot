@@ -33,15 +33,35 @@ namespace Abyss.Entities
 
         public ActionResult Ok(string content, params FileAttachment[] attachments)
         {
-            return Context.Command.HasAttribute<DontEmbedAttribute>()
+            return (Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at) && at.Options.HasFlag(ResponseFormatOptions.DontEmbed))
                 ? new OkResult(content, attachments)
                 : Ok(new EmbedBuilder().WithDescription(content), attachments);
         }
 
         public ActionResult Ok(EmbedBuilder builder, params FileAttachment[] attachments)
         {
-            if (builder.Footer == null && !Context.Command.HasAttribute<DontAttachFooterAttribute>()) builder.WithRequesterFooter(Context);
-            if (builder.Timestamp == null && !Context.Command.HasAttribute<DontAttachTimestampAttribute>()) builder.WithCurrentTimestamp();
+            bool attachFooter = false;
+            if (builder.Footer == null)
+            {
+                if (Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at))
+                {
+                    attachFooter = !at.Options.HasFlag(ResponseFormatOptions.DontAttachFooter);
+                }
+                else attachFooter = true;
+            }
+
+            bool attachTimestamp = false;
+            if (builder.Timestamp == null)
+            {
+                if (Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at0))
+                {
+                    attachFooter = !at0.Options.HasFlag(ResponseFormatOptions.DontAttachTimestamp);
+                }
+                else attachFooter = true;
+            }
+
+            if (attachFooter) builder.WithRequesterFooter(Context);
+            if (attachTimestamp) builder.WithCurrentTimestamp();
             return new OkResult(builder.WithColor(Context.Invoker.GetHighestRoleColourOrDefault()), attachments);
         }
 

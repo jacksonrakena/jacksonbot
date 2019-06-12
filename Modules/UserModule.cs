@@ -21,8 +21,7 @@ namespace Abyss.Modules
         [Command("Avatar")]
         [Description("Grabs the avatar for a user.")]
         [Example("avatar", "avatar @OtherUser")]
-        [DontAttachFooter]
-        [DontAttachTimestamp]
+        [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
         public Task<ActionResult> Command_GetAvatarAsync(
             [Name("User")]
             [Description("The user who you wish to get the avatar for.")]
@@ -85,8 +84,7 @@ namespace Abyss.Modules
         [Command("Hug")]
         [Example("hug @OtherUser", "hug @me")]
         [Description("Gives them all your hugging potential.")]
-        [DontAttachFooter]
-        [DontAttachTimestamp]
+        [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
         public Task<ActionResult> Command_HugUserAsync([Name("Member")] [Description("The user to hug.")]
             SocketGuildUser hugee)
         {

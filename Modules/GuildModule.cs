@@ -133,6 +133,7 @@ namespace Abyss.Modules
                     .WithRequesterFooter(Context)
                     .WithCurrentTimestamp()
                     .Build()).ConfigureAwait(false);
+                outStream.Dispose();
             }
 
             return NoResult();

@@ -23,44 +23,14 @@ namespace Abyss.Modules
     [RequireOwner]
     public class OwnerModule : AbyssModuleBase
     {
-        private readonly ApiStatisticsCollectionService _apiStatisticsCollection;
-        private readonly ICommandExecutor _executor;
         private readonly ILogger<OwnerModule> _logger;
         private readonly ScriptingService _scripting;
 
-        public OwnerModule(ApiStatisticsCollectionService apiStatisticsCollection, ICommandExecutor executor, ILogger<OwnerModule> logger,
+        public OwnerModule(ILogger<OwnerModule> logger,
             ScriptingService scripting)
         {
-            _apiStatisticsCollection = apiStatisticsCollection;
-            _executor = executor;
             _logger = logger;
             _scripting = scripting;
-        }
-
-        [Command("ApiStats")]
-        [Example("apistats")]
-        [Description("Views API statistics for the current session.")]
-        [DontEmbed]
-        public Task<ActionResult> Command_ViewApiStatsAsync()
-        {
-            string Stat(string name, object value)
-            {
-                return $"**`{name}`**: {value}";
-            }
-
-            return Ok(new StringBuilder()
-                .AppendLine(Stat("MESSAGE_CREATE", _apiStatisticsCollection.MessageCreate))
-                .AppendLine(Stat("MESSAGE_UPDATE", _apiStatisticsCollection.MessageUpdate))
-                .AppendLine(Stat("MESSAGE_DELETE", _apiStatisticsCollection.MessageDelete))
-                .AppendLine(Stat("TOTAL_HEARTBEATS",
-                    _apiStatisticsCollection.HeartbeatCount + " (average heartbeat: " +
-                    ((_apiStatisticsCollection.AverageHeartbeat ?? -1) + "ms") +
-                    ")"))
-                .AppendLine(Stat("GUILD_AVAILABLE", _apiStatisticsCollection.GuildMadeAvailable))
-                .AppendLine(Stat("GUILD_UNAVAILABLE", _apiStatisticsCollection.GuildMadeUnavailable))
-                .AppendLine(Stat("COMMAND_SUCCESS", _executor.CommandSuccesses))
-                .AppendLine(Stat("COMMAND_FAILURE", _executor.CommandFailures))
-                .ToString());
         }
 
         [Command("Game", "SetGame")]
@@ -78,11 +48,11 @@ namespace Abyss.Modules
             return Ok($"Set game to `{type} {game} (url: {streamUrl?.ToString() ?? "None"})`.");
         }
 
-        [Command("Script", "Eval", "CSharpEval", "CSharp", "C#")]
+        [Command("Script", "Eval")]
         [RunMode(RunMode.Parallel)]
         [Description("Evaluates a piece of C# code.")]
         [Example("script 1+1")]
-        [DontEmbed]
+        [ResponseFormatOptions(ResponseFormatOptions.DontEmbed)]
         public async Task<ActionResult> Command_EvaluateAsync(
             [Name("Code")] [Description("The code to execute.")] [Remainder]
             string script)

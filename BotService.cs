@@ -46,7 +46,6 @@ namespace Abyss
             await _discordClient.StartAsync().ConfigureAwait(false);
 
             _serviceProvider.InitializeService<IMessageProcessor>(); // start MessageProcessor
-            _serviceProvider.InitializeService<ApiStatisticsCollectionService>(); // start ApiStatsService
             _serviceProvider.InitializeService<ResponseCacheService>();
         }
 

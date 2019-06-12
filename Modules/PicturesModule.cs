@@ -39,10 +39,12 @@ namespace Abyss.Modules
         [AbyssCooldown(1, 5, CooldownMeasure.Seconds, CooldownType.User)]
         public async Task<ActionResult> Command_GetCatPictureAsync()
         {
-            var url = JToken.Parse(await (await _httpApi.GetAsync(CatApi).ConfigureAwait(false)).Content.ReadAsStringAsync().ConfigureAwait(false))
+            using (var response = await _httpApi.GetAsync(CatApi).ConfigureAwait(false))
+            {
+                var url = JToken.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false))
                 .Value<string>("file");
-
-            return Image("Meow~!", url);
+                return Image("Meow~!", url);
+            }
         }
 
         [Command("Bigmoji", "BigEmoji")]
