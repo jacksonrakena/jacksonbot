@@ -4,7 +4,7 @@
 You can add the public instance [here.](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
   
 ### Features
-- Spotify track and album lookup (can also read from the current song you're listening to)  
+- Spotify track and album lookup (can also read from the current song you're listening to), powered by [AbyssalSpotify](http://github.com/abyssal512/AbyssalSpotify)  
 ![Spotify features](https://i.imgur.com/cBasjS8.png)
 - Spoilers which privately message the spoiler content to consenting users
 - Resizing (bicubic) of emojis and custom images, both animated and not-animated  
