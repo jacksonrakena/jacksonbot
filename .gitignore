@@ -2,7 +2,7 @@ obj/
 bin/
 .idea/
 .DS_Store
-Abyss.json
+abyss.json
 logs/**
 .vscode/
 /.vs

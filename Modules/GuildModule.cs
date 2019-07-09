@@ -224,5 +224,60 @@ namespace Abyss.Modules
 
             return Ok(a => a.WithDescription($"I **{(value ? "do" : "do not")}** have permission `{name}`!"));
         }
+
+        [Command("AnalyzePermission", "AnalyzePerm")]
+        [Description("Analyzes a permission for a user, and sees which role grants or denies that permission to them.")]
+        [Example("analyzeperm Abyssal Manage Messages")]
+        public Task<ActionResult> Command_AnalyzePermissionAsync(
+            [Name("User")] [Description("The user to check for the specified permission.")]
+            SocketGuildUser user,
+            [Name("Permission")] [Description("The permission to analyze.")] [Remainder] string permission)
+        {
+            user = user ?? Context.Invoker;
+            
+            var perm = user.GuildPermissions.GetType().GetProperties().FirstOrDefault(a =>
+                a.PropertyType.IsAssignableFrom(typeof(bool))
+                && (a.Name.Equals(permission, StringComparison.OrdinalIgnoreCase)
+                 || a.Name.Humanize().Equals(permission, StringComparison.OrdinalIgnoreCase)));
+            if (perm == null) return BadRequest($"Unknown permission `{permission}`. :(");
+
+            var embed = new EmbedBuilder
+            {
+                Author = user.ToEmbedAuthorBuilder(),
+                Title = "Permission: " + perm.Name.Humanize()
+            };
+
+            if (user.Roles.Count == 0)
+            {
+                embed.Description = "User has no roles.";
+                return Ok(embed);
+            }
+
+            if (user.Guild.OwnerId == user.Id)
+            {
+                embed.Description = "User is owner of this server, and has every permission regardless of roles.";
+                return Ok(embed);
+            }
+
+            var grantedRoles = user.Roles.Where(r => (bool) perm.GetValue(r.Permissions));
+            var deniedRoles = user.Roles.Where(r => !((bool) perm.GetValue(r.Permissions)));
+
+            var gRolesString = string.Join(", ", grantedRoles.Select(r => r.Name));
+            var dRolesString = string.Join(", ", deniedRoles.Select(r => r.Name));
+
+            if (!string.IsNullOrWhiteSpace(gRolesString)) embed.AddField("Roles that grant this permission", gRolesString);
+            if (!string.IsNullOrWhiteSpace(dRolesString)) embed.AddField("Roles that deny this permission", dRolesString);
+
+            if (grantedRoles.Any())
+            {
+                embed.Description = $"To **deny** this permission, deny \"{permission}\" for the following roles: {gRolesString}.";
+            } 
+            else
+            {
+                embed.Description = $"To **allow** this permission, allow \"{permission}\" for the following roles: {dRolesString}.";
+            }
+
+            return Ok(embed);
+        }
     }
 }
