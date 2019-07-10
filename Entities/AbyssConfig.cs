@@ -45,5 +45,6 @@ namespace Abyss.Entities
     public class AbyssConfigNotificationsSection
     {
         public ulong? Ready { get; set; }
+        public ulong? ServerMembershipChange { get; set; }
     }
 }

@@ -39,6 +39,7 @@ namespace Abyss
             _discordClient.Log += DiscordClientOnLog;
             _discordClient.Ready += DiscordClientOnReady;
             _discordClient.JoinedGuild += DiscordClientOnJoinedGuild;
+            _discordClient.LeftGuild += _discordClient_LeftGuild;
 
             var discordConfiguration = _config.Connections.Discord;
 
@@ -49,25 +50,51 @@ namespace Abyss
             _serviceProvider.InitializeService<ResponseCacheService>();
         }
 
+        private async Task _discordClient_LeftGuild(SocketGuild arg)
+        {
+            var updateChannel = _config.Notifications.ServerMembershipChange == null ? null : _discordClient.GetChannel(_config.Notifications.ServerMembershipChange.Value);
+            if (updateChannel is SocketTextChannel stc)
+            {
+                await stc.SendMessageAsync(null, false, new EmbedBuilder()
+                        .WithAuthor(_discordClient.CurrentUser.ToEmbedAuthorBuilder())
+                        .WithDescription($"Left {arg.Name} at {DateTime.Now:F} ({arg.MemberCount} members, owner: {arg.Owner.GetActualName()})")
+                        .WithColor(DefaultEmbedColour)
+                        .WithCurrentTimestamp()
+                        .Build());
+            }
+        }
+
         private async Task DiscordClientOnJoinedGuild(SocketGuild arg)
         {
             var channel = arg.GetDefaultChannel();
 
-            if (channel == null) return;
-
-            // send message, ignoring failures
-            try
+            if (channel != null)
             {
-                await channel.SendMessageAsync(string.Empty, false, new EmbedBuilder()
-                    .WithDescription("WHO DARE AWAKEN ME FROM MY SLEEP?! Oh, it's you. Good to see you. What do you want?")
-                    .WithFooter("Guild joined: " + arg.Name, _discordClient.CurrentUser.GetEffectiveAvatarUrl())
-                    .WithCurrentTimestamp()
-                    .WithColor(DefaultEmbedColour)
-                    .Build()).ConfigureAwait(false);
+                // send message, ignoring failures
+                try
+                {
+                    await channel.SendMessageAsync(string.Empty, false, new EmbedBuilder()
+                        .WithDescription("WHO DARE AWAKEN ME FROM MY SLEEP?! Oh, it's you. Good to see you. What do you want?")
+                        .WithFooter("Guild joined: " + arg.Name, _discordClient.CurrentUser.GetEffectiveAvatarUrl())
+                        .WithCurrentTimestamp()
+                        .WithColor(DefaultEmbedColour)
+                        .Build()).ConfigureAwait(false);
+                }
+                catch
+                {
+                    // ignored
+                }
             }
-            catch
+
+            var updateChannel = _config.Notifications.ServerMembershipChange == null ? null : _discordClient.GetChannel(_config.Notifications.ServerMembershipChange.Value);
+            if (updateChannel is SocketTextChannel stc)
             {
-                // ignored
+                await stc.SendMessageAsync(null, false, new EmbedBuilder()
+                        .WithAuthor(_discordClient.CurrentUser.ToEmbedAuthorBuilder())
+                        .WithDescription($"Joined {arg.Name} at {DateTime.Now:F} ({arg.MemberCount} members, owner: {arg.Owner.GetActualName()})")
+                        .WithColor(DefaultEmbedColour)
+                        .WithCurrentTimestamp()
+                        .Build());
             }
         }
 
