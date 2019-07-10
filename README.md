@@ -1,7 +1,9 @@
+[![Discord](https://img.shields.io/discord/598437365891203072.svg?style=plastic)](https://discord.gg/RsRps9M)
 # Abyss
 
 **A Discord bot,** written in C# using .NET Core and Discord.Net.  
-You can add the public instance [here.](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
+You can add the public instance [here.](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)  
+You can join the support server [here.](https://discord.gg/RsRps9M)
   
 ### Features
 - Spotify track and album lookup (can also read from the current song you're listening to), powered by [AbyssalSpotify](http://github.com/abyssal512/AbyssalSpotify)  
