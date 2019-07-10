@@ -27,6 +27,7 @@ namespace Abyss.Modules
         [Description("Creates a spoiler message, direct messaging users who would like to see the spoiler.")]
         [Example("spoiler \"The Best Bot\" I AM THE BEST BOT!", "spoiler hello_world hello world!")]
         [ResponseFormatOptions(ResponseFormatOptions.DontCache)]
+        [RequireBotPermission(ChannelPermission.ManageMessages)]
         public async Task<ActionResult> Command_CreateSpoilerAsync(
             [Name("Safe Text")] [Description("A name for the spoiler, that everyone will be able to see.")]
             string safe, [Name("Spoiler")] [Description("The content of the spoiler.")] [Remainder]
