@@ -225,7 +225,7 @@ namespace Abyss.Modules
             return Ok(a => a.WithDescription($"I **{(value ? "do" : "do not")}** have permission `{name}`!"));
         }
 
-        [Command("AnalyzePermission", "AnalyzePerm")]
+        [Command("AnalyzePermission", "AnalyzePerm", "Analyze")]
         [Description("Analyzes a permission for a user, and sees which role grants or denies that permission to them.")]
         [Example("analyzeperm Abyssal Manage Messages")]
         public Task<ActionResult> Command_AnalyzePermissionAsync(
@@ -274,7 +274,7 @@ namespace Abyss.Modules
             } 
             else
             {
-                embed.Description = $"To **allow** this permission, allow \"{permission}\" for the following roles: {dRolesString}.";
+                embed.Description = $"To **allow** this permission, allow \"{permission}\" for at least one of the following roles: {dRolesString}.";
             }
 
             return Ok(embed);
