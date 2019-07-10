@@ -13,8 +13,8 @@ namespace Abyss
 {
     public class BotService
     {
-        public const string AbyssYesEmoji = "<:AbyssYes:584262861585645591>";
-        public const string AbyssNoEmoji = "<:AbyssNo:584262872121606147>";
+        public const string AbyssYesEmoji = "<:AbyssYes:598658539287871510>";
+        public const string AbyssNoEmoji = "<:AbyssNo:598658540042846258>";
         public const string ZeroWidthSpace = "​";
         public static readonly Color DefaultEmbedColour = new Color(0xB2F7EF);
         private readonly AbyssConfig _config;
