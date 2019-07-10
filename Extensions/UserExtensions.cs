@@ -23,7 +23,7 @@ namespace Abyss.Extensions
             var avatarUrl = user.GetAvatarUrl(size: size);
             return !string.IsNullOrWhiteSpace(avatarUrl)
                 ? avatarUrl
-                : CDN.GetDefaultUserAvatarUrl(user.DiscriminatorValue) + "?size=" + size;
+                : (CDN.GetDefaultUserAvatarUrl(user.DiscriminatorValue) + "?size=" + size);
         }
 
         public static Color GetHighestRoleColourOrDefault(this IUser normalUser)
