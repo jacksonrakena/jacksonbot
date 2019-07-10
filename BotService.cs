@@ -71,7 +71,7 @@ namespace Abyss
             }
         }
 
-        private Task DiscordClientOnReady()
+        private async Task DiscordClientOnReady()
         {
             var startTime = Process.GetCurrentProcess().StartTime;
             var nowTime = DateTime.Now;
@@ -92,7 +92,22 @@ namespace Abyss
                 return (activityType, a.Message);
             }).ToList();
 
-            Task.Run(async () =>
+            var notifications = _config.Notifications;
+            if (notifications.Ready != null)
+            {
+                var ch = _discordClient.GetChannel(notifications.Ready.Value);
+                if (ch != null && ch is SocketTextChannel stc)
+                {
+                    await stc.SendMessageAsync(null, false, new EmbedBuilder()
+                        .WithAuthor(_discordClient.CurrentUser.ToEmbedAuthorBuilder())
+                        .WithDescription("Ready at " + DateTime.Now.ToString("F"))
+                        .WithColor(DefaultEmbedColour)
+                        .WithCurrentTimestamp()
+                        .Build());
+                }
+            }
+
+            _ = Task.Run(async () =>
             {
                 while (true)
                 {
@@ -101,8 +116,6 @@ namespace Abyss
                     await Task.Delay(TimeSpan.FromMinutes(1));
                 }
             });
-
-            return Task.CompletedTask;
         }
 
         private Task DiscordClientOnLog(LogMessage arg)

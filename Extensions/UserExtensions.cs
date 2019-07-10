@@ -7,7 +7,7 @@ namespace Abyss.Extensions
 {
     public static class UserExtensions
     {
-        public static EmbedAuthorBuilder ToEmbedAuthorBuilder(this SocketGuildUser user)
+        public static EmbedAuthorBuilder ToEmbedAuthorBuilder(this SocketUser user)
         {
             var builder = new EmbedAuthorBuilder
             {
@@ -58,8 +58,9 @@ namespace Abyss.Extensions
             return guildUser.Nickname ?? user.Username;
         }
 
-        public static string Format(this SocketGuildUser sgu)
+        public static string Format(this SocketUser su)
         {
+            if (!(su is SocketGuildUser sgu)) return $"{su.Username}#{su.Discriminator}";
             return sgu.Nickname != null ? $"{sgu.Nickname} ({sgu.Username}#{sgu.Discriminator})" : $"{sgu.Username}#{sgu.Discriminator}";
         }
     }

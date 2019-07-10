@@ -10,6 +10,8 @@ namespace Abyss.Entities
         public AbyssConfigStartupSection Startup { get; set; }
 
         public AbyssConfigConnectionsSection Connections { get; set; }
+
+        public AbyssConfigNotificationsSection Notifications { get; set; }
     }
 
     public class AbyssConfigStartupSection
@@ -38,5 +40,10 @@ namespace Abyss.Entities
 
         public AbyssConfigDiscordConnectionSection Discord { get; set; }
         public AbyssConfigSpotifyConnectionSection Spotify { get; set; }
+    }
+
+    public class AbyssConfigNotificationsSection
+    {
+        public ulong? Ready { get; set; }
     }
 }

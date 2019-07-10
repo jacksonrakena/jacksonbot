@@ -57,27 +57,31 @@ namespace Abyss.Modules
         public async Task<ActionResult> Command_UpdateAsync()
         {
             var m = await Context.Channel.SendMessageAsync("Beginning update.");
-            var gitProcess = new Process();
-            gitProcess.StartInfo = new ProcessStartInfo
+            var gitProcess = new Process
             {
-                CreateNoWindow = true,
-                FileName = "git",
-                Arguments = "pull",
-                WorkingDirectory = Directory.GetCurrentDirectory(),
-                UseShellExecute = false
+                StartInfo = new ProcessStartInfo
+                {
+                    CreateNoWindow = true,
+                    FileName = "git",
+                    Arguments = "pull",
+                    WorkingDirectory = Directory.GetCurrentDirectory(),
+                    UseShellExecute = false
+                }
             };
             gitProcess.Start();
             gitProcess.WaitForExit();
 
             await m.ModifyAsync(a => a.Content = "Finished git update.");
 
-            var newProcess = new Process();
-            newProcess.StartInfo = new ProcessStartInfo
+            var newProcess = new Process
             {
-                CreateNoWindow = false,
-                FileName = "dotnet",
-                Arguments = "run",
-                WorkingDirectory = Directory.GetCurrentDirectory()
+                StartInfo = new ProcessStartInfo
+                {
+                    CreateNoWindow = false,
+                    FileName = "dotnet",
+                    Arguments = "run",
+                    WorkingDirectory = Directory.GetCurrentDirectory()
+                }
             };
             newProcess.Start();
 
