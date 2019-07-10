@@ -232,7 +232,7 @@ namespace Abyss.Modules
             return Command_EvaluateAsync($"Inspect({evaluateScript})");
         }
 
-        [Command("Kill", "Die", "Stop", "Terminate")]
+        [Command("Kill", "Die", "Stop", "Terminate", "Shutdown", "Shut", "Close")]
         [Description("Stops the current bot process.")]
         [RunMode(RunMode.Parallel)]
         [Example("kill")]
