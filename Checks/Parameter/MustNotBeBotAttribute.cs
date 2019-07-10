@@ -27,7 +27,7 @@ namespace Abyss.Checks.Parameter
 
         public string Description => "This user must not be me.";
 
-        public MustNotBeBotAttribute() : base(CheckUtilities.UserTypes)
+        public MustNotBeBotAttribute() : base(CheckResources.UserTypes)
         {
         }
     }

@@ -27,7 +27,7 @@ namespace Abyss.Checks.Parameter
 
         public string Description => "This user must not be you, or the invoker of the command.";
 
-        public MustNotBeInvokerAttribute() : base(CheckUtilities.UserTypes)
+        public MustNotBeInvokerAttribute() : base(CheckResources.UserTypes)
         {
         }
     }

@@ -46,9 +46,10 @@ namespace Abyss.Extensions
             return orderedRoles.FirstOrDefault();
         }
 
-        public static IRole GetHighestRoleOrDefault(this SocketGuildUser user, Func<IRole, bool> predicate)
+        public static IRole GetHighestRoleOrDefault(this SocketGuildUser user, Func<IRole, bool> predicate = null)
         {
-            return user.Roles.OrderByDescending(r => r.Position).FirstOrDefault(predicate);
+            return predicate == null ? user.Roles.OrderByDescending(r => r.Position).FirstOrDefault()
+                                     : user.Roles.OrderByDescending(r => r.Position).FirstOrDefault(predicate);
         }
 
         public static string GetActualName(this SocketUser user)
