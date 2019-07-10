@@ -12,6 +12,8 @@ using Qmmands;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,6 +48,41 @@ namespace Abyss.Modules
         {
             await Context.Client.SetGameAsync(game, streamUrl?.ToString(), type).ConfigureAwait(false);
             return Ok($"Set game to `{type} {game} (url: {streamUrl?.ToString() ?? "None"})`.");
+        }
+
+        [Command("Update")]
+        [Description("Updates this instance of Abyss, and restarts.")]
+        [Example("update")]
+        [RunMode(RunMode.Parallel)]
+        public async Task<ActionResult> Command_UpdateAsync()
+        {
+            var gitProcess = new Process();
+            gitProcess.StartInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = true,
+                FileName = "git",
+                Arguments = "pull",
+                WorkingDirectory = Directory.GetCurrentDirectory(),
+                UseShellExecute = false
+            };
+            gitProcess.Start();
+            gitProcess.WaitForExit();
+
+            Console.WriteLine("Updated.");
+
+            var newProcess = new Process();
+            newProcess.StartInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = true,
+                FileName = "dotnet",
+                Arguments = "run",
+                WorkingDirectory = Directory.GetCurrentDirectory(),
+                UseShellExecute = true
+            };
+            newProcess.Start();
+            await Context.Channel.SendMessageAsync("Updated. Terminating...");
+            Environment.Exit(0);
+            return BadRequest("Failed to terminate.");
         }
 
         [Command("Script", "Eval")]
