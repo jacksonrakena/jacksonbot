@@ -56,6 +56,7 @@ namespace Abyss.Modules
         [RunMode(RunMode.Parallel)]
         public async Task<ActionResult> Command_UpdateAsync()
         {
+            var m = await Context.Channel.SendMessageAsync("Beginning update.");
             var gitProcess = new Process();
             gitProcess.StartInfo = new ProcessStartInfo
             {
@@ -68,7 +69,7 @@ namespace Abyss.Modules
             gitProcess.Start();
             gitProcess.WaitForExit();
 
-            Console.WriteLine("Updated.");
+            await m.ModifyAsync(a => a.Content = "Finished git update.");
 
             var newProcess = new Process();
             newProcess.StartInfo = new ProcessStartInfo
@@ -79,7 +80,9 @@ namespace Abyss.Modules
                 WorkingDirectory = Directory.GetCurrentDirectory()
             };
             newProcess.Start();
-            await Context.Channel.SendMessageAsync("Updated. Terminating...");
+
+            await m.ModifyAsync(b => b.Content = "Started new process. Terminating...");
+
             Environment.Exit(0);
             return BadRequest("Failed to terminate.");
         }
