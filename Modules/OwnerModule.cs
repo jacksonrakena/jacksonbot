@@ -73,7 +73,7 @@ namespace Abyss.Modules
             var newProcess = new Process();
             newProcess.StartInfo = new ProcessStartInfo
             {
-                CreateNoWindow = true,
+                CreateNoWindow = false,
                 FileName = "dotnet",
                 Arguments = "run",
                 WorkingDirectory = Directory.GetCurrentDirectory(),
