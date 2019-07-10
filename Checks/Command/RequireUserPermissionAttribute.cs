@@ -34,7 +34,7 @@ namespace Abyss.Checks.Command
             var cperms = AbyssContext.Invoker.GetPermissions(AbyssContext.Channel);
             foreach (var gperm in GuildPermissions)
             {
-                if (!AbyssContext.Invoker.GuildPermissions.Has(gperm))
+                if (!AbyssContext.Invoker.GuildPermissions.Has(gperm) && !AbyssContext.Invoker.GuildPermissions.Has(GuildPermission.Administrator))
                 {
                     return new CheckResult(
                        $"This command requires **you** to have the \"{gperm.Humanize()}\" server-level permission, but you do not have it!");
@@ -43,7 +43,7 @@ namespace Abyss.Checks.Command
 
             foreach (var cperm in ChannelPermissions)
             {
-                if (!cperms.Has(cperm))
+                if (!cperms.Has(cperm) && !AbyssContext.Invoker.GuildPermissions.Has(GuildPermission.Administrator))
                 {
                     return new CheckResult(
                         $"This command requires **you** to have the \"{cperm.Humanize()}\" channel-level permission, but you do not have it!");
