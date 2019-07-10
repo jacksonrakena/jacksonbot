@@ -47,6 +47,10 @@ Here's an example Abyss configuration file, taken from my main public instance.
         "ClientId": "Spotify client ID",
         "ClientSecret": "Spotify client secret"
       }
+    },
+    "Notifications": {
+      "Ready": 598437593721602068,
+      "ServerMembershipChange": 598437593721602068
     }
   }
 
