@@ -57,7 +57,7 @@ namespace Abyss
             {
                 await stc.SendMessageAsync(null, false, new EmbedBuilder()
                         .WithAuthor(_discordClient.CurrentUser.ToEmbedAuthorBuilder())
-                        .WithDescription($"Left {arg.Name} at {DateTime.Now:F} ({arg.MemberCount} members, owner: {arg.Owner.GetActualName()})")
+                        .WithDescription($"Left {arg.Name} at {DateTime.Now:F} ({arg.MemberCount} members, owner: {arg.Owner})")
                         .WithColor(DefaultEmbedColour)
                         .WithCurrentTimestamp()
                         .Build());
@@ -91,7 +91,7 @@ namespace Abyss
             {
                 await stc.SendMessageAsync(null, false, new EmbedBuilder()
                         .WithAuthor(_discordClient.CurrentUser.ToEmbedAuthorBuilder())
-                        .WithDescription($"Joined {arg.Name} at {DateTime.Now:F} ({arg.MemberCount} members, owner: {arg.Owner.GetActualName()})")
+                        .WithDescription($"Joined {arg.Name} at {DateTime.Now:F} ({arg.MemberCount} members, owner: {arg.Owner})")
                         .WithColor(DefaultEmbedColour)
                         .WithCurrentTimestamp()
                         .Build());
