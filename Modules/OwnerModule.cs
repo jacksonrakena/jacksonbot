@@ -76,8 +76,7 @@ namespace Abyss.Modules
                 CreateNoWindow = false,
                 FileName = "dotnet",
                 Arguments = "run",
-                WorkingDirectory = Directory.GetCurrentDirectory(),
-                UseShellExecute = true
+                WorkingDirectory = Directory.GetCurrentDirectory()
             };
             newProcess.Start();
             await Context.Channel.SendMessageAsync("Updated. Terminating...");
