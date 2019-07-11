@@ -41,7 +41,8 @@ Here's an example Abyss configuration file, taken from my main public instance.
       },
     "Connections": {
       "Discord": {
-        "Token": "Discord bot user token"
+        "Token": "Discord bot user token",
+		"SupportServer": "An invite to the bot's home base. Optional."
       },
       "Spotify": {
         "ClientId": "Spotify client ID",
