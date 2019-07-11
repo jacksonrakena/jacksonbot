@@ -29,9 +29,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AbyssalSpotify" Version="1.0.0-20190610.1" />
-        <PackageReference Include="Discord.Net.WebSocket" Version="2.0.2-dev-20190326.4" />
-        <PackageReference Include="Humanizer.Core.uk" Version="2.5.16" />
+        <PackageReference Include="AbyssalSpotify" Version="1.0.0-20190711.3" />
+        <PackageReference Include="Discord.Net.WebSocket" Version="2.2.0-dev-20190629.2" />
+        <PackageReference Include="Humanizer.Core" Version="2.6.2" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="2.10.0" />
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
@@ -39,7 +39,7 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
         <PackageReference Include="NLog" Version="4.5.11" />
-        <PackageReference Include="Qmmands" Version="3.0.0-nightly-00181" />
+        <PackageReference Include="Qmmands" Version="3.0.0-nightly-00196" />
         <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
     </ItemGroup>
     <ItemGroup>
