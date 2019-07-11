@@ -2,6 +2,7 @@
 using Abyss.Checks.Command;
 using Abyss.Entities;
 using Abyss.Extensions;
+using Abyss.Helper;
 using Abyss.Helpers;
 using Abyss.Results;
 using Discord;
@@ -117,25 +118,17 @@ namespace Abyss.Modules
         {
             if (role.Color.RawValue == 0) return BadRequest("That role does not have a colour!");
 
-            var outStream = new MemoryStream();
-            using (var image =
-                SixLabors.ImageSharp.Image.Load(AssetHelper.GetAssetLocation("transparent_200x200.png")))
-            {
-                image.Mutate(a => a.BackgroundColor(new Rgba32(role.Color.R, role.Color.G, role.Color.B)));
-                image.Save(outStream, new PngEncoder());
-                outStream.Position = 0;
-                await Context.Channel.SendFileAsync(outStream, "role.png", null, embed: new EmbedBuilder()
-                    .WithColor(role.Color)
-                    .WithTitle("Role Color")
-                    .WithDescription(
-                        $"**Hex:** {role.Color}\n\n**Red:** {role.Color.R}\n**Green:** {role.Color.G}\n**Blue:** {role.Color.B}")
-                    .WithImageUrl("attachment://role.png")
-                    .WithRequesterFooter(Context)
-                    .WithCurrentTimestamp()
-                    .Build()).ConfigureAwait(false);
-                outStream.Dispose();
-            }
-
+            var outStream = ImageHelper.CreateColourImage(new Rgba32(role.Color.R, role.Color.G, role.Color.B));
+            await Context.Channel.SendFileAsync(outStream, "role.png", null, embed: new EmbedBuilder()
+                .WithColor(role.Color)
+                .WithTitle("Role Color")
+                .WithDescription(
+                    $"**Hex:** {role.Color}\n\n**Red:** {role.Color.R}\n**Green:** {role.Color.G}\n**Blue:** {role.Color.B}")
+                .WithImageUrl("attachment://role.png")
+                .WithRequesterFooter(Context)
+                .WithCurrentTimestamp()
+                .Build()).ConfigureAwait(false);
+            outStream.Dispose();
             return NoResult();
         }
 
@@ -234,7 +227,7 @@ namespace Abyss.Modules
             [Name("Permission")] [Description("The permission to analyze.")] [Remainder] string permission)
         {
             user = user ?? Context.Invoker;
-            
+
             var perm = user.GuildPermissions.GetType().GetProperties().FirstOrDefault(a =>
                 a.PropertyType.IsAssignableFrom(typeof(bool))
                 && (a.Name.Equals(permission, StringComparison.OrdinalIgnoreCase)
@@ -271,7 +264,7 @@ namespace Abyss.Modules
             if (grantedRoles.Any())
             {
                 embed.Description = $"To **deny** this permission, deny \"{permission}\" for the following roles: {gRolesString}.";
-            } 
+            }
             else
             {
                 embed.Description = $"To **allow** this permission, allow \"{permission}\" for at least one of the following roles: {dRolesString}.";

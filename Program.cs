@@ -64,7 +64,6 @@ namespace Abyss
             serviceCollection.AddSingleton<IMessageProcessor, MessageProcessor>();
             serviceCollection.AddSingleton<ICommandExecutor, CommandExecutor>();
             serviceCollection.AddSingleton<ScriptingService>();
-            serviceCollection.AddSingleton<SpoilerService>();
             serviceCollection.AddSingleton(SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret));
             serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();

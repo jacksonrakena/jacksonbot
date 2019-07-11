@@ -16,27 +16,6 @@ namespace Abyss.Modules
     [Description("Commands that provide useful utilities.")]
     public class UtilityModule : AbyssModuleBase
     {
-        private readonly SpoilerService _spoilerService;
-
-        public UtilityModule(SpoilerService spoilerService)
-        {
-            _spoilerService = spoilerService;
-        }
-
-        [Command("Spoiler", "CreateSpoiler")]
-        [Description("Creates a spoiler message, direct messaging users who would like to see the spoiler.")]
-        [Example("spoiler \"The Best Bot\" I AM THE BEST BOT!", "spoiler hello_world hello world!")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontCache)]
-        [RequireBotPermission(ChannelPermission.ManageMessages)]
-        public async Task<ActionResult> Command_CreateSpoilerAsync(
-            [Name("Safe Text")] [Description("A name for the spoiler, that everyone will be able to see.")]
-            string safe, [Name("Spoiler")] [Description("The content of the spoiler.")] [Remainder]
-            string spoiler)
-        {
-            await _spoilerService.CreateSpoilerMessageAsync(Context, safe, spoiler).ConfigureAwait(false);
-            return NoResult();
-        }
-
         [Command("Echo")]
         [Description("Echoes the input text.")]
         [Example("echo THIS IS THE BEST BOT!")]

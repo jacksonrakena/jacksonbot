@@ -35,7 +35,7 @@ namespace Abyss
         public async Task StartAsync()
         {
             _logger.LogInformation(
-                $"Abyss bot on {Environment.OSVersion.VersionString} with CLR {Environment.Version}");
+                $"{_config.Name} on {Environment.OSVersion.VersionString} with CLR {Environment.Version}");
             _discordClient.Log += DiscordClientOnLog;
             _discordClient.Ready += DiscordClientOnReady;
             _discordClient.JoinedGuild += DiscordClientOnJoinedGuild;
