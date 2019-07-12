@@ -30,6 +30,7 @@ namespace Abyss.Entities
         public class AbyssConfigDiscordConnectionSection
         {
             public string Token { get; set; }
+            public string SupportServer { get; set; }
         }
 
         public class AbyssConfigSpotifyConnectionSection

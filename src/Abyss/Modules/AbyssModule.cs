@@ -66,7 +66,14 @@ namespace Abyss.Modules
                 .AddField("Heartbeat", Context.Client.Latency + "ms", true)
                 .AddField("Commands", _commandService.GetAllCommands().Count(), true)
                 .AddField("Modules", _commandService.GetAllModules().Count(), true)
-                .AddField("Source", $"https://github.com/abyssal512/Abyss")
+                .AddField("Source", $"https://github.com/abyssal512/Abyss");
+
+            if (!string.IsNullOrWhiteSpace(_config.Connections.Discord.SupportServer))
+            {
+                response.AddField("Support Server", _config.Connections.Discord.SupportServer, true);
+            }
+
+            response
                 .AddField("Language",
                     $"C# 7.1 ({dotnetVersion})")
                 .AddField("Libraries", $"Discord.Net {DiscordConfig.Version} w/ Qmmands");
