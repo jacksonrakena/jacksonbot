@@ -79,7 +79,7 @@ namespace Abyss.Modules
                 {
                     CreateNoWindow = false,
                     FileName = "dotnet",
-                    Arguments = "run --project src/Abyss/Abyss.csproj",
+                    Arguments = "run --project src/Abyss/Abyss.csproj -c Release",
                     WorkingDirectory = Directory.GetCurrentDirectory()
                 }
             };

@@ -14,7 +14,7 @@
         <RepositoryType>git</RepositoryType>
     </PropertyGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="$(Configuration) == 'Debug'">
       <Content Include="abyss.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
