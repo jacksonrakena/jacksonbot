@@ -1,11 +1,11 @@
-obj/
-bin/
+**/obj/
+**/bin/
 .idea/
 .DS_Store
 abyss.json
-logs/**
+**/logs/**
 .vscode/
 /.vs
-Abyss.csproj.DotSettings
+**/Abyss.csproj.DotSettings
 *.user
 StyleCop.Cache
