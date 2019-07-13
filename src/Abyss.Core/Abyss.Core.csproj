@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Library</OutputType>
-        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
         <Authors>abyssal512</Authors>
@@ -12,8 +12,6 @@
         <PackageProjectUrl>http://github.com/abyssal512/Abyss</PackageProjectUrl>
         <RepositoryUrl>http://github.com/abyssal512/Abyss</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <ApplicationIcon />
-        <StartupObject />
     </PropertyGroup>
 
     <ItemGroup>

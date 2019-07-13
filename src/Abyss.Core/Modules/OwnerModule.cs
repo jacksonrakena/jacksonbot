@@ -1,5 +1,6 @@
 using Abyss.Attributes;
 using Abyss.Checks.Command;
+using Abyss.Core.Services;
 using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Helpers;
@@ -27,12 +28,14 @@ namespace Abyss.Modules
     {
         private readonly ILogger<OwnerModule> _logger;
         private readonly ScriptingService _scripting;
+        private readonly IDaemonService _daemon;
 
         public OwnerModule(ILogger<OwnerModule> logger,
-            ScriptingService scripting)
+            ScriptingService scripting, IDaemonService daemon)
         {
             _logger = logger;
             _scripting = scripting;
+            _daemon = daemon;
         }
 
         [Command("Game", "SetGame")]
@@ -71,23 +74,10 @@ namespace Abyss.Modules
             gitProcess.Start();
             gitProcess.WaitForExit();
 
-            await m.ModifyAsync(a => a.Content = "Finished git update.");
+            await m.ModifyAsync(a => a.Content = "Finished git update. Restarting...");
 
-            var newProcess = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    CreateNoWindow = false,
-                    FileName = "dotnet",
-                    Arguments = "run --project src/Abyss/Abyss.csproj -c Release",
-                    WorkingDirectory = Directory.GetCurrentDirectory()
-                }
-            };
-            newProcess.Start();
+            await _daemon.RestartApplicationAsync();
 
-            await m.ModifyAsync(b => b.Content = "Started new process. Terminating...");
-
-            Environment.Exit(0);
             return BadRequest("Failed to terminate.");
         }
 
