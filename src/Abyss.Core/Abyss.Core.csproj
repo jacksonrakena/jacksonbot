@@ -24,7 +24,7 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
         <PackageReference Include="NLog" Version="4.5.11" />
-        <ProjectReference Include="..\Qmmands\src\Qmmands\Qmmands.csproj" />
+        <PackageReference Include="Qmmands" Version="3.0.0-nightly-00196" />
         <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
     </ItemGroup>
     <ItemGroup>

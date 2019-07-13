@@ -8,8 +8,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Console", "src\Abyss.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.ExampleCustomAssembly", "src\Abyss.ExampleCustomAssembly\Abyss.ExampleCustomAssembly.csproj", "{F5EE8A7A-EDC6-4513-852F-F9309539C10E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qmmands", "src\Qmmands\src\Qmmands\Qmmands.csproj", "{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,26 +82,6 @@ Global
 		{F5EE8A7A-EDC6-4513-852F-F9309539C10E}.Release|x64.Build.0 = Release|Any CPU
 		{F5EE8A7A-EDC6-4513-852F-F9309539C10E}.Release|x86.ActiveCfg = Release|Any CPU
 		{F5EE8A7A-EDC6-4513-852F-F9309539C10E}.Release|x86.Build.0 = Release|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Debug|ARM.Build.0 = Debug|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Debug|x64.Build.0 = Debug|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Debug|x86.Build.0 = Debug|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Release|ARM.ActiveCfg = Release|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Release|ARM.Build.0 = Release|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Release|ARM64.Build.0 = Release|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Release|x64.ActiveCfg = Release|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Release|x64.Build.0 = Release|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Release|x86.ActiveCfg = Release|Any CPU
-		{39C4094D-1612-4EB1-BAA1-DEFFCE0591D8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
