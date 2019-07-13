@@ -1,0 +1,3 @@
+[submodule "src/Qmmands"]
+	path = src/Qmmands
+	url = https://github.com/abyssal512/Qmmands
