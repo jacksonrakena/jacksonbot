@@ -39,7 +39,7 @@ namespace Abyss
             _discordClient.Log += DiscordClientOnLog;
             _discordClient.Ready += DiscordClientOnReady;
             _discordClient.JoinedGuild += DiscordClientOnJoinedGuild;
-            _discordClient.LeftGuild += _discordClient_LeftGuild;
+            _discordClient.LeftGuild += DiscordClient_LeftGuild;
 
             var discordConfiguration = _config.Connections.Discord;
 
@@ -50,7 +50,7 @@ namespace Abyss
             _serviceProvider.InitializeService<ResponseCacheService>();
         }
 
-        private async Task _discordClient_LeftGuild(SocketGuild arg)
+        private async Task DiscordClient_LeftGuild(SocketGuild arg)
         {
             var updateChannel = _config.Notifications.ServerMembershipChange == null ? null : _discordClient.GetChannel(_config.Notifications.ServerMembershipChange.Value);
             if (updateChannel is SocketTextChannel stc)

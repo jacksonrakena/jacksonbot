@@ -1,11 +1,9 @@
-﻿using Abyss.Common;
-using Abyss.Entities;
+﻿using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Services;
 using AbyssalSpotify;
 using Discord;
 using Discord.WebSocket;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
@@ -14,7 +12,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Abyss
+namespace Abyss.Console
 {
     public static class Program
     {

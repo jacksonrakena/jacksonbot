@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Abyss.Common
+namespace Abyss.Console
 {
     public class AbyssLoggingProvider : ILoggerProvider
     {

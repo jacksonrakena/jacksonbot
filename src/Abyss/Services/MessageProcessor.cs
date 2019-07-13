@@ -6,6 +6,8 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using Qmmands;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -33,6 +35,8 @@ namespace Abyss.Services
 
         private readonly ICommandExecutor _commandExecutor;
 
+        private readonly ILogger<MessageProcessor> _logger;
+
         public MessageProcessor(DiscordSocketClient client, ICommandService commandService,
             IServiceProvider services, ILogger<MessageProcessor> logger,
             AbyssConfig config, ICommandExecutor commandExecutor)
@@ -41,6 +45,7 @@ namespace Abyss.Services
             _services = services;
             _config = config;
             _commandExecutor = commandExecutor;
+            _logger = logger;
 
             commandService.AddTypeParser(_guildUserParser);
             commandService.AddTypeParser(_socketRoleParser);
@@ -49,10 +54,30 @@ namespace Abyss.Services
             commandService.AddTypeParser(_boolTypeParser, true);
             _client.MessageReceived += ProcessMessageAsync;
 
-            var modulesLoaded = commandService.AddModules(Assembly.GetEntryAssembly());
+            var assembliesToLoad = new List<Assembly> { Assembly.GetExecutingAssembly() };
 
-            logger.LogInformation(
-                $"{modulesLoaded.Count} modules loaded, {modulesLoaded.Sum(a => a.Commands.Count)} commands loaded");
+            if (Directory.Exists("CustomAssemblies"))
+            {
+                foreach (var assemblyFile in Directory.GetFiles("CustomAssemblies", "*.dll"))
+                {
+                    try
+                    {
+                        assembliesToLoad.Add(Assembly.LoadFrom(assemblyFile));
+                    }
+                    catch (BadImageFormatException)
+                    {
+                        _logger.LogError($"Failed to load assembly \"{assemblyFile}\". Is it compiled correctly?");
+                    }
+                }
+            }
+
+            foreach (var assembly in assembliesToLoad)
+            {
+                var rootModulesLoaded = commandService.AddModules(assembly);
+
+                _logger.LogInformation(
+                    $"{rootModulesLoaded.Count} modules loaded, {rootModulesLoaded.Sum(a => a.Commands.Count)} commands loaded, from assembly {assembly.GetName().Name}");
+            }
         }
 
         public async Task ProcessMessageAsync(SocketMessage incomingMessage)

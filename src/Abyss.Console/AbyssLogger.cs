@@ -6,7 +6,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 using MSLogLevel = Microsoft.Extensions.Logging.LogLevel;
 using NLogLevel = NLog.LogLevel;
 
-namespace Abyss.Common
+namespace Abyss.Console
 {
     public class AbyssLogger : ILogger
     {
