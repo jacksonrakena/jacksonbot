@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29021.104
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Core", "src\Abyss\Abyss.Core.csproj", "{F94991CA-F7FD-4257-A57D-780CB81A6036}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Core", "src\Abyss.Core\Abyss.Core.csproj", "{F94991CA-F7FD-4257-A57D-780CB81A6036}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abyss.Windows", "src\Abyss.Windows\Abyss.Windows.csproj", "{5908226D-4A3C-47CB-AA03-EAC32D11C553}"
 EndProject

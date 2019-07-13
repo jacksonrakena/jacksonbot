@@ -10,7 +10,7 @@
   </Target>
 
   <ItemGroup>
-    <ProjectReference Include="..\Abyss\Abyss.Core.csproj" />
+    <ProjectReference Include="..\Abyss.Core\Abyss.Core.csproj" />
   </ItemGroup>
 
 </Project>
