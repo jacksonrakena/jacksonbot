@@ -75,7 +75,7 @@ namespace Abyss.Console
         private static (IConfigurationRoot configurationRoot, AbyssConfig configurationModel) ConfigureOptions()
         {
             var configurationBuilder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("Abyss.json", false, true);
             var builtConfiguration = configurationBuilder.Build();
 
