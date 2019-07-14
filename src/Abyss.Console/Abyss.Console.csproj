@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
-  <ItemGroup>
+  <ItemGroup Condition="$(Configuration) == 'Debug'">
     <Content Include="abyss.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
