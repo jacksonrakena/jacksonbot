@@ -1,5 +1,4 @@
-﻿using Abyss.Core.Services;
-using Abyss.Entities;
+﻿using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Services;
 using AbyssalSpotify;
@@ -62,7 +61,6 @@ namespace Abyss.Console
             serviceCollection.AddSingleton<HelpService>();
             serviceCollection.AddSingleton<IMessageProcessor, MessageProcessor>();
             serviceCollection.AddSingleton<ICommandExecutor, CommandExecutor>();
-            serviceCollection.AddSingleton<IDaemonService, ConsoleDaemonService>();
             serviceCollection.AddSingleton<ScriptingService>();
             serviceCollection.AddSingleton(SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret));
             serviceCollection.AddTransient<Random>();
