@@ -60,7 +60,7 @@ namespace Abyss.Modules
         public async Task<ActionResult> Command_UpdateAsync()
         {
             var m = await Context.Channel.SendMessageAsync("Beginning update.");
-            var gitProcess = new Process
+            using (var gitProcess = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -70,9 +70,11 @@ namespace Abyss.Modules
                     WorkingDirectory = Directory.GetCurrentDirectory(),
                     UseShellExecute = false
                 }
+            })
+            {
+                gitProcess.Start();
+                gitProcess.WaitForExit();
             };
-            gitProcess.Start();
-            gitProcess.WaitForExit();
 
             await m.ModifyAsync(a => a.Content = "Finished git update. Restarting...");
 

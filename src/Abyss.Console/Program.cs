@@ -121,23 +121,18 @@ namespace Abyss.Console
                     if (discordContext.InvokerIsOwner)
                         return null; // Owners have no cooldown
 
-                    switch (ct)
+                    return ct switch
                     {
-                        case CooldownType.Server:
-                            return discordContext.Guild.Id;
+                        CooldownType.Server => discordContext.Guild.Id.ToString(),
 
-                        case CooldownType.Channel:
-                            return discordContext.Channel.Id;
+                        CooldownType.Channel => discordContext.Channel.Id.ToString(),
 
-                        case CooldownType.User:
-                            return discordContext.Invoker.Id;
+                        CooldownType.User => discordContext.Invoker.Id.ToString(),
 
-                        case CooldownType.Global:
-                            return "Global";
+                        CooldownType.Global => "Global",
 
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                        _ => throw new ArgumentOutOfRangeException()
+                    };
                 }
             };
 

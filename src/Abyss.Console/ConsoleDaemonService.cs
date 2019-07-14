@@ -13,6 +13,7 @@ namespace Abyss.Console
         public Task RestartApplicationAsync()
         {
             System.Console.WriteLine(Directory.GetCurrentDirectory());
+#pragma warning disable IDE0067 // Dispose objects before losing scope
             var newProcess = new Process
             {
                 StartInfo = new ProcessStartInfo
@@ -23,6 +24,7 @@ namespace Abyss.Console
                     WorkingDirectory = Directory.GetCurrentDirectory()
                 }
             };
+#pragma warning restore IDE0067 // Dispose objects before losing scope
             newProcess.Start();
             Environment.Exit(0);
             return Task.CompletedTask;

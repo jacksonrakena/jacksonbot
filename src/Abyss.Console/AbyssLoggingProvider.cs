@@ -18,7 +18,9 @@ namespace Abyss.Console
     {
         public static ILoggingBuilder AddAbyss(this ILoggingBuilder builder)
         {
+#pragma warning disable IDE0067 // Dispose objects before losing scope
             return builder.AddProvider(new AbyssLoggingProvider());
+#pragma warning restore IDE0067 // Dispose objects before losing scope
         }
     }
 }
