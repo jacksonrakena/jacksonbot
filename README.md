@@ -68,7 +68,6 @@ Abyss has fully modular runtime assembly support. Here's a quick guide on doing 
 3) Create your modules and commands as you like, using `AbyssModuleBase`. Feel free to look at Abyss' included commands for help.
 4) Build `Abyss.Console` (or whatever frontend you are using) in your preferred configuration.
 5) Build your assembly, and copy the assembly file (something like `MyCommandAssembly.dll`) into the `CustomAssemblies` folder. This will be in `src/Abyss.Console/bin/<your_release_configuration>/netcoreapp3.0/CustomAssemblies`.
-	
 6) Start Abyss with `dotnet run --project src/Abyss.Console/Abyss.Console.csproj -c <Your_Configuration>`, and check that the `MessageProcessor` loaded your assembly. It should look like this:
 ![Assembly loading](https://i.imgur.com/PZqeY7s.png)
 7) Enjoy your custom modules! They should be available in the help command.
