@@ -20,7 +20,7 @@ namespace Abyss.Console
                 {
                     CreateNoWindow = false,
                     FileName = "dotnet",
-                    Arguments = "run --project ../../../Abyss.Console.csproj -c Release",
+                    Arguments = "run --project src/Abyss.Console/Abyss.Console.csproj -c Release",
                     WorkingDirectory = Directory.GetCurrentDirectory()
                 }
             };
