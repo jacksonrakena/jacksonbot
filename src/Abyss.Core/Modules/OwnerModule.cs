@@ -1,6 +1,5 @@
 using Abyss.Attributes;
 using Abyss.Checks.Command;
-using Abyss.Core.Services;
 using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Helpers;
@@ -28,14 +27,12 @@ namespace Abyss.Modules
     {
         private readonly ILogger<OwnerModule> _logger;
         private readonly ScriptingService _scripting;
-        private readonly IDaemonService _daemon;
 
         public OwnerModule(ILogger<OwnerModule> logger,
-            ScriptingService scripting, IDaemonService daemon)
+            ScriptingService scripting)
         {
             _logger = logger;
             _scripting = scripting;
-            _daemon = daemon;
         }
 
         [Command("Game", "SetGame")]
@@ -51,36 +48,6 @@ namespace Abyss.Modules
         {
             await Context.Client.SetGameAsync(game, streamUrl?.ToString(), type).ConfigureAwait(false);
             return Ok($"Set game to `{type} {game} (url: {streamUrl?.ToString() ?? "None"})`.");
-        }
-
-        [Command("Update")]
-        [Description("Updates this instance of Abyss, and restarts.")]
-        [Example("update")]
-        [RunMode(RunMode.Parallel)]
-        public async Task<ActionResult> Command_UpdateAsync()
-        {
-            var m = await Context.Channel.SendMessageAsync("Beginning update.");
-            using (var gitProcess = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    CreateNoWindow = true,
-                    FileName = "git",
-                    Arguments = "pull",
-                    WorkingDirectory = Directory.GetCurrentDirectory(),
-                    UseShellExecute = false
-                }
-            })
-            {
-                gitProcess.Start();
-                gitProcess.WaitForExit();
-            };
-
-            await m.ModifyAsync(a => a.Content = "Finished git update. Restarting...");
-
-            await _daemon.RestartApplicationAsync();
-
-            return BadRequest("Failed to terminate.");
         }
 
         [Command("Script", "Eval")]
