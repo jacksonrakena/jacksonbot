@@ -12,7 +12,6 @@ namespace Abyss.Console
     {
         public Task RestartApplicationAsync()
         {
-            System.Console.WriteLine(Directory.GetCurrentDirectory());
 #pragma warning disable IDE0067 // Dispose objects before losing scope
             var newProcess = new Process
             {
@@ -20,8 +19,8 @@ namespace Abyss.Console
                 {
                     CreateNoWindow = false,
                     FileName = "dotnet",
-                    Arguments = "run --project src/Abyss.Console/Abyss.Console.csproj -c Release",
-                    WorkingDirectory = Directory.GetCurrentDirectory()
+                    Arguments = "run --project ../../../Abyss.Console.csproj -c Release",
+                    WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory
                 }
             };
 #pragma warning restore IDE0067 // Dispose objects before losing scope

@@ -67,7 +67,7 @@ Abyss has fully modular runtime assembly support. Here's a quick guide on doing 
 2) Create a new .NET Core 3.0 Library (**not .NET Standard 2.0**) and add your local copy of `Abyss.Core` as a dependency.
 3) Create your modules and commands as you like, using `AbyssModuleBase`. Feel free to look at Abyss' included commands for help.
 4) Build `Abyss.Console` (or whatever frontend you are using) in your preferred configuration.
-5) Build your assembly, and copy the assembly file (something like `MyCommandAssembly.dll`) into the `CustomAssemblies` folder. You may need to make this folder. If you're debugging inside Visual Studio 2019, this will be in `src/Abyss.Console/bin/<your_release_configuration>/netcoreapp3.0/CustomAssemblies`, or if you're debugging from the command-line with `dotnet run`, this will be in the project's root, next to `src`.
+5) Build your assembly, and copy the assembly file (something like `MyCommandAssembly.dll`) into the `CustomAssemblies` folder. This will be in `src/Abyss.Console/bin/<your_release_configuration>/netcoreapp3.0/CustomAssemblies`.
 	
 6) Start Abyss with `dotnet run --project src/Abyss.Console/Abyss.Console.csproj -c <Your_Configuration>`, and check that the `MessageProcessor` loaded your assembly. It should look like this:
 ![Assembly loading](https://i.imgur.com/PZqeY7s.png)

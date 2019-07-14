@@ -55,10 +55,11 @@ namespace Abyss.Services
             _client.MessageReceived += ProcessMessageAsync;
 
             var assembliesToLoad = new List<Assembly> { Assembly.GetExecutingAssembly() };
+            var assemblyDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CustomAssemblies");
 
-            if (Directory.Exists("CustomAssemblies"))
+            if (Directory.Exists(assemblyDirectory))
             {
-                foreach (var assemblyFile in Directory.GetFiles("CustomAssemblies", "*.dll"))
+                foreach (var assemblyFile in Directory.GetFiles(assemblyDirectory, "*.dll"))
                 {
                     try
                     {
