@@ -72,7 +72,8 @@ Abyss has fully modular runtime assembly support. Here's a quick guide on doing 
 6) Start Abyss with `dotnet run --project src/Abyss.Console/Abyss.Console.csproj -c <Your_Configuration>`, and check that the `MessageProcessor` loaded your assembly. It should look like this:
 ![Assembly loading](https://i.imgur.com/PZqeY7s.png)
 7) Enjoy your custom modules!
-<img src="https://i.imgur.com/vX8E3mw.png" width="250" />
+<img src="https://i.imgur.com/vX8E3mw.png" width="250">
+8) If there are any issues with this process, feel free to hop in the [support server](https://discord.gg/RsRps9M) for help.
 
 ### Copyright
 Copyright (c) 2019 abyssal512 under the MIT License, available at [the LICENSE file.](LICENSE.md)
