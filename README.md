@@ -1,7 +1,7 @@
 [![Discord](https://img.shields.io/discord/598437365891203072.svg?style=plastic)](https://discord.gg/RsRps9M)
 # Abyss
 
-**A Discord bot,** written in C# using .NET Core and Discord.Net.  
+**A** fully modular, expandable, open-source **Discord bot,** written in C# using .NET Core and Discord.Net.  
 You can add the public instance [here.](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)  
 You can join the support server [here.](https://discord.gg/RsRps9M)
   
@@ -18,6 +18,7 @@ You can join the support server [here.](https://discord.gg/RsRps9M)
 - C a t commands  
 ![Meow](https://i.imgur.com/iE7MtMQ.png)
 - General purpose command set
+- Support for custom command assemblies (`CustomAssemblies` folder)
 
   
 ### Requirements
@@ -60,6 +61,18 @@ This produces a result that looks like this:
 ![Abyss: Watching you](https://i.imgur.com/TkX7Eat.png)  
 The bot will rotate through each Activity provided under the Startup.Activity property every minute. Available Activity types are Playing, Streaming, Listening, and Watching. (These match to the [enum ActivityType](https://docs.stillu.cc/api/Discord.ActivityType.html) in Discord.Net)  
   
+### Modularity
+Abyss has fully modular runtime assembly support. Here's a quick guide on doing so:
+1) Clone this repository to your computer.
+2) Create a new .NET Core 3.0 Library (**not .NET Standard 2.0**) and add your local copy of `Abyss.Core` as a dependency.
+3) Create your modules and commands as you like, using `AbyssModuleBase`. Feel free to look at Abyss' included commands for help.
+4) Build `Abyss.Console` (or whatever frontend you are using) in your preferred configuration.
+5) Build your assembly, and copy the assembly file (something like `MyCommandAssembly.dll`) into the `CustomAssemblies` folder. You may need to make this folder. If you're debugging inside Visual Studio 2019, this will be in `src/Abyss.Console/bin/<your_release_configuration>/netcoreapp3.0/CustomAssemblies`, or if you're debugging from the command-line with `dotnet run`, this will be in the project's root, next to `src`.
+	
+6) Start Abyss with `dotnet run --project src/Abyss.Console/Abyss.Console.csproj -c <Your_Configuration>`, and check that the `MessageProcessor` loaded your assembly. It should look like this:
+![Assembly loading](https://i.imgur.com/PZqeY7s.png)
+7) Enjoy your custom modules!
+<img src="https://i.imgur.com/vX8E3mw.png" width="250" />
 
 ### Copyright
 Copyright (c) 2019 abyssal512 under the MIT License, available at [the LICENSE file.](LICENSE.md)
