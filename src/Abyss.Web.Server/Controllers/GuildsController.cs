@@ -66,7 +66,7 @@ namespace Abyss.Web.Server.Controllers
                 AfkChannel = guild.AFKChannel?.Name ?? "None",
                 VoiceChannels = guild.VoiceChannels.Count == 0 ? "None" : string.Join(", ", guild.VoiceChannels.Select(a => a.Name)),
                 TextChannels = guild.TextChannels.Count == 0 ? "None" : string.Join(", ", guild.TextChannels.Select(a => a.Name)),
-                Roles = string.Join(", ", guild.Roles.Select(a => a.Name))
+                Roles = string.Join(", ", guild.Roles.OrderByDescending(x => x.Position).Select(a => a.Name))
             };
         }
 
