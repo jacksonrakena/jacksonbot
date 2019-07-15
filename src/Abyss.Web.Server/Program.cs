@@ -16,6 +16,10 @@ namespace Abyss.Web.Server
                 .UseConfiguration(new ConfigurationBuilder()
                     .AddCommandLine(args)
                     .Build())
+                    .ConfigureKestrel(k =>
+                    {
+                        k.ListenAnyIP(2003);
+                    })
                 .UseStartup<Startup>()
                 .Build();
     }
