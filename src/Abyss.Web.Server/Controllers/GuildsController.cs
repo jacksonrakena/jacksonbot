@@ -53,6 +53,23 @@ namespace Abyss.Web.Server.Controllers
             return Ok();
         }
 
+        [HttpGet("{id}")]
+        public ActionResult<GuildInfoDetailed> GetGuildInfo([FromRoute] string id)
+        {
+            var u = ulong.Parse(id);
+            var guild = _client.GetGuild(u);
+            if (guild == null) return BadRequest(new { message = "Invalid ID." });
+            return new GuildInfoDetailed
+            {
+                AbyssJoinDate = guild.CurrentUser.JoinedAt,
+                CreationDate = guild.CreatedAt,
+                AfkChannel = guild.AFKChannel?.Name ?? "None",
+                VoiceChannels = guild.VoiceChannels.Count == 0 ? "None" : string.Join(", ", guild.VoiceChannels.Select(a => a.Name)),
+                TextChannels = guild.TextChannels.Count == 0 ? "None" : string.Join(", ", guild.TextChannels.Select(a => a.Name)),
+                Roles = string.Join(", ", guild.Roles.Select(a => a.Name))
+            };
+        }
+
         [HttpGet("add")]
         public async Task<ActionResult> AddToGuild()
         {
