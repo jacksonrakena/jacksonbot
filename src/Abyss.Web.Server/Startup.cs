@@ -6,13 +6,16 @@ using Discord;
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Serialization;
 using Qmmands;
 using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 
@@ -80,7 +83,16 @@ namespace Abyss.Web.Server
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
+#if DEBUG
+                endpoints.MapFallbackToClientSideBlazor<Client.Startup>("index.html");
+#else
                 endpoints.MapFallbackToClientSideBlazor<Client.Startup>("_content/abysswebclient/index.html");
+                app.UseStaticFiles(new StaticFileOptions()
+                {
+                    FileProvider = new PhysicalFileProvider(Path.Combine(path1: Directory.GetCurrentDirectory(), "wwwroot/_content/abysswebclient")),
+                    RequestPath = new PathString("")
+                }); 
+#endif
             });
         }
 
