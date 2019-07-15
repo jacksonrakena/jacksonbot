@@ -1,58 +1,45 @@
-﻿using Abyss.Entities;
+using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Services;
 using AbyssalSpotify;
 using Discord;
 using Discord.WebSocket;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Serialization;
 using Qmmands;
 using System;
-using System.Diagnostics;
-using System.IO;
+using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 
-namespace Abyss.Console
+namespace Abyss.Web.Server
 {
-    public static class Program
+    public class Startup
     {
-        private static void Main()
+        // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        public void ConfigureServices(IServiceCollection services)
         {
-            MainAsync().GetAwaiter().GetResult();
-        }
+            services.AddMvc().AddNewtonsoftJson();
+            services.AddResponseCompression(opts =>
+            {
+                opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+                    new[] { "application/octet-stream" });
+            });
 
-        private static async Task MainAsync()
-        {
-            System.Console.WriteLine("Abyss console host application starting at " + DateTime.Now.ToString("F"));
-
-            var services = ConfigureServices();
-
-            var logger = services.GetRequiredService<ILoggerFactory>().CreateLogger("Abyss Console Host");
-            logger.LogInformation($"Took {(DateTime.Now - Process.GetCurrentProcess().StartTime).TotalSeconds} seconds to initialize services. Console host starting.");
-
-            var bot = services.GetRequiredService<BotService>();
-
-            await bot.StartAsync().ConfigureAwait(false);
-
-            await Task.Delay(-1).ConfigureAwait(false);
-        }
-
-        private static IServiceProvider ConfigureServices()
-        {
-            var serviceCollection = new ServiceCollection();
+            var serviceCollection = services;
 
             // Bot core
-            serviceCollection.AddSingleton<BotService>();
+            services.AddHostedService<BotService>();
 
             // Configuration
             var (configurationRoot, configurationModel) = ConfigureOptions();
             serviceCollection.AddSingleton(configurationModel);
             serviceCollection.AddSingleton(configurationRoot);
-
-            // Logging
-            serviceCollection.AddLogging(builder => builder.AddAbyss());
 
             // Discord
             var (discordClient, discordConfig) = ConfigureDiscord();
@@ -73,8 +60,28 @@ namespace Abyss.Console
             serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<ResponseCacheService>();
+        }
 
-            return serviceCollection.BuildServiceProvider();
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseResponseCompression();
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseBlazorDebugging();
+            }
+
+            app.UseClientSideBlazorFiles<Client.Startup>();
+
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+                endpoints.MapFallbackToClientSideBlazor<Client.Startup>("index.html");
+            });
         }
 
         private static (IConfigurationRoot configurationRoot, AbyssConfig configurationModel) ConfigureOptions()

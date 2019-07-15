@@ -1,0 +1,58 @@
+﻿@page "/guilds"
+@using Abyss.Web.Shared
+@inject HttpClient Http
+
+<h1>Guilds</h1>
+
+<p>View the status of all guilds here.</p>
+
+@if (guilds == null)
+{
+    <p><em>Loading guilds... (depending on the size of your bot, this may take some time)</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Owner</th>
+                <th>Member count</th>
+                <th>Bot's highest role name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var guild in guilds)
+            {
+                <tr>
+                    <td>@guild.Id</td>
+                    <td>@guild.Name</td>
+                    <td>@guild.Owner</td>
+                    <td>@guild.MemberCount</td>
+                    <td>@(guild.HighestRoleName ?? "None")</td>
+                    <td><button class="btn btn-danger" @onclick="@(async () => await LeaveGuildAsync(guild.Id))">Leave</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+List<GuildInfo> guilds;
+
+protected override async Task OnInitAsync()
+{
+    guilds = await Http.GetJsonAsync<List<GuildInfo>>("api/guilds");
+}
+
+public async Task LeaveGuildAsync(string id)
+{
+    var resp = await Http.DeleteAsync("api/guilds/" + id);
+    if (resp.StatusCode == System.Net.HttpStatusCode.OK)
+    {
+        guilds.Remove(guilds.FirstOrDefault(a => a.Id == id));
+    }
+}
+    }

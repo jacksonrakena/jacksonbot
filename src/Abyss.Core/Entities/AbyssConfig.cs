@@ -31,6 +31,7 @@ namespace Abyss.Entities
         {
             public string Token { get; set; }
             public string SupportServer { get; set; }
+            public ulong? SupportServerId { get; set; }
         }
 
         public class AbyssConfigSpotifyConnectionSection

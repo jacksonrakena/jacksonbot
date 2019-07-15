@@ -3,15 +3,17 @@ using Abyss.Extensions;
 using Abyss.Services;
 using Discord;
 using Discord.WebSocket;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Abyss
 {
-    public class BotService
+    public class BotService: IHostedService
     {
         public const string AbyssYesEmoji = "<:AbyssYes:598658539287871510>";
         public const string AbyssNoEmoji = "<:AbyssNo:598658540042846258>";
@@ -30,16 +32,16 @@ namespace Abyss
             _discordClient = socketClient;
             _config = config;
             _serviceProvider = services;
-        }
-
-        public async Task StartAsync()
-        {
-            _logger.LogInformation(
-                $"{_config.Name} on {Environment.OSVersion.VersionString} with CLR {Environment.Version}");
             _discordClient.Log += DiscordClientOnLog;
             _discordClient.Ready += DiscordClientOnReady;
             _discordClient.JoinedGuild += DiscordClientOnJoinedGuild;
             _discordClient.LeftGuild += DiscordClient_LeftGuild;
+        }
+
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation(
+                $"{_config.Name} on {Environment.OSVersion.VersionString} with CLR {Environment.Version}");
 
             var discordConfiguration = _config.Connections.Discord;
 
@@ -150,6 +152,11 @@ namespace Abyss
             _logger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception, arg.Message);
 
             return Task.CompletedTask;
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            await _discordClient.StopAsync();
         }
     }
 }

@@ -1,0 +1,42 @@
+﻿@page "/status"
+@using Abyss.Web.Shared
+@inject HttpClient Http
+
+<h1>Bot status</h1>
+
+@if (info == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <p>Current username: @info.Username</p>
+}
+
+@if (info != null && ssinfo == null)
+{
+    <p>No support server is configured in the configuration.</p>
+}
+else if (ssinfo == null)
+{
+    <p>Loading support server info...</p>
+}
+else
+{
+    <h1>Support Server @ssinfo.Name</h1>
+    <p>Owned by @ssinfo.Owner</p>
+    <p>Member count: @ssinfo.MemberCount</p>
+    <img src="@ssinfo.GuildIconUrl" />
+}
+
+@code {
+BotStatusInfo info;
+BotSupportServerInfo ssinfo;
+
+protected override async Task OnInitAsync()
+{
+    info = await Http.GetJsonAsync<BotStatusInfo>("api/status");
+    ssinfo = info.SupportServerInfo;
+}
+
+}

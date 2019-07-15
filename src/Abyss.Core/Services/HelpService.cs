@@ -115,7 +115,7 @@ namespace Abyss.Services
                 embed.AddField("Checks", string.Join("\n", newChecks));
             }
 
-            embed.WithFooter("You can use quotes to encapsulate inputs that are more than one word long.",
+            if (command.Parameters.Count != 0) embed.WithFooter("You can use quotes to encapsulate inputs that are more than one word long.",
                 context.Bot.GetEffectiveAvatarUrl());
 
             if (!command.HasAttribute<ThumbnailAttribute>(out var imageUrlAttribute)) return embed.Build();
