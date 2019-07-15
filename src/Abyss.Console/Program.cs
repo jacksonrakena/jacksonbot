@@ -12,6 +12,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Abyss.Console
@@ -34,7 +35,7 @@ namespace Abyss.Console
 
             var bot = services.GetRequiredService<BotService>();
 
-            await bot.StartAsync().ConfigureAwait(false);
+            await bot.StartAsync(CancellationToken.None).ConfigureAwait(false);
 
             await Task.Delay(-1).ConfigureAwait(false);
         }
