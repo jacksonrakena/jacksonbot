@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Abyss.Checks
 {
-    public class CheckResources
+    public static class CheckResources
     {
         public static Predicate<Type> UserTypes = CreatePredicate(typeof(SocketGuildUser), typeof(SocketUser));
         public static Predicate<Type> GuildUser = CreatePredicate<SocketGuildUser>();

@@ -14,14 +14,6 @@ namespace Abyss.Extensions
             return provider.GetRequiredService<T>();
         }
 
-        public static async Task<T> InitializeServiceAsync<T>(this IServiceProvider provider)
-            where T : IServiceInitializable
-        {
-            var service = provider.InitializeService<T>();
-            await service.InitializeAsync();
-            return service;
-        }
-
         public static bool TryGetService(this IServiceProvider provider, Type type, out object result)
         {
             var query = provider.GetService(type);

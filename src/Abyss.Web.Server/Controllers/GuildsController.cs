@@ -75,7 +75,7 @@ namespace Abyss.Web.Server.Controllers
         {
             while (_client.CurrentUser == null)
             {
-
+                await Task.Delay(500);
             }
             return Redirect($"https://discordapp.com/api/oauth2/authorize?client_id={_client.CurrentUser.Id}&permissions=0&scope=bot");
         }
