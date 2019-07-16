@@ -4,6 +4,7 @@ using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Parsers;
 using Discord;
+using Humanizer;
 using Qmmands;
 using System;
 using System.Collections.Generic;
@@ -103,6 +104,12 @@ namespace Abyss.Services
             {
                 embed.AddField($"Example{(example.ExampleUsage.Length == 1 ? "" : "s")}",
                    string.Join("\n", example.ExampleUsage.Select(c => Format.Code(prefix + c))));
+            }
+
+            var cd = command.Cooldowns;
+            if (cd.Count > 0)
+            {
+                embed.AddField("Cooldowns", string.Join("\n", cd.Select(c => $"{c.BucketType.Cast<CooldownType>().GetPerName()} - {c.Amount} usage{(c.Amount == 1 ? "" : "s")} per {c.Per.Humanize()}")));
             }
 
             var checks = command.Checks.Concat(command.Module.Checks).ToList();
