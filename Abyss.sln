@@ -8,11 +8,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Console", "src\Abyss.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.ExampleCustomAssembly", "src\Abyss.ExampleCustomAssembly\Abyss.ExampleCustomAssembly.csproj", "{F5EE8A7A-EDC6-4513-852F-F9309539C10E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abyss.Web.Server", "src\Abyss.Web.Server\Abyss.Web.Server.csproj", "{B7938177-6B05-49FC-816C-A9B0E544F622}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Web.Server", "src\Abyss.Web.Server\Abyss.Web.Server.csproj", "{B7938177-6B05-49FC-816C-A9B0E544F622}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abyss.Web.Client", "src\Abyss.Web.Client\Abyss.Web.Client.csproj", "{940A73BF-DD24-43DA-A63F-61CD945A7D2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Web.Client", "src\Abyss.Web.Client\Abyss.Web.Client.csproj", "{940A73BF-DD24-43DA-A63F-61CD945A7D2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abyss.Web.Shared", "src\Abyss.Web.Shared\Abyss.Web.Shared.csproj", "{54ED94B2-A83C-4307-BEBB-61ED731AB70D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Web.Shared", "src\Abyss.Web.Shared\Abyss.Web.Shared.csproj", "{54ED94B2-A83C-4307-BEBB-61ED731AB70D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

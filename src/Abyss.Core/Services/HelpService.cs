@@ -135,10 +135,13 @@ namespace Abyss.Services
 
         private static async Task<string> FormatCheck(CheckAttribute cba, AbyssCommandContext context)
         {
-            var message = (cba.Cast<IAbyssCheck>() ?? throw new InvalidOperationException($"The provided check is not of the Abyss check type, {typeof(IAbyssCheck).Name}.")).Description;
+            var message = GetCheckFriendlyMessage(cba);
+            return $"- {((await cba.CheckAsync(context, context.Services).ConfigureAwait(false)).IsSuccessful ? BotService.AbyssYesEmoji : BotService.AbyssNoEmoji)} {message}";
+        }
 
-            return
-                $"- {((await cba.CheckAsync(context, context.Services).ConfigureAwait(false)).IsSuccessful ? BotService.AbyssYesEmoji : BotService.AbyssNoEmoji)} {message}";
+        public static string GetCheckFriendlyMessage(CheckAttribute cba)
+        {
+            return (cba.Cast<IAbyssCheck>() ?? throw new InvalidOperationException($"The provided check is not of the Abyss check type, {typeof(IAbyssCheck).Name}.")).Description;
         }
 
         private string FormatParameter(Parameter parameterInfo)

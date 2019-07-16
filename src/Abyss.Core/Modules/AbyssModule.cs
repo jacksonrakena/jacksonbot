@@ -135,16 +135,6 @@ namespace Abyss.Modules
             return NoResult();
         }
 
-        [Command("Stats")]
-        [RequireOwner]
-        [Example("stats")]
-        [Description("Retrieves statistics about the consumers of this bot.")]
-        public Task<ActionResult> Command_ViewStatsAsync()
-        {
-            return Ok(
-                $"Total Users: {Context.Client.Guilds.SelectMany(a => a.Users).Select(a => a.Id).Distinct().Count()} | Total Guilds: {Context.Client.Guilds.Count}\n{Format.Code(string.Join("\n\n", Context.Client.Guilds.Select(a => $"[Name: {a.Name}, ID: {a.Id}, Members: {a.MemberCount}, Owner: {a.Owner}]")), "ini")}");
-        }
-
         [Command("Prefix")]
         [Example("prefix")]
         [Description("Shows the prefix.")]
