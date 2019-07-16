@@ -43,7 +43,8 @@ Here's an example Abyss configuration file, taken from my main public instance.
     "Connections": {
       "Discord": {
         "Token": "Discord bot user token",
-		"SupportServer": "An invite to the bot's home base. Optional."
+    "SupportServer": "An invite to the bot's home base. Optional.",
+    "SupportServerId": "The ID of your support server. Optional."
       },
       "Spotify": {
         "ClientId": "Spotify client ID",
@@ -52,7 +53,8 @@ Here's an example Abyss configuration file, taken from my main public instance.
     },
     "Notifications": {
       "Ready": 598437593721602068,
-      "ServerMembershipChange": 598437593721602068
+      "ServerMembershipChange": 598437593721602068,
+      "Feedback": 600565543010828288
     }
   }
 

@@ -21,5 +21,4 @@
   <Target Name="MakeCustomAssembliesFolder" AfterTargets="Build">
     <MakeDir Directories="$(OutDir)CustomAssemblies" />
   </Target>
-
 </Project>

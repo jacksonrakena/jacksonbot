@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,11 +25,13 @@ namespace Abyss.Modules
     {
         private readonly ICommandService _commandService;
         private readonly AbyssConfig _config;
+        private readonly DiscordSocketClient _client;
 
-        public AbyssModule(ICommandService commandService, AbyssConfig config)
+        public AbyssModule(DiscordSocketClient client, ICommandService commandService, AbyssConfig config)
         {
             _commandService = commandService;
             _config = config;
+            _client = client;
         }
 
         [Command("Uptime")]
@@ -85,10 +88,12 @@ namespace Abyss.Modules
         [Example("feedback Bot is great!", "feedback Add more cats!!!")]
         [Description("Sends feedback to the developer.")]
         [AbyssCooldown(1, 24, CooldownMeasure.Hours, CooldownType.User)]
-        public async Task<ActionResult> Command_SendFeedbackAsync([Remainder] string feedback)
+        public Task<ActionResult> Command_SendFeedbackAsync([Remainder] [Range(1, 500)] string feedback)
         {
-            var app = await Context.Client.GetApplicationInfoAsync().ConfigureAwait(false);
-            var _ = app.Owner.SendMessageAsync(
+            if (_config.Notifications.Feedback == null || !(_client.GetChannel(_config.Notifications.Feedback.Value) is SocketTextChannel stc))
+                return BadRequest("Feedback has been disabled for this bot. (Bot owner: you need to set the `Feedback` property in your configuration.)");
+
+            var _ = stc.SendMessageAsync(
                 $"Feedback from {Context.Invoker} in {Context.Guild?.ToString() ?? "their DM channel"}:\n\"{feedback}\"");
 
             return Ok("Feedback sent!");
