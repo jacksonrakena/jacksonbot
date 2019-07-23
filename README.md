@@ -79,7 +79,7 @@ Abyss has fully modular runtime assembly support. Here's a quick guide on doing 
 The project is broken down into the following projects: 
 - `Abyss.Core` (library) The core of Abyss. This project contains the robust, fast, and safe architecture that sits at the heart of Abyss operation. It also contains all of the default commands that come with every instance.
 - `Abyss.ExampleCustomAssembly` (library) This is an example project, which shows how you can make your own projects to expand and add new functionality and commands to Abyss.
-- `Abyss.Console` This is an executable which wraps `Abyss.Core`, and pipes otuput to the console. This executable does not support web functionality.
+- `Abyss.Console` This is an executable which wraps `Abyss.Core`, and pipes output to the console. This executable does not support web functionality.
 - `Abyss.Web.Shared` This library contains data classes and code that is shared between `Abyss.Web.Client` and `Abyss.Web.Server`.
 - `Abyss.Web.Client` This contains all the Blazor clientside code for using the Abyss administration panel.
 - `Abyss.Web.Server` An alternative to `Abyss.Console`, this executable starts up the Abyss administration panel on `[Any IP]:2003` and serves clients the Blazor code in `Abyss.Web.Client`. This web server contains many useful administration tools.
