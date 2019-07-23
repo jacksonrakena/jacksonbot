@@ -1,8 +1,10 @@
 ﻿using Abyss.Attributes;
+using Abyss.Core.Results;
 using Abyss.Extensions;
 using Abyss.Results;
 using Discord;
 using Discord.Rest;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Qmmands;
 using System;
 using System.Threading.Tasks;
@@ -30,6 +32,8 @@ namespace Abyss.Entities
                 e.Title = title;
             });
         }
+
+        public ReactSuccessResult Ok() => new ReactSuccessResult();
 
         public ActionResult Ok(string content, params FileAttachment[] attachments)
         {
@@ -77,9 +81,9 @@ namespace Abyss.Entities
             return new BadRequestResult(reason);
         }
 
-        public ActionResult NoResult()
+        public ActionResult Empty()
         {
-            return new NoResult();
+            return new EmptyResult();
         }
     }
 }

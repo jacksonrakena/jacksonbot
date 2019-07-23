@@ -129,7 +129,7 @@ namespace Abyss.Modules
                 .WithCurrentTimestamp()
                 .Build()).ConfigureAwait(false);
             outStream.Dispose();
-            return NoResult();
+            return Empty();
         }
 
         [Command("Colour", "Color")]

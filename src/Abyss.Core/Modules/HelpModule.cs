@@ -76,7 +76,7 @@ namespace Abyss.Modules
                     await Context.Channel.SendMessageAsync(string.Empty, false, embed0).ConfigureAwait(false);
                 }
 
-                return NoResult();
+                return Empty();
             }
 
             var prefix = Context.GetPrefix();

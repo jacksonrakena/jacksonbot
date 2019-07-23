@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Abyss.Results
 {
-    public class NoResult : ActionResult
+    public class EmptyResult : ActionResult
     {
         public override bool IsSuccessful => true;
 

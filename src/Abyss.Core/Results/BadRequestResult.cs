@@ -22,7 +22,7 @@ namespace Abyss.Results
         public override async Task<ResultCompletionData> ExecuteResultAsync(AbyssCommandContext context)
         {
             var message = await context.Channel.SendMessageAsync(null, false, new EmbedBuilder()
-                .WithTitle("Welp, that didn't work.")
+                .WithTitle("You've been telling me lies, hun.")
                 .WithDescription(Reason)
                 .WithColor(ErrorColor)
                 .WithTimestamp(DateTimeOffset.Now)

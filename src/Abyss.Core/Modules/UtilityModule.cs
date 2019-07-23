@@ -71,7 +71,7 @@ namespace Abyss.Modules
                     opt.AuditLogReason = $"Requested by {Context.Invoker} at {DateTime.UtcNow.ToUniversalTime():F}";
                     await message.DeleteAsync(opt).ConfigureAwait(false);
                     if (!silent) return Ok($"Deleted message {messageId}.");
-                    return NoResult();
+                    return Empty();
                 }
                 catch (Exception)
                 {

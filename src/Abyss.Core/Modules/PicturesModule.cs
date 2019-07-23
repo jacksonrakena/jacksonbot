@@ -80,7 +80,7 @@ namespace Abyss.Modules
                                        ".png");
             }
 
-            return NoResult();
+            return Empty();
         }
 
         [Command("Resize", "Upscale", "Downscale")]

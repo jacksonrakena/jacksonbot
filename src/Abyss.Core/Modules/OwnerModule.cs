@@ -206,7 +206,7 @@ namespace Abyss.Modules
             Context.Client.Dispose();
 
             Environment.Exit(0); // Clean exit - trigger daemon NOT to restart
-            return NoResult();
+            return Empty();
         }
     }
 }

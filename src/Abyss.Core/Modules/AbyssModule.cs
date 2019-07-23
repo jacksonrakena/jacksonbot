@@ -96,7 +96,7 @@ namespace Abyss.Modules
             var _ = stc.SendMessageAsync(
                 $"Feedback from {Context.Invoker} in {Context.Guild?.ToString() ?? "their DM channel"}:\n\"{feedback}\"");
 
-            return Ok("Feedback sent!");
+            return Ok();
         }
 
         [Command("Ping")]
@@ -104,7 +104,7 @@ namespace Abyss.Modules
         [AbyssCooldown(1, 3, CooldownMeasure.Seconds, CooldownType.User)]
         public async Task<ActionResult> Command_PingAsync()
         {
-            if (!Context.BotUser.GetPermissions(Context.Channel).SendMessages) return NoResult();
+            if (!Context.BotUser.GetPermissions(Context.Channel).SendMessages) return Empty();
             var sw = Stopwatch.StartNew();
             var initial = await Context.Channel.SendMessageAsync("Pinging...").ConfigureAwait(false);
             var restTime = sw.ElapsedMilliseconds.ToString();
@@ -137,7 +137,7 @@ namespace Abyss.Modules
 
             Context.Client.MessageReceived += Handler;
 
-            return NoResult();
+            return Empty();
         }
 
         [Command("Prefix")]
