@@ -6,6 +6,7 @@ using Abyss.Helpers;
 using Abyss.Results;
 using Abyss.Services;
 using Discord;
+using Discord.WebSocket;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Qmmands;
@@ -207,6 +208,29 @@ namespace Abyss.Modules
 
             Environment.Exit(0); // Clean exit - trigger daemon NOT to restart
             return Empty();
+        }
+
+        [Command("Edit")]
+        [Description("Edits a message that was sent by me.")]
+        [Example("edit 562486465645510656 hello")]
+        [RequireOwner]
+        public async Task<ActionResult> Command_EditAsync([Name("Message")] [Description("The message to edit.")]
+            ulong messageId, [Name("New Content")] [Description("The new content of the message.")] string newContent)
+        {
+            var channel = Context.Channel;
+            var message = channel.GetCachedMessage(messageId) ?? await channel.GetMessageAsync(messageId);
+            if (message == null || !(message is IUserMessage msg) || msg.Author.Id != Context.Bot.Id)
+                return BadRequest("Unknown message!");
+
+            try
+            {
+                await msg.ModifyAsync(v => v.Content = newContent);
+                return Empty();
+            }
+            catch (Exception)
+            {
+                return BadRequest("Failed to modify the message!");
+            }
         }
     }
 }
