@@ -2,6 +2,7 @@
 using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Results;
+using Abyssal.Common;
 using Discord.WebSocket;
 using Qmmands;
 using System;
@@ -38,10 +39,10 @@ namespace Abyss.Modules
 
             if (guildUsers.Length < 2) return Ok("This guild is too small!");
 
-            var member1 = guildUsers.SelectRandom(_random);
-            var member2 = guildUsers.SelectRandom(_random);
+            var member1 = guildUsers.Random(_random);
+            var member2 = guildUsers.Random(_random);
 
-            while (member1 == member2) member1 = guildUsers.SelectRandom(_random);
+            while (member1 == member2) member1 = guildUsers.Random(_random);
 
             return Ok(
                 $":heart: I ship **{member1.Nickname ?? member1.Username}** x **{member2.Nickname ?? member2.Username}**! :heart:");

@@ -2,6 +2,7 @@ using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Services;
 using Discord;
+using Abyssal.Common;
 using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -140,7 +141,7 @@ namespace Abyss
             {
                 while (true)
                 {
-                    var (activityType, message) = activities.SelectRandom();
+                    var (activityType, message) = activities.Random();
                     await _discordClient.SetGameAsync(message, null, activityType).ConfigureAwait(false);
                     await Task.Delay(TimeSpan.FromMinutes(1));
                 }

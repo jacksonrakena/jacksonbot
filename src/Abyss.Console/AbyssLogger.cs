@@ -1,3 +1,4 @@
+using Abyssal.Common;
 using Microsoft.Extensions.Logging;
 using NLog;
 using System;

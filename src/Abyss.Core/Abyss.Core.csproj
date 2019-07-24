@@ -15,6 +15,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Abyssal.Common" Version="1.0.0-20190724.5" />
         <PackageReference Include="AbyssalSpotify" Version="1.0.0-20190711.3" />
         <PackageReference Include="Discord.Net.WebSocket" Version="2.2.0-dev-20190629.2" />
         <PackageReference Include="Humanizer.Core" Version="2.6.2" />
