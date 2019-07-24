@@ -252,6 +252,15 @@ namespace Abyss.Modules
                 return Ok(embed);
             }
 
+            var p = user.Roles.Where(a => a.Permissions.Administrator).ToList();
+            if (p.Count > 0)
+            {
+                embed.Description = 
+                    "User has administrator, and has every permission. To deny them administrator, remove the Administrator permission from the following roles:\n" +
+                    $"`{string.Join(", ", p.Select(b => b.Name))}`";
+                return Ok(embed);
+            }
+
             var grantedRoles = user.Roles.Where(r => (bool) perm.GetValue(r.Permissions));
             var deniedRoles = user.Roles.Where(r => !((bool) perm.GetValue(r.Permissions)));
 
@@ -259,11 +268,11 @@ namespace Abyss.Modules
             var dRolesString = string.Join(", ", deniedRoles.Select(r => r.Name));
 
             if (!string.IsNullOrWhiteSpace(gRolesString)) embed.AddField("Roles that grant this permission", gRolesString);
-            if (!string.IsNullOrWhiteSpace(dRolesString)) embed.AddField("Roles that deny this permission", dRolesString);
+            if (!string.IsNullOrWhiteSpace(dRolesString)) embed.AddField("Roles that don't have this permission", dRolesString);
 
             if (grantedRoles.Any())
             {
-                embed.Description = $"To **deny** this permission, deny \"{permission}\" for the following roles: {gRolesString}.";
+                embed.Description = $"To **deny** this permission, remove \"{permission}\" for the following roles: {gRolesString}.";
             }
             else
             {
