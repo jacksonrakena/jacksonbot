@@ -43,15 +43,8 @@ namespace Abyss.Modules
             SpotifyTrack track;
             if (trackQuery != null)
             {
-                try
-                {
-                    var tracks = await _spotify.SearchAsync(trackQuery, SearchType.Track).ConfigureAwait(false);
-                    track = tracks.Tracks.Items.FirstOrDefault();
-                }
-                catch (Exception)
-                {
-                    return BadRequest("An error occurred while searching.");
-                }
+                var tracks = await _spotify.SearchAsync(trackQuery, SearchType.Track).ConfigureAwait(false);
+                track = tracks.Tracks.Items.FirstOrDefault();
             }
             else
             {
