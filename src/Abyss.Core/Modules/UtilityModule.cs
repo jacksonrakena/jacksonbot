@@ -2,6 +2,7 @@ using Abyss.Attributes;
 using Abyss.Checks.Command;
 using Abyss.Entities;
 using Abyss.Extensions;
+using Abyss.Helpers;
 using Abyss.Results;
 using Abyss.Services;
 using Discord;
@@ -29,24 +30,14 @@ namespace Abyss.Modules
         }
 
         [Command("Echod")]
-        [RequireBotPermission(ChannelPermission.ManageMessages)]
         [Description("Attempts to delete the source message, and then echoes the input text.")]
         [Example("echod THIS IS THE BEST BOT!")]
         [ResponseFormatOptions(ResponseFormatOptions.DontEmbed | ResponseFormatOptions.DontCache)]
         public async Task<ActionResult> Command_EchoDeleteAsync([Name("Text")] [Remainder] string echocontent)
         {
-            try
-            {
-                await Context.Message.DeleteAsync().ConfigureAwait(false);
-            }
-            catch
-            {
-                // ignored
-            }
-
-            return Ok(Context.InvokerIsOwner
+            return (await Context.Message.TryDeleteAsync()) ? Ok(Context.InvokerIsOwner
                 ? echocontent
-                : $"{Context.Invoker}: {echocontent}");
+                : $"{Context.Invoker}: {echocontent}") : Empty();
         }
 
         [Command("Delete")]
@@ -62,26 +53,12 @@ namespace Abyss.Modules
             [Name("Silence")] [Description("Whether to respond with confirmation of the deletion.")]
             bool silent = false)
         {
-            try
-            {
-                var message = await Context.Channel.GetMessageAsync(messageId).ConfigureAwait(false);
-                try
-                {
-                    var opt = RequestOptions.Default;
-                    opt.AuditLogReason = $"Requested by {Context.Invoker} at {DateTime.UtcNow.ToUniversalTime():F}";
-                    await message.DeleteAsync(opt).ConfigureAwait(false);
-                    if (!silent) return Ok($"Deleted message {messageId}.");
-                    return Empty();
-                }
-                catch (Exception)
-                {
-                    return BadRequest("Failed to delete message. Do I have permissions?");
-                }
-            }
-            catch (Exception)
-            {
-                return BadRequest("Failed to get message, did you pass an invalid ID?");
-            }
+            var message = await Context.Channel.GetMessageAsync(messageId).ConfigureAwait(false);
+            if (message == null) return BadRequest("Couldn't find the message.");
+            var success = await message.TryDeleteAsync(RequestOptionsHelper.AuditLog($"Requested by {Context.Invoker} at {DateTime.UtcNow.ToUniversalTime():F}"));
+            if (success && !silent) return Ok();
+            else if (success) return Empty();
+            else return BadRequest("Failed to delete message.");
         }
 
         [Command("Quote")]

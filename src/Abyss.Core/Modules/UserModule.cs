@@ -59,6 +59,15 @@ namespace Abyss.Modules
 
             var desc = new StringBuilder();
 
+            string FormatActivity(IActivity activity)
+            {
+                if (activity is SpotifyGame spotify)
+                {
+                    return $"Listening to {spotify.TrackTitle} by {spotify.Artists.Humanize()}";
+                }
+                return $"{activity.Type.Humanize()} {activity.Name}";
+            }
+
             desc.AppendLine($"**- Created:** {FormatOffset(member.CreatedAt)}");
             if (member.JoinedAt != null) desc.AppendLine($"**- Joined:** {FormatOffset(member.JoinedAt.Value)}");
             desc.AppendLine(
@@ -68,7 +77,7 @@ namespace Abyss.Modules
             desc.AppendLine($"**- Nickname:** {member.Nickname ?? "None"}");
             desc.AppendLine($"**- Voice Status:** {GetVoiceChannelStatus(member)}");
             if (member.Activity != null)
-                desc.AppendLine($"**- Activity:** {member.Activity.Type.Humanize()} {member.Activity.Name}");
+                desc.AppendLine($"**- Activity:** {FormatActivity(member.Activity)}");
             desc.AppendLine($"**- Status:** {member.Status.Humanize()}");
 
             embed.Description = desc.ToString();

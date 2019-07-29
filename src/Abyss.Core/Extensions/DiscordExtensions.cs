@@ -3,11 +3,25 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Abyss.Extensions
 {
     public static class DiscordExtensions
     {
+        public static async Task<bool> TryDeleteAsync(this IDeletable deletable, RequestOptions options = null)
+        {
+            try
+            {
+                await deletable.DeleteAsync(options).ConfigureAwait(false);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public static ITextChannel GetDefaultChannel(this SocketGuild guild)
         {
             if (guild.DefaultChannel != null) return guild.DefaultChannel;
