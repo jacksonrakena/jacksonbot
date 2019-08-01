@@ -1,3 +1,4 @@
+using Abyss.Addons;
 using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Services;
@@ -63,6 +64,7 @@ namespace Abyss.Web.Server
             serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<ResponseCacheService>();
+            serviceCollection.AddSingleton<AddonService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

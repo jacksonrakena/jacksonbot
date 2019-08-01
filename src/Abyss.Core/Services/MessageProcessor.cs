@@ -33,6 +33,8 @@ namespace Abyss.Services
         // Services
         private readonly IServiceProvider _services;
 
+        private readonly ICommandService _commandService;
+
         private readonly ICommandExecutor _commandExecutor;
 
         private readonly ILogger<MessageProcessor> _logger;
@@ -44,6 +46,7 @@ namespace Abyss.Services
             _client = client;
             _services = services;
             _config = config;
+            _commandService = commandService;
             _commandExecutor = commandExecutor;
             _logger = logger;
 
@@ -54,31 +57,18 @@ namespace Abyss.Services
             commandService.AddTypeParser(_boolTypeParser, true);
             _client.MessageReceived += ProcessMessageAsync;
 
+            LoadModulesFromAssembly(Assembly.GetExecutingAssembly());
+
             var assembliesToLoad = new List<Assembly> { Assembly.GetExecutingAssembly() };
             var assemblyDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CustomAssemblies");
+        }
 
-            if (Directory.Exists(assemblyDirectory))
-            {
-                foreach (var assemblyFile in Directory.GetFiles(assemblyDirectory, "*.dll"))
-                {
-                    try
-                    {
-                        assembliesToLoad.Add(Assembly.LoadFrom(assemblyFile));
-                    }
-                    catch (BadImageFormatException)
-                    {
-                        _logger.LogError($"Failed to load assembly \"{assemblyFile}\". Is it compiled correctly?");
-                    }
-                }
-            }
+        public void LoadModulesFromAssembly(Assembly assembly)
+        {
+            var rootModulesLoaded = _commandService.AddModules(assembly);
 
-            foreach (var assembly in assembliesToLoad)
-            {
-                var rootModulesLoaded = commandService.AddModules(assembly);
-
-                _logger.LogInformation(
-                    $"{rootModulesLoaded.Count} modules loaded, {rootModulesLoaded.Sum(a => a.Commands.Count)} commands loaded, from assembly {assembly.GetName().Name}");
-            }
+            _logger.LogInformation(
+                $"{rootModulesLoaded.Count} modules loaded, {rootModulesLoaded.Sum(a => a.Commands.Count)} commands loaded, from assembly {assembly.GetName().Name}");
         }
 
         public async Task ProcessMessageAsync(SocketMessage incomingMessage)

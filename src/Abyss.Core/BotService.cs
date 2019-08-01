@@ -11,6 +11,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Reflection;
+using System.IO;
+using Abyss.Addons;
 
 namespace Abyss
 {
@@ -23,11 +26,17 @@ namespace Abyss
         private readonly AbyssConfig _config;
         private readonly DiscordSocketClient _discordClient;
 
+        private readonly Type _addonType = typeof(IAddon);
+
         private readonly ILogger<BotService> _logger;
         private readonly IServiceProvider _serviceProvider;
 
+        private readonly AddonService _addonService;
+
+        private readonly IMessageProcessor _messageProcessor;
+
         public BotService(
-            IServiceProvider services, ILoggerFactory logFac, AbyssConfig config, DiscordSocketClient socketClient)
+            IServiceProvider services, ILoggerFactory logFac, AbyssConfig config, DiscordSocketClient socketClient, IMessageProcessor messageProcessor, AddonService addonService)
         {
             _logger = logFac.CreateLogger<BotService>();
             _discordClient = socketClient;
@@ -37,6 +46,8 @@ namespace Abyss
             _discordClient.Ready += DiscordClientOnReady;
             _discordClient.JoinedGuild += DiscordClientOnJoinedGuild;
             _discordClient.LeftGuild += DiscordClient_LeftGuild;
+            _messageProcessor = messageProcessor;
+            _addonService = addonService;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -51,6 +62,33 @@ namespace Abyss
 
             _serviceProvider.InitializeService<IMessageProcessor>(); // start MessageProcessor
             _serviceProvider.InitializeService<ResponseCacheService>();
+
+            var assemblyDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CustomAssemblies");
+
+            if (Directory.Exists(assemblyDirectory))
+            {
+                foreach (var assemblyFile in Directory.GetFiles(assemblyDirectory, "*.dll"))
+                {
+                    try
+                    {
+                        var assembly = Assembly.LoadFrom(assemblyFile);
+                        _messageProcessor.LoadModulesFromAssembly(assembly);
+                        await TryLoadAddonsFromAssemblyAsync(assembly).ConfigureAwait(false);
+                    }
+                    catch (BadImageFormatException)
+                    {
+                        _logger.LogError($"Failed to load assembly \"{assemblyFile}\". Is it compiled correctly?");
+                    }
+                }
+            }
+        }
+
+        private async Task TryLoadAddonsFromAssemblyAsync(Assembly assembly)
+        {
+            foreach (var addonType in assembly.GetExportedTypes().Where(_addonType.IsAssignableFrom))
+            {
+                await _addonService.AddAddonAsync(addonType);
+            }
         }
 
         private async Task DiscordClient_LeftGuild(SocketGuild arg)

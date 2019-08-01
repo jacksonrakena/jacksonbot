@@ -1,4 +1,5 @@
-﻿using Abyss.Entities;
+﻿using Abyss.Addons;
+using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Services;
 using AbyssalSpotify;
@@ -74,6 +75,7 @@ namespace Abyss.Console
             serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<ResponseCacheService>();
+            serviceCollection.AddSingleton<AddonService>();
 
             return serviceCollection.BuildServiceProvider();
         }

@@ -1,4 +1,5 @@
 using Discord.WebSocket;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Abyss.Services
@@ -8,5 +9,7 @@ namespace Abyss.Services
         Task ProcessMessageAsync(SocketMessage incomingMessage);
 
         Task<bool> HasPrefixAsync(SocketUserMessage message, ref int argPos);
+
+        void LoadModulesFromAssembly(Assembly assembly);
     }
 }
