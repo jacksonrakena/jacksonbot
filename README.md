@@ -1,11 +1,12 @@
 [![Discord](https://img.shields.io/discord/598437365891203072.svg?style=plastic)](https://discord.gg/RsRps9M)
-# Abyss
+# Abyss Bot Platform
 
-**A** fully modular, expandable, open-source **Discord bot,** written in C# using .NET Core and Discord.Net.  
-You can add the public instance [here.](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)  
+A **fully modular, expandable, open-source (for life)** Discord bot and platform, written in C# using .NET Core and Discord.Net.  
+You can add the public instance, running on the default addon set, [here.](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)  
 You can join the support server [here.](https://discord.gg/RsRps9M)
   
 ### Features
+- Complete modularity including custom event hooks, custom commands (using the existing command system), and full expandability, through .NET's powerful assembly loading system   
 - Spotify track and album lookup (can also read from the current song you're listening to), powered by [AbyssalSpotify](http://github.com/abyssal512/AbyssalSpotify)  
 ![Spotify features](https://jessica.is-pretty.cool/2Xtz3D8.png)
 - Resizing (bicubic) of emojis and custom images, both animated and not-animated  
@@ -17,11 +18,10 @@ You can join the support server [here.](https://discord.gg/RsRps9M)
 - C a t commands  
 ![Meow](https://jessica.is-pretty.cool/A5r2nws.png)
 - General purpose command set
-- Support for custom command assemblies (`CustomAssemblies` folder)
 
   
 ### Requirements
-- .NET Core 2.2 SDK for building (or Runtime for a pre-compiled version)
+- .NET Core 3.0 Preview 7 SDK for building (or Runtime for a pre-compiled version)
 - A Discord bot application with registered user and token
 - `Abyss.json` configuration file set out as below
 
@@ -42,8 +42,8 @@ Here's an example Abyss configuration file, taken from my main public instance.
     "Connections": {
       "Discord": {
         "Token": "Discord bot user token",
-    "SupportServer": "An invite to the bot's home base. Optional.",
-    "SupportServerId": "The ID of your support server. Optional."
+        "SupportServer": "An invite to the bot's home base. Optional.",
+        "SupportServerId": "The ID of your support server. Optional."
       },
       "Spotify": {
         "ClientId": "Spotify client ID",
