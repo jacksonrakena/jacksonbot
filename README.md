@@ -7,16 +7,15 @@ You can join the support server [here.](https://discord.gg/RsRps9M)
   
 ### Features
 - Spotify track and album lookup (can also read from the current song you're listening to), powered by [AbyssalSpotify](http://github.com/abyssal512/AbyssalSpotify)  
-![Spotify features](https://i.imgur.com/cBasjS8.png)
-- Spoilers which privately message the spoiler content to consenting users
+![Spotify features](https://jessica.is-pretty.cool/2Xtz3D8.png)
 - Resizing (bicubic) of emojis and custom images, both animated and not-animated  
-![Bigmoji](https://i.imgur.com/p7zQLTn.png)
+![Bigmoji](https://jessica.is-pretty.cool/6GxxvCX.png)
 - Live C# script evaluation  
-![Script eval](https://i.imgur.com/dsGkgVb.png)
-- Dice rolling with custom expression support (e.g. `!roll d20+d48+d10`)  
-![Dice roll](https://i.imgur.com/y65yPlU.png)
+![Script eval](https://jessica.is-pretty.cool/yqDJqbU.png)
+- Dice rolling with custom expression support (e.g. `a.roll d20+d48+d10`)  
+![Dice roll](https://jessica.is-pretty.cool/5j9rGtr.png)
 - C a t commands  
-![Meow](https://i.imgur.com/iE7MtMQ.png)
+![Meow](https://jessica.is-pretty.cool/A5r2nws.png)
 - General purpose command set
 - Support for custom command assemblies (`CustomAssemblies` folder)
 
