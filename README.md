@@ -59,7 +59,7 @@ Here's an example Abyss configuration file, taken from my main public instance.
 
 ```
 This produces a result that looks like this:   
-![Abyss: Watching you](https://i.imgur.com/TkX7Eat.png)  
+![Abyss: Watching you](https://jessica.is-pretty.cool/AQx2195.png)  
 The bot will rotate through each Activity provided under the Startup.Activity property every minute. Available Activity types are Playing, Streaming, Listening, and Watching. (These match to the [enum ActivityType](https://docs.stillu.cc/api/Discord.ActivityType.html) in Discord.Net)  
   
 ### Modularity
