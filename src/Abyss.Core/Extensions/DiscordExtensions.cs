@@ -9,6 +9,19 @@ namespace Abyss.Extensions
 {
     public static class DiscordExtensions
     {
+        public static async Task<bool> TrySendMessageAsync(this IMessageChannel messageChannel, string message = null, bool isTts = false, Embed embed = null, RequestOptions options = null)
+        {
+            try
+            {
+                await messageChannel.SendMessageAsync(message, isTts, embed, options);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public static async Task<bool> TryDeleteAsync(this IDeletable deletable, RequestOptions options = null)
         {
             try

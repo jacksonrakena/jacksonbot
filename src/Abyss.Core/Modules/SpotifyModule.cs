@@ -2,7 +2,6 @@ using Abyss.Attributes;
 using Abyss.Entities;
 using Abyss.Helpers;
 using Abyss.Results;
-using Abyss.Services;
 using AbyssalSpotify;
 using Discord;
 using Discord.WebSocket;

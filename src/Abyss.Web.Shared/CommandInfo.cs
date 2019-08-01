@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Abyss.Web.Shared
+﻿namespace Abyss.Web.Shared
 {
     public class CommandInfo
     {

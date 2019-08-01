@@ -2,9 +2,7 @@
 using Abyss.Helpers;
 using Abyss.Web.Shared;
 using Discord.WebSocket;
-using Humanizer;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

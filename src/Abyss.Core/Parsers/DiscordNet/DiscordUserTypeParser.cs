@@ -22,7 +22,7 @@ namespace Abyss.Parsers.DiscordNet
         public override ValueTask<TypeParserResult<SocketGuildUser>> ParseAsync(Parameter parameter, string value, CommandContext context,
             IServiceProvider provider)
         {
-            var AbyssContext = context.Cast<AbyssCommandContext>();
+            var AbyssContext = context.Cast<AbyssRequestContext>();
             var channel = AbyssContext.Channel;
             var results = new Dictionary<ulong, UserParseResolveResult>();
             var channelUsers = AbyssContext.Guild.Users;

@@ -20,12 +20,12 @@ namespace Abyss.Checks.Parameter
                    $"Provided argument, {argument.GetType().Name}, is not a {nameof(SocketUser)}!");
             }
 
-            return user.Id == context.Cast<AbyssCommandContext>().Bot.Id
-                ? new CheckResult("Must not be me!")
+            return user.Id == context.Cast<AbyssRequestContext>().Bot.Id
+                ? new CheckResult("The provided user can't be me.")
                 : CheckResult.Successful;
         }
 
-        public string Description => "This user must not be me.";
+        public string Description => "The provided user can't be me.";
 
         public MustNotBeBotAttribute() : base(CheckResources.UserTypes)
         {

@@ -70,7 +70,7 @@ namespace Abyss.Services
             return info.Type.Name;
         }
 
-        public async Task<Embed> CreateCommandEmbedAsync(Command command, AbyssCommandContext context)
+        public async Task<Embed> CreateCommandEmbedAsync(Command command, AbyssRequestContext context)
         {
             var prefix = context.GetPrefix();
 
@@ -133,7 +133,7 @@ namespace Abyss.Services
             return embed.Build();
         }
 
-        private static async Task<string> FormatCheck(CheckAttribute cba, AbyssCommandContext context)
+        private static async Task<string> FormatCheck(CheckAttribute cba, AbyssRequestContext context)
         {
             var message = GetCheckFriendlyMessage(cba);
             return $"- {((await cba.CheckAsync(context, context.Services).ConfigureAwait(false)).IsSuccessful ? BotService.AbyssYesEmoji : BotService.AbyssNoEmoji)} {message}";

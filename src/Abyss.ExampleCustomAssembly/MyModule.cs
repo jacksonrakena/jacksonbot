@@ -1,6 +1,5 @@
 ﻿using Abyss.Results;
 using Qmmands;
-using System;
 using System.Threading.Tasks;
 
 namespace Abyss.ExampleCustomAssembly

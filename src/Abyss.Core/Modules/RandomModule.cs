@@ -1,6 +1,5 @@
 ﻿using Abyss.Attributes;
 using Abyss.Entities;
-using Abyss.Extensions;
 using Abyss.Results;
 using Abyssal.Common;
 using Discord.WebSocket;

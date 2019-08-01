@@ -4,7 +4,6 @@ using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Helpers;
 using Abyss.Results;
-using Abyss.Services;
 using Discord;
 using Qmmands;
 using System;

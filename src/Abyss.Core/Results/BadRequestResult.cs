@@ -19,7 +19,7 @@ namespace Abyss.Results
 
         public override bool IsSuccessful => false;
 
-        public override async Task<ResultCompletionData> ExecuteResultAsync(AbyssCommandContext context)
+        public override async Task<ResultCompletionData> ExecuteResultAsync(AbyssRequestContext context)
         {
             var message = await context.Channel.SendMessageAsync(null, false, new EmbedBuilder()
                 .WithTitle("You've been telling me lies, hun.")
@@ -31,7 +31,7 @@ namespace Abyss.Results
             return new ResultCompletionData(message);
         }
 
-        public override async Task<ResultCompletionData> UpdateResultAsync(AbyssUpdateContext context)
+        public override async Task<ResultCompletionData> UpdateResultAsync(AbyssRequestUpdateContext context)
         {
             await context.Response.DeleteAsync().ConfigureAwait(false);
             return await ExecuteResultAsync(context.Request).ConfigureAwait(false);

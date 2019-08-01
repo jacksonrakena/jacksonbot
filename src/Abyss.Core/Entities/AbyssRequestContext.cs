@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Abyss.Entities
 {
-    public class AbyssCommandContext : CommandContext
+    public class AbyssRequestContext : CommandContext
     {
-        public AbyssCommandContext(SocketUserMessage message, IServiceProvider services)
+        public AbyssRequestContext(SocketUserMessage message, IServiceProvider services)
         {
             Message = message;
             Channel = (SocketTextChannel) message.Channel;
@@ -20,7 +20,6 @@ namespace Abyss.Entities
             Bot = Client.CurrentUser;
             Invoker = (SocketGuildUser) message.Author;
             BotUser = Guild.GetUser(Bot.Id);
-            InvokerIsOwner = Invoker.Id == Client.GetApplicationInfoAsync().GetAwaiter().GetResult().Owner.Id;
         }
 
         public SocketGuildUser Invoker { get; }
@@ -31,7 +30,7 @@ namespace Abyss.Entities
         public SocketUserMessage Message { get; }
         public SocketTextChannel Channel { get; }
         public SocketGuild Guild { get; }
-        public bool InvokerIsOwner { get; }
+        public bool InvokerIsOwner => Invoker.Id == Client.GetApplicationInfoAsync().GetAwaiter().GetResult().Owner.Id;
 
         public string FormatString()
         {
@@ -47,7 +46,7 @@ namespace Abyss.Entities
         public Task<RestUserMessage> ReplyAsync(string content = null, EmbedBuilder embed = null,
             RequestOptions options = null)
         {
-            if (!BotUser.GetPermissions(Channel).SendMessages) return null;
+            if (!BotUser.GetPermissions(Channel).SendMessages) return Task.FromResult((RestUserMessage) null);
             return Channel.SendMessageAsync(content, false, embed?.Build(), options);
         }
     }

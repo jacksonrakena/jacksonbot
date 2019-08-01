@@ -11,7 +11,6 @@ using Microsoft.Extensions.Logging;
 using Qmmands;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,8 +67,7 @@ namespace Abyss.Console
 
             // Other services
             serviceCollection.AddSingleton<HelpService>();
-            serviceCollection.AddSingleton<IMessageProcessor, MessageProcessor>();
-            serviceCollection.AddSingleton<ICommandExecutor, CommandExecutor>();
+            serviceCollection.AddSingleton<MessageReceiver>();
             serviceCollection.AddSingleton<ScriptingService>();
             serviceCollection.AddSingleton(SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret));
             serviceCollection.AddTransient<Random>();
@@ -124,7 +122,7 @@ namespace Abyss.Console
                            $"Cooldown bucket type is incorrect. Expected {typeof(CooldownType)}, received {t.GetType().Name}.");
                     }
 
-                    var discordContext = ctx.Cast<AbyssCommandContext>();
+                    var discordContext = ctx.Cast<AbyssRequestContext>();
 
                     if (discordContext.InvokerIsOwner)
                         return null; // Owners have no cooldown

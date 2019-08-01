@@ -6,9 +6,9 @@ namespace Abyss.Results
 {
     public abstract class ActionResult : CommandResult
     {
-        public abstract Task<ResultCompletionData> ExecuteResultAsync(AbyssCommandContext context);
+        public abstract Task<ResultCompletionData> ExecuteResultAsync(AbyssRequestContext context);
 
-        public abstract Task<ResultCompletionData> UpdateResultAsync(AbyssUpdateContext context);
+        public abstract Task<ResultCompletionData> UpdateResultAsync(AbyssRequestUpdateContext context);
 
         public static implicit operator Task<ActionResult>(ActionResult res)
         {

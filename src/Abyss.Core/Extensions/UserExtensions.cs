@@ -54,8 +54,14 @@ namespace Abyss.Extensions
 
         public static string Format(this SocketUser su)
         {
-            if (!(su is SocketGuildUser sgu)) return $"{su.Username}#{su.Discriminator}";
-            return sgu.Nickname != null ? $"{sgu.Nickname} ({sgu.Username}#{sgu.Discriminator})" : $"{sgu.Username}#{sgu.Discriminator}";
+            if (!(su is SocketGuildUser sgu) || sgu.Nickname == null) return $"{su.Username}#{su.Discriminator} ({su.Id})";
+            return $"{sgu.Nickname} ({sgu.Username}#{sgu.Discriminator}, {su.Id})";
+        }
+
+        public static string FormatWithId(this SocketUser su)
+        {
+            if (!(su is SocketGuildUser sgu) || sgu.Nickname == null) return $"{su.Username}#{su.Discriminator} ({su.Id})";
+            return $"{sgu.Nickname} ({sgu.Username}#{sgu.Discriminator}, {su.Id})";
         }
     }
 }

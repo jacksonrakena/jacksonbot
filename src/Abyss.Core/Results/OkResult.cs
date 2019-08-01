@@ -29,7 +29,7 @@ namespace Abyss.Results
         private EmbedBuilder Embed { get; }
         private FileAttachment[] Attachments { get; }
 
-        public override async Task<ResultCompletionData> ExecuteResultAsync(AbyssCommandContext context)
+        public override async Task<ResultCompletionData> ExecuteResultAsync(AbyssRequestContext context)
         {
             if (!context.BotUser.GetPermissions(context.Channel).SendMessages) return new ResultCompletionData();
             if (Attachments.Length > 0 && !context.BotUser.GetPermissions(context.Channel).AttachFiles) return new ResultCompletionData();
@@ -57,7 +57,7 @@ namespace Abyss.Results
             return new ResultCompletionData(messages.ToArray());
         }
 
-        public override async Task<ResultCompletionData> UpdateResultAsync(AbyssUpdateContext context)
+        public override async Task<ResultCompletionData> UpdateResultAsync(AbyssRequestUpdateContext context)
         {
             await context.Response.DeleteAsync().ConfigureAwait(false);
             return await ExecuteResultAsync(context.Request).ConfigureAwait(false);

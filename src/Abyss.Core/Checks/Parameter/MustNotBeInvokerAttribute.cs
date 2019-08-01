@@ -20,12 +20,12 @@ namespace Abyss.Checks.Parameter
                    $"Provided argument, {argument.GetType().Name}, is not a {nameof(SocketUser)}!");
             }
 
-            return user.Id == context.Cast<AbyssCommandContext>().Invoker.Id
-                ? new CheckResult("Must not be the person who initiated the command!")
+            return user.Id == context.Cast<AbyssRequestContext>().Invoker.Id
+                ? new CheckResult("The provided user can't be you.")
                 : CheckResult.Successful;
         }
 
-        public string Description => "This user must not be you, or the invoker of the command.";
+        public string Description => "The provided user can't be you.";
 
         public MustNotBeInvokerAttribute() : base(CheckResources.UserTypes)
         {

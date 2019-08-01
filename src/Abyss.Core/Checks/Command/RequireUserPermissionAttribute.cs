@@ -28,7 +28,7 @@ namespace Abyss.Checks.Command
 
         public override ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
         {
-            var AbyssContext = context.Cast<AbyssCommandContext>();
+            var AbyssContext = context.Cast<AbyssRequestContext>();
             if (AbyssContext.InvokerIsOwner) return CheckResult.Successful;
 
             var cperms = AbyssContext.Invoker.GetPermissions(AbyssContext.Channel);
@@ -37,7 +37,7 @@ namespace Abyss.Checks.Command
                 if (!AbyssContext.Invoker.GuildPermissions.Has(gperm) && !AbyssContext.Invoker.GuildPermissions.Has(GuildPermission.Administrator))
                 {
                     return new CheckResult(
-                       $"This command requires **you** to have the \"{gperm.Humanize()}\" server-level permission, but you do not have it!");
+                       $"You need the \"{gperm.Humanize()}\" server-level permission.");
                 }
             }
 
@@ -46,7 +46,7 @@ namespace Abyss.Checks.Command
                 if (!cperms.Has(cperm) && !AbyssContext.Invoker.GuildPermissions.Has(GuildPermission.Administrator))
                 {
                     return new CheckResult(
-                        $"This command requires **you** to have the \"{cperm.Humanize()}\" channel-level permission, but you do not have it!");
+                        $"You need the \"{cperm.Humanize()}\" channel-level permission.");
                 }
             }
 
@@ -54,7 +54,7 @@ namespace Abyss.Checks.Command
         }
 
         public string Description => ChannelPermissions.Count > 0
-            ? $"Requires **you** to have channel-level permissions: {string.Join(", ", ChannelPermissions.Select(a => a.Humanize()))}."
-            : $"Requires **you** to have server-level permissions: {string.Join(", ", GuildPermissions.Select(a => a.Humanize()))}.";
+            ? $"You need these channel-level permissions: {string.Join(", ", ChannelPermissions.Select(a => a.Humanize()))}."
+            : $"You need these server-level permissions: {string.Join(", ", GuildPermissions.Select(a => a.Humanize()))}.";
     }
 }

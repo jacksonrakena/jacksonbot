@@ -7,16 +7,12 @@ using Discord;
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json.Serialization;
 using Qmmands;
 using System;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 
@@ -57,8 +53,7 @@ namespace Abyss.Web.Server
 
             // Other services
             serviceCollection.AddSingleton<HelpService>();
-            serviceCollection.AddSingleton<IMessageProcessor, MessageProcessor>();
-            serviceCollection.AddSingleton<ICommandExecutor, CommandExecutor>();
+            serviceCollection.AddSingleton<MessageReceiver>();
             serviceCollection.AddSingleton<ScriptingService>();
             serviceCollection.AddSingleton(SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret));
             serviceCollection.AddTransient<Random>();
@@ -142,7 +137,7 @@ namespace Abyss.Web.Server
                            $"Cooldown bucket type is incorrect. Expected {typeof(CooldownType)}, received {t.GetType().Name}.");
                     }
 
-                    var discordContext = ctx.Cast<AbyssCommandContext>();
+                    var discordContext = ctx.Cast<AbyssRequestContext>();
 
                     if (discordContext.InvokerIsOwner)
                         return null; // Owners have no cooldown

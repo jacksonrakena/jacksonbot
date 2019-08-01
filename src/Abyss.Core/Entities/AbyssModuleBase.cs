@@ -1,17 +1,13 @@
-﻿using Abyss.Attributes;
-using Abyss.Core.Results;
-using Abyss.Extensions;
+﻿using Abyss.Extensions;
 using Abyss.Results;
 using Discord;
-using Discord.Rest;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Qmmands;
 using System;
 using System.Threading.Tasks;
 
 namespace Abyss.Entities
 {
-    public abstract class AbyssModuleBase : ModuleBase<AbyssCommandContext>
+    public abstract class AbyssModuleBase : ModuleBase<AbyssRequestContext>
     {
         public Task ReplyAsync(string content = null, EmbedBuilder embed = null,
             RequestOptions options = null)

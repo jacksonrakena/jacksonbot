@@ -33,10 +33,10 @@ namespace Abyss
 
         private readonly AddonService _addonService;
 
-        private readonly IMessageProcessor _messageProcessor;
+        private readonly MessageReceiver _messageReceiver;
 
         public BotService(
-            IServiceProvider services, ILoggerFactory logFac, AbyssConfig config, DiscordSocketClient socketClient, IMessageProcessor messageProcessor, AddonService addonService)
+            IServiceProvider services, ILoggerFactory logFac, AbyssConfig config, DiscordSocketClient socketClient, MessageReceiver messageReceiver, AddonService addonService)
         {
             _logger = logFac.CreateLogger<BotService>();
             _discordClient = socketClient;
@@ -46,7 +46,7 @@ namespace Abyss
             _discordClient.Ready += DiscordClientOnReady;
             _discordClient.JoinedGuild += DiscordClientOnJoinedGuild;
             _discordClient.LeftGuild += DiscordClient_LeftGuild;
-            _messageProcessor = messageProcessor;
+            _messageReceiver = messageReceiver;
             _addonService = addonService;
         }
 
@@ -60,7 +60,7 @@ namespace Abyss
             await _discordClient.LoginAsync(TokenType.Bot, discordConfiguration.Token).ConfigureAwait(false);
             await _discordClient.StartAsync().ConfigureAwait(false);
 
-            _serviceProvider.InitializeService<IMessageProcessor>(); // start MessageProcessor
+            _serviceProvider.InitializeService<MessageReceiver>(); // start MessageProcessor
             _serviceProvider.InitializeService<ResponseCacheService>();
 
             var assemblyDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CustomAssemblies");
@@ -72,7 +72,7 @@ namespace Abyss
                     try
                     {
                         var assembly = Assembly.LoadFrom(assemblyFile);
-                        _messageProcessor.LoadModulesFromAssembly(assembly);
+                        _messageReceiver.LoadModulesFromAssembly(assembly);
                         await TryLoadAddonsFromAssemblyAsync(assembly).ConfigureAwait(false);
                     }
                     catch (BadImageFormatException)

@@ -7,12 +7,12 @@ namespace Abyss.Results
     {
         public override bool IsSuccessful => true;
 
-        public override Task<ResultCompletionData> ExecuteResultAsync(AbyssCommandContext context)
+        public override Task<ResultCompletionData> ExecuteResultAsync(AbyssRequestContext context)
         {
             return Task.FromResult(new ResultCompletionData());
         }
 
-        public override Task<ResultCompletionData> UpdateResultAsync(AbyssUpdateContext context)
+        public override Task<ResultCompletionData> UpdateResultAsync(AbyssRequestUpdateContext context)
         {
             return Task.FromResult(new ResultCompletionData());
         }
