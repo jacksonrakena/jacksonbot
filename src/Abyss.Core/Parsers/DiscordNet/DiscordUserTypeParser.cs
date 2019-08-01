@@ -1,3 +1,4 @@
+using Abyss.Core.Parsers;
 using Abyss.Entities;
 using Abyss.Extensions;
 using Discord;
@@ -17,6 +18,7 @@ namespace Abyss.Parsers.DiscordNet
         public SocketGuildUser Value { get; set; }
     }
 
+    [DiscoverableTypeParser]
     public class DiscordUserTypeParser : TypeParser<SocketGuildUser>, IAbyssTypeParser
     {
         public override ValueTask<TypeParserResult<SocketGuildUser>> ParseAsync(Parameter parameter, string value, CommandContext context,

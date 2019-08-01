@@ -1,3 +1,4 @@
+using Abyss.Core.Parsers;
 using Qmmands;
 using System;
 using System.Collections.Generic;
@@ -5,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Abyss.Parsers
 {
+    [DiscoverableTypeParser(true)]
     public class BooleanTypeParser : TypeParser<bool>, IAbyssTypeParser
     {
         private static readonly List<string> MatchingTrueValues = new List<string>

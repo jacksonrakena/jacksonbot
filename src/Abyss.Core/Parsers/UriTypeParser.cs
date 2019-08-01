@@ -1,9 +1,11 @@
-﻿using Qmmands;
+﻿using Abyss.Core.Parsers;
+using Qmmands;
 using System;
 using System.Threading.Tasks;
 
 namespace Abyss.Parsers
 {
+    [DiscoverableTypeParser]
     public class UriTypeParser : TypeParser<Uri>, IAbyssTypeParser
     {
         public override ValueTask<TypeParserResult<Uri>> ParseAsync(Parameter parameter, string value, CommandContext context,

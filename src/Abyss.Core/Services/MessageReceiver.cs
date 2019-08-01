@@ -1,10 +1,12 @@
 using Abyss.Attributes;
+using Abyss.Core.Parsers;
 using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Helpers;
 using Abyss.Parsers;
 using Abyss.Parsers.DiscordNet;
 using Abyss.Results;
+using Abyssal.Common;
 using Discord;
 using Discord.WebSocket;
 using Humanizer;
@@ -34,12 +36,24 @@ namespace Abyss.Services
             _services = services;
             _logger = logger.CreateLogger<MessageReceiver>();
 
-            // Register type parsers
-            commandService.AddTypeParser(_guildUserParser);
-            commandService.AddTypeParser(_socketRoleParser);
-            commandService.AddTypeParser(_emoteParser);
-            commandService.AddTypeParser(_uriTypeParser);
-            commandService.AddTypeParser(_boolTypeParser, true);
+            var currentAssembly = Assembly.GetExecutingAssembly();
+            var discoverableAttributeType = typeof(DiscoverableTypeParserAttribute);
+            var typeParserType = typeof(TypeParser<>);
+            var addTypeParserMethod = typeof(CommandService).GetMethod("AddTypeParser");
+
+            var loadedTypes = new List<Type>();
+
+            foreach (var type in currentAssembly.ExportedTypes)
+            {
+                if (!(type.GetCustomAttributes().FirstOrDefault(a => a is DiscoverableTypeParserAttribute) is DiscoverableTypeParserAttribute attr)) continue;
+
+                var parser = type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                var method = addTypeParserMethod.MakeGenericMethod(type.BaseType.GenericTypeArguments[0]);
+                method.Invoke(_commandService, new object[] { parser, attr.ReplacingPrimitive });
+                loadedTypes.Add(type);
+            }
+
+            _logger.LogInformation($"Loaded discoverable parsers: {string.Join(", ", loadedTypes.Select(c => c.Name))}");
             
             // Hook events
             _commandService.CommandExecuted += HandleCommandExecutedAsync;
@@ -47,7 +61,7 @@ namespace Abyss.Services
             _discordClient.MessageReceived += ReceiveMessageAsync;
 
             // Load commands from internal assembly
-            LoadModulesFromAssembly(Assembly.GetExecutingAssembly());
+            LoadModulesFromAssembly(currentAssembly);
         }
 
         public static readonly Emoji UnknownCommandReaction = new Emoji("❓");

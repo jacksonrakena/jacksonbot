@@ -1,3 +1,4 @@
+using Abyss.Core.Parsers;
 using Abyss.Entities;
 using Abyss.Extensions;
 using Discord;
@@ -20,6 +21,7 @@ namespace Abyss.Parsers.DiscordNet
         public SocketRole Value { get; set; }
     }
 
+    [DiscoverableTypeParser]
     public class DiscordRoleTypeParser : TypeParser<SocketRole>, IAbyssTypeParser
     {
         public override ValueTask<TypeParserResult<SocketRole>> ParseAsync(Parameter parameter, string value, CommandContext context,

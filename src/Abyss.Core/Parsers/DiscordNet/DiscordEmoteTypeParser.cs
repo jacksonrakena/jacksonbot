@@ -1,3 +1,4 @@
+using Abyss.Core.Parsers;
 using Discord;
 using Qmmands;
 using System;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Abyss.Parsers.DiscordNet
 {
+    [DiscoverableTypeParser]
     public class DiscordEmoteTypeParser : TypeParser<IEmote>, IAbyssTypeParser
     {
         public override ValueTask<TypeParserResult<IEmote>> ParseAsync(Parameter parameter, string value, CommandContext context, IServiceProvider provider)
