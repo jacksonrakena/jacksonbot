@@ -24,7 +24,7 @@ namespace Abyss.ExampleCustomAssembly
         public Task OnRemovedAsync(IServiceProvider services)
         {
             services.GetRequiredService<ILogger<MyAddon>>().LogInformation("Removing Abyss example addon...");
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

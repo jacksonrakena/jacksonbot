@@ -58,12 +58,19 @@ namespace Abyss.Addons
             await addon.OnAddedAsync(_services);
         }
 
-        public async Task RemoveAddonAsync<TAddonType>() where TAddonType : IAddon
+        public async Task RemoveAddonAsync(IAddon addon)
         {
-            var addon = _addons.FirstOrDefault(a => a is TAddonType);
             if (addon == null) return;
             await addon.OnRemovedAsync(_services);
             _addons.Remove(addon);
+        }
+
+        public async Task RemoveAllAddonsAsync()
+        {
+            foreach (var addon in _addons)
+            {
+                await RemoveAddonAsync(addon).ConfigureAwait(false);
+            }
         }
     }
 }
