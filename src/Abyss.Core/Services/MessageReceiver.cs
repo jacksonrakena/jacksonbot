@@ -77,12 +77,6 @@ namespace Abyss.Services
         private readonly DiscordSocketClient _discordClient;
         private readonly AbyssConfig _config;
 
-        private readonly DiscordEmoteTypeParser _emoteParser = new DiscordEmoteTypeParser();
-        private readonly DiscordUserTypeParser _guildUserParser = new DiscordUserTypeParser();
-        private readonly DiscordRoleTypeParser _socketRoleParser = new DiscordRoleTypeParser();
-        private readonly BooleanTypeParser _boolTypeParser = new BooleanTypeParser();
-        private readonly UriTypeParser _uriTypeParser = new UriTypeParser();
-
         public int CommandFailures { get; private set; }
         public int CommandSuccesses { get; private set; }
 
@@ -320,7 +314,6 @@ namespace Abyss.Services
         {
             var result = args.Result;
             var ctx = args.Context;
-            var services = args.Provider;
             var command = ctx.Command;
             var context = ctx.Cast<AbyssRequestContext>();
             var baseResult = result.Cast<ActionResult>();
