@@ -8,6 +8,8 @@ namespace Abyss.ExampleCustomAssembly
 {
     public class MyAddon : IAddon
     {
+        private readonly ILogger<MyAddon> _logger;
+
         public AddonDescriptor GetDescriptor()
         {
             return new AddonDescriptor
@@ -20,16 +22,21 @@ namespace Abyss.ExampleCustomAssembly
             };
         }
 
-        public Task OnAddedAsync(IServiceProvider services)
+        public Task OnAddedAsync()
         {
-            services.GetRequiredService<ILogger<MyAddon>>().LogInformation("Adding Abyss example addon...");
+            _logger.LogInformation("Adding Abyss example addon...");
             return Task.CompletedTask;
         }
 
-        public Task OnRemovedAsync(IServiceProvider services)
+        public Task OnRemovedAsync()
         {
-            services.GetRequiredService<ILogger<MyAddon>>().LogInformation("Removing Abyss example addon...");
+            _logger.LogInformation("Removing Abyss example addon...");
             return Task.CompletedTask;
+        }
+
+        public MyAddon(ILogger<MyAddon> logger)
+        {
+            _logger = logger;
         }
     }
 }

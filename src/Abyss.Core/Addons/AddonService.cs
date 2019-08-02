@@ -58,13 +58,13 @@ namespace Abyss.Addons
 
             var addon = (IAddon) constructor.Invoke(parametersToExecute.ToArray());
             _addons.Add(addon);
-            await addon.OnAddedAsync(_services);
+            await addon.OnAddedAsync();
         }
 
         public async Task RemoveAddonAsync(IAddon addon)
         {
             if (addon == null) return;
-            await addon.OnRemovedAsync(_services);
+            await addon.OnRemovedAsync();
             _addons.Remove(addon);
         }
 
