@@ -19,6 +19,11 @@ namespace Abyss.Addons
             _services = services;
         }
 
+        public Task AddAddonAsync<T>() where T : IAddon
+        {
+            return AddAddonAsync(typeof(T));
+        }
+
         public async Task AddAddonAsync(Type type)
         {
             if (_addons.Any(a => a.GetType() == type)) throw new InvalidOperationException("An addon of type \"" + type.Name + "\" has already been registered.");
