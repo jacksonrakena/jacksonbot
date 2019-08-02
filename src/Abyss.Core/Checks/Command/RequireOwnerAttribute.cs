@@ -11,10 +11,10 @@ namespace Abyss.Checks.Command
     {
         public override async ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
         {
-            var AbyssContext = context.Cast<AbyssRequestContext>();
+            var abyssContext = context.Cast<AbyssRequestContext>();
 
-            var owner = (await AbyssContext.Client.GetApplicationInfoAsync().ConfigureAwait(false)).Owner;
-            var invokerId = AbyssContext.Invoker.Id;
+            var owner = (await abyssContext.Client.GetApplicationInfoAsync().ConfigureAwait(false)).Owner;
+            var invokerId = abyssContext.Invoker.Id;
 
             return owner.Id == invokerId
                 ? CheckResult.Successful
