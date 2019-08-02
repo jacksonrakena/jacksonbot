@@ -23,8 +23,8 @@ namespace Abyss.Addons
         Task OnRemovedAsync(IServiceProvider services);
 
         /// <summary>
-        ///     This method returns the friendly name of this addon.
+        ///     This method returns information regarding the addon, like name, description, and author.
         /// </summary>
-        string GetFriendlyName();
+        AddonDescriptor GetDescriptor();
     }
 }
