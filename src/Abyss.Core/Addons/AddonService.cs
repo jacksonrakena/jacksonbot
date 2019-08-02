@@ -68,12 +68,9 @@ namespace Abyss.Addons
             _addons.Remove(addon);
         }
 
-        public async Task RemoveAllAddonsAsync()
+        public Task RemoveAllAddonsAsync()
         {
-            foreach (var addon in _addons)
-            {
-                await RemoveAddonAsync(addon).ConfigureAwait(false);
-            }
+            return Task.WhenAll(_addons.Select(RemoveAddonAsync));
         }
     }
 }
