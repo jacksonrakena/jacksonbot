@@ -11,8 +11,6 @@ namespace Abyss.Addons
     {
         private readonly IServiceProvider _services;
 
-        private readonly Type _addonType = typeof(IAddon);
-
         private readonly List<IAddon> _addons = new List<IAddon>();
 
         public AddonService(IServiceProvider services)
