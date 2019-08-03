@@ -3,7 +3,7 @@ using System;
 namespace Abyss.Attributes
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-    public class ThumbnailAttribute : Attribute
+    public sealed class ThumbnailAttribute : Attribute
     {
         public ThumbnailAttribute(string imageUrl)
         {

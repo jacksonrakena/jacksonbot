@@ -3,7 +3,7 @@ using System;
 namespace Abyss.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class IsRootAttribute : Attribute
+    public sealed class IsRootAttribute : Attribute
     {
     }
 }
