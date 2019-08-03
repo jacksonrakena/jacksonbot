@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Abyssal.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -26,37 +27,7 @@ namespace Abyss.Addons
 
         public async Task AddAddonAsync(Type type)
         {
-            if (_addons.Any(a => a.GetType() == type)) throw new InvalidOperationException("An addon of type \"" + type.Name + "\" has already been registered.");
-
-            if (!_addonType.IsAssignableFrom(type)) throw new InvalidOperationException("The provided type is not of the addon type, " + _addonType.Name + ".");
-
-            if (type.IsInterface || type.IsAbstract) throw new InvalidOperationException("Cannot instantiate an abstract type, or an interface type.");
-
-            var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
-            if (constructors.Length == 0) throw new InvalidOperationException($"There are no public, instance-level constructors for {type.Name}.");
-            if (constructors.Length > 1) throw new InvalidOperationException($"There are more than one public, instance-level constructors for {type.Name}.");
-            var constructor = constructors[0];
-
-            var parametersToExecute = new List<object>();
-            var serviceProviderType = typeof(IServiceProvider);
-            foreach (var parameter in constructor.GetParameters())
-            {
-                if (parameter.ParameterType.IsAssignableFrom(serviceProviderType))
-                {
-                    parametersToExecute.Add(_services);
-                    continue;
-                }
-
-                var service = _services.GetService(parameter.ParameterType);
-                if (service == null)
-                {
-                    throw new InvalidOperationException($"Could not find a service for {parameter.ParameterType.Name}, while building an object of type {type.Name}.");
-                }
-
-                parametersToExecute.Add(service);
-            }
-
-            var addon = (IAddon) constructor.Invoke(parametersToExecute.ToArray());
+            var addon = (IAddon) _services.Create(type);
             _addons.Add(addon);
             await addon.OnAddedAsync();
         }
