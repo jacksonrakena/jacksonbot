@@ -137,6 +137,7 @@ namespace Abyss.Services
                         _failedCommandsTracking.LogWarning(LoggingEventIds.ChecksFailed, $"{cfr.FailedChecks.Count} checks ({string.Join(", ", cfr.FailedChecks.Select(c => c.Check.GetType().Name))}) " +
                             $"failed for command {cfr.Command.Name} (message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
 
+
                         if (cfr.FailedChecks.Count == 1 && cfr.FailedChecks.FirstOrDefault().Check.GetType()
                                 .CustomAttributes.Any(a => a.AttributeType == typeof(SilentCheckAttribute))) break;
 
@@ -148,7 +149,7 @@ namespace Abyss.Services
                                     .Select(a => $"- {a.Result.Reason}")))
                             .WithColor(Color.Red)
                             .WithFooter(
-                                $"{(cfr.Command == null ? $"Module {cfr.Module.Name}" : $"Command {cfr.Command.Name} in module {cfr.Module.Name}")}, " +
+                                $"{(cfr.Command == null ? $"Module {cfr.Module.Name}" : $"Command {cfr.Command.Name} in module {cfr.Command.Module.Name}")}, " +
                                 $"executed by {context.Invoker.Format()}")
                             .WithCurrentTimestamp()
                             .Build()).ConfigureAwait(false);
