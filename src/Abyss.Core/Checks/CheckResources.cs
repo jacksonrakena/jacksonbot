@@ -2,7 +2,7 @@ using Discord.WebSocket;
 using System;
 using System.Linq;
 
-namespace Abyss.Checks
+namespace Abyss.Core.Checks
 {
     public static class CheckResources
     {

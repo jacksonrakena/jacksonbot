@@ -1,6 +1,6 @@
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Services;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
+using Abyss.Core.Services;
 using Discord;
 using Abyssal.Common;
 using Discord.WebSocket;
@@ -13,11 +13,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
-using Abyss.Addons;
+using Abyss.Core.Addons;
 using Microsoft.Extensions.DependencyInjection;
-using Abyss.Core.Services;
 
-namespace Abyss
+namespace Abyss.Core
 {
     public class BotService: IHostedService
     {

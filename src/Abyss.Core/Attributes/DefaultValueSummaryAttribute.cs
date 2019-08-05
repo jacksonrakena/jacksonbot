@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Abyss.Attributes
+namespace Abyss.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Parameter)]
     public class DefaultValueDescriptionAttribute : Attribute

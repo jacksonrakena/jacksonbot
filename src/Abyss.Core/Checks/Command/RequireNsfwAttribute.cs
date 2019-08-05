@@ -1,10 +1,10 @@
-using Abyss.Entities;
-using Abyss.Extensions;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
 using Qmmands;
 using System;
 using System.Threading.Tasks;
 
-namespace Abyss.Checks.Command
+namespace Abyss.Core.Checks.Command
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class RequireNsfwAttribute : CheckAttribute, IAbyssCheck

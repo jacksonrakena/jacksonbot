@@ -1,7 +1,7 @@
-﻿using Abyss.Attributes;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Results;
+﻿using Abyss.Core.Attributes;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
+using Abyss.Core.Results;
 using Discord;
 using Discord.WebSocket;
 using Humanizer;
@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Modules
+namespace Abyss.Core.Modules
 {
     [Name("User Information")]
     [Description("Commands that help you interact with other Discord users.")]

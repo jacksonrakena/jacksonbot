@@ -1,11 +1,11 @@
-using Abyss.Entities;
-using Abyss.Extensions;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
 using Discord.WebSocket;
 using Qmmands;
 using System;
 using System.Threading.Tasks;
 
-namespace Abyss.Checks.Parameter
+namespace Abyss.Core.Checks.Parameter
 {
     [AttributeUsage(AttributeTargets.Parameter)]
     public class MustNotBeInvokerAttribute : ParameterCheckAttribute, IAbyssCheck

@@ -6,7 +6,7 @@ using Qmmands;
 using System;
 using System.Threading.Tasks;
 
-namespace Abyss.Entities
+namespace Abyss.Core.Entities
 {
     public class AbyssRequestContext : CommandContext
     {

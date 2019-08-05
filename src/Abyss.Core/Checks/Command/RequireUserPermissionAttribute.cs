@@ -1,5 +1,5 @@
-using Abyss.Entities;
-using Abyss.Extensions;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
 using Discord;
 using Humanizer;
 using Qmmands;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Checks.Command
+namespace Abyss.Core.Checks.Command
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class RequireUserPermissionAttribute : CheckAttribute, IAbyssCheck

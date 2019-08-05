@@ -1,10 +1,10 @@
-﻿using Abyss.Results;
+﻿using Abyss.Core.Results;
 using Discord.WebSocket;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Threading.Tasks;
 
-namespace Abyss.Services
+namespace Abyss.Core.Services
 {
     public class ResponseCacheService
     {

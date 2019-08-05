@@ -1,4 +1,4 @@
-namespace Abyss.Parsers
+namespace Abyss.Core.Parsers
 {
     public interface IAbyssTypeParser
     {

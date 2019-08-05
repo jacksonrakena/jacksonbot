@@ -1,4 +1,4 @@
-using Abyss.Entities;
+using Abyss.Core.Entities;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.CodeAnalysis;
@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Services
+namespace Abyss.Core.Services
 {
     public sealed class ScriptingService
     {

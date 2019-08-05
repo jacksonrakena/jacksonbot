@@ -1,7 +1,7 @@
-using Abyss.Entities;
+using Abyss.Core.Entities;
 using Discord;
 
-namespace Abyss.Extensions
+namespace Abyss.Core.Extensions
 {
     public static class EmbedExtensions
     {

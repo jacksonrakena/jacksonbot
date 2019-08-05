@@ -1,16 +1,16 @@
-using Abyss.Attributes;
-using Abyss.Checks.Command;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Helpers;
-using Abyss.Results;
+using Abyss.Core.Attributes;
+using Abyss.Core.Checks.Command;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
+using Abyss.Core.Helpers;
+using Abyss.Core.Results;
 using Discord;
 using Qmmands;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Modules
+namespace Abyss.Core.Modules
 {
     [Name("Utility")]
     [Description("Commands that provide useful utilities.")]

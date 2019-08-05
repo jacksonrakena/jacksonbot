@@ -1,5 +1,5 @@
-﻿using Abyss.Entities;
-using Abyss.Extensions;
+﻿using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
 using Discord;
 using Discord.WebSocket;
 using System;

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Abyss.Entities
+namespace Abyss.Core.Entities
 {
     public sealed class ScriptingResult
     {

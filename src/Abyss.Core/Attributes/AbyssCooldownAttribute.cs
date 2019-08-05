@@ -1,8 +1,8 @@
-using Abyss.Entities;
+using Abyss.Core.Entities;
 using Qmmands;
 using System;
 
-namespace Abyss.Attributes
+namespace Abyss.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class AbyssCooldownAttribute : CooldownAttribute

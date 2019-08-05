@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Abyss.Parsers
+namespace Abyss.Core.Parsers
 {
     [DiscoverableTypeParser(true)]
     public class BooleanTypeParser : TypeParser<bool>, IAbyssTypeParser

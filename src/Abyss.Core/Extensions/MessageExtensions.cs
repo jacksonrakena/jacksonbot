@@ -1,7 +1,7 @@
 using Discord;
 using System;
 
-namespace Abyss.Extensions
+namespace Abyss.Core.Extensions
 {
     public static class MessageExtensions
     {

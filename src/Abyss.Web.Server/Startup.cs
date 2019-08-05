@@ -1,8 +1,7 @@
-using Abyss.Addons;
+using Abyss.Core.Addons;
 using Abyss.Core.Services;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Services;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
 using AbyssalSpotify;
 using Discord;
 using Discord.WebSocket;
@@ -16,6 +15,7 @@ using Qmmands;
 using System;
 using System.Linq;
 using System.Net.Http;
+using Abyss.Core;
 
 namespace Abyss.Web.Server
 {

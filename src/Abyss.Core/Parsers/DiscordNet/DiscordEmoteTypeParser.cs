@@ -1,11 +1,10 @@
-using Abyss.Core.Parsers;
 using Discord;
 using Qmmands;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Abyss.Parsers.DiscordNet
+namespace Abyss.Core.Parsers.DiscordNet
 {
     [DiscoverableTypeParser]
     public class DiscordEmoteTypeParser : TypeParser<IEmote>, IAbyssTypeParser

@@ -1,4 +1,4 @@
-namespace Abyss.Entities
+namespace Abyss.Core.Entities
 {
     public enum ScriptStage
     {

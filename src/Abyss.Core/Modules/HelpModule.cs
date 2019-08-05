@@ -1,8 +1,8 @@
-using Abyss.Attributes;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Results;
-using Abyss.Services;
+using Abyss.Core.Attributes;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
+using Abyss.Core.Results;
+using Abyss.Core.Services;
 using Discord;
 using Qmmands;
 using System;
@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Modules
+namespace Abyss.Core.Modules
 {
     [Name("Help")]
     [Description("Contains helpful commands to help you discover your way around my commands and modules.")]

@@ -1,6 +1,6 @@
 using System;
 
-namespace Abyss.Attributes
+namespace Abyss.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class ExampleAttribute : Attribute

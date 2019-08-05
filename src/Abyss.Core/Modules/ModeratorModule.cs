@@ -1,9 +1,9 @@
-﻿using Abyss.Attributes;
-using Abyss.Checks.Command;
-using Abyss.Checks.Parameter;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Results;
+﻿using Abyss.Core.Attributes;
+using Abyss.Core.Checks.Command;
+using Abyss.Core.Checks.Parameter;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
+using Abyss.Core.Results;
 using Discord;
 using Discord.Net;
 using Discord.WebSocket;
@@ -12,7 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Abyss.Modules
+namespace Abyss.Core.Modules
 {
     [Name("Moderation")]
     [Description("Commands that help you moderate and protect your server.")]

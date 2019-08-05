@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace Abyss.Addons
+namespace Abyss.Core.Addons
 {
     /// <summary>
     ///     Represents an Abyss addon that can be added or removed at runtime.

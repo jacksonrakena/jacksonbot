@@ -1,8 +1,7 @@
-﻿using Abyss.Addons;
+﻿using Abyss.Core.Addons;
 using Abyss.Core.Services;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Services;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
 using AbyssalSpotify;
 using Discord;
 using Discord.WebSocket;
@@ -13,10 +12,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Configuration;
 using Qmmands;
 using System;
-using System.Diagnostics;
 using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
+using Abyss.Core;
 
 namespace Abyss.Console
 {

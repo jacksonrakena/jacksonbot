@@ -1,7 +1,7 @@
-using Abyss.Attributes;
-using Abyss.Entities;
-using Abyss.Helpers;
-using Abyss.Results;
+using Abyss.Core.Attributes;
+using Abyss.Core.Entities;
+using Abyss.Core.Helpers;
+using Abyss.Core.Results;
 using AbyssalSpotify;
 using Discord;
 using Discord.WebSocket;
@@ -11,7 +11,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Modules
+namespace Abyss.Core.Modules
 {
     [Name("Spotify")]
     [Description(

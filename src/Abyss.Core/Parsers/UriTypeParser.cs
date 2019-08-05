@@ -3,7 +3,7 @@ using Qmmands;
 using System;
 using System.Threading.Tasks;
 
-namespace Abyss.Parsers
+namespace Abyss.Core.Parsers
 {
     [DiscoverableTypeParser]
     public class UriTypeParser : TypeParser<Uri>, IAbyssTypeParser

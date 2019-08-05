@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Abyss.Helpers
+namespace Abyss.Core.Helpers
 {
     public static class LoggingEventIds
     {

@@ -1,4 +1,4 @@
-namespace Abyss.Checks
+namespace Abyss.Core.Checks
 {
     public interface IAbyssCheck
     {
