@@ -8,15 +8,10 @@ You can join the support server [here.](https://discord.gg/RsRps9M)
 ### Features
 - Complete modularity including custom event hooks, custom commands (using the existing command system), and full expandability, through .NET's powerful assembly loading system   
 - Spotify track and album lookup (can also read from the current song you're listening to), powered by [AbyssalSpotify](http://github.com/abyssal512/AbyssalSpotify)  
-![Spotify features](https://jessica.is-pretty.cool/2Xtz3D8.png)
 - Resizing (bicubic) of emojis and custom images, both animated and not-animated  
-![Bigmoji](https://jessica.is-pretty.cool/6GxxvCX.png)
 - Live C# script evaluation  
-![Script eval](https://jessica.is-pretty.cool/yqDJqbU.png)
 - Dice rolling with custom expression support (e.g. `a.roll d20+d48+d10`)  
-![Dice roll](https://jessica.is-pretty.cool/5j9rGtr.png)
 - C a t commands  
-![Meow](https://jessica.is-pretty.cool/A5r2nws.png)
 - General purpose command set
 
   
@@ -67,22 +62,28 @@ The bot will rotate through each Activity provided under the Startup.Activity pr
 Abyss has fully modular runtime assembly support. Here's a quick guide on doing so:
 1) Clone this repository to your computer.
 2) Create a new .NET Core 3.0 Library (**not .NET Standard 2.0**) and add your local copy of `Abyss.Core` as a dependency.
-3) Create your modules and commands as you like, using `AbyssModuleBase`. Feel free to look at Abyss' included commands for help.
+3) Create your modules and commands as you like, using `AbyssModuleBase`. Feel free to look at Abyss' included commands for help. To extend your addon to modify functionality of the platform, create a class that extends `Absys.Core.Addons.IAddon` and implement it's methods.
 4) Build `Abyss.Console` (or whatever frontend you are using) in your preferred configuration.
-5) Build your assembly, and copy the assembly file (something like `MyCommandAssembly.dll`) into the `CustomAssemblies` folder. This will be in `src/Abyss.Console/bin/<your_release_configuration>/netcoreapp3.0/CustomAssemblies`.
-6) Start Abyss with `dotnet run --project src/Abyss.Console/Abyss.Console.csproj -c <Your_Configuration>`, and check that the `MessageProcessor` loaded your assembly. It should look like this:
-![Assembly loading](https://i.imgur.com/PZqeY7s.png)
-7) Enjoy your custom modules! They should be available in the help command.
-8) If there are any issues with this process, feel free to hop in the [support server](https://discord.gg/RsRps9M) for help.
+5) Build your assembly, and copy the assembly file (something like `MyCommandAssembly.dll`) into your `Addons` folder. If you don't provide an absolute or relative directory path as the first argument to the application, it will default to the directory of the built DLL, plus `Addons`. If you do, it will use the `Addons` directory in that path.
+6) Abyss will automatically discover addons and modules and register them. This will be logged in the console.
+7) If there are any issues, join the [support server for help.](https://discord.gg/RsRps9M)
+
 
 ### Contributing
-The project is broken down into the following projects: 
-- `Abyss.Core` (library) The core of Abyss. This project contains the robust, fast, and safe architecture that sits at the heart of Abyss operation. It also contains all of the default commands that come with every instance.
-- `Abyss.ExampleCustomAssembly` (library) This is an example project, which shows how you can make your own projects to expand and add new functionality and commands to Abyss.
-- `Abyss.Console` This is an executable which wraps `Abyss.Core`, and pipes output to the console. This executable does not support web functionality.
+The project is broken down into the following projects:   
+**Platform core**  
+- `Abyss.Core` (library) The core of Abyss. This project contains the robust, fast, and safe architecture that sits at the heart of Abyss operation. It also contains all of the default commands that come with every instance.  
+
+**Console host**  
+- `Abyss.Console` This is an executable which wraps `Abyss.Core`, and pipes output to the console. This executable does not support web functionality.  
+
+**Web host**  
 - `Abyss.Web.Shared` This library contains data classes and code that is shared between `Abyss.Web.Client` and `Abyss.Web.Server`.
 - `Abyss.Web.Client` This contains all the Blazor clientside code for using the Abyss administration panel.
-- `Abyss.Web.Server` An alternative to `Abyss.Console`, this executable starts up the Abyss administration panel on `[Any IP]:2003` and serves clients the Blazor code in `Abyss.Web.Client`. This web server contains many useful administration tools.
+- `Abyss.Web.Server` An alternative to `Abyss.Console`, this executable starts up the Abyss administration panel on `[Any IP]:2003` and serves clients the Blazor code in `Abyss.Web.Client`. This web server contains many useful administration tools.   
+
+**Addons**  
+- `Abyss.ExampleCustomAssembly` (library) This is an example project, which shows how you can make your own projects to expand and add new functionality and commands to Abyss.
 
 ### Copyright
 Copyright (c) 2019 abyssal512 under the MIT License, available at [the LICENSE file.](LICENSE.md)
