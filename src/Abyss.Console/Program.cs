@@ -1,4 +1,5 @@
 ﻿using Abyss.Addons;
+using Abyss.Core.Services;
 using Abyss.Entities;
 using Abyss.Extensions;
 using Abyss.Services;
@@ -19,16 +20,16 @@ namespace Abyss.Console
 {
     public static class Program
     {
-        private static void Main()
+        private static void Main(string[] args)
         {
-            MainAsync().GetAwaiter().GetResult();
+            MainAsync(args).GetAwaiter().GetResult();
         }
 
-        private static async Task MainAsync()
+        private static async Task MainAsync(string[] args)
         {
             System.Console.WriteLine("Abyss console host application starting at " + DateTime.Now.ToString("F"));
 
-            var services = ConfigureServices();
+            var services = ConfigureServices(args);
 
             var logger = services.GetRequiredService<ILoggerFactory>().CreateLogger("Abyss Console Host");
             logger.LogInformation($"Took {(DateTime.Now - Process.GetCurrentProcess().StartTime).TotalSeconds} seconds to initialize services. Console host starting.");
@@ -40,7 +41,7 @@ namespace Abyss.Console
             await Task.Delay(-1).ConfigureAwait(false);
         }
 
-        private static IServiceProvider ConfigureServices()
+        private static IServiceProvider ConfigureServices(string[] args)
         {
             var serviceCollection = new ServiceCollection();
 
@@ -48,9 +49,20 @@ namespace Abyss.Console
             serviceCollection.AddSingleton<BotService>();
 
             // Configuration
-            var (configurationRoot, configurationModel) = ConfigureOptions();
-            serviceCollection.AddSingleton(configurationModel);
-            serviceCollection.AddSingleton(configurationRoot);
+            serviceCollection.AddSingleton(serviceProvider =>
+            {
+                var configurationBuilder = new ConfigurationBuilder()
+                .SetBasePath(serviceProvider.GetRequiredService<DataService>().GetConfigurationBasePath())
+                .AddJsonFile("Abyss.json", false, true);
+                return configurationBuilder.Build();
+            });
+            serviceCollection.AddSingleton(serviceProvider =>
+            {
+                var configurationModel = new AbyssConfig();
+                serviceProvider.GetRequiredService<IConfigurationRoot>().Bind(configurationModel);
+
+                return configurationModel;
+            });
 
             // Logging
             serviceCollection.AddLogging(builder => builder.AddAbyss());
@@ -69,26 +81,18 @@ namespace Abyss.Console
             serviceCollection.AddSingleton<HelpService>();
             serviceCollection.AddSingleton<MessageReceiver>();
             serviceCollection.AddSingleton<ScriptingService>();
-            serviceCollection.AddSingleton(SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret));
+            serviceCollection.AddSingleton(provider =>
+            {
+                var configurationModel = provider.GetRequiredService<AbyssConfig>();
+                return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret);
+            });
             serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<ResponseCacheService>();
             serviceCollection.AddSingleton<AddonService>();
+            serviceCollection.AddSingleton(new DataService(args.Length > 0 ? args[0] : AppDomain.CurrentDomain.BaseDirectory));
 
             return serviceCollection.BuildServiceProvider();
-        }
-
-        private static (IConfigurationRoot configurationRoot, AbyssConfig configurationModel) ConfigureOptions()
-        {
-            var configurationBuilder = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("Abyss.json", false, true);
-            var builtConfiguration = configurationBuilder.Build();
-
-            var configurationModel = new AbyssConfig();
-            builtConfiguration.Bind(configurationModel);
-
-            return (builtConfiguration, configurationModel);
         }
 
         private static (DiscordSocketClient discordClient, DiscordSocketConfig discordConfig) ConfigureDiscord()

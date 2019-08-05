@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
 using Abyss.Addons;
+using Microsoft.Extensions.DependencyInjection;
+using Abyss.Core.Services;
 
 namespace Abyss
 {
@@ -63,7 +65,7 @@ namespace Abyss
             _serviceProvider.InitializeService<MessageReceiver>(); // start MessageProcessor
             _serviceProvider.InitializeService<ResponseCacheService>();
 
-            var assemblyDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CustomAssemblies");
+            var assemblyDirectory = _serviceProvider.GetRequiredService<DataService>().GetCustomAssemblyBasePath();
 
             if (Directory.Exists(assemblyDirectory))
             {
