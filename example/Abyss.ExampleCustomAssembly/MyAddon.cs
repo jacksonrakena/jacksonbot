@@ -18,7 +18,7 @@ namespace Abyss.ExampleCustomAssembly
                 Version = new Version(1, 0, 1),
                 Description = "An example addon that shows how to use Abyss' addon platform.",
                 FriendlyName = "Example Abyss Addon",
-                Url = "https://github.com/abyssal512/Abyss/tree/master/src/Abyss.ExampleCustomAssembly"
+                Url = "https://github.com/abyssal512/Abyss/tree/master/example/Abyss.ExampleCustomAssembly"
             };
         }
 
