@@ -6,7 +6,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Core", "src\Abyss.Cor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Console", "src\Abyss.Console\Abyss.Console.csproj", "{D0708892-5559-4F19-9479-5FAC0EF0BD6E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.ExampleCustomAssembly", "src\Abyss.ExampleCustomAssembly\Abyss.ExampleCustomAssembly.csproj", "{F5EE8A7A-EDC6-4513-852F-F9309539C10E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.ExampleCustomAssembly", "example\Abyss.ExampleCustomAssembly\Abyss.ExampleCustomAssembly.csproj", "{F5EE8A7A-EDC6-4513-852F-F9309539C10E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Web.Server", "src\Abyss.Web.Server\Abyss.Web.Server.csproj", "{B7938177-6B05-49FC-816C-A9B0E544F622}"
 EndProject
