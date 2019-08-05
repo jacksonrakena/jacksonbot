@@ -30,6 +30,7 @@ namespace Abyss.Console
                 .UseContentRoot(args.Length > 0 ? args[0] : AppDomain.CurrentDomain.BaseDirectory)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
+                    config.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath);
                     config.AddJsonFile("abyss.json", false, true);
                     config.AddJsonFile($"abyss.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true);
                 })
