@@ -35,6 +35,5 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Assets" />
-      <Folder Include="Parsers\DiscordNet" />
     </ItemGroup>
 </Project>

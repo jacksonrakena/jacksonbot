@@ -1,5 +1,6 @@
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
+using Abyss.Core.Parsers.DiscordNet;
 using Discord.WebSocket;
 using Qmmands;
 using System;
@@ -14,13 +15,9 @@ namespace Abyss.Core.Checks.Parameter
             IServiceProvider provider)
         {
             if (argument == null) return CheckResult.Successful;
-            if (!(argument is SocketUser user))
-            {
-                throw new InvalidOperationException(
-                   $"Provided argument, {argument.GetType().Name}, is not a {nameof(SocketUser)}!");
-            }
+            var id = argument is SocketUser user ? user.Id : argument is DiscordUserReference dur ? dur.Id : throw new InvalidOperationException($"{nameof(MustNotBeBotAttribute)} is being executed on an invalid object type. Expected a SocketUser or DiscordUserReference variant, got {argument.GetType().Name}."); ;
 
-            return user.Id == context.Cast<AbyssRequestContext>().Bot.Id
+            return id == context.Cast<AbyssRequestContext>().Bot.Id
                 ? new CheckResult("The provided user can't be me.")
                 : CheckResult.Successful;
         }
