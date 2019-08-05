@@ -1,8 +1,8 @@
-using Abyss.Attributes;
-using Abyss.Checks;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Parsers;
+using Abyss.Core.Attributes;
+using Abyss.Core.Checks;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
+using Abyss.Core.Parsers;
 using Discord;
 using Humanizer;
 using Qmmands;
@@ -14,7 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Services
+namespace Abyss.Core.Services
 {
     public sealed class HelpService
     {

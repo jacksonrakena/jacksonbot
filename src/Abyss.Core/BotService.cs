@@ -1,6 +1,6 @@
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Services;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
+using Abyss.Core.Services;
 using Discord;
 using Abyssal.Common;
 using Discord.WebSocket;
@@ -13,9 +13,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
-using Abyss.Addons;
+using Abyss.Core.Addons;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Abyss
+namespace Abyss.Core
 {
     public class BotService: IHostedService
     {
@@ -32,11 +33,15 @@ namespace Abyss
         private readonly IServiceProvider _serviceProvider;
 
         private readonly AddonService _addonService;
+        private readonly NotificationsService _notifications;
 
         private readonly MessageReceiver _messageReceiver;
 
+        private bool _hasBeenReady = false;
+
         public BotService(
-            IServiceProvider services, ILoggerFactory logFac, AbyssConfig config, DiscordSocketClient socketClient, MessageReceiver messageReceiver, AddonService addonService)
+            IServiceProvider services, ILoggerFactory logFac, AbyssConfig config, DiscordSocketClient socketClient, MessageReceiver messageReceiver, AddonService addonService,
+            NotificationsService notifications)
         {
             _logger = logFac.CreateLogger<BotService>();
             _discordClient = socketClient;
@@ -48,6 +53,7 @@ namespace Abyss
             _discordClient.LeftGuild += DiscordClient_LeftGuild;
             _messageReceiver = messageReceiver;
             _addonService = addonService;
+            _notifications = notifications;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -63,7 +69,7 @@ namespace Abyss
             _serviceProvider.InitializeService<MessageReceiver>(); // start MessageProcessor
             _serviceProvider.InitializeService<ResponseCacheService>();
 
-            var assemblyDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CustomAssemblies");
+            var assemblyDirectory = _serviceProvider.GetRequiredService<DataService>().GetCustomAssemblyBasePath();
 
             if (Directory.Exists(assemblyDirectory))
             {
@@ -91,18 +97,9 @@ namespace Abyss
             }
         }
 
-        private async Task DiscordClient_LeftGuild(SocketGuild arg)
+        private Task DiscordClient_LeftGuild(SocketGuild arg)
         {
-            var updateChannel = _config.Notifications.ServerMembershipChange == null ? null : _discordClient.GetChannel(_config.Notifications.ServerMembershipChange.Value);
-            if (updateChannel is SocketTextChannel stc)
-            {
-                await stc.SendMessageAsync(null, false, new EmbedBuilder()
-                        .WithAuthor(_discordClient.CurrentUser.ToEmbedAuthorBuilder())
-                        .WithDescription($"Left {arg.Name} at {DateTime.Now:F} ({arg.MemberCount} members, owner: {arg.Owner})")
-                        .WithColor(DefaultEmbedColour)
-                        .WithCurrentTimestamp()
-                        .Build());
-            }
+            return _notifications.NotifyServerMembershipChangeAsync(arg, false);
         }
 
         private async Task DiscordClientOnJoinedGuild(SocketGuild arg)
@@ -111,32 +108,15 @@ namespace Abyss
 
             if (channel != null)
             {
-                // send message, ignoring failures
-                try
-                {
-                    await channel.SendMessageAsync(string.Empty, false, new EmbedBuilder()
-                        .WithDescription("WHO DARE AWAKEN ME FROM MY SLEEP?! Oh, it's you. Good to see you. What do you want?")
-                        .WithFooter("Guild joined: " + arg.Name, _discordClient.CurrentUser.GetEffectiveAvatarUrl())
-                        .WithCurrentTimestamp()
-                        .WithColor(DefaultEmbedColour)
-                        .Build()).ConfigureAwait(false);
-                }
-                catch
-                {
-                    // ignored
-                }
+                await channel.TrySendMessageAsync(string.Empty, false, new EmbedBuilder()
+                    .WithDescription("WHO DARE AWAKEN ME FROM MY SLEEP?! Oh, it's you. Good to see you. What do you want?")
+                    .WithFooter("Guild joined: " + arg.Name, _discordClient.CurrentUser.GetEffectiveAvatarUrl())
+                    .WithCurrentTimestamp()
+                    .WithColor(DefaultEmbedColour)
+                    .Build()).ConfigureAwait(false);
             }
 
-            var updateChannel = _config.Notifications.ServerMembershipChange == null ? null : _discordClient.GetChannel(_config.Notifications.ServerMembershipChange.Value);
-            if (updateChannel is SocketTextChannel stc)
-            {
-                await stc.SendMessageAsync(null, false, new EmbedBuilder()
-                        .WithAuthor(_discordClient.CurrentUser.ToEmbedAuthorBuilder())
-                        .WithDescription($"Joined {arg.Name} at {DateTime.Now:F} ({arg.MemberCount} members, owner: {arg.Owner})")
-                        .WithColor(DefaultEmbedColour)
-                        .WithCurrentTimestamp()
-                        .Build());
-            }
+            await _notifications.NotifyServerMembershipChangeAsync(arg, true).ConfigureAwait(false);
         }
 
         private async Task DiscordClientOnReady()
@@ -145,7 +125,14 @@ namespace Abyss
             var nowTime = DateTime.Now;
             var difference = nowTime - startTime;
 
-            _logger.LogInformation($"Ready. Logged in as {_discordClient.CurrentUser} with command prefix \"{_config.CommandPrefix}\" - Time from startup to ready: {difference.Seconds}.{difference.Milliseconds} seconds.");
+            if (!_hasBeenReady)
+            {
+                await _notifications.NotifyReadyAsync(true);
+                _hasBeenReady = true;
+            }
+            else await _notifications.NotifyReadyAsync().ConfigureAwait(false);
+
+            _logger.LogInformation($"Ready. Logged in as {_discordClient.CurrentUser} with command prefix \"{_config.CommandPrefix}\". {(!_hasBeenReady ? $"Time from startup to ready: {difference.Seconds}.{difference.Milliseconds} seconds." : "")}");
 
             var startupConfiguration = _config.Startup;
             var activities = startupConfiguration.Activity.Select(a =>
@@ -159,21 +146,6 @@ namespace Abyss
 
                 return (activityType, a.Message);
             }).ToList();
-
-            var notifications = _config.Notifications;
-            if (notifications.Ready != null)
-            {
-                var ch = _discordClient.GetChannel(notifications.Ready.Value);
-                if (ch != null && ch is SocketTextChannel stc)
-                {
-                    await stc.SendMessageAsync(null, false, new EmbedBuilder()
-                        .WithAuthor(_discordClient.CurrentUser.ToEmbedAuthorBuilder())
-                        .WithDescription("Ready at " + DateTime.Now.ToString("F"))
-                        .WithColor(DefaultEmbedColour)
-                        .WithCurrentTimestamp()
-                        .Build());
-                }
-            }
 
             _ = Task.Run(async () =>
             {

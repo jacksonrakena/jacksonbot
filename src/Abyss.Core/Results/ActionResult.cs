@@ -1,8 +1,8 @@
-using Abyss.Entities;
+using Abyss.Core.Entities;
 using Qmmands;
 using System.Threading.Tasks;
 
-namespace Abyss.Results
+namespace Abyss.Core.Results
 {
     public abstract class ActionResult : CommandResult
     {

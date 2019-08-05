@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Abyss.Addons;
+using Abyss.Core.Addons;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

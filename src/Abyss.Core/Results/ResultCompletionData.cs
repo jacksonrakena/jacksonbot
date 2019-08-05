@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Abyss.Results
+namespace Abyss.Core.Results
 {
     public class ResultCompletionData
     {

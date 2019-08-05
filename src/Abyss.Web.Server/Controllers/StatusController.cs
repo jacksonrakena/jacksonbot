@@ -1,4 +1,4 @@
-﻿using Abyss.Entities;
+﻿using Abyss.Core.Entities;
 using Abyss.Web.Shared;
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Mvc;

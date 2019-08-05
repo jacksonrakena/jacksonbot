@@ -5,4 +5,4 @@ COPY . ./
 RUN dotnet restore
 RUN dotnet build src/Abyss.Console/Abyss.Console.csproj -c $Configuration -o /app
 
-ENTRYPOINT ["dotnet", "/app/Abyss.Console.dll"]
+ENTRYPOINT ["dotnet", "/app/Abyss.Console.dll", "/data"]

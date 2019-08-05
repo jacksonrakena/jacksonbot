@@ -1,11 +1,11 @@
-using Abyss.Entities;
+using Abyss.Core.Entities;
 using Discord;
 using Discord.Rest;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Results
+namespace Abyss.Core.Results
 {
     public class OkResult : ActionResult
     {

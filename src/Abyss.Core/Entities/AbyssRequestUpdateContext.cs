@@ -1,6 +1,6 @@
 using Discord;
 
-namespace Abyss.Entities
+namespace Abyss.Core.Entities
 {
     public class AbyssRequestUpdateContext
     {

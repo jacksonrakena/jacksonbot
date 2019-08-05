@@ -1,59 +1,56 @@
-﻿using Abyss.Addons;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Services;
+﻿using Abyss.Core.Addons;
+using Abyss.Core.Services;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
 using AbyssalSpotify;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Configuration;
 using Qmmands;
 using System;
-using System.Diagnostics;
 using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
+using Abyss.Core;
 
 namespace Abyss.Console
 {
     public static class Program
     {
-        private static void Main()
-        {
-            MainAsync().GetAwaiter().GetResult();
-        }
-
-        private static async Task MainAsync()
+        private static void Main(string[] args)
         {
             System.Console.WriteLine("Abyss console host application starting at " + DateTime.Now.ToString("F"));
 
-            var services = ConfigureServices();
+            var host = new HostBuilder()
+                .UseContentRoot(args.Length > 0 ? args[0] : AppDomain.CurrentDomain.BaseDirectory)
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath);
+                    config.AddJsonFile("abyss.json", false, true);
+                    config.AddJsonFile($"abyss.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true);
+                })
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    logging.AddConsole();
+                })
+                .ConfigureServices(ConfigureServices)
+                .UseConsoleLifetime()
+                .RunConsoleAsync();
 
-            var logger = services.GetRequiredService<ILoggerFactory>().CreateLogger("Abyss Console Host");
-            logger.LogInformation($"Took {(DateTime.Now - Process.GetCurrentProcess().StartTime).TotalSeconds} seconds to initialize services. Console host starting.");
-
-            var bot = services.GetRequiredService<BotService>();
-
-            await bot.StartAsync(CancellationToken.None).ConfigureAwait(false);
-
-            await Task.Delay(-1).ConfigureAwait(false);
+            host.GetAwaiter().GetResult();
         }
 
-        private static IServiceProvider ConfigureServices()
+        private static void ConfigureServices(HostBuilderContext context, IServiceCollection serviceCollection)
         {
-            var serviceCollection = new ServiceCollection();
-
-            // Bot core
-            serviceCollection.AddSingleton<BotService>();
+            serviceCollection.AddHostedService<BotService>();
 
             // Configuration
-            var (configurationRoot, configurationModel) = ConfigureOptions();
-            serviceCollection.AddSingleton(configurationModel);
-            serviceCollection.AddSingleton(configurationRoot);
-
-            // Logging
-            serviceCollection.AddLogging(builder => builder.AddAbyss());
+            var abyssConfig = new AbyssConfig();
+            context.Configuration.Bind(abyssConfig);
+            serviceCollection.AddSingleton(abyssConfig);
 
             // Discord
             var (discordClient, discordConfig) = ConfigureDiscord();
@@ -69,26 +66,18 @@ namespace Abyss.Console
             serviceCollection.AddSingleton<HelpService>();
             serviceCollection.AddSingleton<MessageReceiver>();
             serviceCollection.AddSingleton<ScriptingService>();
-            serviceCollection.AddSingleton(SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret));
+            serviceCollection.AddSingleton(provider =>
+            {
+                var configurationModel = provider.GetRequiredService<AbyssConfig>();
+                return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret);
+            });
             serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<ResponseCacheService>();
             serviceCollection.AddSingleton<AddonService>();
+            serviceCollection.AddSingleton<NotificationsService>();
+            serviceCollection.AddSingleton(new DataService(context.HostingEnvironment.ContentRootPath));
 
-            return serviceCollection.BuildServiceProvider();
-        }
-
-        private static (IConfigurationRoot configurationRoot, AbyssConfig configurationModel) ConfigureOptions()
-        {
-            var configurationBuilder = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("Abyss.json", false, true);
-            var builtConfiguration = configurationBuilder.Build();
-
-            var configurationModel = new AbyssConfig();
-            builtConfiguration.Bind(configurationModel);
-
-            return (builtConfiguration, configurationModel);
         }
 
         private static (DiscordSocketClient discordClient, DiscordSocketConfig discordConfig) ConfigureDiscord()

@@ -1,10 +1,10 @@
-using Abyss.Entities;
-using Abyss.Extensions;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
 using Discord;
 using System;
 using System.Threading.Tasks;
 
-namespace Abyss.Results
+namespace Abyss.Core.Results
 {
     public class BadRequestResult : ActionResult
     {

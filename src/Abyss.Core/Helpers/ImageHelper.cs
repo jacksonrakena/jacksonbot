@@ -1,10 +1,10 @@
-﻿using Abyss.Helpers;
+﻿using Abyss.Core.Services;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System.IO;
 
-namespace Abyss.Helper
+namespace Abyss.Core.Helpers
 {
     public static class ImageHelper
     {
@@ -12,7 +12,7 @@ namespace Abyss.Helper
         {
             var outStream = new MemoryStream();
             using (var image =
-                SixLabors.ImageSharp.Image.Load(AssetHelper.GetAssetLocation("transparent_200x200.png")))
+                SixLabors.ImageSharp.Image.Load(DataService.GetAssetLocation("transparent_200x200.png")))
             {
                 image.Mutate(a => a.BackgroundColor(colour));
                 image.Save(outStream, new PngEncoder());

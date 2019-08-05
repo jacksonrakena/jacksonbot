@@ -19,26 +19,21 @@
         <PackageReference Include="AbyssalSpotify" Version="1.0.0-20190803.2" />
         <PackageReference Include="Discord.Net.WebSocket" Version="2.2.0-dev-20190629.2" />
         <PackageReference Include="Humanizer.Core" Version="2.6.2" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="2.10.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.2.0" />
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
-        <PackageReference Include="NLog" Version="4.5.11" />
         <PackageReference Include="Qmmands" Version="3.0.0-nightly-00196" />
         <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
     </ItemGroup>
     <ItemGroup>
-        <None Update="nlog.config">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
         <None Update="Assets\transparent_200x200.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Assets" />
-      <Folder Include="Parsers\DiscordNet" />
     </ItemGroup>
 </Project>

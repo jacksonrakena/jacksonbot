@@ -1,6 +1,6 @@
 using Discord;
 
-namespace Abyss.Helpers
+namespace Abyss.Core.Helpers
 {
     public static class RequestOptionsHelper
     {

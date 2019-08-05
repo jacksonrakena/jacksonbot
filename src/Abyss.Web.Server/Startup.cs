@@ -1,7 +1,7 @@
-using Abyss.Addons;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Services;
+using Abyss.Core.Addons;
+using Abyss.Core.Services;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
 using AbyssalSpotify;
 using Discord;
 using Discord.WebSocket;
@@ -15,6 +15,7 @@ using Qmmands;
 using System;
 using System.Linq;
 using System.Net.Http;
+using Abyss.Core;
 
 namespace Abyss.Web.Server
 {
@@ -37,9 +38,20 @@ namespace Abyss.Web.Server
             services.AddHostedService<BotService>();
 
             // Configuration
-            var (configurationRoot, configurationModel) = ConfigureOptions();
-            serviceCollection.AddSingleton(configurationModel);
-            serviceCollection.AddSingleton(configurationRoot);
+            serviceCollection.AddSingleton(serviceProvider =>
+            {
+                var configurationBuilder = new ConfigurationBuilder()
+                .SetBasePath(serviceProvider.GetRequiredService<DataService>().GetConfigurationBasePath())
+                .AddJsonFile("Abyss.json", false, true);
+                return configurationBuilder.Build();
+            });
+            serviceCollection.AddSingleton(serviceProvider =>
+            {
+                var configurationModel = new AbyssConfig();
+                serviceProvider.GetRequiredService<IConfigurationRoot>().Bind(configurationModel);
+
+                return configurationModel;
+            });
 
             // Discord
             var (discordClient, discordConfig) = ConfigureDiscord();
@@ -55,11 +67,17 @@ namespace Abyss.Web.Server
             serviceCollection.AddSingleton<HelpService>();
             serviceCollection.AddSingleton<MessageReceiver>();
             serviceCollection.AddSingleton<ScriptingService>();
-            serviceCollection.AddSingleton(SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret));
+            serviceCollection.AddSingleton(provider =>
+            {
+                var configurationModel = provider.GetRequiredService<AbyssConfig>();
+                return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret);
+            });
             serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<ResponseCacheService>();
             serviceCollection.AddSingleton<AddonService>();
+            serviceCollection.AddSingleton<NotificationsService>();
+            serviceCollection.AddSingleton(new DataService(AppDomain.CurrentDomain.BaseDirectory));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -91,19 +109,6 @@ namespace Abyss.Web.Server
                 }); 
 #endif
             });
-        }
-
-        private static (IConfigurationRoot configurationRoot, AbyssConfig configurationModel) ConfigureOptions()
-        {
-            var configurationBuilder = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("Abyss.json", false, true);
-            var builtConfiguration = configurationBuilder.Build();
-
-            var configurationModel = new AbyssConfig();
-            builtConfiguration.Bind(configurationModel);
-
-            return (builtConfiguration, configurationModel);
         }
 
         private static (DiscordSocketClient discordClient, DiscordSocketConfig discordConfig) ConfigureDiscord()

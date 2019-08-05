@@ -1,4 +1,4 @@
-namespace Abyss.Extensions
+namespace Abyss.Core.Extensions
 {
     public static class ObjectExtensions
     {

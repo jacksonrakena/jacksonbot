@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Extensions
+namespace Abyss.Core.Extensions
 {
     public static class DiscordExtensions
     {

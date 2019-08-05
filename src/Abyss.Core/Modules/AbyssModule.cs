@@ -1,8 +1,8 @@
-﻿using Abyss.Attributes;
-using Abyss.Checks.Command;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Results;
+﻿using Abyss.Core.Attributes;
+using Abyss.Core.Checks.Command;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
+using Abyss.Core.Results;
 using Discord;
 using Discord.WebSocket;
 using Humanizer;
@@ -16,7 +16,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Modules
+namespace Abyss.Core.Modules
 {
     [Name("Abyss")]
     [Description("Provides commands related to me.")]

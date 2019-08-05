@@ -1,6 +1,6 @@
-﻿using Abyss.Attributes;
-using Abyss.Entities;
-using Abyss.Results;
+﻿using Abyss.Core.Attributes;
+using Abyss.Core.Entities;
+using Abyss.Core.Results;
 using Abyssal.Common;
 using Discord.WebSocket;
 using Qmmands;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Abyss.Modules
+namespace Abyss.Core.Modules
 {
     [Name("Random")]
     [Description("Commands that involve a computerised RNG calculator.")]

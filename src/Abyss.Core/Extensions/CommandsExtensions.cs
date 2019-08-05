@@ -2,7 +2,7 @@ using Qmmands;
 using System;
 using System.Linq;
 
-namespace Abyss.Extensions
+namespace Abyss.Core.Extensions
 {
     public static class CommandsExtensions
     {

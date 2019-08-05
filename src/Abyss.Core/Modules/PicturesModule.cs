@@ -1,7 +1,7 @@
-using Abyss.Attributes;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Results;
+using Abyss.Core.Attributes;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
+using Abyss.Core.Results;
 using Discord;
 using Newtonsoft.Json.Linq;
 using Qmmands;
@@ -17,7 +17,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Abyss.Modules
+namespace Abyss.Core.Modules
 {
     [Name("Pictures")]
     [Description("Commands that let you access pictures from various websites.")]

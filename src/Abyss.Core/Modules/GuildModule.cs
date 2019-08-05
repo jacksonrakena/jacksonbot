@@ -1,9 +1,9 @@
-﻿using Abyss.Attributes;
-using Abyss.Checks.Command;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Helper;
-using Abyss.Results;
+﻿using Abyss.Core.Attributes;
+using Abyss.Core.Checks.Command;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
+using Abyss.Core.Helpers;
+using Abyss.Core.Results;
 using Discord;
 using Discord.Net;
 using Discord.WebSocket;
@@ -16,7 +16,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Abyss.Modules
+namespace Abyss.Core.Modules
 {
     [Name("Server Information")]
     [Description("Commands that help you interact with your server in useful and efficient ways.")]

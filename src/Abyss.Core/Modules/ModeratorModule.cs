@@ -1,9 +1,10 @@
-﻿using Abyss.Attributes;
-using Abyss.Checks.Command;
-using Abyss.Checks.Parameter;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Results;
+﻿using Abyss.Core.Attributes;
+using Abyss.Core.Checks.Command;
+using Abyss.Core.Checks.Parameter;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
+using Abyss.Core.Parsers.DiscordNet;
+using Abyss.Core.Results;
 using Discord;
 using Discord.Net;
 using Discord.WebSocket;
@@ -12,7 +13,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Abyss.Modules
+namespace Abyss.Core.Modules
 {
     [Name("Moderation")]
     [Description("Commands that help you moderate and protect your server.")]
@@ -25,26 +26,26 @@ namespace Abyss.Modules
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<ActionResult> BanUserAsync(
             [Name("Victim")] [Description("The user to ban.")] [MustNotBeBot] [MustNotBeInvoker]
-            SocketGuildUser target,
+            DiscordUserReference target,
             [Name("Ban Reason")] [Description("The audit log reason for the ban.")] [Remainder] [Maximum(50)]
             string reason = null)
         {
-            if (target.Hierarchy > Context.Invoker.Hierarchy)
+            var guildUser = Context.Guild.GetUser(target.Id);
+            if (guildUser != null && guildUser.Hierarchy > Context.Invoker.Hierarchy)
                 return BadRequest("That member is a higher rank than you!");
 
             try
             {
-                await target.BanAsync(7,
-                    $"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : "")}").ConfigureAwait(false);
+                await Context.Guild.AddBanAsync(target.Id, 7, $"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : "")}");
             }
             catch (HttpException e) when (e.HttpCode == HttpStatusCode.Forbidden)
             {
                 return BadRequest(
-                    $"Cannot ban '{target.Nickname ?? target.Username}' because that user is more powerful than me!");
+                    $"I don't have permission to ban them.");
             }
 
             return Ok(
-                $"Banned {target.Format()}{(reason != null ? " with reason: " + reason : "")}.");
+                $"Banned user {target.Id}{(reason != null ? " with reason: " + reason : "")}.");
         }
 
         [Command("Bans")]

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Abyss.Entities
+namespace Abyss.Core.Entities
 {
     public class AbyssConfig
     {

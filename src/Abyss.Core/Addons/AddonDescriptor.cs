@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Abyss.Addons
+namespace Abyss.Core.Addons
 {
     public class AddonDescriptor
     {

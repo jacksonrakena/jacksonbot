@@ -1,11 +1,11 @@
-using Abyss.Entities;
-using Abyss.Extensions;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
 using Qmmands;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Checks.Command
+namespace Abyss.Core.Checks.Command
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class RequireGuildAttribute : CheckAttribute, IAbyssCheck

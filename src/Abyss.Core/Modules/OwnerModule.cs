@@ -1,10 +1,10 @@
-using Abyss.Attributes;
-using Abyss.Checks.Command;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Helpers;
-using Abyss.Results;
-using Abyss.Services;
+using Abyss.Core.Attributes;
+using Abyss.Core.Checks.Command;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
+using Abyss.Core.Helpers;
+using Abyss.Core.Results;
+using Abyss.Core.Services;
 using Discord;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
@@ -16,7 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Modules
+namespace Abyss.Core.Modules
 {
     [Name("Owner")]
     [Description("Provides commands for my creator.")]

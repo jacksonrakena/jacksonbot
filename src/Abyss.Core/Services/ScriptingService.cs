@@ -1,4 +1,4 @@
-using Abyss.Entities;
+using Abyss.Core.Entities;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.CodeAnalysis;
@@ -11,16 +11,16 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Services
+namespace Abyss.Core.Services
 {
     public sealed class ScriptingService
     {
         public static readonly IReadOnlyList<string> Imports = new ReadOnlyCollection<string>(new List<string>
         {
             "System", "System.Math", "System.Linq", "Discord", "System.Diagnostics", "System.Collections.Generic",
-            "Discord.WebSocket", "Abyss", "Abyss.Entities",
+            "Discord.WebSocket", "Abyss.Core", "Abyss.Core.Entities",
             "Qmmands", "System.IO",
-            "Microsoft.Extensions.DependencyInjection", "System.Text", "Abyss.Services",
+            "Microsoft.Extensions.DependencyInjection", "System.Text", "Abyss.Core.Services",
             "System.Globalization", "Microsoft.Extensions.Options",
             "Abyss.Modules", "System.Reflection"
         });

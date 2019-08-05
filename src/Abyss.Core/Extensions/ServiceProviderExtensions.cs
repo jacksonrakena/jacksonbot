@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace Abyss.Extensions
+namespace Abyss.Core.Extensions
 {
     public static class ServiceProviderExtensions
     {

@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Abyss.Results
+namespace Abyss.Core.Results
 {
     public struct FileAttachment
     {

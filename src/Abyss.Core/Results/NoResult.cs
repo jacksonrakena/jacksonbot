@@ -1,7 +1,7 @@
-using Abyss.Entities;
+using Abyss.Core.Entities;
 using System.Threading.Tasks;
 
-namespace Abyss.Results
+namespace Abyss.Core.Results
 {
     public class EmptyResult : ActionResult
     {

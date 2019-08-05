@@ -1,6 +1,6 @@
 using Abyss.Core.Parsers;
-using Abyss.Entities;
-using Abyss.Extensions;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
 using Discord;
 using Discord.WebSocket;
 using Qmmands;
@@ -10,7 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Parsers.DiscordNet
+namespace Abyss.Core.Parsers.DiscordNet
 {
     // Source: https://github.com/RogueException/Discord.Net/blob/dev/src/Discord.Net.Commands/Readers/RoleTypeReader.cs
     // Copyright (c) 2018 Discord.Net contributors

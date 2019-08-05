@@ -1,11 +1,11 @@
-﻿using Abyss.Extensions;
-using Abyss.Results;
+﻿using Abyss.Core.Extensions;
+using Abyss.Core.Results;
 using Discord;
 using Qmmands;
 using System;
 using System.Threading.Tasks;
 
-namespace Abyss.Entities
+namespace Abyss.Core.Entities
 {
     public abstract class AbyssModuleBase : ModuleBase<AbyssRequestContext>
     {

@@ -1,12 +1,9 @@
-using Abyss.Attributes;
+using Abyss.Core.Attributes;
 using Abyss.Core.Parsers;
-using Abyss.Entities;
-using Abyss.Extensions;
-using Abyss.Helpers;
-using Abyss.Parsers;
-using Abyss.Parsers.DiscordNet;
-using Abyss.Results;
-using Abyssal.Common;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
+using Abyss.Core.Helpers;
+using Abyss.Core.Results;
 using Discord;
 using Discord.WebSocket;
 using Humanizer;
@@ -14,12 +11,11 @@ using Microsoft.Extensions.Logging;
 using Qmmands;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Abyss.Services
+namespace Abyss.Core.Services
 {
     public sealed class MessageReceiver
     {

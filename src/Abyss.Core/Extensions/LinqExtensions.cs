@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Abyss.Extensions
+namespace Abyss.Core.Extensions
 {
     public static class LinqExtensions
     {

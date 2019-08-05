@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Abyss.Entities
+namespace Abyss.Core.Entities
 {
     [Flags]
     public enum ResponseFormatOptions

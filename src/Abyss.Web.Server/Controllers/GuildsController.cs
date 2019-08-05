@@ -1,5 +1,5 @@
-﻿using Abyss.Extensions;
-using Abyss.Helpers;
+﻿using Abyss.Core.Extensions;
+using Abyss.Core.Helpers;
 using Abyss.Web.Shared;
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Mvc;

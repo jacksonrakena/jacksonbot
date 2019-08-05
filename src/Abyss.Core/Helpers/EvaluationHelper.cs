@@ -1,4 +1,4 @@
-using Abyss.Entities;
+using Abyss.Core.Entities;
 using Discord;
 using Discord.Rest;
 using Qmmands;
@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Helpers
+namespace Abyss.Core.Helpers
 {
     [DoNotAdd]
     public class EvaluationHelper : AbyssModuleBase
