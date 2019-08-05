@@ -8,7 +8,9 @@ using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Configuration;
 using Qmmands;
 using System;
 using System.Diagnostics;
@@ -22,50 +24,35 @@ namespace Abyss.Console
     {
         private static void Main(string[] args)
         {
-            MainAsync(args).GetAwaiter().GetResult();
-        }
-
-        private static async Task MainAsync(string[] args)
-        {
             System.Console.WriteLine("Abyss console host application starting at " + DateTime.Now.ToString("F"));
 
-            var services = ConfigureServices(args);
+            var host = new HostBuilder()
+                .UseContentRoot(args.Length > 0 ? args[0] : AppDomain.CurrentDomain.BaseDirectory)
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.AddJsonFile("abyss.json", false, true);
+                    config.AddJsonFile($"abyss.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true);
+                })
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    logging.AddConsole();
+                })
+                .ConfigureServices(ConfigureServices)
+                .UseConsoleLifetime()
+                .RunConsoleAsync();
 
-            var logger = services.GetRequiredService<ILoggerFactory>().CreateLogger("Abyss Console Host");
-            logger.LogInformation($"Took {(DateTime.Now - Process.GetCurrentProcess().StartTime).TotalSeconds} seconds to initialize services. Console host starting.");
-
-            var bot = services.GetRequiredService<BotService>();
-
-            await bot.StartAsync(CancellationToken.None).ConfigureAwait(false);
-
-            await Task.Delay(-1).ConfigureAwait(false);
+            host.GetAwaiter().GetResult();
         }
 
-        private static IServiceProvider ConfigureServices(string[] args)
+        private static void ConfigureServices(HostBuilderContext context, IServiceCollection serviceCollection)
         {
-            var serviceCollection = new ServiceCollection();
-
-            // Bot core
-            serviceCollection.AddSingleton<BotService>();
+            serviceCollection.AddHostedService<BotService>();
 
             // Configuration
-            serviceCollection.AddSingleton(serviceProvider =>
-            {
-                var configurationBuilder = new ConfigurationBuilder()
-                .SetBasePath(serviceProvider.GetRequiredService<DataService>().GetConfigurationBasePath())
-                .AddJsonFile("Abyss.json", false, true);
-                return configurationBuilder.Build();
-            });
-            serviceCollection.AddSingleton(serviceProvider =>
-            {
-                var configurationModel = new AbyssConfig();
-                serviceProvider.GetRequiredService<IConfigurationRoot>().Bind(configurationModel);
-
-                return configurationModel;
-            });
-
-            // Logging
-            serviceCollection.AddLogging(builder => builder.AddAbyss());
+            var abyssConfig = new AbyssConfig();
+            context.Configuration.Bind(abyssConfig);
+            serviceCollection.AddSingleton(abyssConfig);
 
             // Discord
             var (discordClient, discordConfig) = ConfigureDiscord();
@@ -90,9 +77,8 @@ namespace Abyss.Console
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<ResponseCacheService>();
             serviceCollection.AddSingleton<AddonService>();
-            serviceCollection.AddSingleton(new DataService(args.Length > 0 ? args[0] : AppDomain.CurrentDomain.BaseDirectory));
+            serviceCollection.AddSingleton(new DataService(context.HostingEnvironment.ContentRootPath));
 
-            return serviceCollection.BuildServiceProvider();
         }
 
         private static (DiscordSocketClient discordClient, DiscordSocketConfig discordConfig) ConfigureDiscord()
