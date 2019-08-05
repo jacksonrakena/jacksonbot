@@ -21,6 +21,7 @@ You can join the support server [here.](https://discord.gg/RsRps9M)
 
   
 ### Requirements
+- It is heavily recommended to run Abyss on a Docker daemon running with Linux containers. Instructions for running with Docker are [here.](DOCKER.md) If you don't want to run on Docker, you're on your own.
 - .NET Core 3.0 Preview 7 SDK for building (or Runtime for a pre-compiled version)
 - A Discord bot application with registered user and token
 - `Abyss.json` configuration file set out as below
