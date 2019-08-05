@@ -1,0 +1,52 @@
+﻿using Abyss.Entities;
+using Abyss.Extensions;
+using Discord;
+using Discord.WebSocket;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Abyss.Core.Services
+{
+    public class NotificationsService
+    {
+        private readonly bool _sendNotifications = true;
+        private readonly AbyssConfigNotificationsSection _notifyConfig;
+        private readonly DiscordSocketClient _client;
+
+        public NotificationsService(AbyssConfig config, DiscordSocketClient client)
+        {
+            if (config.Notifications == null) _sendNotifications = false;
+            _notifyConfig = config.Notifications;
+            _client = client;
+        }
+
+        public async Task NotifyReadyAsync()
+        {
+            if (!_sendNotifications || _notifyConfig.Ready == null) return;
+            var ch = _client.GetChannel(_notifyConfig.Ready.Value);
+            if (!(ch != null && ch is SocketTextChannel stc)) return;
+            await stc.SendMessageAsync(null, false, new EmbedBuilder()
+                .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
+                .WithDescription("Ready at " + DateTime.Now.ToString("F"))
+                .WithColor(BotService.DefaultEmbedColour)
+                .WithCurrentTimestamp()
+                .Build());
+        }
+
+        public async Task NotifyServerMembershipChangeAsync(SocketGuild arg, bool botIsJoining)
+        {
+            if (!_sendNotifications || _notifyConfig.ServerMembershipChange == null) return;
+            var updateChannel = _client.GetChannel(_notifyConfig.ServerMembershipChange.Value);
+            if (!(updateChannel is SocketTextChannel stc)) return;
+             await stc.SendMessageAsync(null, false, new EmbedBuilder()
+                 .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
+                 .WithDescription($"{(botIsJoining ? "Joined" : "Left")} {arg.Name} at {DateTime.Now:F} ({arg.MemberCount} members, owner: {arg.Owner})")
+                 .WithColor(BotService.DefaultEmbedColour)
+                 .WithThumbnailUrl(arg.IconUrl)
+                 .WithCurrentTimestamp()
+                 .Build());
+        }
+    }
+}

@@ -77,6 +77,7 @@ namespace Abyss.Console
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<ResponseCacheService>();
             serviceCollection.AddSingleton<AddonService>();
+            serviceCollection.AddSingleton<NotificationsService>();
             serviceCollection.AddSingleton(new DataService(context.HostingEnvironment.ContentRootPath));
 
         }
