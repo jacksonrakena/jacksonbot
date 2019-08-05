@@ -22,16 +22,30 @@ namespace Abyss.Core.Services
             _client = client;
         }
 
-        public async Task NotifyReadyAsync()
+        public async Task NotifyReadyAsync(bool firstTime = false)
         {
             if (!_sendNotifications || _notifyConfig.Ready == null) return;
             var ch = _client.GetChannel(_notifyConfig.Ready.Value);
             if (!(ch != null && ch is SocketTextChannel stc)) return;
+
+            if (firstTime)
+            {
+                await stc.SendMessageAsync(null, false, new EmbedBuilder()
+                    .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
+                    .WithDescription("Abyss instance started and ready at " + DateTime.Now.ToString("F"))
+                    .WithColor(BotService.DefaultEmbedColour)
+                    .WithCurrentTimestamp()
+                    .WithThumbnailUrl(_client.CurrentUser.GetEffectiveAvatarUrl(2048))
+                    .Build());
+                return;
+            }
+
             await stc.SendMessageAsync(null, false, new EmbedBuilder()
                 .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
                 .WithDescription("Ready at " + DateTime.Now.ToString("F"))
                 .WithColor(BotService.DefaultEmbedColour)
                 .WithCurrentTimestamp()
+                .WithThumbnailUrl(_client.CurrentUser.GetEffectiveAvatarUrl(2048))
                 .Build());
         }
 

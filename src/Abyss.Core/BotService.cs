@@ -38,6 +38,8 @@ namespace Abyss
 
         private readonly MessageReceiver _messageReceiver;
 
+        private bool _hasBeenReady = false;
+
         public BotService(
             IServiceProvider services, ILoggerFactory logFac, AbyssConfig config, DiscordSocketClient socketClient, MessageReceiver messageReceiver, AddonService addonService,
             NotificationsService notifications)
@@ -124,7 +126,14 @@ namespace Abyss
             var nowTime = DateTime.Now;
             var difference = nowTime - startTime;
 
-            _logger.LogInformation($"Ready. Logged in as {_discordClient.CurrentUser} with command prefix \"{_config.CommandPrefix}\" - Time from startup to ready: {difference.Seconds}.{difference.Milliseconds} seconds.");
+            if (!_hasBeenReady)
+            {
+                await _notifications.NotifyReadyAsync(true);
+                _hasBeenReady = true;
+            }
+            else await _notifications.NotifyReadyAsync().ConfigureAwait(false);
+
+            _logger.LogInformation($"Ready. Logged in as {_discordClient.CurrentUser} with command prefix \"{_config.CommandPrefix}\". {(!_hasBeenReady ? $"Time from startup to ready: {difference.Seconds}.{difference.Milliseconds} seconds." : "")}");
 
             var startupConfiguration = _config.Startup;
             var activities = startupConfiguration.Activity.Select(a =>
@@ -138,8 +147,6 @@ namespace Abyss
 
                 return (activityType, a.Message);
             }).ToList();
-
-            await _notifications.NotifyReadyAsync().ConfigureAwait(false);
 
             _ = Task.Run(async () =>
             {
