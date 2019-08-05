@@ -9,7 +9,7 @@ Abyss has a bundled Dockerfile that downloads and installs all the requirements 
 > docker volume create abyss-data
 abyss-data
 ```
-2) Inspect that Docker volume and copy it's mountpoint:
+2) Inspect that Docker volume and note the mountpoint:
 ```bash
 > docker volume inspect abyss-data
 [
@@ -23,6 +23,7 @@ abyss-data
         "Scope": "local"
     }
 ]
+```
 3) Copy your `abyss.json` configuration file into the mountpoint:
 ```bash
 > sudo cp abyss.json /var/lib/docker/volumes/abyss-data/_data
