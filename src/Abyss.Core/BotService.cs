@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
 using Abyss.Core.Addons;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Abyss.Core
 {
@@ -34,26 +33,28 @@ namespace Abyss.Core
 
         private readonly AddonService _addonService;
         private readonly NotificationsService _notifications;
+        private readonly DataService _dataService;
 
         private readonly MessageReceiver _messageReceiver;
 
         private bool _hasBeenReady = false;
 
         public BotService(
-            IServiceProvider services, ILoggerFactory logFac, AbyssConfig config, DiscordSocketClient socketClient, MessageReceiver messageReceiver, AddonService addonService,
-            NotificationsService notifications)
+            IServiceProvider services, ILogger<BotService> logger, AbyssConfig config, DiscordSocketClient socketClient, MessageReceiver messageReceiver, AddonService addonService,
+            NotificationsService notifications, DataService dataService)
         {
-            _logger = logFac.CreateLogger<BotService>();
+            _logger = logger;
             _discordClient = socketClient;
             _config = config;
             _serviceProvider = services;
-            _discordClient.Log += DiscordClientOnLog;
-            _discordClient.Ready += DiscordClientOnReady;
-            _discordClient.JoinedGuild += DiscordClientOnJoinedGuild;
+            _discordClient.Log += DiscordClient_Log;
+            _discordClient.Ready += DiscordClient_Ready;
+            _discordClient.JoinedGuild += DiscordClient_JoinedGuild;
             _discordClient.LeftGuild += DiscordClient_LeftGuild;
             _messageReceiver = messageReceiver;
             _addonService = addonService;
             _notifications = notifications;
+            _dataService = dataService;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -66,10 +67,9 @@ namespace Abyss.Core
             await _discordClient.LoginAsync(TokenType.Bot, discordConfiguration.Token).ConfigureAwait(false);
             await _discordClient.StartAsync().ConfigureAwait(false);
 
-            _serviceProvider.InitializeService<MessageReceiver>(); // start MessageProcessor
             _serviceProvider.InitializeService<ResponseCacheService>();
 
-            var assemblyDirectory = _serviceProvider.GetRequiredService<DataService>().GetCustomAssemblyBasePath();
+            var assemblyDirectory = _dataService.GetCustomAssemblyBasePath();
 
             if (Directory.Exists(assemblyDirectory))
             {
@@ -89,12 +89,9 @@ namespace Abyss.Core
             }
         }
 
-        private async Task TryLoadAddonsFromAssemblyAsync(Assembly assembly)
+        private Task TryLoadAddonsFromAssemblyAsync(Assembly assembly)
         {
-            foreach (var addonType in assembly.GetExportedTypes().Where(_addonType.IsAssignableFrom))
-            {
-                await _addonService.AddAddonAsync(addonType);
-            }
+            return Task.WhenAll(assembly.GetExportedTypes().Where(_addonType.IsAssignableFrom).Select(_addonService.AddAddonAsync));
         }
 
         private Task DiscordClient_LeftGuild(SocketGuild arg)
@@ -102,7 +99,7 @@ namespace Abyss.Core
             return _notifications.NotifyServerMembershipChangeAsync(arg, false);
         }
 
-        private async Task DiscordClientOnJoinedGuild(SocketGuild arg)
+        private async Task DiscordClient_JoinedGuild(SocketGuild arg)
         {
             var channel = arg.GetDefaultChannel();
 
@@ -119,12 +116,8 @@ namespace Abyss.Core
             await _notifications.NotifyServerMembershipChangeAsync(arg, true).ConfigureAwait(false);
         }
 
-        private async Task DiscordClientOnReady()
+        private async Task DiscordClient_Ready()
         {
-            var startTime = Process.GetCurrentProcess().StartTime;
-            var nowTime = DateTime.Now;
-            var difference = nowTime - startTime;
-
             if (!_hasBeenReady)
             {
                 await _notifications.NotifyReadyAsync(true);
@@ -132,7 +125,7 @@ namespace Abyss.Core
             }
             else await _notifications.NotifyReadyAsync().ConfigureAwait(false);
 
-            _logger.LogInformation($"Ready. Logged in as {_discordClient.CurrentUser} with command prefix \"{_config.CommandPrefix}\". {(!_hasBeenReady ? $"Time from startup to ready: {difference.Seconds}.{difference.Milliseconds} seconds." : "")}");
+            _logger.LogInformation($"Ready. Logged in as {_discordClient.CurrentUser} with command prefix \"{_config.CommandPrefix}\".");
 
             var startupConfiguration = _config.Startup;
             var activities = startupConfiguration.Activity.Select(a =>
@@ -158,9 +151,9 @@ namespace Abyss.Core
             });
         }
 
-        private Task DiscordClientOnLog(LogMessage arg)
+        private Task DiscordClient_Log(LogMessage arg)
         {
-            _logger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception, arg.Message);
+            _logger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception, "[" + arg.Source + "] " + arg.Message);
 
             return Task.CompletedTask;
         }
