@@ -9,6 +9,5 @@ abyss.json
 **/Abyss.csproj.DotSettings
 *.user
 StyleCop.Cache
-Properties/
 abyss.Development.json
 abyss.Production.json

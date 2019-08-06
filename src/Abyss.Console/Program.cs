@@ -23,8 +23,16 @@ namespace Abyss.Console
         {
             System.Console.WriteLine("Abyss console host application starting at " + DateTime.Now.ToString("F"));
 
+            var contentRoot = args.Length > 0 ? args[0] : AppDomain.CurrentDomain.BaseDirectory;
+
             var host = new HostBuilder()
-                .UseContentRoot(args.Length > 0 ? args[0] : AppDomain.CurrentDomain.BaseDirectory)
+                .UseContentRoot(contentRoot)
+                .ConfigureHostConfiguration(hostConfig =>
+                {
+                    hostConfig.SetBasePath(contentRoot);
+                    hostConfig.AddJsonFile("hostsettings.json", optional: true);
+                    hostConfig.AddEnvironmentVariables("Abyss_");
+                })
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath);
@@ -51,6 +59,8 @@ namespace Abyss.Console
             var abyssConfig = new AbyssConfig();
             context.Configuration.Bind(abyssConfig);
             serviceCollection.AddSingleton(abyssConfig);
+
+            context.HostingEnvironment.ApplicationName = abyssConfig.Name;
 
             // Discord
             var (discordClient, discordConfig) = ConfigureDiscord();
