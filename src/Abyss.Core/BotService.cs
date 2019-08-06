@@ -29,6 +29,7 @@ namespace Abyss.Core
         private readonly Type _addonType = typeof(IAddon);
 
         private readonly ILogger<BotService> _logger;
+        private readonly ILogger _discordLogger;
         private readonly IServiceProvider _serviceProvider;
 
         private readonly AddonService _addonService;
@@ -41,7 +42,7 @@ namespace Abyss.Core
 
         public BotService(
             IServiceProvider services, ILogger<BotService> logger, AbyssConfig config, DiscordSocketClient socketClient, MessageReceiver messageReceiver, AddonService addonService,
-            NotificationsService notifications, DataService dataService)
+            NotificationsService notifications, DataService dataService, ILoggerFactory factory)
         {
             _logger = logger;
             _discordClient = socketClient;
@@ -55,6 +56,7 @@ namespace Abyss.Core
             _addonService = addonService;
             _notifications = notifications;
             _dataService = dataService;
+            _discordLogger = factory.CreateLogger("Discord");
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -153,7 +155,7 @@ namespace Abyss.Core
 
         private Task DiscordClient_Log(LogMessage arg)
         {
-            _logger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception, "[" + arg.Source + "] " + arg.Message);
+            _discordLogger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception, "[" + arg.Source + "] " + arg.Message);
 
             return Task.CompletedTask;
         }

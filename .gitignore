@@ -10,3 +10,5 @@ abyss.json
 *.user
 StyleCop.Cache
 Properties/
+abyss.Development.json
+abyss.Production.json

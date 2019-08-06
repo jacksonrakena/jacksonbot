@@ -85,7 +85,7 @@ namespace Abyss.Console
             var discordConfig = new DiscordSocketConfig
             {
                 MessageCacheSize = 100,
-                LogLevel = LogSeverity.Warning,
+                LogLevel = LogSeverity.Debug,
                 DefaultRetryMode = RetryMode.RetryTimeouts,
                 AlwaysDownloadUsers = true
             };
