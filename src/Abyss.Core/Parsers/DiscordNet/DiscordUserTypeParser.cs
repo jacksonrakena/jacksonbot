@@ -24,10 +24,10 @@ namespace Abyss.Core.Parsers.DiscordNet
         public override ValueTask<TypeParserResult<SocketGuildUser>> ParseAsync(Parameter parameter, string value, CommandContext context,
             IServiceProvider provider)
         {
-            var AbyssContext = context.Cast<AbyssRequestContext>();
-            var channel = AbyssContext.Channel;
+            var abyssContext = context.Cast<AbyssRequestContext>();
+            var channel = abyssContext.Channel;
             var results = new Dictionary<ulong, UserParseResolveResult>();
-            var channelUsers = AbyssContext.Guild.Users;
+            var channelUsers = abyssContext.Guild.Users;
 
             // Parse mention
             if (MentionUtils.TryParseUser(value, out var id))
@@ -38,7 +38,7 @@ namespace Abyss.Core.Parsers.DiscordNet
             }
 
             // by Discord snowflake ID
-            if (ulong.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out id) && AbyssContext.Guild != null)
+            if (ulong.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out id) && abyssContext.Guild != null)
             {
                 AddResult(results,
                     channel.GetUser(id), 0.90f);

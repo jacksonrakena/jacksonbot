@@ -28,13 +28,13 @@ namespace Abyss.Core.Checks.Command
 
         public override ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
         {
-            var AbyssContext = context.Cast<AbyssRequestContext>();
-            if (AbyssContext.InvokerIsOwner) return CheckResult.Successful;
+            var discordContext = context.Cast<AbyssRequestContext>();
+            if (discordContext.InvokerIsOwner) return CheckResult.Successful;
 
-            var cperms = AbyssContext.Invoker.GetPermissions(AbyssContext.Channel);
+            var cperms = discordContext.Invoker.GetPermissions(discordContext.Channel);
             foreach (var gperm in GuildPermissions)
             {
-                if (!AbyssContext.Invoker.GuildPermissions.Has(gperm) && !AbyssContext.Invoker.GuildPermissions.Has(GuildPermission.Administrator))
+                if (!discordContext.Invoker.GuildPermissions.Has(gperm) && !discordContext.Invoker.GuildPermissions.Has(GuildPermission.Administrator))
                 {
                     return new CheckResult(
                        $"You need the \"{gperm.Humanize()}\" server-level permission.");
@@ -43,7 +43,7 @@ namespace Abyss.Core.Checks.Command
 
             foreach (var cperm in ChannelPermissions)
             {
-                if (!cperms.Has(cperm) && !AbyssContext.Invoker.GuildPermissions.Has(GuildPermission.Administrator))
+                if (!cperms.Has(cperm) && !discordContext.Invoker.GuildPermissions.Has(GuildPermission.Administrator))
                 {
                     return new CheckResult(
                         $"You need the \"{cperm.Humanize()}\" channel-level permission.");

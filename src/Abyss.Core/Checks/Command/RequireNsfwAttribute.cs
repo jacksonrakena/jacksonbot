@@ -11,9 +11,9 @@ namespace Abyss.Core.Checks.Command
     {
         public override ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
         {
-            var AbyssContext = context.Cast<AbyssRequestContext>();
+            var discordContext = context.Cast<AbyssRequestContext>();
 
-            return !AbyssContext.Channel.IsNsfw
+            return !discordContext.Channel.IsNsfw
                 ? new CheckResult("This command can only be used in an NSFW channel.")
                 : CheckResult.Successful;
         }

@@ -27,20 +27,20 @@ namespace Abyss.Core.Parsers.DiscordNet
         public override ValueTask<TypeParserResult<SocketRole>> ParseAsync(Parameter parameter, string value, CommandContext context,
             IServiceProvider provider)
         {
-            var AbyssContext = context.Cast<AbyssRequestContext>();
+            var abyssContext = context.Cast<AbyssRequestContext>();
 
-            if (AbyssContext.Guild == null)
+            if (abyssContext.Guild == null)
                 return new TypeParserResult<SocketRole>("Not applicable in a DM.");
             var results = new Dictionary<ulong, RoleParseResult>();
-            var roles = AbyssContext.Guild.Roles;
+            var roles = abyssContext.Guild.Roles;
 
             //By Mention (1.0)
             if (MentionUtils.TryParseRole(value, out var id))
-                AddResult(results, AbyssContext.Guild.GetRole(id), 1.00f);
+                AddResult(results, abyssContext.Guild.GetRole(id), 1.00f);
 
             //By Id (0.9)
             if (ulong.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out id))
-                AddResult(results, AbyssContext.Guild.GetRole(id), 0.90f);
+                AddResult(results, abyssContext.Guild.GetRole(id), 0.90f);
 
             //By Name (0.7-0.8)
             foreach (var role in roles.Where(x => string.Equals(value, x.Name, StringComparison.OrdinalIgnoreCase)))
