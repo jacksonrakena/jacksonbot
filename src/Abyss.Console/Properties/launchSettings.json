@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Abyss.Console": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "Abyss_Environment": "Development"
+      }
+    }
+  }
+}
