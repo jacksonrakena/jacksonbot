@@ -9,7 +9,7 @@ namespace Abyss.Web.Client
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IWebAssemblyHostBuilder CreateHostBuilder(string[] args) =>
+        public static IWebAssemblyHostBuilder CreateHostBuilder(string[] _) =>
             BlazorWebAssemblyHost.CreateDefaultBuilder()
                 .UseBlazorStartup<Startup>();
     }
