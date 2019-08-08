@@ -77,7 +77,7 @@ namespace Abyss.Web.Server
             serviceCollection.AddSingleton<ResponseCacheService>();
             serviceCollection.AddSingleton<AddonService>();
             serviceCollection.AddSingleton<NotificationsService>();
-            serviceCollection.AddSingleton(new DataService(AppDomain.CurrentDomain.BaseDirectory));
+            serviceCollection.AddSingleton<DataService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

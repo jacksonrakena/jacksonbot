@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -8,18 +9,14 @@ namespace Abyss.Core.Services
 {
     public class DataService
     {
-        private readonly string _basePath;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public DataService(string basePath)
+        public DataService(IHostingEnvironment hostingEnvironment)
         {
-            _basePath = basePath;
-            if (!Directory.Exists(_basePath))
-            {
-                throw new FileLoadException($"Can't find data directory {_basePath}. Has it been created?");
-            }
+            _hostingEnvironment = hostingEnvironment;
         }
 
-        public string GetBasePath() => _basePath;
+        public string GetBasePath() => _hostingEnvironment.ContentRootPath;
 
         // /Assets/ is packed with the application assembly
         public static string GetAssetLocation(string assetName)
@@ -27,7 +24,7 @@ namespace Abyss.Core.Services
             return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", assetName);
         }
 
-        public string GetConfigurationBasePath() => _basePath;
-        public string GetCustomAssemblyBasePath() => Path.Combine(_basePath, "Addons");
+        public string GetConfigurationBasePath() => GetBasePath();
+        public string GetCustomAssemblyBasePath() => Path.Combine(GetBasePath(), "Addons");
     }
 }
