@@ -33,31 +33,12 @@ namespace Abyss.Core.Services
             _logger = logger.CreateLogger<MessageReceiver>();
 
             var currentAssembly = Assembly.GetExecutingAssembly();
-            var discoverableAttributeType = typeof(DiscoverableTypeParserAttribute);
-            var typeParserType = typeof(TypeParser<>);
-            var addTypeParserMethod = typeof(CommandService).GetMethod("AddTypeParser");
-
-            var loadedTypes = new List<Type>();
-
-            foreach (var type in currentAssembly.ExportedTypes)
-            {
-                if (!(type.GetCustomAttributes().FirstOrDefault(a => a is DiscoverableTypeParserAttribute) is DiscoverableTypeParserAttribute attr)) continue;
-
-                var parser = type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
-                var method = addTypeParserMethod.MakeGenericMethod(type.BaseType.GenericTypeArguments[0]);
-                method.Invoke(_commandService, new object[] { parser, attr.ReplacingPrimitive });
-                loadedTypes.Add(type);
-            }
-
-            _logger.LogInformation($"Loaded discoverable parsers: {string.Join(", ", loadedTypes.Select(c => c.Name))}");
+            LoadTypesFromAssembly(currentAssembly);
             
             // Hook events
             _commandService.CommandExecuted += HandleCommandExecutedAsync;
             _commandService.CommandErrored += HandleCommandErroredAsync;
             _discordClient.MessageReceived += ReceiveMessageAsync;
-
-            // Load commands from internal assembly
-            LoadModulesFromAssembly(currentAssembly);
         }
 
         public static readonly Emoji UnknownCommandReaction = new Emoji("❓");
@@ -360,12 +341,30 @@ namespace Abyss.Core.Services
             return HandleRuntimeExceptionAsync(e.Context.Cast<AbyssRequestContext>(), efr.Exception, efr.CommandExecutionStep, efr.Reason);
         }
 
-        public void LoadModulesFromAssembly(Assembly assembly)
+        public void LoadTypesFromAssembly(Assembly assembly)
         {
             var rootModulesLoaded = _commandService.AddModules(assembly);
 
             _logger.LogInformation(
                 $"{rootModulesLoaded.Count} modules loaded, {rootModulesLoaded.Sum(a => a.Commands.Count)} commands loaded, from assembly {assembly.GetName().Name}");
+
+            var discoverableAttributeType = typeof(DiscoverableTypeParserAttribute);
+            var typeParserType = typeof(TypeParser<>);
+            var addTypeParserMethod = typeof(CommandService).GetMethod("AddTypeParser");
+
+            var loadedTypes = new List<Type>();
+
+            foreach (var type in assembly.ExportedTypes)
+            {
+                if (!(type.GetCustomAttributes().FirstOrDefault(a => a is DiscoverableTypeParserAttribute) is DiscoverableTypeParserAttribute attr)) continue;
+
+                var parser = type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                var method = addTypeParserMethod.MakeGenericMethod(type.BaseType.GenericTypeArguments[0]);
+                method.Invoke(_commandService, new object[] { parser, attr.ReplacingPrimitive });
+                loadedTypes.Add(type);
+            }
+
+            _logger.LogInformation($"Loaded {loadedTypes.Count} discoverable parsers from {assembly.FullName}: {string.Join(", ", loadedTypes.Select(c => c.Name))}");
         }
     }
 }

@@ -80,7 +80,7 @@ namespace Abyss.Core
                     try
                     {
                         var assembly = Assembly.LoadFrom(assemblyFile);
-                        _messageReceiver.LoadModulesFromAssembly(assembly);
+                        _messageReceiver.LoadTypesFromAssembly(assembly);
                         await TryLoadAddonsFromAssemblyAsync(assembly).ConfigureAwait(false);
                     }
                     catch (BadImageFormatException)
