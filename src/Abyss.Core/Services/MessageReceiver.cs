@@ -37,7 +37,7 @@ namespace Abyss.Core.Services
             
             // Hook events
             _commandService.CommandExecuted += HandleCommandExecutedAsync;
-            _commandService.CommandErrored += HandleCommandErroredAsync;
+            _commandService.CommandExecutionFailed += HandleCommandExecutionFailedAsync;
             _discordClient.MessageReceived += ReceiveMessageAsync;
         }
 
@@ -329,7 +329,7 @@ namespace Abyss.Core.Services
             }
         }
 
-        public Task HandleCommandErroredAsync(CommandErroredEventArgs e)
+        public Task HandleCommandExecutionFailedAsync(CommandExecutionFailedEventArgs e)
         {
             if (!(e.Result is ExecutionFailedResult efr))
             {
