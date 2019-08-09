@@ -146,9 +146,7 @@ namespace Abyss.Core.Services
                             .WithColor(Color.Red)
                             .WithFooter(
                                 $"Parameter {pcfr.Parameter.Name} in command {pcfr.Parameter.Command.Name} (module {pcfr.Parameter.Command.Module.Name}), executed by {context.Invoker.Format()}")
-                            .AddField("Expected", _helpService.GetFriendlyName(pcfr.Parameter))
                             .WithCurrentTimestamp()
-                            .AddField("Received", pcfr.Argument)
                             .Build()).ConfigureAwait(false);
                         break;
 
