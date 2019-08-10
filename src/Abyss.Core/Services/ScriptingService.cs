@@ -22,7 +22,7 @@ namespace Abyss.Core.Services
             "Qmmands", "System.IO",
             "Microsoft.Extensions.DependencyInjection", "System.Text", "Abyss.Core.Services",
             "System.Globalization", "Microsoft.Extensions.Options",
-            "Abyss.Modules", "System.Reflection"
+            "Abyss.Core.Modules", "System.Reflection"
         });
 
         public async Task<ScriptingResult> EvaluateScriptAsync<T>(string code, T properties)
