@@ -89,7 +89,7 @@ namespace Abyss.Core.Modules
                 $"Use `{prefix}help <command>` for more details on a command.");
 
             embed.WithFooter(
-                $"You can use \"{prefix}help <command name>\" to see help on a specific command, or \"{prefix}module <module name>\" to see help on a specific module.",
+                $"You can use \"{prefix}help <command name>\" to see help on a specific command.",
                 Context.BotUser.GetAvatarUrl());
 
             foreach (var module in _commandService.GetAllModules().Where(module =>

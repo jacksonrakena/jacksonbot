@@ -68,6 +68,9 @@ namespace Abyss.Core.Modules
                 return $"{activity.Type.Humanize()} {activity.Name}";
             }
 
+            var effectiveColor = member.GetHighestRoleColour();
+
+            desc.AppendLine($"**- ID:** {member.Id}");
             desc.AppendLine($"**- Created:** {FormatOffset(member.CreatedAt)}");
             if (member.JoinedAt != null) desc.AppendLine($"**- Joined:** {FormatOffset(member.JoinedAt.Value)}");
             desc.AppendLine(
@@ -79,6 +82,10 @@ namespace Abyss.Core.Modules
             if (member.Activity != null)
                 desc.AppendLine($"**- Activity:** {FormatActivity(member.Activity)}");
             desc.AppendLine($"**- Status:** {member.Status.Humanize()}");
+            desc.AppendLine($"**- Mutual servers:** {member.MutualGuilds.Count}");
+            if (member.PremiumSince != null) desc.AppendLine($"**- Nitro membership since: {FormatOffset(member.PremiumSince.Value)}");
+            if (member.ActiveClients != null) desc.AppendLine($"**- Active on:** {string.Join(", ", member.ActiveClients)}");
+            if (effectiveColor != null) desc.AppendLine($"**- Colour:** {effectiveColor.Value.ToString()} (R {effectiveColor.Value.R}, G {effectiveColor.Value.G}, B {effectiveColor.Value.B})");
 
             embed.Description = desc.ToString();
 

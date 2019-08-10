@@ -55,9 +55,9 @@ namespace Abyss.Core.Entities
             {
                 if (Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at0))
                 {
-                    attachFooter = !at0.Options.HasFlag(ResponseFormatOptions.DontAttachTimestamp);
+                    attachTimestamp = !at0.Options.HasFlag(ResponseFormatOptions.DontAttachTimestamp);
                 }
-                else attachFooter = true;
+                else attachTimestamp = true;
             }
 
             if (attachFooter) builder.WithRequesterFooter(Context);
