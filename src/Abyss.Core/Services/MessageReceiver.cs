@@ -37,7 +37,7 @@ namespace Abyss.Core.Services
             
             // Hook events
             _commandService.CommandExecuted += HandleCommandExecutedAsync;
-            _commandService.CommandErrored += HandleCommandErroredAsync;
+            _commandService.CommandExecutionFailed += HandleCommandExecutionFailedAsync;
             _discordClient.MessageReceived += ReceiveMessageAsync;
         }
 
@@ -146,9 +146,7 @@ namespace Abyss.Core.Services
                             .WithColor(Color.Red)
                             .WithFooter(
                                 $"Parameter {pcfr.Parameter.Name} in command {pcfr.Parameter.Command.Name} (module {pcfr.Parameter.Command.Module.Name}), executed by {context.Invoker.Format()}")
-                            .AddField("Expected", _helpService.GetFriendlyName(pcfr.Parameter))
                             .WithCurrentTimestamp()
-                            .AddField("Received", pcfr.Argument)
                             .Build()).ConfigureAwait(false);
                         break;
 
@@ -335,7 +333,7 @@ namespace Abyss.Core.Services
             }
         }
 
-        public Task HandleCommandErroredAsync(CommandErroredEventArgs e)
+        public Task HandleCommandExecutionFailedAsync(CommandExecutionFailedEventArgs e)
         {
             if (!(e.Result is ExecutionFailedResult efr))
             {
