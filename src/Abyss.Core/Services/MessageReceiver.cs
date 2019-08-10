@@ -213,7 +213,7 @@ namespace Abyss.Core.Services
                             $"(message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})"); ;
                         break;
 
-                    case OverloadsFailedResult _:
+                    case OverloadsFailedResult ofr:
                         _failedCommandsTracking.LogWarning("Failed to find a matching command from input " + context.Message.Content + ". " +
                             $"(message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
 
@@ -223,6 +223,10 @@ namespace Abyss.Core.Services
                                 $"Multiple versions of the command you requested exist, and your supplied information doesn't match any of them. Try using {context.GetPrefix()}help <your command> for more information on the different versions.")
                             .WithCurrentTimestamp()
                             .WithColor(Color.Red)
+                            .WithFields(ofr.FailedOverloads.Select(ov =>
+                            {
+                                return new EmbedFieldBuilder().WithName(ov.Key.CreateCommandString()).WithValue(ov.Value.Reason).WithIsInline(false);
+                            }))
                             .WithRequesterFooter(context)
                             .Build()).ConfigureAwait(false);
                         break;

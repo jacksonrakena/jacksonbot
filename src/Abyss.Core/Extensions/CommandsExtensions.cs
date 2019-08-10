@@ -56,5 +56,10 @@ namespace Abyss.Core.Extensions
         {
             return HasAttribute<T>(info, out _);
         }
+
+        public static string CreateCommandString(this Command command)
+        {
+            return $"{command.FullAliases.First()} {string.Join(" ", command.Parameters.Select(a => a.Name))}";
+        }
     }
 }
