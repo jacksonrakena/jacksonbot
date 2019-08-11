@@ -97,7 +97,7 @@ namespace Abyss.Core.Services
             httpRequest.Content = new StringContent(JsonConvert.SerializeObject(new
             {
                 guilds = _client.Guilds.Count,
-                users = _client.Guilds.SelectMany(b => b.Users).Select(a => a.Id).Distinct().Count(),
+                users = _client.Guilds.Select(b => b.MemberCount).Sum(),
                 voice_connections = 0
             }));
 
