@@ -21,7 +21,7 @@ namespace Abyss.Core.Checks.Command
 
         public override ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
         {
-            var ctx = context.Cast<AbyssRequestContext>();
+            var ctx = context.ToRequestContext();
 
             return Ids.Contains(ctx.Guild.Id)
                 ? CheckResult.Successful

@@ -17,7 +17,7 @@ namespace Abyss.Core.Checks.Parameter
             if (argument == null) return CheckResult.Successful;
             var id = argument is SocketUser user ? user.Id : argument is DiscordUserReference dur ? dur.Id : throw new InvalidOperationException($"{nameof(MustNotBeBotAttribute)} is being executed on an invalid object type. Expected a SocketUser or DiscordUserReference variant, got {argument.GetType().Name}."); ;
 
-            return id == context.Cast<AbyssRequestContext>().Bot.Id
+            return id == context.ToRequestContext().Bot.Id
                 ? new CheckResult("The provided user can't be me.")
                 : CheckResult.Successful;
         }

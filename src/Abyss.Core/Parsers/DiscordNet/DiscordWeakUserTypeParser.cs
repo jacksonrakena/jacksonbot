@@ -30,7 +30,7 @@ namespace Abyss.Core.Parsers.DiscordNet
 
         public override ValueTask<TypeParserResult<DiscordUserReference>> ParseAsync(Parameter parameter, string value, CommandContext context, IServiceProvider provider)
         {
-            var abyssContext = context.Cast<AbyssRequestContext>();
+            var abyssContext = context.ToRequestContext();
             var channel = abyssContext.Channel;
             var results = new Dictionary<ulong, UserParseResolveResult>();
             var channelUsers = abyssContext.Guild.Users;

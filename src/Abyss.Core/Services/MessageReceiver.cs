@@ -295,7 +295,7 @@ namespace Abyss.Core.Services
             var result = args.Result;
             var ctx = args.Context;
             var command = ctx.Command;
-            var context = ctx.Cast<AbyssRequestContext>();
+            var context = ctx.ToRequestContext();
             var baseResult = result.Cast<ActionResult>();
 
             if (baseResult == null)
@@ -340,7 +340,7 @@ namespace Abyss.Core.Services
                 _logger.LogCritical(LoggingEventIds.CommandErroredRaisedWithUnknownType, $"CommandErrored event raised with unknown type: {e.Result.GetType().Name}");
                 return Task.CompletedTask;
             }
-            return HandleRuntimeExceptionAsync(e.Context.Cast<AbyssRequestContext>(), efr.Exception, efr.CommandExecutionStep, efr.Reason);
+            return HandleRuntimeExceptionAsync(e.Context.ToRequestContext(), efr.Exception, efr.CommandExecutionStep, efr.Reason);
         }
 
         public void LoadTypesFromAssembly(Assembly assembly)

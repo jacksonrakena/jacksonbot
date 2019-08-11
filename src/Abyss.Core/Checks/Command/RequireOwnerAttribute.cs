@@ -12,7 +12,7 @@ namespace Abyss.Core.Checks.Command
     {
         public override async ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
         {
-            var abyssContext = context.Cast<AbyssRequestContext>();
+            var abyssContext = context.ToRequestContext();
 
             var owner = (await abyssContext.Client.GetApplicationInfoAsync().ConfigureAwait(false)).Owner;
             var invokerId = abyssContext.Invoker.Id;

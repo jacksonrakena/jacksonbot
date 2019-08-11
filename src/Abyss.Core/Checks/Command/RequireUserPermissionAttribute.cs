@@ -28,7 +28,7 @@ namespace Abyss.Core.Checks.Command
 
         public override ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
         {
-            var discordContext = context.Cast<AbyssRequestContext>();
+            var discordContext = context.ToRequestContext();
             if (discordContext.InvokerIsOwner) return CheckResult.Successful;
 
             var cperms = discordContext.Invoker.GetPermissions(discordContext.Channel);

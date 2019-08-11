@@ -28,7 +28,7 @@ namespace Abyss.Core.Checks.Command
 
         public override ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
         {
-            var discordContext = context.Cast<AbyssRequestContext>();
+            var discordContext = context.ToRequestContext();
 
             var cperms = discordContext.BotUser.GetPermissions(discordContext.Channel);
             foreach (var gperm in GuildPermissions)

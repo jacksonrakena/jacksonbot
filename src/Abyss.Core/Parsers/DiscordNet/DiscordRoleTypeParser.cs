@@ -27,7 +27,7 @@ namespace Abyss.Core.Parsers.DiscordNet
         public override ValueTask<TypeParserResult<SocketRole>> ParseAsync(Parameter parameter, string value, CommandContext context,
             IServiceProvider provider)
         {
-            var abyssContext = context.Cast<AbyssRequestContext>();
+            var abyssContext = context.ToRequestContext();
 
             if (abyssContext.Guild == null)
                 return new TypeParserResult<SocketRole>("Not applicable in a DM.");
