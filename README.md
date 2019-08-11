@@ -49,7 +49,8 @@ Here's an example Abyss configuration file, taken from my main public instance.
     "Notifications": { // Abyss will notify you of these events. Blank/missing values will be ignored.
       "Ready": 598437593721602068,
       "ServerMembershipChange": 598437593721602068,
-      "Feedback": 600565543010828288
+      "Feedback": 600565543010828288,
+      "Stopping": 598437593721602068
     },
     "Logging": { // Logging scopes.
       "LogLevel": {

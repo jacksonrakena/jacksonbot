@@ -160,7 +160,8 @@ namespace Abyss.Core
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            await _discordClient.StopAsync();
+            await _notifications.NotifyStoppingAsync().ConfigureAwait(false);
+            await _discordClient.StopAsync().ConfigureAwait(false);
         }
     }
 }

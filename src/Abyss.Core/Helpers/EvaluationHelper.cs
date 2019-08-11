@@ -1,6 +1,7 @@
 using Abyss.Core.Entities;
 using Discord;
 using Discord.Rest;
+using Discord.WebSocket;
 using Qmmands;
 using System;
 using System.Collections;
@@ -229,5 +230,32 @@ namespace Abyss.Core.Helpers
 
             return Format.Code(inspection.ToString(), "ini");
         }
+
+        public SocketGuildUser User(ulong id)
+        {
+            return Context.Guild.GetUser(id);
+        }
+
+        public SocketGuildUser User(string username)
+        {
+            return Context.Guild.Users.FirstOrDefault(a => a.Username.Equals(username, StringComparison.OrdinalIgnoreCase) || (a.Nickname != null && a.Nickname.Equals(username, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        public SocketTextChannel TextChannel(ulong id)
+        {
+            return Context.Guild.GetTextChannel(id);
+        }
+
+        public SocketTextChannel TextChannel(string name)
+        {
+            return Context.Guild.TextChannels.FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public SocketUserMessage Message(ulong id)
+        {
+            return Context.Channel.GetCachedMessage(id) as SocketUserMessage;
+        }
+
+        public SocketUserMessage Message(string id) => Message(ulong.Parse(id));
     }
 }
