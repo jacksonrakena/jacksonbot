@@ -72,5 +72,6 @@ namespace Abyss.Core.Entities
     {
         public string DblDotComToken { get; set; }
         public string DiscordBoatsToken { get; set; }
+        public string DiscordBotsListToken { get; set; }
     }
 }

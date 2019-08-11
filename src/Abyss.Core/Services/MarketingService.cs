@@ -28,7 +28,7 @@ namespace Abyss.Core.Services
 
         public Task UpdateAllBotListsAsync()
         {
-            return Task.WhenAll(UpdateDiscordBotListDotComAsync(), UpdateDiscordBoatsAsync());
+            return Task.WhenAll(UpdateDiscordBotListDotComAsync(), UpdateDiscordBoatsAsync(), UpdateDiscordBotsListAsync());
         }
 
         public async Task UpdateDiscordBoatsAsync()
@@ -50,7 +50,36 @@ namespace Abyss.Core.Services
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogWarning($"Failed to update Discord.boats: error code " + response.StatusCode);
+                response.Dispose();
+                return;
             }
+            _logger.LogInformation("Updated statistics with discord.boats");
+            response.Dispose();
+        }
+
+        public async Task UpdateDiscordBotsListAsync()
+        {
+            if (_config.Marketing?.DiscordBotsListToken == null)
+            {
+                _logger.LogWarning("Failed to update Discord Bots List: token missing");
+                return;
+            }
+
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, "https://discordbots.org/api/bots/" + _client.CurrentUser.Id + "/stats");
+
+            httpRequest.Headers.TryAddWithoutValidation("Authorization", _config.Marketing.DiscordBotsListToken);
+            httpRequest.Content = new StringContent("{\"server_count\":" + _client.Guilds.Count + "}", Encoding.UTF8, "application/json");
+
+            var response = await _http.SendAsync(httpRequest);
+            httpRequest.Dispose();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning($"Failed to update Discord Bots List: error code " + response.StatusCode);
+                response.Dispose();
+                return;
+            }
+            _logger.LogInformation("Updated statistics with Discord Bots List");
             response.Dispose();
         }
 
@@ -78,7 +107,10 @@ namespace Abyss.Core.Services
             if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
             {
                 _logger.LogWarning($"Failed to update Discordbotlist.com: error code " + response.StatusCode);
+                response.Dispose();
+                return;
             }
+            _logger.LogInformation("Updated statistics with Discordbotlist.com");
             response.Dispose();
         }
     }
