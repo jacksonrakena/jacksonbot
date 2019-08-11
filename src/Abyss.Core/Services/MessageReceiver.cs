@@ -103,11 +103,7 @@ namespace Abyss.Core.Services
                         await context.Message.AddReactionAsync(UnknownCommandReaction).ConfigureAwait(false);
                         return;
 
-                    case ExecutionFailedResult efr:
-                        var command = efr.Command;
-                        var exception = efr.Exception;
-
-                        await HandleRuntimeExceptionAsync(context, exception, efr.CommandExecutionStep, efr.Reason);
+                    case ExecutionFailedResult _:
                         return;
 
                     case ChecksFailedResult cfr:
