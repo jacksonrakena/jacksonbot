@@ -33,7 +33,7 @@ namespace Abyss.Core.Services
 
         public async Task UpdateDiscordBotListDotComAsync()
         {
-            if (_config.Marketing.DblDotComToken == null)
+            if (_config.Marketing?.DblDotComToken == null)
             {
                 _logger.LogWarning("Failed to update Discordbotlist.com: token missing");
                 return;
