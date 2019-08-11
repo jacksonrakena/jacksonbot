@@ -49,7 +49,7 @@ namespace Abyss.Core.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning($"Failed to update Discordbotlist.com: error code " + response.StatusCode);
+                _logger.LogWarning($"Failed to update Discord.boats: error code " + response.StatusCode);
             }
             response.Dispose();
         }
