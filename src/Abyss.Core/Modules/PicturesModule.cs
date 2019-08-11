@@ -91,9 +91,9 @@ namespace Abyss.Core.Modules
         public async Task<ActionResult> Command_ResizeImageAsync(
             [Name("Image_URL")] [Description("The URL of the image to resize.")]
             Uri url,
-            [Name("Width")] [Description("The width to resize to.")] [Range(1, 500)]
+            [Name("Width")] [Description("The width to resize to.")] [Range(1, 500, true, true)]
             int width,
-            [Name("Height")] [Description("The height to resize to.")] [Range(1, 500)]
+            [Name("Height")] [Description("The height to resize to.")] [Range(1, 500, true, true)]
             int height)
         {
             var isGif = url.ToString().EndsWith("gif");
