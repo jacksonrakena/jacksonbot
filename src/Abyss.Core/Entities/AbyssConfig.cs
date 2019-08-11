@@ -71,5 +71,6 @@ namespace Abyss.Core.Entities
     public class AbyssConfigMarketingSection
     {
         public string DblDotComToken { get; set; }
+        public string DiscordBoatsToken { get; set; }
     }
 }

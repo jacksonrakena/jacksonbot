@@ -28,7 +28,30 @@ namespace Abyss.Core.Services
 
         public Task UpdateAllBotListsAsync()
         {
-            return Task.WhenAll(UpdateDiscordBotListDotComAsync());
+            return Task.WhenAll(UpdateDiscordBotListDotComAsync(), UpdateDiscordBoatsAsync());
+        }
+
+        public async Task UpdateDiscordBoatsAsync()
+        {
+            if (_config.Marketing?.DiscordBoatsToken == null)
+            {
+                _logger.LogWarning("Failed to update Discord.Boats: token missing");
+                return;
+            }
+
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, "http://discord.boats/api/v2/bot/" + _client.CurrentUser.Id);
+
+            httpRequest.Headers.TryAddWithoutValidation("Authorization", _config.Marketing.DiscordBoatsToken);
+            httpRequest.Content = new StringContent("{\"server_count\":" + _client.Guilds.Count + "}", Encoding.UTF8, "application/json");
+
+            var response = await _http.SendAsync(httpRequest);
+            httpRequest.Dispose();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning($"Failed to update Discordbotlist.com: error code " + response.StatusCode);
+            }
+            response.Dispose();
         }
 
         public async Task UpdateDiscordBotListDotComAsync()
