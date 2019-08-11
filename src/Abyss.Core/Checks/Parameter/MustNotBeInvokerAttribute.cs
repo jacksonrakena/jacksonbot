@@ -22,7 +22,7 @@ namespace Abyss.Core.Checks.Parameter
                 : CheckResult.Successful;
         }
 
-        public string Description => "The provided user can't be you.";
+        public string GetDescription(AbyssRequestContext requestContext) => "The provided user can't be you.";
 
         public MustNotBeInvokerAttribute() : base(CheckResources.UserTypes)
         {

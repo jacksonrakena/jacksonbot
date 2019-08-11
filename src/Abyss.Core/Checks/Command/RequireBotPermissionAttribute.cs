@@ -52,7 +52,7 @@ namespace Abyss.Core.Checks.Command
             return CheckResult.Successful;
         }
 
-        public string Description => ChannelPermissions.Count > 0
+        public string GetDescription(AbyssRequestContext requestContext) => ChannelPermissions.Count > 0
             ? $"I need these channel-level permissions: {string.Join(", ", ChannelPermissions.Select(a => a.Humanize()))}."
             : $"I need these server-level permissions: {string.Join(", ", GuildPermissions.Select(a => a.Humanize()))}.";
     }

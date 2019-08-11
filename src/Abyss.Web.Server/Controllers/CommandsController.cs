@@ -25,7 +25,7 @@ namespace Abyss.Web.Server.Controllers
                 return new CommandInfo
                 {
                     Aliases = a.Aliases.ToArray(),
-                    Checks = a.Checks.Select(HelpService.GetCheckFriendlyMessage).ToArray(),
+                    Checks = a.Checks.Select(a => a.GetType().Name).ToArray(),
                     Enabled = a.IsEnabled,
                     Module = a.Module.Name,
                     Parameters = a.Parameters.Select(c => c.Name).ToArray()

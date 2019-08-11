@@ -19,10 +19,12 @@ namespace Abyss.Core.Services
     public sealed class HelpService
     {
         private readonly ICommandService _commandService;
+        private readonly AbyssConfig _config;
         private readonly MethodInfo _getTypeParserMethod = typeof(ICommandService).GetMethod("GetTypeParser");
 
-        public HelpService(ICommandService service)
+        public HelpService(ICommandService service, AbyssConfig config)
         {
+            _config = config;
             _commandService = service;
         }
 
@@ -95,7 +97,7 @@ namespace Abyss.Core.Services
             if (command.Parameters.Count > 0)
             {
                 embed.AddField("Parameters",
-                   string.Join("\n", command.Parameters.Select((p, i) => $"**{i + 1})** {FormatParameter(p)}")));
+                   string.Join("\n", command.Parameters.Select((p, i) => $"**{i + 1})** {FormatParameter(context, p)}")));
             }
 
             if (command.Remarks != null) embed.AddField("Remarks", command.Remarks);
@@ -133,26 +135,26 @@ namespace Abyss.Core.Services
             return embed.Build();
         }
 
-        private static async Task<string> FormatCheck(CheckAttribute cba, AbyssRequestContext context)
+        private async Task<string> FormatCheck(CheckAttribute cba, AbyssRequestContext context)
         {
-            var message = GetCheckFriendlyMessage(cba);
-            return $"- {((await cba.CheckAsync(context, context.Services).ConfigureAwait(false)).IsSuccessful ? BotService.AbyssYesEmoji : BotService.AbyssNoEmoji)} {message}";
+            var message = GetCheckFriendlyMessage(context, cba);
+            return $"- {((await cba.CheckAsync(context, context.Services).ConfigureAwait(false)).IsSuccessful ? _config.Emotes.YesEmote : _config.Emotes.NoEmote)} {message}";
         }
 
-        public static string GetCheckFriendlyMessage(CheckAttribute cba)
+        public string GetCheckFriendlyMessage(AbyssRequestContext context, CheckAttribute cba)
         {
-            return (cba.Cast<IAbyssCheck>() ?? throw new InvalidOperationException($"The provided check is not of the Abyss check type, {typeof(IAbyssCheck).Name}.")).Description;
+            return (cba.Cast<IAbyssCheck>() ?? throw new InvalidOperationException($"The provided check is not of the Abyss check type, {typeof(IAbyssCheck).Name}.")).GetDescription(context);
         }
 
-        private string FormatParameter(Parameter parameterInfo)
+        private string FormatParameter(AbyssRequestContext ctx, Parameter parameterInfo)
         {
             var type = GetFriendlyName(parameterInfo);
 
             return
-                $"`{parameterInfo.Name}`: {type}{FormatParameterTags(parameterInfo)}";
+                $"`{parameterInfo.Name}`: {type}{FormatParameterTags(ctx, parameterInfo)}";
         }
 
-        private static string FormatParameterTags(Parameter parameterInfo)
+        private string FormatParameterTags(AbyssRequestContext ctx, Parameter parameterInfo)
         {
             var sb = new StringBuilder();
 
@@ -179,7 +181,7 @@ namespace Abyss.Core.Services
 
             foreach (var check in parameterInfo.Checks.OfType<IAbyssCheck>())
             {
-                sb.AppendLine(" - " + check.Description);
+                sb.AppendLine(" - " + check.GetDescription(ctx));
             }
 
             return sb.ToString();

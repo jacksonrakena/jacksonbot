@@ -12,6 +12,8 @@ namespace Abyss.Core.Entities
         public AbyssConfigConnectionsSection Connections { get; set; }
 
         public AbyssConfigNotificationsSection Notifications { get; set; }
+
+        public AbyssConfigEmoteSection Emotes { get; set; }
     }
 
     public class AbyssConfigStartupSection
@@ -49,5 +51,17 @@ namespace Abyss.Core.Entities
         public ulong? Ready { get; set; }
         public ulong? ServerMembershipChange { get; set; }
         public ulong? Feedback { get; set; }
+    }
+
+    public class AbyssConfigEmoteSection
+    {
+        public string YesEmote { get; set; }
+        public string NoEmote { get; set; }
+        public string AfkEmote { get; set; }
+        public string OfflineEmote { get; set; }
+        public string DndEmote { get; set; }
+        public string StaffEmote { get; set; }
+        public string GuildOwnerEmote { get; set; }
+        public string OnlineEmote { get; set; }
     }
 }

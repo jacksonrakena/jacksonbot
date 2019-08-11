@@ -1,5 +1,6 @@
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
 using System;
 using System.Threading.Tasks;
@@ -21,6 +22,6 @@ namespace Abyss.Core.Checks.Command
                 : new CheckResult($"You aren't my owner, `{owner}`!");
         }
 
-        public string Description => "You have to be my current owner.";
+        public string GetDescription(AbyssRequestContext ctx) => $"{ctx.Services.GetRequiredService<AbyssConfig>().Emotes.StaffEmote} You have to be my current owner.";
     }
 }

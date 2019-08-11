@@ -18,6 +18,13 @@ namespace Abyss.Core.Modules
     [Description("Commands that help you interact with other Discord users.")]
     public class UserModule : AbyssModuleBase
     {
+        private readonly AbyssConfig _config;
+
+        public UserModule(AbyssConfig config)
+        {
+            _config = config;
+        }
+
         [Command("Avatar")]
         [Description("Grabs the avatar for a user.")]
         [Example("avatar", "avatar @OtherUser")]
@@ -81,7 +88,7 @@ namespace Abyss.Core.Modules
             desc.AppendLine($"**- Voice Status:** {GetVoiceChannelStatus(member)}");
             if (member.Activity != null)
                 desc.AppendLine($"**- Activity:** {FormatActivity(member.Activity)}");
-            desc.AppendLine($"**- Status:** {member.Status.Humanize()}");
+            desc.AppendLine($"**- Status:** {_config.Emotes.GetEmoteFromActivity(member.Status)} {member.Status.Humanize()}");
             desc.AppendLine($"**- Mutual servers:** {member.MutualGuilds.Count}");
             if (member.PremiumSince != null) desc.AppendLine($"**- Nitro membership since: {FormatOffset(member.PremiumSince.Value)}");
             if (member.ActiveClients != null) desc.AppendLine($"**- Active on:** {string.Join(", ", member.ActiveClients)}");

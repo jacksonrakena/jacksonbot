@@ -1,7 +1,9 @@
+using Abyss.Core.Entities;
+
 namespace Abyss.Core.Checks
 {
     public interface IAbyssCheck
     {
-        string Description { get; }
+        string GetDescription(AbyssRequestContext requestContext);
     }
 }

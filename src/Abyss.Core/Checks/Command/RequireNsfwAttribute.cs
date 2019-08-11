@@ -18,6 +18,6 @@ namespace Abyss.Core.Checks.Command
                 : CheckResult.Successful;
         }
 
-        public string Description => "We must be in an NSFW channel.";
+        public string GetDescription(AbyssRequestContext context) => "We must be in an NSFW channel.";
     }
 }

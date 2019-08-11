@@ -28,6 +28,6 @@ namespace Abyss.Core.Checks.Command
                 : CheckResult.Unsuccessful($"This can only work in the following servers: {string.Join(", ", Ids.Select(a => ctx.Client.GetGuild(a)?.Name ?? a.ToString()))}.");
         }
 
-        public string Description => "We must be in one of the following servers: " + string.Join(", ", Ids) + ".";
+        public string GetDescription(AbyssRequestContext requestContext) => "We must be in one of the following servers: " + string.Join(", ", Ids) + ".";
     }
 }

@@ -46,12 +46,31 @@ Here's an example Abyss configuration file, taken from my main public instance.
         "ClientSecret": "Spotify client secret"
       }
     },
-    "Notifications": {
+    "Notifications": { // Abyss will notify you of these events. Blank/missing values will be ignored.
       "Ready": 598437593721602068,
       "ServerMembershipChange": 598437593721602068,
       "Feedback": 600565543010828288
+    },
+    "Logging": { // Logging scopes.
+      "LogLevel": {
+        "Default": "Information",
+        "Discord": "Warning" // Only show warning messages from Discord.
+      },
+      "Console": {
+        "IncludeScopes": "true" // Keep this on.
+      }
+    },
+    "Emotes": { // The emotes that Abyss will use. All of these must be filled.
+      "YesEmote": "<:AbyssYes:598658539287871510>",
+      "NoEmote": "<:AbyssNo:598658540042846258>",
+      "AfkEmote": "<:discordAfk:609952141414629376>",
+      "OnlineEmote": "<:discordOnline:609952141980729360>",
+      "OfflineEmote": "<:discordOffline:609952141775339533>",
+      "DndEmote": "<:discordDnd:609952141620150418>",
+      "StaffEmote": "<:discordStaff:609952142379188235>",
+      "GuildOwnerEmote": "<:discordGuildOwner:609952141599309875>"
     }
-  }
+}
 
 ```
 This produces a result that looks like this:   
