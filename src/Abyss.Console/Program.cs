@@ -87,6 +87,7 @@ namespace Abyss.Console
             serviceCollection.AddSingleton<AddonService>();
             serviceCollection.AddSingleton<NotificationsService>();
             serviceCollection.AddSingleton<DataService>();
+            serviceCollection.AddSingleton<MarketingService>();
 
         }
 

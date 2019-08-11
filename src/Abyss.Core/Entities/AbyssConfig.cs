@@ -14,6 +14,8 @@ namespace Abyss.Core.Entities
         public AbyssConfigNotificationsSection Notifications { get; set; }
 
         public AbyssConfigEmoteSection Emotes { get; set; }
+
+        public AbyssConfigMarketingSection Marketing { get; set; }
     }
 
     public class AbyssConfigStartupSection
@@ -64,5 +66,10 @@ namespace Abyss.Core.Entities
         public string StaffEmote { get; set; }
         public string GuildOwnerEmote { get; set; }
         public string OnlineEmote { get; set; }
+    }
+
+    public class AbyssConfigMarketingSection
+    {
+        public string DblDotComToken { get; set; }
     }
 }

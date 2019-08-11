@@ -78,6 +78,7 @@ namespace Abyss.Web.Server
             serviceCollection.AddSingleton<AddonService>();
             serviceCollection.AddSingleton<NotificationsService>();
             serviceCollection.AddSingleton<DataService>();
+            serviceCollection.AddSingleton<MarketingService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

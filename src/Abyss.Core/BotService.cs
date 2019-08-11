@@ -7,7 +7,6 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,6 +32,7 @@ namespace Abyss.Core
         private readonly AddonService _addonService;
         private readonly NotificationsService _notifications;
         private readonly DataService _dataService;
+        private readonly MarketingService _marketing;
 
         private readonly MessageReceiver _messageReceiver;
 
@@ -40,7 +40,8 @@ namespace Abyss.Core
 
         public BotService(
             IServiceProvider services, ILogger<BotService> logger, AbyssConfig config, DiscordSocketClient socketClient, MessageReceiver messageReceiver, AddonService addonService,
-            NotificationsService notifications, DataService dataService, ILoggerFactory factory)
+            NotificationsService notifications, DataService dataService, ILoggerFactory factory,
+            MarketingService marketing)
         {
             _logger = logger;
             _discordClient = socketClient;
@@ -55,6 +56,7 @@ namespace Abyss.Core
             _notifications = notifications;
             _dataService = dataService;
             _discordLogger = factory.CreateLogger("Discord");
+            _marketing = marketing;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -149,6 +151,8 @@ namespace Abyss.Core
                     await Task.Delay(TimeSpan.FromMinutes(1));
                 }
             });
+
+            _ = _marketing.UpdateAllBotListsAsync().ConfigureAwait(false);
         }
 
         private Task DiscordClient_Log(LogMessage arg)
