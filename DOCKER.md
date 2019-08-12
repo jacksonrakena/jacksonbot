@@ -17,16 +17,11 @@ You can use my [bash script for initializing deployments](https://github.com/aby
 > nano abyss.json
 > cd ../
 ```
-3) Build the Docker container image:
+3) Run the Docker container image, mounting the `abyss-data` directory as a Docker bind mount at `/data`. This will use the latest image from the [Docker Hub registry](https://hub.docker.com/r/abyssalnz/abyss), but you can build it manually if you wish.
 ```bash
-> docker build http://github.com/abyssal512/abyss.git -t abyss
-Successfully tagged abyss:latest
+> docker run -d --name abyssconsole --mount type=bind,source="$(pwd)"/abyss-data,target=/data abyssalnz/abyss:latest
 ```
-4) Run the Docker container image, mounting the `abyss-data` directory as a Docker bind mount at `/data`
-```bash
-> docker run -d --name abyssconsole --mount type=bind,source="$(pwd)"/abyss-data,target=/data abyss
-```
-5) Abyss should now be running! If you have any issues, feel free to join [the support server.](https://discord.gg/RsRps9M)
+4) Abyss should now be running! If you have any issues, feel free to join [the support server.](https://discord.gg/RsRps9M)
    
    
 ### Updating
