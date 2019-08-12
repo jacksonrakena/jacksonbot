@@ -22,60 +22,9 @@ You can join the support server [here.](https://discord.gg/RsRps9M)
 - A Discord bot application with registered user and token
 - `Abyss.json` configuration file set out as below
 
-### Example config file
-Here's an example Abyss configuration file, taken from my main public instance.
-```json
-{
-    "Name": "Abyss",
-    "CommandPrefix": "a.",
-    "Startup": {
-      "Activity": [
-        {
-          "Type": "Watching",
-          "Message": "you <3"
-        }
-      ]
-      },
-    "Connections": {
-      "Discord": {
-        "Token": "Discord bot user token",
-        "SupportServer": "An invite to the bot's home base. Optional.",
-        "SupportServerId": "The ID of your support server. Optional."
-      },
-      "Spotify": {
-        "ClientId": "Spotify client ID",
-        "ClientSecret": "Spotify client secret"
-      }
-    },
-    "Notifications": { // Abyss will notify you of these events. Blank/missing values will be ignored.
-      "Ready": 598437593721602068,
-      "ServerMembershipChange": 598437593721602068,
-      "Feedback": 600565543010828288,
-      "Stopping": 598437593721602068
-    },
-    "Logging": { // Logging scopes.
-      "LogLevel": {
-        "Default": "Information",
-        "Discord": "Warning" // Only show warning messages from Discord.
-      },
-      "Console": {
-        "IncludeScopes": "true" // Keep this on.
-      }
-    },
-    "Emotes": { // The emotes that Abyss will use. All of these must be filled.
-      "YesEmote": "<:AbyssYes:598658539287871510>",
-      "NoEmote": "<:AbyssNo:598658540042846258>",
-      "AfkEmote": "<:discordAfk:609952141414629376>",
-      "OnlineEmote": "<:discordOnline:609952141980729360>",
-      "OfflineEmote": "<:discordOffline:609952141775339533>",
-      "DndEmote": "<:discordDnd:609952141620150418>",
-      "StaffEmote": "<:discordStaff:609952142379188235>",
-      "GuildOwnerEmote": "<:discordGuildOwner:609952141599309875>"
-    }
-}
-
-```
-This produces a result that looks like this:   
+### Configuration
+An example Abyss configuration file can be found at [abyss.example.json](https://github.com/abyssal512/Abyss/blob/master/abyss.example.json), which should be renamed to `abyss.json` before running.  
+It produces a result that looks like this:   
 ![Abyss: Watching you](https://jessica.is-pretty.cool/AQx2195.png)  
 The bot will rotate through each Activity provided under the Startup.Activity property every minute. Available Activity types are Playing, Streaming, Listening, and Watching. (These match to the [enum ActivityType](https://docs.stillu.cc/api/Discord.ActivityType.html) in Discord.Net)  
   
