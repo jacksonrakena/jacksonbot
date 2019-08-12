@@ -91,12 +91,10 @@ namespace Abyss.Core.Services
                     return;
                 }
 
-                CommandFailures++;
-
                 switch (result)
                 {
                     case CommandResult _:
-                        break;
+                        return;
 
                     case CommandNotFoundResult cnfr:
                         _failedCommandsTracking.LogWarning(LoggingEventIds.UnknownCommand, $"No command found matching {requestString} (message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
@@ -229,6 +227,7 @@ namespace Abyss.Core.Services
                         _failedCommandsTracking.LogCritical(LoggingEventIds.UnknownResultType, $"Unknown result type: {result.GetType().Name}. Must be addressed immediately.");
                         return;
                 }
+                CommandFailures++;
             }
             catch (Exception e)
             {
@@ -238,12 +237,14 @@ namespace Abyss.Core.Services
                 if (_config.Connections.Discord.SupportServer != null) response += "you might want to hop into " + _config.Connections.Discord.SupportServer + " for help.";
                 else response += "panic.";
                 await context.Channel.TrySendMessageAsync(response);
+                CommandFailures++;
             }
         }
 
         public async Task HandleRuntimeExceptionAsync(AbyssRequestContext context, Exception exception, CommandExecutionStep step, string reason)
         {
             var command = context.Command;
+            CommandFailures++;
 
             var embed = new EmbedBuilder
             {
@@ -299,6 +300,9 @@ namespace Abyss.Core.Services
                 await context.Channel.TrySendMessageAsync($"Man, this bot sucks. Command {command.Name} is broken, and will need to be recompiled. Try again later. (Developer: The command returned a type that isn't a {typeof(ActionResult).Name}.)");
                 return;
             }
+
+            if (result.IsSuccessful) CommandSuccesses++;
+            else CommandFailures++;
 
             try
             {

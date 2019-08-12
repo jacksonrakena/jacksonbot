@@ -3,6 +3,7 @@ using Abyss.Core.Checks.Command;
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
 using Abyss.Core.Results;
+using Abyss.Core.Services;
 using Discord;
 using Discord.WebSocket;
 using Humanizer;
@@ -25,12 +26,14 @@ namespace Abyss.Core.Modules
         private readonly ICommandService _commandService;
         private readonly AbyssConfig _config;
         private readonly DiscordSocketClient _client;
+        private readonly DataService _data;
 
-        public AbyssModule(DiscordSocketClient client, ICommandService commandService, AbyssConfig config)
+        public AbyssModule(DiscordSocketClient client, ICommandService commandService, AbyssConfig config, DataService data)
         {
             _commandService = commandService;
             _config = config;
             _client = client;
+            _data = data;
         }
 
         [Command("Uptime")]
@@ -154,25 +157,17 @@ namespace Abyss.Core.Modules
         [RequireOwner]
         public Task<ActionResult> Command_MemoryDumpAsync()
         {
-            return Ok(new StringBuilder()
-                .AppendLine("```json")
-                .AppendLine("== Core ==")
-                .AppendLine($"{Context.Client.Guilds.Count} guilds")
-                .AppendLine($"{Context.Client.DMChannels.Count} DM channels")
-                .AppendLine($"{Context.Client.GroupChannels.Count} group channels")
-                .AppendLine("== Commands ==")
-                .AppendLine($"{_commandService.GetAllModules().Count()} modules")
-                .AppendLine($"{_commandService.GetAllCommands().Count()} commands")
-                .AppendLine("== Environment ==")
-                .AppendLine($"Operating System: {Environment.OSVersion}")
-                .AppendLine($"Processor Count: {Environment.ProcessorCount}")
-                .AppendLine($"64-bit OS: {Environment.Is64BitOperatingSystem}")
-                .AppendLine($"64-bit Process: {Environment.Is64BitProcess}")
-                .AppendLine($"Current Thread ID: {Environment.CurrentManagedThreadId}")
-                .AppendLine($"System Name: {Environment.MachineName}")
-                .AppendLine($"CLR Version: {Environment.Version}")
-                .AppendLine($"Culture: {CultureInfo.InstalledUICulture.EnglishName}")
-                .AppendLine("```").ToString());
+            var info = _data.GetServiceInfo();
+            return Ok(e =>
+            {
+                e.Author = Context.BotUser.ToEmbedAuthorBuilder();
+                e.Description = $"{info.ServiceName} instance running on {info.OperatingSystem} (runtime version {info.RuntimeVersion}), powering {info.Guilds} guilds ({info.Channels} channels, and {info.Users} users)";
+                e.AddField("Command statistics", $"{info.Modules} modules | {info.Commands} commands | {info.CommandSuccesses} successful calls | {info.CommandFailures} unsuccessful calls");
+                e.AddField("Process statistics", $"Process name {info.ProcessName} on machine name {info.MachineName} (thread {info.CurrentThreadId}, {info.ProcessorCount} processors)");
+                e.AddField("Addons", $"{info.AddonsLoaded} addons loaded");
+                e.AddField("Content root", info.ContentRootPath);
+                e.AddField("Start time", info.StartTime.ToString("F"), false);
+            });
         }
     }
 }
