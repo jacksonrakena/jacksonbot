@@ -1,4 +1,4 @@
-[![DBL Big](https://discordbots.org/api/widget/532099058941034498.svg)](https://discordbots.org/bot/532099058941034498) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss?ref=badge_shield)
+[![DBL Big](https://discordbots.org/api/widget/532099058941034498.svg)](https://discordbots.org/bot/532099058941034498)   
  
 [![DBL Small](https://discordbots.org/api/widget/owner/532099058941034498.svg)](https://discordbots.org/bot/532099058941034498) [![Discord](https://img.shields.io/discord/598437365891203072?style=flat-square)](https://discord.gg/RsRps9M)
 # Abyss Bot Platform
@@ -57,8 +57,6 @@ The project is broken down into the following projects:
 - `Abyss.ExampleCustomAssembly` (library) This is an example project, which shows how you can make your own projects to expand and add new functionality and commands to Abyss.
 
 ### Copyright
-Copyright (c) 2019 abyssal512 under the MIT License, available at [the LICENSE file.](LICENSE.md)
-
-
-## License
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss?ref=badge_large)
+Copyright (c) 2019 abyssal512 under the MIT License, available at [the LICENSE file.](LICENSE.md)  
+  
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss?ref=badge_large)
