@@ -6,11 +6,6 @@ namespace Abyss.Core.Extensions
 {
     public static class CastExtensions
     {
-        public static T Cast<T>(this object @object)
-        {
-            return @object is T res ? res : default;
-        }
-
         public static AbyssRequestContext ToRequestContext(this CommandContext context)
         {
             return context is AbyssRequestContext requestContext

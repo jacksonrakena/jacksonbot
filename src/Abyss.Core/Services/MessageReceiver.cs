@@ -188,7 +188,7 @@ namespace Abyss.Core.Services
 
                         foreach (var (cooldown, retryAfter) in cdr.Cooldowns)
                         {
-                            var bucketType = cooldown.BucketType.Cast<CooldownType>().GetPerName();
+                            var bucketType = ((CooldownType) cooldown.BucketType).GetPerName();
 
                             await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
                                 .WithColor(Color.Red)
@@ -292,7 +292,7 @@ namespace Abyss.Core.Services
             var ctx = args.Context;
             var command = ctx.Command;
             var context = ctx.ToRequestContext();
-            var baseResult = result.Cast<ActionResult>();
+            var baseResult = result as ActionResult;
 
             if (baseResult == null)
             {

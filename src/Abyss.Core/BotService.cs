@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
 using Abyss.Core.Addons;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Abyss.Core
 {
@@ -69,7 +70,7 @@ namespace Abyss.Core
             await _discordClient.LoginAsync(TokenType.Bot, discordConfiguration.Token).ConfigureAwait(false);
             await _discordClient.StartAsync().ConfigureAwait(false);
 
-            _serviceProvider.InitializeService<ResponseCacheService>();
+            _serviceProvider.GetRequiredService<ResponseCacheService>();
 
             var assemblyDirectory = _dataService.GetCustomAssemblyBasePath();
 

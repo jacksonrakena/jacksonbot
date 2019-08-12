@@ -111,7 +111,7 @@ namespace Abyss.Core.Services
             var cd = command.Cooldowns;
             if (cd.Count > 0)
             {
-                embed.AddField("Cooldowns", string.Join("\n", cd.Select(c => $"{c.BucketType.Cast<CooldownType>().GetPerName()} - {c.Amount} usage{(c.Amount == 1 ? "" : "s")} per {c.Per.Humanize()}")));
+                embed.AddField("Cooldowns", string.Join("\n", cd.Select(c => $"{((CooldownType)c.BucketType).GetPerName()} - {c.Amount} usage{(c.Amount == 1 ? "" : "s")} per {c.Per.Humanize()}")));
             }
 
             var checks = command.Checks.Concat(command.Module.Checks).ToList();
@@ -143,7 +143,7 @@ namespace Abyss.Core.Services
 
         public string GetCheckFriendlyMessage(AbyssRequestContext context, CheckAttribute cba)
         {
-            return (cba.Cast<IAbyssCheck>() ?? throw new InvalidOperationException($"The provided check is not of the Abyss check type, {typeof(IAbyssCheck).Name}.")).GetDescription(context);
+            return (cba as IAbyssCheck ?? throw new InvalidOperationException($"The provided check is not of the Abyss check type, {typeof(IAbyssCheck).Name}.")).GetDescription(context);
         }
 
         private string FormatParameter(AbyssRequestContext ctx, Parameter parameterInfo)
