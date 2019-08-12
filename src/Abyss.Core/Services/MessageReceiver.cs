@@ -292,9 +292,8 @@ namespace Abyss.Core.Services
             var ctx = args.Context;
             var command = ctx.Command;
             var context = ctx.ToRequestContext();
-            var baseResult = result as ActionResult;
 
-            if (baseResult == null)
+            if (!(result is ActionResult baseResult))
             {
                 _failedCommandsTracking.LogCritical(LoggingEventIds.CommandReturnedBadType, $"Command {command.Name} returned a result of type {result.GetType().Name} and not {typeof(ActionResult).Name}.");
                 await context.Channel.TrySendMessageAsync($"Man, this bot sucks. Command {command.Name} is broken, and will need to be recompiled. Try again later. (Developer: The command returned a type that isn't a {typeof(ActionResult).Name}.)");
