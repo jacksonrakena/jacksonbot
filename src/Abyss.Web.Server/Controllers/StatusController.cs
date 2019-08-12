@@ -21,9 +21,9 @@ namespace Abyss.Web.Server.Controllers
         }
 
         [HttpGet]
-        public ServiceInfo GetBotStatus()
+        public ActionResult<ServiceInfo> GetBotStatus()
         {
-            if (_client.CurrentUser == null) return null;
+            if (_client.CurrentUser == null) return NotFound();
             return _data.GetServiceInfo();
         }
 
