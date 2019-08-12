@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Abyss.Web.Shared
+namespace Abyss.Shared
 {
     public class GuildInfoDetailed
     {

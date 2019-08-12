@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Abyss.Web.Shared\Abyss.Web.Shared.csproj" />
+    <ProjectReference Include="..\Abyss.Shared\Abyss.Shared.csproj" />
   </ItemGroup>
 
 </Project>

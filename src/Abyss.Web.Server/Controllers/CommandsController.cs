@@ -1,5 +1,4 @@
-﻿using Abyss.Core.Services;
-using Abyss.Web.Shared;
+﻿using Abyss.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Qmmands;
 using System.Collections.Generic;

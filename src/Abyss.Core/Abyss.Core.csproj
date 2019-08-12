@@ -36,4 +36,7 @@
     <ItemGroup>
       <Folder Include="Assets" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Abyss.Shared\Abyss.Shared.csproj" />
+    </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 ﻿using Abyss.Core.Extensions;
 using Abyss.Core.Helpers;
-using Abyss.Web.Shared;
+using Abyss.Shared;
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;

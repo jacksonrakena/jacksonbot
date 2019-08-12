@@ -1,5 +1,5 @@
 ﻿@page "/status"
-@using Abyss.Web.Shared
+@using Abyss.Shared
 @inject HttpClient Http
 
 <h1>Bot status</h1>
@@ -10,7 +10,8 @@
 }
 else
 {
-    <p>Current username: @info.Username</p>
+<p>@info.ServiceName instance running on @info.OperatingSystem (runtime version @info.RuntimeVersion), powering @info.Guilds guilds (@info.Channels channels, and @info.Users users)</p>
+    <p><b>Content root path:</b> @info.ContentRootPath</p>
 }
 
 @if (info != null && ssinfo == null)
@@ -30,13 +31,13 @@ else
 }
 
 @code {
-BotStatusInfo info;
-BotSupportServerInfo ssinfo;
+    ServiceInfo info;
+    BotSupportServerInfo ssinfo;
 
-protected override async Task OnInitAsync()
-{
-    info = await Http.GetJsonAsync<BotStatusInfo>("api/status");
-    ssinfo = info.SupportServerInfo;
-}
+    protected override async Task OnInitAsync()
+    {
+        info = await Http.GetJsonAsync<ServiceInfo>("api/status");
+        ssinfo = await Http.GetJsonAsync<BotSupportServerInfo>("api/status/support");
+    }
 
 }

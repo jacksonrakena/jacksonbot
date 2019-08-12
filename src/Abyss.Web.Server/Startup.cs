@@ -41,8 +41,7 @@ namespace Abyss.Web.Server
             serviceCollection.AddSingleton(serviceProvider =>
             {
                 var configurationBuilder = new ConfigurationBuilder()
-                .SetBasePath(serviceProvider.GetRequiredService<DataService>().GetConfigurationBasePath())
-                .AddJsonFile("Abyss.json", false, true);
+                .AddJsonFile("abyss.json", false, true);
                 return configurationBuilder.Build();
             });
             serviceCollection.AddSingleton(serviceProvider =>
