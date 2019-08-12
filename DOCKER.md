@@ -1,6 +1,8 @@
 # Abyss on Docker
 Docker is a powerful containerization and orchestration platform that is heavily recommended to use to run Abyss on.  
-Abyss has a bundled Dockerfile that downloads and installs all the requirements it needs.
+Abyss has a bundled Dockerfile that downloads and installs all the requirements it needs.  
+  
+There are Bash scripts that I have written that automate most of this stuff, which are available at [abyssal512/abyss-scripts](http://github.com/abyssal512/abyss-scripts).
 
 ### Running Abyss on Docker
 0) Install Docker.
