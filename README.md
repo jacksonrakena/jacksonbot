@@ -30,7 +30,7 @@ An example Abyss configuration file can be found at [abyss.example.json](https:/
 Abyss has fully modular runtime addon support, using .NET assemblies. Here's a quick guide on doing so:
 1) Clone this repository to your computer.
 2) Create a new .NET Core 3.0 Library (**not .NET Standard 2.0**) and add your local copy of `Abyss.Core` as a dependency.
-3) Create your modules and commands as you like, using `AbyssModuleBase`. Feel free to look at Abyss' included commands for help. To extend your addon to modify functionality of the platform, create a class that extends `Absys.Core.Addons.IAddon` and implement its methods.
+3) Create your modules and commands as you like, using `AbyssModuleBase`. Feel free to look at Abyss' included commands for help. To extend your addon to modify functionality of the platform, create a class that extends `Abyss.Core.Addons.IAddon` and implement its methods.
 4) Build `Abyss.Console` (or whatever frontend you are using) in your preferred configuration.
 5) Build your assembly, and copy the assembly file (something like `MyCommandAssembly.dll`) into your `Addons` folder. If you don't provide an absolute or relative directory path as the first argument to the application, it will default to the directory of the built DLL, plus `Addons`. If you do, it will use the `Addons` directory in that path.
 6) Abyss will automatically discover addons and modules and register them. This will be logged in the console.
