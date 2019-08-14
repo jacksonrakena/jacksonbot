@@ -66,7 +66,7 @@ namespace Abyss.Core.Modules
 
             var desc = new StringBuilder();
 
-            string FormatActivity(IActivity activity)
+            static string FormatActivity(IActivity activity)
             {
                 if (activity is SpotifyGame spotify)
                 {

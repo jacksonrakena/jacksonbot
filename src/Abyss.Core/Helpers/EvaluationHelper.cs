@@ -89,7 +89,7 @@ namespace Abyss.Core.Helpers
 
             if (value == null) return "Null";
 
-            string HandleEnumerable(IEnumerable @enum)
+            static string HandleEnumerable(IEnumerable @enum)
             {
                 var enu = @enum.Cast<object>().ToList();
                 return $"{enu.Count} [{enu.GetType().Name}]";
@@ -134,7 +134,7 @@ namespace Abyss.Core.Helpers
 
             parents.Reverse();
 
-            string FormatType(Type atype)
+            static string FormatType(Type atype)
             {
                 var vs = atype.Namespace + "." + atype.Name;
 

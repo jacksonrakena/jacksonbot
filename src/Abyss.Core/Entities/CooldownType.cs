@@ -14,23 +14,18 @@ namespace Abyss.Core.Entities
     {
         public static string GetFriendlyName(this CooldownType type)
         {
-            switch (type)
+            return type switch
             {
-                case CooldownType.Server:
-                    return "This server";
+                CooldownType.Server => "This server",
 
-                case CooldownType.Channel:
-                    return "This channel";
+                CooldownType.Channel => "This channel",
 
-                case CooldownType.User:
-                    return "You";
+                CooldownType.User => "You",
 
-                case CooldownType.Global:
-                    return "Everybody";
+                CooldownType.Global => "Everybody",
 
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null),
+            };
         }
 
         public static string GetPerName(this CooldownType type)

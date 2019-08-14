@@ -147,7 +147,7 @@ namespace Abyss.Core.Modules
                     var start = compilationDiagnostic.Location.SourceSpan.Start;
                     var end = compilationDiagnostic.Location.SourceSpan.End;
 
-                    var bottomRow = script.Substring(start, end - start);
+                    var bottomRow = script[start..end];
 
                     if (!string.IsNullOrEmpty(bottomRow)) sb.AppendLine("`" + bottomRow + "`");
                     sb.AppendLine(

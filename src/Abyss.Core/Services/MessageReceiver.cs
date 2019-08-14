@@ -146,14 +146,12 @@ namespace Abyss.Core.Services
                             .Build()).ConfigureAwait(false);
                         break;
 
-                    case ArgumentParseFailedResult apfr:
-                        var reason = apfr.ArgumentParserFailure.Humanize();
-
+                    case ArgumentParseFailedResult apfr0 when apfr0.ParserResult is DefaultArgumentParserResult apfr:
                         _failedCommandsTracking.LogWarning(LoggingEventIds.ArgumentParseFailed,
-                            $"Parse failed for {apfr.Command.Name}. Reason: {apfr.Reason} " +
+                            $"Parse failed for {apfr.Command.Name}. Reason: {apfr.Failure?.Humanize()} " +
                             $"(message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
 
-                        if (apfr.ArgumentParserFailure == ArgumentParserFailure.TooFewArguments)
+                        if (apfr.Failure == DefaultArgumentParserFailure.TooFewArguments)
                         {
                             await context.Channel.SendMessageAsync(
                                 $"I can't read that, you didn't provide enough information. Here's the command listing for `{apfr.Command.Name}`:",
@@ -162,7 +160,7 @@ namespace Abyss.Core.Services
                         }
 
                         await context.Channel.SendMessageAsync(
-                            $"I couldn't read whatever you just said: {reason}.").ConfigureAwait(false);
+                            $"I couldn't read whatever you just said: {apfr.Failure?.Humanize() ?? "A parsing error occurred."}.").ConfigureAwait(false);
                         break;
 
                     case TypeParseFailedResult tpfr:

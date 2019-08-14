@@ -39,12 +39,10 @@ namespace Abyss.Core.Modules
         [AbyssCooldown(1, 5, CooldownMeasure.Seconds, CooldownType.User)]
         public async Task<ActionResult> Command_GetCatPictureAsync()
         {
-            using (var response = await _httpApi.GetAsync(CatApi).ConfigureAwait(false))
-            {
-                var url = JToken.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false))
-                .Value<string>("file");
-                return Image("Meow~!", url);
-            }
+            using var response = await _httpApi.GetAsync(CatApi).ConfigureAwait(false);
+            var url = JToken.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false))
+.Value<string>("file");
+            return Image("Meow~!", url);
         }
 
         [Command("Bigmoji", "BigEmoji")]
@@ -61,18 +59,14 @@ namespace Abyss.Core.Modules
                     {
                         var url = emote.Url;
 
-                        using (var inStream = await _httpApi.GetStreamAsync(url).ConfigureAwait(false))
-                        {
-                            var outStream = new MemoryStream();
-                            using (var img = SixLabors.ImageSharp.Image.Load(inStream))
-                            {
-                                img.Mutate(a => a.Resize(a.GetCurrentSize() * 2, new BicubicResampler(), false));
-                                img.Save(outStream,
-                                    emote.Animated ? (IImageEncoder) new GifEncoder() : new PngEncoder());
-                                outStream.Position = 0;
-                                return Image(FileAttachment.FromStream(outStream, $"emoji.{(emote.Animated ? "gif" : "png")}"));
-                            }
-                        }
+                        using var inStream = await _httpApi.GetStreamAsync(url).ConfigureAwait(false);
+                        var outStream = new MemoryStream();
+                        using var img = SixLabors.ImageSharp.Image.Load(inStream);
+                        img.Mutate(a => a.Resize(a.GetCurrentSize() * 2, new BicubicResampler(), false));
+                        img.Save(outStream,
+                            emote.Animated ? (IImageEncoder) new GifEncoder() : new PngEncoder());
+                        outStream.Position = 0;
+                        return Image(FileAttachment.FromStream(outStream, $"emoji.{(emote.Animated ? "gif" : "png")}"));
                     }
                 case Emoji emoji:
                     return Image(null, "https://i.kuro.mu/emoji/512x512/" + string.Join("-",
@@ -97,24 +91,20 @@ namespace Abyss.Core.Modules
             int height)
         {
             var isGif = url.ToString().EndsWith("gif");
-            using (var inStream = await _httpApi.GetStreamAsync(url).ConfigureAwait(false))
+            using var inStream = await _httpApi.GetStreamAsync(url).ConfigureAwait(false);
+            var outStream = new MemoryStream();
+            try
             {
-                var outStream = new MemoryStream();
-                try
-                {
-                    using (var img = SixLabors.ImageSharp.Image.Load(inStream))
-                    {
-                        img.Mutate(a => a.Resize(new Size(width, height), new BicubicResampler(), false));
-                        img.Save(outStream, isGif ? (IImageEncoder) new GifEncoder() : new PngEncoder());
-                        outStream.Position = 0;
-                        return Image(FileAttachment.FromStream(outStream, $"resized.{(isGif ? "gif" : "png")}"));
-                    }
-                }
-                catch (NotSupportedException)
-                {
-                    return BadRequest(
-                        "The provided URL's image was in a bad format! Available formats are PNG, JPEG, BMP or GIF!");
-                }
+                using var img = SixLabors.ImageSharp.Image.Load(inStream);
+                img.Mutate(a => a.Resize(new Size(width, height), new BicubicResampler(), false));
+                img.Save(outStream, isGif ? (IImageEncoder) new GifEncoder() : new PngEncoder());
+                outStream.Position = 0;
+                return Image(FileAttachment.FromStream(outStream, $"resized.{(isGif ? "gif" : "png")}"));
+            }
+            catch (NotSupportedException)
+            {
+                return BadRequest(
+                    "The provided URL's image was in a bad format! Available formats are PNG, JPEG, BMP or GIF!");
             }
         }
     }
