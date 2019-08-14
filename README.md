@@ -9,7 +9,7 @@ You can join the support server [here.](https://discord.gg/RsRps9M)
   
 ### Features
 - Complete modularity including custom event hooks, custom commands (using the existing command system), and full expandability, through .NET's powerful assembly loading system   
-- Spotify track and album lookup (can also read from the current song you're listening to), powered by [AbyssalSpotify](http://github.com/abyssal512/AbyssalSpotify)  
+- Spotify track and album lookup (can also read from the current song you're listening to), powered by [AbyssalSpotify](http://github.com/abyssal/AbyssalSpotify)  
 - Resizing (bicubic) of emojis and custom images, both animated and not-animated  
 - Live C# script evaluation  
 - Dice rolling with custom expression support (e.g. `a.roll d20+d48+d10`)  
@@ -24,7 +24,7 @@ You can join the support server [here.](https://discord.gg/RsRps9M)
 - `Abyss.json` configuration file set out as below
 
 ### Configuration
-An example Abyss configuration file can be found at [abyss.example.json](https://github.com/abyssal512/Abyss/blob/master/abyss.example.json), which should be renamed to `abyss.json` before running. This needs to be mounted in Abyss' content root, which is explained in [the Docker instructions.](DOCKER.md)
+An example Abyss configuration file can be found at [abyss.example.json](https://github.com/abyssal/Abyss/blob/master/abyss.example.json), which should be renamed to `abyss.json` before running. This needs to be mounted in Abyss' content root, which is explained in [the Docker instructions.](DOCKER.md)
   
 ### Creating Addons
 Abyss has fully modular runtime addon support, using .NET assemblies. Here's a quick guide on doing so:
