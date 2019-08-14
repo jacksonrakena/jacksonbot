@@ -151,7 +151,7 @@ namespace Abyss.Core.Modules
             [DefaultValueDescription("The user who invoked this command.")]
             SocketGuildUser user = null)
         {
-            user = user ?? Context.Invoker; // Get the user (or the invoker, if none specified)
+            user ??= Context.Invoker; // Get the user (or the invoker, if none specified)
 
             var embed = new EmbedBuilder();
             embed.WithAuthor((IUser) user);
@@ -222,7 +222,7 @@ namespace Abyss.Core.Modules
             SocketGuildUser user,
             [Name("Permission")] [Description("The permission to analyze.")] [Remainder] string permission)
         {
-            user = user ?? Context.Invoker;
+            user ??= Context.Invoker;
 
             var perm = user.GuildPermissions.GetType().GetProperties().FirstOrDefault(a =>
                 a.PropertyType.IsAssignableFrom(typeof(bool))

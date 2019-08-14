@@ -69,7 +69,7 @@ namespace Abyss.Core.Modules
             [Remainder]
             SocketGuildUser user = null)
         {
-            user = user ?? Context.Invoker;
+            user ??= Context.Invoker;
 
             if (user.Activity == null || !(user.Activity is SpotifyGame spotify))
                 return BadRequest("User is not listening to anything~!");

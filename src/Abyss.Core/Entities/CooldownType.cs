@@ -30,23 +30,18 @@ namespace Abyss.Core.Entities
 
         public static string GetPerName(this CooldownType type)
         {
-            switch (type)
+            return type switch
             {
-                case CooldownType.Server:
-                    return "Per server";
+                CooldownType.Server => "Per server",
 
-                case CooldownType.Channel:
-                    return "Per channel";
+                CooldownType.Channel => "Per channel",
 
-                case CooldownType.User:
-                    return "Per user";
+                CooldownType.User => "Per user",
 
-                case CooldownType.Global:
-                    return "Global";
+                CooldownType.Global => "Global",
 
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null),
+            };
         }
     }
 }

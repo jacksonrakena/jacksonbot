@@ -50,29 +50,22 @@ namespace Abyss.Core.Extensions
 
         public static LogLevel ToMicrosoftLogLevel(this LogSeverity logSeverity)
         {
-            switch (logSeverity)
+            return logSeverity switch
             {
-                case LogSeverity.Critical:
-                    return LogLevel.Critical;
+                LogSeverity.Critical => LogLevel.Critical,
 
-                case LogSeverity.Error:
-                    return LogLevel.Error;
+                LogSeverity.Error => LogLevel.Error,
 
-                case LogSeverity.Warning:
-                    return LogLevel.Warning;
+                LogSeverity.Warning => LogLevel.Warning,
 
-                case LogSeverity.Info:
-                    return LogLevel.Information;
+                LogSeverity.Info => LogLevel.Information,
 
-                case LogSeverity.Verbose:
-                    return LogLevel.Trace;
+                LogSeverity.Verbose => LogLevel.Trace,
 
-                case LogSeverity.Debug:
-                    return LogLevel.Debug;
+                LogSeverity.Debug => LogLevel.Debug,
 
-                default:
-                    return LogLevel.Information;
-            }
+                _ => LogLevel.Information,
+            };
         }
     }
 }

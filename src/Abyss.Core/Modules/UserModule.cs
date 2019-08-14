@@ -37,7 +37,7 @@ namespace Abyss.Core.Modules
             [Name("Image_Size")] [Description("The size of the resulting image, in pixels.")]
             int size = 1024)
         {
-            target = target ?? Context.Invoker;
+            target ??= Context.Invoker;
 
             return Ok(a =>
             {
@@ -55,7 +55,7 @@ namespace Abyss.Core.Modules
             [DefaultValueDescription("The user who invoked this command.")]
             SocketGuildUser member = null)
         {
-            member = member ?? Context.Invoker;
+            member ??= Context.Invoker;
 
             var embed = new EmbedBuilder
             {

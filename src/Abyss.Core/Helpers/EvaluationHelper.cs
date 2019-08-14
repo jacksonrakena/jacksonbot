@@ -62,47 +62,41 @@ namespace Abyss.Core.Helpers
 
         private static string ReadValue(object prop, object obj)
         {
-            object value;
 
             /* PropertyInfo and FieldInfo both derive from MemberInfo, but that does not have a GetValue method, so the only
                 supported ancestor is object */
             try
             {
-                switch (prop)
+                var value = prop switch
                 {
-                    case PropertyInfo pinfo:
-                        value = pinfo.GetValue(obj);
-                        break;
+                    PropertyInfo pinfo => pinfo.GetValue(obj),
 
-                    case FieldInfo finfo:
-                        value = finfo.GetValue(obj);
-                        break;
+                    FieldInfo finfo => finfo.GetValue(obj),
 
-                    default:
-                        throw new ArgumentException($"{nameof(prop)} must be PropertyInfo or FieldInfo", nameof(prop));
+                    _ => throw new ArgumentException($"{nameof(prop)} must be PropertyInfo or FieldInfo", nameof(prop)),
+                };
+
+                if (value == null) return "Null";
+
+                static string HandleEnumerable(IEnumerable @enum)
+                {
+                    var enu = @enum.Cast<object>().ToList();
+                    return $"{enu.Count} [{enu.GetType().Name}]";
                 }
+
+                string HandleNormal()
+                {
+                    return value + $" [{value.GetType().Name}]";
+                }
+
+                return value is IEnumerable enumerable && !(value is string)
+                    ? HandleEnumerable(enumerable)
+                    : HandleNormal();
             }
             catch (Exception)
             {
                 return "{{failed to read property or field}}";
             }
-
-            if (value == null) return "Null";
-
-            static string HandleEnumerable(IEnumerable @enum)
-            {
-                var enu = @enum.Cast<object>().ToList();
-                return $"{enu.Count} [{enu.GetType().Name}]";
-            }
-
-            string HandleNormal()
-            {
-                return value + $" [{value.GetType().Name}]";
-            }
-
-            return value is IEnumerable enumerable && !(value is string)
-                ? HandleEnumerable(enumerable)
-                : HandleNormal();
         }
 
         public static string InspectInheritance<T>()
