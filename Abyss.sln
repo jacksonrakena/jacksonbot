@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abyss.Shared.Hosts", "src\Abyss.Shared.Hosts\Abyss.Shared.Hosts.csproj", "{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -160,6 +162,26 @@ Global
 		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Release|x64.Build.0 = Release|Any CPU
 		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Release|x86.ActiveCfg = Release|Any CPU
 		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Release|x86.Build.0 = Release|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Debug|ARM.Build.0 = Debug|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Debug|x64.Build.0 = Debug|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Debug|x86.Build.0 = Debug|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Release|ARM.ActiveCfg = Release|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Release|ARM.Build.0 = Release|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Release|ARM64.Build.0 = Release|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Release|x64.ActiveCfg = Release|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Release|x64.Build.0 = Release|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Release|x86.ActiveCfg = Release|Any CPU
+		{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

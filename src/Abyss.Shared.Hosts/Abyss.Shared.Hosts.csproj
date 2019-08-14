@@ -1,27 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
-  <ItemGroup Condition="$(Configuration) == 'Debug'">
-    <Content Include="abyss.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="abyss.Development.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.0.0-preview8.19405.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0-preview8.19405.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0-preview8.19405.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.0.0-preview8.19405.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.0.0-preview8.19405.4" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.0.0-preview8.19405.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Abyss.Core\Abyss.Core.csproj" />
-    <ProjectReference Include="..\Abyss.Shared.Hosts\Abyss.Shared.Hosts.csproj" />
   </ItemGroup>
+
 </Project>

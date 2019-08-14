@@ -56,10 +56,10 @@
 }
 
 @code {      
-CommandInfo[] commands; 
+    CommandInfo[] commands;
 
-protected override async Task OnInitAsync()
-{
-    commands = await Http.GetJsonAsync<CommandInfo[]>("api/commands");
-}
+    protected override async Task OnInitializedAsync()
+    {
+        commands = await Http.GetJsonAsync<CommandInfo[]>("api/commands");
+    }
 }

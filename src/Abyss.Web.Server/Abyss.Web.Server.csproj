@@ -6,11 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Blazor.Server" Version="3.0.0-preview6.19307.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0-preview6.19307.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.Server" Version="3.0.0-preview8.19405.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0-preview8.19405.7" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Abyss.Shared.Hosts\Abyss.Shared.Hosts.csproj" />
     <ProjectReference Include="..\Abyss.Web.Client\Abyss.Web.Client.csproj" />
     <ProjectReference Include="..\Abyss.Core\Abyss.Core.csproj" />
     <ProjectReference Include="..\Abyss.Shared\Abyss.Shared.csproj" />

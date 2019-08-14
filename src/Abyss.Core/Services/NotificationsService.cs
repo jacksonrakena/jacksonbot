@@ -14,10 +14,10 @@ namespace Abyss.Core.Services
     {
         private readonly bool _sendNotifications = true;
         private readonly AbyssConfigNotificationsSection _notifyConfig;
-        private readonly IHostingEnvironment _environment;
+        private readonly IHostEnvironment _environment;
         private readonly DiscordSocketClient _client;
 
-        public NotificationsService(AbyssConfig config, DiscordSocketClient client, IHostingEnvironment env)
+        public NotificationsService(AbyssConfig config, DiscordSocketClient client, IHostEnvironment env)
         {
             if (config.Notifications == null) _sendNotifications = false;
             _notifyConfig = config.Notifications;

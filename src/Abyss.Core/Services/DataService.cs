@@ -16,13 +16,13 @@ namespace Abyss.Core.Services
 {
     public class DataService
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IHostEnvironment _hostingEnvironment;
         private readonly MessageReceiver _messageReceiver;
         private readonly ICommandService _commandService;
         private readonly DiscordSocketClient _discord;
         private readonly AddonService _addons;
 
-        public DataService(IHostingEnvironment hostingEnvironment, DiscordSocketClient client, MessageReceiver receiver, ICommandService commandService,
+        public DataService(IHostEnvironment hostingEnvironment, DiscordSocketClient client, MessageReceiver receiver, ICommandService commandService,
             AddonService addons)
         {
             _hostingEnvironment = hostingEnvironment;

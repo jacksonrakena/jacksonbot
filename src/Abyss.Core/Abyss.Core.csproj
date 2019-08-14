@@ -19,14 +19,14 @@
         <PackageReference Include="AbyssalSpotify" Version="1.0.0-20190803.2" />
         <PackageReference Include="Discord.Net.WebSocket" Version="2.2.0-dev-20190730.2" />
         <PackageReference Include="Humanizer.Core" Version="2.6.2" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.2.0" />
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.2.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.2.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.3.0-beta1-final" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.0.0-preview8.19405.4" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0-preview8.19405.4" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0-preview8.19405.4" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.0.0-preview8.19405.4" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0-preview8.19405.4" />
         <PackageReference Include="Qmmands" Version="3.0.0-nightly-00204" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
     </ItemGroup>
     <ItemGroup>
         <None Update="Assets\transparent_200x200.png">
