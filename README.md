@@ -39,9 +39,10 @@ Abyss has fully modular runtime addon support, using .NET assemblies. Here's a q
 
 ### Contributing
 The project is broken down into the following projects:     
-**Platform core**  
+**Platform core** 
 - `Abyss.Core` (library) The core of Abyss. This project contains the robust, fast, and safe architecture that sits at the heart of Abyss operation. It also contains all of the default commands that come with every instance.  
 - `Abyss.Shared` This library contains data classes and code that is shared between `Abyss.Core`, `Abyss.Web.Client`, and `Abyss.Web.Server`.  
+- `Abyss.Shared.Hosts` This library contains common code and functionality that is shared between `Abyss.Web.Server` and `Abyss.Console`.
   
 **Console host**  
 - `Abyss.Console` This is an executable which wraps `Abyss.Core`, and pipes output to the console. This executable does not support web functionality.  
@@ -51,9 +52,14 @@ The project is broken down into the following projects:
 - `Abyss.Web.Server` An alternative to `Abyss.Console`, this executable starts up the Abyss administration panel on `[Any IP]:2003` and serves clients the Blazor code in `Abyss.Web.Client`. This web server contains many useful administration tools.   
 
 **Addons**  
-- `Abyss.ExampleCustomAssembly` (library) This is an example project, which shows how you can make your own projects to expand and add new functionality and commands to Abyss.
+- `Abyss.ExampleCustomAssembly` (library) This is an example project, which shows how you can make your own projects to expand and add new functionality and commands to Abyss.  
+  
+*External addons*  
+- [abyssal/Abyss.Addons.TheLair](https://github.com/abyssal/Abyss.Addons.TheLair) (library) This is an external Abyss addon for Abyss' support server.  
+- [abyssal/Abyss.Addons.Guardian](https://github.com/abyssal/Abyss.Addons.Guardian) (library) This is an external Abyss addon for server protection.
+
 
 ### Copyright
-Copyright (c) 2019 abyssal512 under the MIT License, available at [the LICENSE file.](LICENSE.md)  
+Copyright (c) 2019 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
   
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss?ref=badge_large)
