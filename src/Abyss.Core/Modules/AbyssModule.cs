@@ -71,7 +71,7 @@ namespace Abyss.Core.Modules
                 .AddField("Heartbeat", Context.Client.Latency + "ms", true)
                 .AddField("Commands", _commandService.GetAllCommands().Count(), true)
                 .AddField("Modules", _commandService.GetAllModules().Count(), true)
-                .AddField("Source", $"https://github.com/abyssal512/Abyss");
+                .AddField("Source", $"https://github.com/abyssal/Abyss");
 
             if (!string.IsNullOrWhiteSpace(_config.Connections.Discord.SupportServer))
             {
