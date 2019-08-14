@@ -1,6 +1,6 @@
 ﻿using Abyss.Core.Extensions;
 using Abyss.Core.Helpers;
-using Abyss.Web.Shared;
+using Abyss.Shared;
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -22,23 +22,15 @@ namespace Abyss.Web.Server.Controllers
         [HttpGet]
         public IEnumerable<GuildInfo> GetGuilds()
         {
-            var guilds = new List<GuildInfo>();
-
-            foreach (var guild in _client.Guilds)
+            return _client.Guilds.Select(guild => new GuildInfo
             {
-                var newGuild = new GuildInfo
-                {
-                    Id = guild.Id.ToString(),
-                    Name = guild.Name,
-                    MemberCount = guild.MemberCount,
-                    IconUrl = guild.IconUrl,
-                    Owner = guild.Owner.Format(),
-                    HighestRoleName = guild.CurrentUser.Roles.Count == 0 ? null : guild.CurrentUser.Roles.OrderByDescending(a => a.Position).First().Name
-                };
-                guilds.Add(newGuild);
-            }
-
-            return guilds;
+                Id = guild.Id.ToString(),
+                Name = guild.Name,
+                MemberCount = guild.MemberCount,
+                IconUrl = guild.IconUrl,
+                Owner = guild.Owner.Format(),
+                HighestRoleName = guild.CurrentUser.Roles.Count == 0 ? null : guild.CurrentUser.Roles.OrderByDescending(a => a.Position).First().Name
+            });
         }
 
         [HttpDelete("{id}")]

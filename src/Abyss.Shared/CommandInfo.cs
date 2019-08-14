@@ -1,4 +1,4 @@
-﻿namespace Abyss.Web.Shared
+﻿namespace Abyss.Shared
 {
     public class CommandInfo
     {

@@ -17,6 +17,8 @@ namespace Abyss.Core.Addons
             _services = services;
         }
 
+        public List<IAddon> GetAllAddons() => _addons;
+
         public Task AddAddonAsync<T>() where T : IAddon
         {
             return AddAddonAsync(typeof(T));
