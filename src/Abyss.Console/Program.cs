@@ -57,8 +57,8 @@ namespace Abyss.Console
                     serviceCollection.ConfigureSharedServices();
                 })
                 .UseConsoleLifetime()
-                .RunConsoleAsync();
-            host.GetAwaiter().GetResult();
+                .Build();
+            host.Run();
         }
     }
 }
