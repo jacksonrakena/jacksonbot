@@ -10,11 +10,9 @@ using Humanizer;
 using Qmmands;
 using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Abyss.Core.Modules

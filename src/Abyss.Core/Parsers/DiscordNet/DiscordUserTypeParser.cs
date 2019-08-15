@@ -1,5 +1,3 @@
-using Abyss.Core.Parsers;
-using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
 using Discord;
 using Discord.WebSocket;

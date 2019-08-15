@@ -2,12 +2,10 @@
 using Abyss.Core.Checks.Command;
 using Abyss.Core.Checks.Parameter;
 using Abyss.Core.Entities;
-using Abyss.Core.Extensions;
 using Abyss.Core.Parsers.DiscordNet;
 using Abyss.Core.Results;
 using Discord;
 using Discord.Net;
-using Discord.WebSocket;
 using Qmmands;
 using System.Linq;
 using System.Net;

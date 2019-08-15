@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Abyss.Core.Addons;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Abyss.ExampleCustomAssembly

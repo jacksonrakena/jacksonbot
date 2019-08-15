@@ -4,13 +4,10 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
 using Qmmands;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace Abyss.Core.Services
 {

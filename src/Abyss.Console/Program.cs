@@ -1,19 +1,10 @@
-﻿using Abyss.Core.Addons;
-using Abyss.Core.Services;
-using Abyss.Core.Entities;
-using Abyss.Core.Extensions;
-using AbyssalSpotify;
-using Discord;
-using Discord.WebSocket;
+﻿using Abyss.Core.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Configuration;
-using Qmmands;
 using System;
-using System.Net.Http;
-using Abyss.Core;
 using Abyss.Shared.Hosts;
 
 namespace Abyss.Console

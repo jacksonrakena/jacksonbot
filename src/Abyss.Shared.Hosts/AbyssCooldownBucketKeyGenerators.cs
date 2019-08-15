@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
 using Qmmands;
