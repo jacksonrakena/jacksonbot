@@ -41,8 +41,6 @@ namespace Abyss.Core.Services
             _discordClient.MessageReceived += ReceiveMessageAsync;
         }
 
-        public static readonly Emoji UnknownCommandReaction = new Emoji("❓");
-
         private readonly ILogger _successfulCommandsTracking;
         private readonly ILogger _failedCommandsTracking;
         private readonly ILogger<MessageReceiver> _logger;
@@ -98,7 +96,7 @@ namespace Abyss.Core.Services
 
                     case CommandNotFoundResult cnfr:
                         _failedCommandsTracking.LogWarning(LoggingEventIds.UnknownCommand, $"No command found matching {requestString} (message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
-                        await context.Message.AddReactionAsync(UnknownCommandReaction).ConfigureAwait(false);
+                        //await context.Message.AddReactionAsync(UnknownCommandReaction).ConfigureAwait(false);
                         return;
 
                     case ExecutionFailedResult _:
