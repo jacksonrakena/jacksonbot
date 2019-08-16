@@ -114,7 +114,7 @@ namespace Abyss.Core.Modules
         {
             if (role.Color.RawValue == 0) return BadRequest("That role does not have a colour!");
 
-            var outStream = ImageHelper.CreateColourImage(new Rgba32(role.Color.R, role.Color.G, role.Color.B));
+            var outStream = ImageHelper.CreateColourImage(new Rgba32(role.Color.R, role.Color.G, role.Color.B), 200, 200);
             await Context.Channel.SendFileAsync(outStream, "role.png", null, embed: new EmbedBuilder()
                 .WithColor(role.Color)
                 .WithTitle("Role Color")
