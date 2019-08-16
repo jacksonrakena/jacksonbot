@@ -102,21 +102,9 @@ namespace Abyss.Core
             return _notifications.NotifyServerMembershipChangeAsync(arg, false);
         }
 
-        private async Task DiscordClient_JoinedGuild(SocketGuild arg)
+        private Task DiscordClient_JoinedGuild(SocketGuild arg)
         {
-            var channel = arg.GetDefaultChannel();
-
-            if (channel != null)
-            {
-                await channel.TrySendMessageAsync(string.Empty, false, new EmbedBuilder()
-                    .WithDescription("WHO DARE AWAKEN ME FROM MY SLEEP?! Oh, it's you. Good to see you. What do you want?")
-                    .WithFooter("Guild joined: " + arg.Name, _discordClient.CurrentUser.GetEffectiveAvatarUrl())
-                    .WithCurrentTimestamp()
-                    .WithColor(DefaultEmbedColour)
-                    .Build()).ConfigureAwait(false);
-            }
-
-            await _notifications.NotifyServerMembershipChangeAsync(arg, true).ConfigureAwait(false);
+            return _notifications.NotifyServerMembershipChangeAsync(arg, true);
         }
 
         private async Task DiscordClient_Ready()
