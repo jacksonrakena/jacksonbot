@@ -1,4 +1,5 @@
 using Discord;
+using Discord.Commands;
 
 namespace Abyss.Core.Helpers
 {
@@ -6,7 +7,7 @@ namespace Abyss.Core.Helpers
     {
         public static RequestOptions AuditLog(string auditLog)
         {
-            return new RequestOptions { AuditLogReason = auditLog };
+            return new RequestOptions {AuditLogReason = auditLog};
         }
     }
 }

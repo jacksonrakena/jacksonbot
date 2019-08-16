@@ -1,16 +1,17 @@
-﻿using Abyss.Core.Attributes;
-using Abyss.Core.Entities;
-using Abyss.Core.Extensions;
-using Abyss.Core.Results;
-using Discord;
-using Discord.WebSocket;
-using Humanizer;
-using Qmmands;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Abyss.Core.Attributes;
+using Abyss.Core.Entities;
+using Abyss.Core.Extensions;
+using Abyss.Core.Results;
+using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using Humanizer;
+using Qmmands;
 
 namespace Abyss.Core.Modules
 {
@@ -69,9 +70,7 @@ namespace Abyss.Core.Modules
             static string FormatActivity(IActivity activity)
             {
                 if (activity is SpotifyGame spotify)
-                {
                     return $"Listening to {spotify.TrackTitle} by {spotify.Artists.Humanize()}";
-                }
                 return $"{activity.Type.Humanize()} {activity.Name}";
             }
 
@@ -88,18 +87,27 @@ namespace Abyss.Core.Modules
             desc.AppendLine($"**- Voice Status:** {GetVoiceChannelStatus(member)}");
             if (member.Activity != null)
                 desc.AppendLine($"**- Activity:** {FormatActivity(member.Activity)}");
-            desc.AppendLine($"**- Status:** {_config.Emotes.GetEmoteFromActivity(member.Status)} {member.Status.Humanize()}");
+            desc.AppendLine(
+                $"**- Status:** {_config.Emotes.GetEmoteFromActivity(member.Status)} {member.Status.Humanize()}");
             desc.AppendLine($"**- Mutual servers:** {member.MutualGuilds.Count}");
-            if (member.PremiumSince != null) desc.AppendLine($"**- Nitro membership since: {FormatOffset(member.PremiumSince.Value)}");
-            if (member.ActiveClients != null) desc.AppendLine($"**- Active on:** {string.Join(", ", member.ActiveClients)}");
-            if (effectiveColor != null) desc.AppendLine($"**- Colour:** {effectiveColor.Value.ToString()} (R {effectiveColor.Value.R}, G {effectiveColor.Value.G}, B {effectiveColor.Value.B})");
+            if (member.PremiumSince != null)
+                desc.AppendLine($"**- Nitro membership since: {FormatOffset(member.PremiumSince.Value)}");
+            if (member.ActiveClients != null)
+                desc.AppendLine($"**- Active on:** {string.Join(", ", member.ActiveClients)}");
+            if (effectiveColor != null)
+                desc.AppendLine(
+                    $"**- Colour:** {effectiveColor.Value.ToString()} (R {effectiveColor.Value.R}, G {effectiveColor.Value.G}, B {effectiveColor.Value.B})");
 
             embed.Description = desc.ToString();
 
             var roles = member.Roles.Where(r => !r.IsEveryone);
             var socketRoles = roles as SocketRole[] ?? roles.ToArray();
 
-            embed.AddField($"{(socketRoles.Length > 0 ? socketRoles.Length.ToString() : "No")} role{(socketRoles.Length == 1 ? "" : "s")}", socketRoles.Length > 0 ? string.Join(", ", socketRoles.Select(r => r.Name)) : BotService.ZeroWidthSpace);
+            embed.AddField(
+                $"{(socketRoles.Length > 0 ? socketRoles.Length.ToString() : "No")} role{(socketRoles.Length == 1 ? "" : "s")}",
+                socketRoles.Length > 0
+                    ? string.Join(", ", socketRoles.Select(r => r.Name))
+                    : BotService.ZeroWidthSpace);
 
             return Ok(embed);
         }

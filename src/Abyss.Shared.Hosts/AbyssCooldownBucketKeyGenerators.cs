@@ -1,6 +1,8 @@
 ﻿using System;
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
+using Discord;
+using Discord.Commands;
 using Qmmands;
 
 namespace Abyss.Shared.Hosts
@@ -10,10 +12,8 @@ namespace Abyss.Shared.Hosts
         public static CooldownBucketKeyGeneratorDelegate Default = (t, ctx, services) =>
         {
             if (!(t is CooldownType ct))
-            {
                 throw new InvalidOperationException(
-                   $"Cooldown bucket type is incorrect. Expected {typeof(CooldownType)}, received {t.GetType().Name}.");
-            }
+                    $"Cooldown bucket type is incorrect. Expected {typeof(CooldownType)}, received {t.GetType().Name}.");
 
             var discordContext = ctx.ToRequestContext();
 
@@ -21,17 +21,13 @@ namespace Abyss.Shared.Hosts
                 return null; // Owners have no cooldown
 
             return ct switch
-            {
+                {
                 CooldownType.Server => discordContext.Guild.Id.ToString(),
-
                 CooldownType.Channel => discordContext.Channel.Id.ToString(),
-
                 CooldownType.User => discordContext.Invoker.Id.ToString(),
-
                 CooldownType.Global => "Global",
-
                 _ => throw new ArgumentOutOfRangeException()
-            };
+                };
         };
     }
 }

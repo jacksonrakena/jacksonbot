@@ -1,5 +1,4 @@
 ﻿@page "/status"
-@using Abyss.Shared
 @inject HttpClient Http
 
 <h1>Bot status</h1>
@@ -14,8 +13,9 @@ else if (info == null)
 }
 else
 {
-<p>@info.ServiceName instance running on @info.OperatingSystem (runtime version @info.RuntimeVersion), powering @info.Guilds guilds (@info.Channels channels, and @info.Users users)</p>
-    <p><b>Content root path:</b> @info.ContentRootPath</p>
+    <p>@info.ServiceName instance running on @info.OperatingSystem (runtime version @info.RuntimeVersion), powering @info.Guilds guilds (@info.Channels channels, and @info.Users users)</p>
+    <p>
+        <b>Content root path:</b> @info.ContentRootPath</p>
 }
 
 @if (notfoundSupportServer)
@@ -35,33 +35,35 @@ else
     <h1>Support Server @ssinfo.Name</h1>
     <p>Owned by @ssinfo.Owner</p>
     <p>Member count: @ssinfo.MemberCount</p>
-    <img src="@ssinfo.GuildIconUrl" />
+    <img src="@ssinfo.GuildIconUrl"/>
 }
 
 @code {
-    ServiceInfo info;
-    BotSupportServerInfo ssinfo;
-    bool notfound = false;
-    bool notfoundSupportServer = false;
+ServiceInfo info;
+BotSupportServerInfo ssinfo;
+bool notfound = false;
+bool notfoundSupportServer = false;
 
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            info = await Http.GetJsonAsync<ServiceInfo>("api/status");
-        }
-        catch
-        {
-            notfound = true;
-        }
-        try
-        {
-            ssinfo = await Http.GetJsonAsync<BotSupportServerInfo>("api/status/support");
-        }
-        catch
-        {
-            notfoundSupportServer = true;
-        }
-    }
+protected override async Task OnInitializedAsync()
+{
+try
+{
+info = await Http.GetJsonAsync
+<ServiceInfo>("api/status");
+}
+catch
+{
+notfound = true;
+}
+try
+{
+ssinfo = await Http.GetJsonAsync
+<BotSupportServerInfo>("api/status/support");
+}
+catch
+{
+notfoundSupportServer = true;
+}
+}
 
 }

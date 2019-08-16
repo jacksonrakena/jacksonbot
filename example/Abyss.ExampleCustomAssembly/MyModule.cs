@@ -1,7 +1,9 @@
-﻿using Abyss.Core.Entities;
+﻿using System.Threading.Tasks;
+using Abyss.Core.Entities;
 using Abyss.Core.Results;
+using Discord;
+using Discord.Commands;
 using Qmmands;
-using System.Threading.Tasks;
 
 namespace Abyss.ExampleCustomAssembly
 {

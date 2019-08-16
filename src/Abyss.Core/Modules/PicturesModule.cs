@@ -1,8 +1,14 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Abyss.Core.Attributes;
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
 using Abyss.Core.Results;
 using Discord;
+using Discord.Commands;
 using Newtonsoft.Json.Linq;
 using Qmmands;
 using SixLabors.ImageSharp.Formats;
@@ -11,11 +17,6 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using SixLabors.Primitives;
-using System;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Abyss.Core.Modules
 {
@@ -41,7 +42,7 @@ namespace Abyss.Core.Modules
         {
             using var response = await _httpApi.GetAsync(CatApi).ConfigureAwait(false);
             var url = JToken.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false))
-.Value<string>("file");
+                .Value<string>("file");
             return Image("Meow~!", url);
         }
 
@@ -56,18 +57,19 @@ namespace Abyss.Core.Modules
             switch (emote0)
             {
                 case Emote emote:
-                    {
-                        var url = emote.Url;
+                {
+                    var url = emote.Url;
 
-                        using var inStream = await _httpApi.GetStreamAsync(url).ConfigureAwait(false);
-                        var outStream = new MemoryStream();
-                        using var img = SixLabors.ImageSharp.Image.Load(inStream);
-                        img.Mutate(a => a.Resize(a.GetCurrentSize() * 2, new BicubicResampler(), false));
-                        img.Save(outStream,
-                            emote.Animated ? (IImageEncoder) new GifEncoder() : new PngEncoder());
-                        outStream.Position = 0;
-                        return Image(FileAttachment.FromStream(outStream, $"emoji.{(emote.Animated ? "gif" : "png")}"));
-                    }
+                    using var inStream = await _httpApi.GetStreamAsync(url).ConfigureAwait(false);
+                    var outStream = new MemoryStream();
+                    using var img = SixLabors.ImageSharp.Image.Load(inStream);
+                    img.Mutate(a => a.Resize(a.GetCurrentSize() * 2, new BicubicResampler(), false));
+                    img.Save(outStream,
+                        emote.Animated ? (IImageEncoder) new GifEncoder() : new PngEncoder());
+                    outStream.Position = 0;
+                    return Image(FileAttachment.FromStream(outStream, $"emoji.{(emote.Animated ? "gif" : "png")}"));
+                }
+
                 case Emoji emoji:
                     return Image(null, "https://i.kuro.mu/emoji/512x512/" + string.Join("-",
                                            emoji.ToString().GetUnicodeCodePoints().Select(x => x.ToString("x2"))) +

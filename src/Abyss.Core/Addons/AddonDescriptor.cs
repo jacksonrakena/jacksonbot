@@ -1,4 +1,6 @@
 ﻿using System;
+using Discord;
+using Discord.Commands;
 
 namespace Abyss.Core.Addons
 {
@@ -8,14 +10,14 @@ namespace Abyss.Core.Addons
         ///     The author of this addon.
         /// </summary>
         public string Author { get; set; }
-        
+
         /// <summary>
         ///     A URL that points to this addon's homepage or source code.
         /// </summary>
         public string Url { get; set; }
-        
+
         /// <summary>
-        ///     A <see cref="Version"/> object representing the version of this addon.
+        ///     A <see cref="Version" /> object representing the version of this addon.
         /// </summary>
         public Version Version { get; set; }
 

@@ -1,11 +1,12 @@
-﻿using Abyss.Core.Entities;
+﻿using System;
+using Abyss.Core.Entities;
+using Abyss.Shared.Hosts;
+using Discord;
+using Discord.Commands;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Configuration;
-using System;
-using Abyss.Shared.Hosts;
 
 namespace Abyss.Console
 {
@@ -22,7 +23,7 @@ namespace Abyss.Console
                 .ConfigureHostConfiguration(hostConfig =>
                 {
                     hostConfig.SetBasePath(contentRoot);
-                    hostConfig.AddJsonFile("hostsettings.json", optional: true);
+                    hostConfig.AddJsonFile("hostsettings.json", true);
                     hostConfig.AddEnvironmentVariables("Abyss_");
                 })
                 .ConfigureAppConfiguration((hostingContext, config) =>

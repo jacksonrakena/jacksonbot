@@ -1,19 +1,20 @@
-﻿using Abyss.Core.Entities;
+﻿using System;
+using System.Threading.Tasks;
+using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Threading.Tasks;
 
 namespace Abyss.Core.Services
 {
     public class NotificationsService
     {
-        private readonly bool _sendNotifications = true;
-        private readonly AbyssConfigNotificationsSection _notifyConfig;
-        private readonly IHostEnvironment _environment;
         private readonly DiscordSocketClient _client;
+        private readonly IHostEnvironment _environment;
+        private readonly AbyssConfigNotificationsSection _notifyConfig;
+        private readonly bool _sendNotifications = true;
 
         public NotificationsService(AbyssConfig config, DiscordSocketClient client, IHostEnvironment env)
         {
@@ -33,7 +34,8 @@ namespace Abyss.Core.Services
             {
                 await stc.SendMessageAsync(null, false, new EmbedBuilder()
                     .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
-                    .WithDescription($"{_environment.ApplicationName} instance started and ready at " + DateTime.Now.ToString("F"))
+                    .WithDescription($"{_environment.ApplicationName} instance started and ready at " +
+                                     DateTime.Now.ToString("F"))
                     .WithColor(BotService.DefaultEmbedColour)
                     .WithCurrentTimestamp()
                     .WithThumbnailUrl(_client.CurrentUser.GetEffectiveAvatarUrl(2048))
@@ -58,13 +60,12 @@ namespace Abyss.Core.Services
             if (!(ch != null && ch is SocketTextChannel stc)) return;
 
             await stc.SendMessageAsync(null, false, new EmbedBuilder()
-                    .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
-                    .WithDescription($"{_environment.ApplicationName} instance stopping at " + DateTime.Now.ToString("F"))
-                    .WithColor(BotService.DefaultEmbedColour)
-                    .WithCurrentTimestamp()
-                    .WithThumbnailUrl(_client.CurrentUser.GetEffectiveAvatarUrl(2048))
-                    .Build());
-            return;
+                .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
+                .WithDescription($"{_environment.ApplicationName} instance stopping at " + DateTime.Now.ToString("F"))
+                .WithColor(BotService.DefaultEmbedColour)
+                .WithCurrentTimestamp()
+                .WithThumbnailUrl(_client.CurrentUser.GetEffectiveAvatarUrl(2048))
+                .Build());
         }
 
         public async Task NotifyServerMembershipChangeAsync(SocketGuild arg, bool botIsJoining)
@@ -72,13 +73,14 @@ namespace Abyss.Core.Services
             if (!_sendNotifications || _notifyConfig.ServerMembershipChange == null) return;
             var updateChannel = _client.GetChannel(_notifyConfig.ServerMembershipChange.Value);
             if (!(updateChannel is SocketTextChannel stc)) return;
-             await stc.SendMessageAsync(null, false, new EmbedBuilder()
-                 .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
-                 .WithDescription($"{(botIsJoining ? "Joined" : "Left")} {arg.Name} at {DateTime.Now:F} ({arg.MemberCount} members, owner: {arg.Owner})")
-                 .WithColor(BotService.DefaultEmbedColour)
-                 .WithThumbnailUrl(arg.IconUrl)
-                 .WithCurrentTimestamp()
-                 .Build());
+            await stc.SendMessageAsync(null, false, new EmbedBuilder()
+                .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
+                .WithDescription(
+                    $"{(botIsJoining ? "Joined" : "Left")} {arg.Name} at {DateTime.Now:F} ({arg.MemberCount} members, owner: {arg.Owner})")
+                .WithColor(BotService.DefaultEmbedColour)
+                .WithThumbnailUrl(arg.IconUrl)
+                .WithCurrentTimestamp()
+                .Build());
         }
     }
 }

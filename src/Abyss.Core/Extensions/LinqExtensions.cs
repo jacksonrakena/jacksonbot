@@ -1,8 +1,10 @@
-using Humanizer;
-using Qmmands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Discord;
+using Discord.Commands;
+using Humanizer;
+using Qmmands;
 
 namespace Abyss.Core.Extensions
 {
@@ -18,8 +20,8 @@ namespace Abyss.Core.Extensions
         public static string HumanizeChoiceCollection<T>(this IEnumerable<T> source)
         {
             return source.Humanize()
-                    .Replace("&", "or")
-                    .Replace("and", "or", StringComparison.OrdinalIgnoreCase);
+                .Replace("&", "or")
+                .Replace("and", "or", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

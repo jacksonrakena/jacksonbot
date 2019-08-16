@@ -1,22 +1,23 @@
-﻿using Abyss.Core.Extensions;
-using Discord;
-using Qmmands;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Abyss.Core.Extensions;
+using Discord;
+using Discord.Commands;
+using Qmmands;
 
 namespace Abyss.Core.Parsers.DiscordNet
 {
     public class DiscordUserReference
     {
-        public ulong Id { get; }
-
         internal DiscordUserReference(ulong id)
         {
             Id = id;
         }
+
+        public ulong Id { get; }
     }
 
     [DiscoverableTypeParser]
@@ -25,7 +26,8 @@ namespace Abyss.Core.Parsers.DiscordNet
         public (string Singular, string Multiple, string Remainder) FriendlyName =>
             ("Either a Discord user, or an ID of one.", "A list of Discord users, or Discord user IDs.", null);
 
-        public override ValueTask<TypeParserResult<DiscordUserReference>> ParseAsync(Parameter parameter, string value, CommandContext context, IServiceProvider provider)
+        public override ValueTask<TypeParserResult<DiscordUserReference>> ParseAsync(Parameter parameter, string value,
+            CommandContext context, IServiceProvider provider)
         {
             var abyssContext = context.ToRequestContext();
             var channel = abyssContext.Channel;
@@ -34,15 +36,12 @@ namespace Abyss.Core.Parsers.DiscordNet
 
             // Parse mention
             if (MentionUtils.TryParseUser(value, out var id))
-            {
                 return new TypeParserResult<DiscordUserReference>(new DiscordUserReference(id));
-            }
 
             // by Discord snowflake ID
-            if (ulong.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out id) && abyssContext.Guild != null)
-            {
+            if (ulong.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out id) &&
+                abyssContext.Guild != null)
                 return new TypeParserResult<DiscordUserReference>(new DiscordUserReference(id));
-            }
 
             // Parse username & discrim
             var index = value.LastIndexOf('#');
@@ -55,7 +54,8 @@ namespace Abyss.Core.Parsers.DiscordNet
                                                                      && string.Equals(username, x.Username,
                                                                          StringComparison.OrdinalIgnoreCase));
 
-                    if (guildUser != null) return new TypeParserResult<DiscordUserReference>(new DiscordUserReference(guildUser.Id));
+                    if (guildUser != null)
+                        return new TypeParserResult<DiscordUserReference>(new DiscordUserReference(guildUser.Id));
                 }
             }
 

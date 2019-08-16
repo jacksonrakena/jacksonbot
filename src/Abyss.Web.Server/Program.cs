@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.AspNetCore.Builder;
-using System.Linq;
+﻿using System.Linq;
 using Abyss.Core.Entities;
 using Abyss.Shared.Hosts;
+using Abyss.Web.Client;
+using Discord;
+using Discord.Commands;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -32,7 +35,7 @@ namespace Abyss.Web.Server
                         applicationBuilder.UseBlazorDebugging();
                     }
 
-                    applicationBuilder.UseClientSideBlazorFiles<Client.Startup>();
+                    applicationBuilder.UseClientSideBlazorFiles<Startup>();
 
                     applicationBuilder.UseRouting();
 
@@ -40,14 +43,15 @@ namespace Abyss.Web.Server
                     {
                         endpoints.MapDefaultControllerRoute();
 #if DEBUG
-                        endpoints.MapFallbackToClientSideBlazor<Client.Startup>("index.html");
+                        endpoints.MapFallbackToClientSideBlazor<Startup>("index.html");
 #else
                 endpoints.MapFallbackToClientSideBlazor<Client.Startup>("_content/abysswebclient/index.html");
                 applicationBuilder.UseStaticFiles(new StaticFileOptions()
                 {
-                    FileProvider = new PhysicalFileProvider(Path.Combine(path1: Directory.GetCurrentDirectory(), "wwwroot/_content/abysswebclient")),
+                    FileProvider =
+ new PhysicalFileProvider(Path.Combine(path1: Directory.GetCurrentDirectory(), "wwwroot/_content/abysswebclient")),
                     RequestPath = new PathString("")
-                }); 
+                });
 #endif
                     });
                 })
@@ -62,17 +66,14 @@ namespace Abyss.Web.Server
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     logging.AddConsole();
                 })
-                .ConfigureKestrel(k =>
-                {
-                    k.ListenAnyIP(2003);
-                })
+                .ConfigureKestrel(k => { k.ListenAnyIP(2003); })
                 .ConfigureServices((hostBuildingContext, serviceCollection) =>
                 {
                     serviceCollection.AddMvc().AddNewtonsoftJson();
                     serviceCollection.AddResponseCompression(opts =>
                     {
                         opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-                            new[] { "application/octet-stream" });
+                            new[] {"application/octet-stream"});
                     });
 
                     // Abyss common service core

@@ -1,46 +1,48 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using Abyss.Core.Addons;
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
 using Abyss.Core.Services;
-using Discord;
 using Abyssal.Common;
+using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.IO;
-using Abyss.Core.Addons;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Abyss.Core
 {
-    public class BotService: IHostedService
+    public class BotService : IHostedService
     {
         public const string ZeroWidthSpace = "​";
         public static readonly Color DefaultEmbedColour = new Color(0xB2F7EF);
-        private readonly AbyssConfig _config;
-        private readonly DiscordSocketClient _discordClient;
-
-        private readonly Type _addonType = typeof(IAddon);
-
-        private readonly ILogger<BotService> _logger;
-        private readonly ILogger _discordLogger;
-        private readonly IServiceProvider _serviceProvider;
 
         private readonly AddonService _addonService;
-        private readonly NotificationsService _notifications;
+
+        private readonly Type _addonType = typeof(IAddon);
+        private readonly AbyssConfig _config;
         private readonly DataService _dataService;
+        private readonly DiscordSocketClient _discordClient;
+        private readonly ILogger _discordLogger;
+
+        private readonly ILogger<BotService> _logger;
         private readonly MarketingService _marketing;
 
         private readonly MessageReceiver _messageReceiver;
+        private readonly NotificationsService _notifications;
+        private readonly IServiceProvider _serviceProvider;
 
-        private bool _hasBeenReady = false;
+        private bool _hasBeenReady;
 
         public BotService(
-            IServiceProvider services, ILogger<BotService> logger, AbyssConfig config, DiscordSocketClient socketClient, MessageReceiver messageReceiver, AddonService addonService,
+            IServiceProvider services, ILogger<BotService> logger, AbyssConfig config, DiscordSocketClient socketClient,
+            MessageReceiver messageReceiver, AddonService addonService,
             NotificationsService notifications, DataService dataService, ILoggerFactory factory,
             MarketingService marketing)
         {
@@ -75,9 +77,7 @@ namespace Abyss.Core
             var assemblyDirectory = _dataService.GetCustomAssemblyBasePath();
 
             if (Directory.Exists(assemblyDirectory))
-            {
                 foreach (var assemblyFile in Directory.GetFiles(assemblyDirectory, "*.dll"))
-                {
                     try
                     {
                         var assembly = Assembly.LoadFrom(assemblyFile);
@@ -88,13 +88,18 @@ namespace Abyss.Core
                     {
                         _logger.LogError($"Failed to load assembly \"{assemblyFile}\". Is it compiled correctly?");
                     }
-                }
-            }
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            await _notifications.NotifyStoppingAsync().ConfigureAwait(false);
+            await _discordClient.StopAsync().ConfigureAwait(false);
         }
 
         private Task TryLoadAddonsFromAssemblyAsync(Assembly assembly)
         {
-            return Task.WhenAll(assembly.GetExportedTypes().Where(_addonType.IsAssignableFrom).Select(_addonService.AddAddonAsync));
+            return Task.WhenAll(assembly.GetExportedTypes().Where(_addonType.IsAssignableFrom)
+                .Select(_addonService.AddAddonAsync));
         }
 
         private Task DiscordClient_LeftGuild(SocketGuild arg)
@@ -107,14 +112,13 @@ namespace Abyss.Core
             var channel = arg.GetDefaultChannel();
 
             if (channel != null)
-            {
                 await channel.TrySendMessageAsync(string.Empty, false, new EmbedBuilder()
-                    .WithDescription("WHO DARE AWAKEN ME FROM MY SLEEP?! Oh, it's you. Good to see you. What do you want?")
+                    .WithDescription(
+                        "WHO DARE AWAKEN ME FROM MY SLEEP?! Oh, it's you. Good to see you. What do you want?")
                     .WithFooter("Guild joined: " + arg.Name, _discordClient.CurrentUser.GetEffectiveAvatarUrl())
                     .WithCurrentTimestamp()
                     .WithColor(DefaultEmbedColour)
                     .Build()).ConfigureAwait(false);
-            }
 
             await _notifications.NotifyServerMembershipChangeAsync(arg, true).ConfigureAwait(false);
         }
@@ -126,19 +130,21 @@ namespace Abyss.Core
                 await _notifications.NotifyReadyAsync(true);
                 _hasBeenReady = true;
             }
-            else await _notifications.NotifyReadyAsync().ConfigureAwait(false);
+            else
+            {
+                await _notifications.NotifyReadyAsync().ConfigureAwait(false);
+            }
 
-            _logger.LogInformation($"Ready. Logged in as {_discordClient.CurrentUser} with command prefix \"{_config.CommandPrefix}\".");
+            _logger.LogInformation(
+                $"Ready. Logged in as {_discordClient.CurrentUser} with command prefix \"{_config.CommandPrefix}\".");
 
             var startupConfiguration = _config.Startup;
             var activities = startupConfiguration.Activity.Select(a =>
             {
                 if (!Enum.TryParse<ActivityType>(a.Type, out var activityType))
-                {
                     throw new InvalidOperationException(
                         $"{a.Type} is not a valid Discord activity type.\n" +
                         $"Available options are: {string.Join(", ", typeof(ActivityType).GetEnumNames())}");
-                }
 
                 return (activityType, a.Message);
             }).ToList();
@@ -158,15 +164,10 @@ namespace Abyss.Core
 
         private Task DiscordClient_Log(LogMessage arg)
         {
-            _discordLogger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception, "[" + arg.Source + "] " + arg.Message);
+            _discordLogger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception,
+                "[" + arg.Source + "] " + arg.Message);
 
             return Task.CompletedTask;
-        }
-
-        public async Task StopAsync(CancellationToken cancellationToken)
-        {
-            await _notifications.NotifyStoppingAsync().ConfigureAwait(false);
-            await _discordClient.StopAsync().ConfigureAwait(false);
         }
     }
 }

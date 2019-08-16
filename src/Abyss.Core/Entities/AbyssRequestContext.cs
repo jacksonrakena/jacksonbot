@@ -1,10 +1,11 @@
+using System;
+using System.Threading.Tasks;
 using Discord;
+using Discord.Commands;
 using Discord.Rest;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
-using System;
-using System.Threading.Tasks;
 
 namespace Abyss.Core.Entities
 {

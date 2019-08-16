@@ -1,20 +1,21 @@
-﻿using Abyss.Core.Attributes;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using Abyss.Core.Attributes;
 using Abyss.Core.Checks.Command;
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
 using Abyss.Core.Helpers;
 using Abyss.Core.Results;
 using Discord;
+using Discord.Commands;
 using Discord.Net;
 using Discord.WebSocket;
 using Humanizer;
 using Qmmands;
 using SixLabors.ImageSharp.PixelFormats;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace Abyss.Core.Modules
 {
@@ -29,7 +30,8 @@ namespace Abyss.Core.Modules
         [RequireBotPermission(GuildPermission.ChangeNickname)]
         [RequireUserPermission(GuildPermission.ChangeNickname)]
         public async Task<ActionResult> Command_SetNicknameAsync(
-            [Name("Target")] [Description("The user you would like me to change username of.")] SocketGuildUser target,
+            [Name("Target")] [Description("The user you would like me to change username of.")]
+            SocketGuildUser target,
             [Description("The nickname to set to. `clear` to remove one (if set).")] [Name("Nickname")] [Remainder]
             string nickname)
         {
@@ -154,7 +156,7 @@ namespace Abyss.Core.Modules
             user ??= Context.Invoker; // Get the user (or the invoker, if none specified)
 
             var embed = new EmbedBuilder();
-            embed.WithAuthor((IUser) user);
+            embed.WithAuthor(user);
 
             if (user.Id == Context.Guild.OwnerId)
             {
@@ -202,7 +204,7 @@ namespace Abyss.Core.Modules
             var boolProps = props.Where(a =>
                 a.PropertyType.IsAssignableFrom(typeof(bool))
                 && (a.Name.Equals(permission, StringComparison.OrdinalIgnoreCase)
-                 || a.Name.Humanize().Equals(permission, StringComparison.OrdinalIgnoreCase))).ToList();
+                    || a.Name.Humanize().Equals(permission, StringComparison.OrdinalIgnoreCase))).ToList();
             /* Get a list of all properties of Boolean type and that match either the permission specified, or match it   when humanized */
 
             if (boolProps.Count == 0) return BadRequest($"Unknown permission `{permission}` :(");
@@ -220,14 +222,15 @@ namespace Abyss.Core.Modules
         public Task<ActionResult> Command_AnalyzePermissionAsync(
             [Name("User")] [Description("The user to check for the specified permission.")]
             SocketGuildUser user,
-            [Name("Permission")] [Description("The permission to analyze.")] [Remainder] string permission)
+            [Name("Permission")] [Description("The permission to analyze.")] [Remainder]
+            string permission)
         {
             user ??= Context.Invoker;
 
             var perm = user.GuildPermissions.GetType().GetProperties().FirstOrDefault(a =>
                 a.PropertyType.IsAssignableFrom(typeof(bool))
                 && (a.Name.Equals(permission, StringComparison.OrdinalIgnoreCase)
-                 || a.Name.Humanize().Equals(permission, StringComparison.OrdinalIgnoreCase)));
+                    || a.Name.Humanize().Equals(permission, StringComparison.OrdinalIgnoreCase)));
             if (perm == null) return BadRequest($"Unknown permission `{permission}`. :(");
 
             var embed = new EmbedBuilder
@@ -251,29 +254,29 @@ namespace Abyss.Core.Modules
             var p = user.Roles.Where(a => a.Permissions.Administrator).ToList();
             if (p.Count > 0)
             {
-                embed.Description = 
+                embed.Description =
                     "User has administrator, and has every permission. To deny them administrator, remove the Administrator permission from the following roles:\n" +
                     $"`{string.Join(", ", p.Select(b => b.Name))}`";
                 return Ok(embed);
             }
 
             var grantedRoles = user.Roles.Where(r => (bool) perm.GetValue(r.Permissions));
-            var deniedRoles = user.Roles.Where(r => !((bool) perm.GetValue(r.Permissions)));
+            var deniedRoles = user.Roles.Where(r => !(bool) perm.GetValue(r.Permissions));
 
             var gRolesString = string.Join(", ", grantedRoles.Select(r => r.Name));
             var dRolesString = string.Join(", ", deniedRoles.Select(r => r.Name));
 
-            if (!string.IsNullOrWhiteSpace(gRolesString)) embed.AddField("Roles that grant this permission", gRolesString);
-            if (!string.IsNullOrWhiteSpace(dRolesString)) embed.AddField("Roles that don't have this permission", dRolesString);
+            if (!string.IsNullOrWhiteSpace(gRolesString))
+                embed.AddField("Roles that grant this permission", gRolesString);
+            if (!string.IsNullOrWhiteSpace(dRolesString))
+                embed.AddField("Roles that don't have this permission", dRolesString);
 
             if (grantedRoles.Any())
-            {
-                embed.Description = $"To **deny** this permission, remove \"{permission}\" for the following roles: {gRolesString}.";
-            }
+                embed.Description =
+                    $"To **deny** this permission, remove \"{permission}\" for the following roles: {gRolesString}.";
             else
-            {
-                embed.Description = $"To **allow** this permission, allow \"{permission}\" for at least one of the following roles: {dRolesString}.";
-            }
+                embed.Description =
+                    $"To **allow** this permission, allow \"{permission}\" for at least one of the following roles: {dRolesString}.";
 
             return Ok(embed);
         }

@@ -1,15 +1,16 @@
-﻿using Abyss.Core.Attributes;
+﻿using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using Abyss.Core.Attributes;
 using Abyss.Core.Checks.Command;
 using Abyss.Core.Checks.Parameter;
 using Abyss.Core.Entities;
 using Abyss.Core.Parsers.DiscordNet;
 using Abyss.Core.Results;
 using Discord;
+using Discord.Commands;
 using Discord.Net;
 using Qmmands;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace Abyss.Core.Modules
 {
@@ -34,12 +35,13 @@ namespace Abyss.Core.Modules
 
             try
             {
-                await Context.Guild.AddBanAsync(target.Id, 7, $"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : "")}");
+                await Context.Guild.AddBanAsync(target.Id, 7,
+                    $"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : "")}");
             }
             catch (HttpException e) when (e.HttpCode == HttpStatusCode.Forbidden)
             {
                 return BadRequest(
-                    $"I don't have permission to ban them.");
+                    "I don't have permission to ban them.");
             }
 
             return Ok(
@@ -75,7 +77,8 @@ namespace Abyss.Core.Modules
         )
         {
             var messages =
-                (await Context.Channel.GetMessagesAsync(Context.Message.Id, Direction.Before, count).FlattenAsync().ConfigureAwait(false))
+                (await Context.Channel.GetMessagesAsync(Context.Message.Id, Direction.Before, count).FlattenAsync()
+                    .ConfigureAwait(false))
                 .ToArray();
 
             await Context.Channel.DeleteMessagesAsync(messages).ConfigureAwait(false);

@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Abyss.Core.Attributes;
 using Abyss.Core.Checks.Command;
 using Abyss.Core.Entities;
@@ -5,10 +8,8 @@ using Abyss.Core.Extensions;
 using Abyss.Core.Helpers;
 using Abyss.Core.Results;
 using Discord;
+using Discord.Commands;
 using Qmmands;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Abyss.Core.Modules
 {
@@ -19,8 +20,9 @@ namespace Abyss.Core.Modules
         [Command("Echo")]
         [Description("Echoes the input text.")]
         [Example("echo THIS IS THE BEST BOT!")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontEmbed | ResponseFormatOptions.DontCache | ResponseFormatOptions.DontAttachFooter
-            | ResponseFormatOptions.DontAttachTimestamp)]
+        [ResponseFormatOptions(ResponseFormatOptions.DontEmbed | ResponseFormatOptions.DontCache |
+                               ResponseFormatOptions.DontAttachFooter
+                               | ResponseFormatOptions.DontAttachTimestamp)]
         public Task<ActionResult> Command_EchoAsync([Name("Text")] [Remainder] string echocontent)
         {
             return Ok(Context.InvokerIsOwner
@@ -34,9 +36,11 @@ namespace Abyss.Core.Modules
         [ResponseFormatOptions(ResponseFormatOptions.DontEmbed | ResponseFormatOptions.DontCache)]
         public async Task<ActionResult> Command_EchoDeleteAsync([Name("Text")] [Remainder] string echocontent)
         {
-            return (await Context.Message.TryDeleteAsync()) ? Ok(Context.InvokerIsOwner
-                ? echocontent
-                : $"{Context.Invoker}: {echocontent}") : Empty();
+            return await Context.Message.TryDeleteAsync()
+                ? Ok(Context.InvokerIsOwner
+                    ? echocontent
+                    : $"{Context.Invoker}: {echocontent}")
+                : Empty();
         }
 
         [Command("Delete")]
@@ -45,7 +49,7 @@ namespace Abyss.Core.Modules
         [RequireBotPermission(ChannelPermission.ManageMessages)]
         [Example("delete 525827581371613184 yes", "delete 525827581371613184 no", "delete 525827581371613184")]
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp
-            | ResponseFormatOptions.DontCache)]
+                                                                      | ResponseFormatOptions.DontCache)]
         public async Task<ActionResult> Command_DeleteMessageAsync(
             [Name("Message")] [Description("The ID of the message to delete.")]
             ulong messageId,
@@ -54,10 +58,12 @@ namespace Abyss.Core.Modules
         {
             var message = await Context.Channel.GetMessageAsync(messageId).ConfigureAwait(false);
             if (message == null) return BadRequest("Couldn't find the message.");
-            var success = await message.TryDeleteAsync(RequestOptionsHelper.AuditLog($"Requested by {Context.Invoker} at {DateTime.UtcNow.ToUniversalTime():F}"));
+            var success = await message.TryDeleteAsync(
+                RequestOptionsHelper.AuditLog(
+                    $"Requested by {Context.Invoker} at {DateTime.UtcNow.ToUniversalTime():F}"));
             if (success && !silent) return Ok();
-            else if (success) return Empty();
-            else return BadRequest("Failed to delete message.");
+            if (success) return Empty();
+            return BadRequest("Failed to delete message.");
         }
 
         [Command("Quote")]

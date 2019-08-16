@@ -1,16 +1,18 @@
-﻿using Discord.Rest;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Discord;
+using Discord.Commands;
+using Discord.Rest;
 
 namespace Abyss.Core.Results
 {
     public class ResultCompletionData
     {
-        public List<RestUserMessage> Messages { get; set; }
-
         public ResultCompletionData(params RestUserMessage[] messages)
         {
             Messages = messages.ToList();
         }
+
+        public List<RestUserMessage> Messages { get; set; }
     }
 }

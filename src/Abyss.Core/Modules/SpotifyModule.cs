@@ -1,15 +1,16 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Abyss.Core.Attributes;
 using Abyss.Core.Entities;
 using Abyss.Core.Helpers;
 using Abyss.Core.Results;
 using AbyssalSpotify;
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using Humanizer;
 using Qmmands;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Abyss.Core.Modules
 {
@@ -94,10 +95,8 @@ namespace Abyss.Core.Modules
             if (albumQuery == null)
             {
                 if (!(Context.Invoker.Activity is SpotifyGame spot))
-                {
                     return BadRequest(
-                       "You didn't supply an album name, and you're not currently listening to anything!");
-                }
+                        "You didn't supply an album name, and you're not currently listening to anything!");
 
                 var track = await _spotify.GetTrackAsync(spot.TrackId).ConfigureAwait(false);
                 album = await track.Album.GetFullEntityAsync().ConfigureAwait(false);

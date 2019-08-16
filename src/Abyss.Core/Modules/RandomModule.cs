@@ -1,14 +1,16 @@
-﻿using Abyss.Core.Attributes;
-using Abyss.Core.Entities;
-using Abyss.Core.Results;
-using Abyssal.Common;
-using Discord.WebSocket;
-using Qmmands;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Abyss.Core.Attributes;
+using Abyss.Core.Entities;
+using Abyss.Core.Results;
+using Abyssal.Common;
+using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using Qmmands;
 
 namespace Abyss.Core.Modules
 {
@@ -54,9 +56,7 @@ namespace Abyss.Core.Modules
         public Task<ActionResult> Command_DiceRollAsync(
             [Name("Dice")]
             [Description("The dice configuration to use. It can be simple, like `6`, or complex, like `d20+d18+4`.")]
-            string dice, [Name("Number of Dice")]
-            [Description("The number of dice to roll.")]
-            [Range(1, 100)]
+            string dice, [Name("Number of Dice")] [Description("The number of dice to roll.")] [Range(1, 100)]
             int numberOfDice = 1)
         {
             if (!dice.Contains("d" /* No dice */) && int.TryParse(dice, out var diceParsed))
@@ -141,17 +141,15 @@ namespace Abyss.Core.Modules
                     .Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
                 // Blank dice expressions end up being DiceExpression.Zero.
-                if (tokens.Length == 0) tokens = new[] { "0" };
+                if (tokens.Length == 0) tokens = new[] {"0"};
 
                 // Since we parse tokens in operator-then-operand pairs, make sure the first token is an operand.
-                if (tokens[0] != "+" && tokens[0] != "-") tokens = new[] { "+" }.Concat(tokens).ToArray();
+                if (tokens[0] != "+" && tokens[0] != "-") tokens = new[] {"+"}.Concat(tokens).ToArray();
 
                 // This is a precondition for the below parsing loop to make any sense.
                 if (tokens.Length % 2 != 0)
-                {
                     throw new ArgumentException(
-                       "The given dice expression was not in an expected format: even after normalization, it contained an odd number of tokens.");
-                }
+                        "The given dice expression was not in an expected format: even after normalization, it contained an odd number of tokens.");
 
                 // Parse operator-then-operand pairs into nodes.
                 for (var tokenIndex = 0; tokenIndex < tokens.Length; tokenIndex += 2)
@@ -199,15 +197,15 @@ namespace Abyss.Core.Modules
                     var number = numberNodes.Sum(pair => pair.Key * pair.Value.Evaluate());
                     var diceTypes = diceRollNodes.Select(node => ((DiceRollNode) node.Value).DiceType).Distinct();
                     var normalizedDiceRollNodes = from type in diceTypes
-                                                  let numDiceOfThisType = diceRollNodes
-                                                      .Where(node => ((DiceRollNode) node.Value).DiceType == type).Sum(node =>
-                                                          node.Key * ((DiceRollNode) node.Value).NumberOfDice)
-                                                  where numDiceOfThisType != 0
-                                                  let multiplicand = numDiceOfThisType > 0 ? +1 : -1
-                                                  let absNumDice = Math.Abs(numDiceOfThisType)
-                                                  orderby multiplicand descending, type descending
-                                                  select new KeyValuePair<int, IDiceExpressionNode>(multiplicand,
-                                                      new DiceRollNode(absNumDice, type));
+                        let numDiceOfThisType = diceRollNodes
+                            .Where(node => ((DiceRollNode) node.Value).DiceType == type).Sum(node =>
+                                node.Key * ((DiceRollNode) node.Value).NumberOfDice)
+                        where numDiceOfThisType != 0
+                        let multiplicand = numDiceOfThisType > 0 ? +1 : -1
+                        let absNumDice = Math.Abs(numDiceOfThisType)
+                        orderby multiplicand descending, type descending
+                        select new KeyValuePair<int, IDiceExpressionNode>(multiplicand,
+                            new DiceRollNode(absNumDice, type));
 
                     _nodes = (number == 0
                             ? normalizedDiceRollNodes

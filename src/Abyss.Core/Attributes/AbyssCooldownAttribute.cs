@@ -1,6 +1,8 @@
-using Abyss.Core.Entities;
-using Qmmands;
 using System;
+using Abyss.Core.Entities;
+using Discord;
+using Discord.Commands;
+using Qmmands;
 
 namespace Abyss.Core.Attributes
 {
@@ -9,7 +11,6 @@ namespace Abyss.Core.Attributes
     {
         public AbyssCooldownAttribute(int amount, double per, CooldownMeasure cooldownMeasure, CooldownType bucketType)
             : base(amount, per, cooldownMeasure, bucketType)
-        {
-        }
+        { }
     }
 }

@@ -2,7 +2,7 @@
   "Name": "Abyss",
   "CommandPrefix": "a.",
   "Startup": {
-    "Activity": [ // Bot rotates through these every minute
+    "Activity": [// Bot rotates through these every minute
       {
         "Type": "Watching",
         "Message": "you <3"
@@ -45,7 +45,8 @@
     "StaffEmote": "<:discordStaff:609952142379188235>",
     "GuildOwnerEmote": "<:discordGuildOwner:609952141599309875>"
   },
-  "Marketing": { // Connection tokens for Discord bot lists. These shouldn't be used by clones, as they will get rejected.
+  "Marketing":
+  { // Connection tokens for Discord bot lists. These shouldn't be used by clones, as they will get rejected.
     "DblBotComToken": "The token for Discordbotslist.com",
     "DiscordBoatsToken": "The token for discord.boats",
     "DiscordBotsListToken": "The token for Discord Bots List"

@@ -1,12 +1,13 @@
-using Abyss.Core.Extensions;
-using Discord;
-using Discord.WebSocket;
-using Qmmands;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Abyss.Core.Extensions;
+using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using Qmmands;
 
 namespace Abyss.Core.Parsers.DiscordNet
 {
@@ -19,7 +20,11 @@ namespace Abyss.Core.Parsers.DiscordNet
     [DiscoverableTypeParser]
     public class DiscordUserTypeParser : TypeParser<SocketGuildUser>, IAbyssTypeParser
     {
-        public override ValueTask<TypeParserResult<SocketGuildUser>> ParseAsync(Parameter parameter, string value, CommandContext context,
+        public (string, string, string) FriendlyName => ("A server member, by name, ID, nickname or mention.",
+            "A list of specific server members.", null);
+
+        public override ValueTask<TypeParserResult<SocketGuildUser>> ParseAsync(Parameter parameter, string value,
+            CommandContext context,
             IServiceProvider provider)
         {
             var abyssContext = context.ToRequestContext();
@@ -29,18 +34,15 @@ namespace Abyss.Core.Parsers.DiscordNet
 
             // Parse mention
             if (MentionUtils.TryParseUser(value, out var id))
-            {
                 AddResult(results,
-                   channel.GetUser(id),
-                   1.00f);
-            }
+                    channel.GetUser(id),
+                    1.00f);
 
             // by Discord snowflake ID
-            if (ulong.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out id) && abyssContext.Guild != null)
-            {
+            if (ulong.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out id) &&
+                abyssContext.Guild != null)
                 AddResult(results,
                     channel.GetUser(id), 0.90f);
-            }
 
             // Parse username & discrim
             var index = value.LastIndexOf('#');
@@ -72,9 +74,7 @@ namespace Abyss.Core.Parsers.DiscordNet
             float score)
         {
             if (user != null && !results.ContainsKey(user.Id))
-                results.Add(user.Id, new UserParseResolveResult { Score = score, Value = user });
+                results.Add(user.Id, new UserParseResolveResult {Score = score, Value = user});
         }
-
-        public (string, string, string) FriendlyName => ("A server member, by name, ID, nickname or mention.", "A list of specific server members.", null);
     }
 }

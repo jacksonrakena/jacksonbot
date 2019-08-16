@@ -1,15 +1,16 @@
-using Abyss.Core.Entities;
-using Discord;
-using Discord.WebSocket;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Abyss.Core.Entities;
+using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
 
 namespace Abyss.Core.Services
 {
@@ -28,11 +29,9 @@ namespace Abyss.Core.Services
         public async Task<ScriptingResult> EvaluateScriptAsync<T>(string code, T properties)
         {
             if (string.IsNullOrWhiteSpace(code))
-            {
                 return ScriptingResult.FromError(
-                   new ArgumentException("code parameter cannot be empty, null or whitespace", nameof(code)),
-                   ScriptStage.Preprocessing);
-            }
+                    new ArgumentException("code parameter cannot be empty, null or whitespace", nameof(code)),
+                    ScriptStage.Preprocessing);
 
             var options = ScriptOptions.Default
                 .WithReferences(typeof(IDiscordClient).Assembly)
@@ -48,10 +47,8 @@ namespace Abyss.Core.Services
 
             if (compilationDiagnostics.Length > 0
                 && compilationDiagnostics.Any(a => a.Severity == DiagnosticSeverity.Error))
-            {
                 return ScriptingResult.FromError(compilationDiagnostics, ScriptStage.Compilation,
-                   compilationTime: compilationTimer.ElapsedMilliseconds);
-            }
+                    compilationTime: compilationTimer.ElapsedMilliseconds);
 
             var executionTimer = new Stopwatch();
 

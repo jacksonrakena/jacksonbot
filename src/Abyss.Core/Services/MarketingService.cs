@@ -1,8 +1,12 @@
 ﻿using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Abyss.Core.Entities;
+using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -12,8 +16,8 @@ namespace Abyss.Core.Services
     public class MarketingService
     {
         private readonly DiscordSocketClient _client;
-        private readonly HttpClient _http;
         private readonly AbyssConfig _config;
+        private readonly HttpClient _http;
         private readonly ILogger<MarketingService> _logger;
 
         public MarketingService(DiscordSocketClient client, AbyssConfig config, ILogger<MarketingService> logger)
@@ -26,7 +30,8 @@ namespace Abyss.Core.Services
 
         public Task UpdateAllBotListsAsync()
         {
-            return Task.WhenAll(UpdateDiscordBotListDotComAsync(), UpdateDiscordBoatsAsync(), UpdateDiscordBotsListAsync());
+            return Task.WhenAll(UpdateDiscordBotListDotComAsync(), UpdateDiscordBoatsAsync(),
+                UpdateDiscordBotsListAsync());
         }
 
         public async Task UpdateDiscordBoatsAsync()
@@ -37,20 +42,23 @@ namespace Abyss.Core.Services
                 return;
             }
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, "http://discord.boats/api/v2/bot/" + _client.CurrentUser.Id);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post,
+                "http://discord.boats/api/v2/bot/" + _client.CurrentUser.Id);
 
             httpRequest.Headers.TryAddWithoutValidation("Authorization", _config.Marketing.DiscordBoatsToken);
-            httpRequest.Content = new StringContent("{\"server_count\":" + _client.Guilds.Count + "}", Encoding.UTF8, "application/json");
+            httpRequest.Content = new StringContent("{\"server_count\":" + _client.Guilds.Count + "}", Encoding.UTF8,
+                "application/json");
 
             var response = await _http.SendAsync(httpRequest);
             httpRequest.Dispose();
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning($"Failed to update Discord.boats: error code " + response.StatusCode);
+                _logger.LogWarning("Failed to update Discord.boats: error code " + response.StatusCode);
                 response.Dispose();
                 return;
             }
+
             _logger.LogInformation("Updated statistics with discord.boats");
             response.Dispose();
         }
@@ -63,20 +71,23 @@ namespace Abyss.Core.Services
                 return;
             }
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, "https://discordbots.org/api/bots/" + _client.CurrentUser.Id + "/stats");
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post,
+                "https://discordbots.org/api/bots/" + _client.CurrentUser.Id + "/stats");
 
             httpRequest.Headers.TryAddWithoutValidation("Authorization", _config.Marketing.DiscordBotsListToken);
-            httpRequest.Content = new StringContent("{\"server_count\":" + _client.Guilds.Count + "}", Encoding.UTF8, "application/json");
+            httpRequest.Content = new StringContent("{\"server_count\":" + _client.Guilds.Count + "}", Encoding.UTF8,
+                "application/json");
 
             var response = await _http.SendAsync(httpRequest);
             httpRequest.Dispose();
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning($"Failed to update Discord Bots List: error code " + response.StatusCode);
+                _logger.LogWarning("Failed to update Discord Bots List: error code " + response.StatusCode);
                 response.Dispose();
                 return;
             }
+
             _logger.LogInformation("Updated statistics with Discord Bots List");
             response.Dispose();
         }
@@ -89,9 +100,10 @@ namespace Abyss.Core.Services
                 return;
             }
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, "https://discordbotlist.com/api/bots/" + _client.CurrentUser.Id + "/stats");
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post,
+                "https://discordbotlist.com/api/bots/" + _client.CurrentUser.Id + "/stats");
 
-            httpRequest.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bot", _config.Marketing.DblDotComToken);
+            httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bot", _config.Marketing.DblDotComToken);
             httpRequest.Content = new StringContent(JsonConvert.SerializeObject(new
             {
                 guilds = _client.Guilds.Count,
@@ -102,12 +114,13 @@ namespace Abyss.Core.Services
             var response = await _http.SendAsync(httpRequest);
             httpRequest.Dispose();
 
-            if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
+            if (response.StatusCode != HttpStatusCode.NoContent)
             {
-                _logger.LogWarning($"Failed to update Discordbotlist.com: error code " + response.StatusCode);
+                _logger.LogWarning("Failed to update Discordbotlist.com: error code " + response.StatusCode);
                 response.Dispose();
                 return;
             }
+
             _logger.LogInformation("Updated statistics with Discordbotlist.com");
             response.Dispose();
         }

@@ -1,4 +1,6 @@
 using Abyss.Core.Entities;
+using Discord;
+using Discord.Commands;
 
 namespace Abyss.Core.Checks
 {

@@ -1,8 +1,11 @@
-﻿using Abyss.Core.Services;
+﻿using System.IO;
+using Abyss.Core.Services;
+using Discord;
+using Discord.Commands;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using System.IO;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace Abyss.Core.Helpers
 {
@@ -12,7 +15,7 @@ namespace Abyss.Core.Helpers
         {
             var outStream = new MemoryStream();
             using var image =
-                SixLabors.ImageSharp.Image.Load(DataService.GetAssetLocation("transparent_200x200.png"));
+                Image.Load(DataService.GetAssetLocation("transparent_200x200.png"));
             image.Mutate(a => a.BackgroundColor(colour));
             image.Save(outStream, new PngEncoder());
             outStream.Position = 0;

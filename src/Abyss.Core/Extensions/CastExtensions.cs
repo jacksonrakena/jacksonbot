@@ -1,5 +1,7 @@
 using System;
 using Abyss.Core.Entities;
+using Discord;
+using Discord.Commands;
 using Qmmands;
 
 namespace Abyss.Core.Extensions
@@ -10,7 +12,8 @@ namespace Abyss.Core.Extensions
         {
             return context is AbyssRequestContext requestContext
                 ? requestContext
-                : throw new InvalidCastException($"Received a context that's not of type {nameof(AbyssRequestContext)}. (Type: {context.GetType().Name})");
+                : throw new InvalidCastException(
+                    $"Received a context that's not of type {nameof(AbyssRequestContext)}. (Type: {context.GetType().Name})");
         }
     }
 }

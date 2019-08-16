@@ -1,14 +1,15 @@
 ﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using Abyss.Core.Services;
-using Abyss.Core.Entities;
-using AbyssalSpotify;
 using System.Net.Http;
-using Abyss.Core.Addons;
-using Discord.WebSocket;
-using Discord;
-using Qmmands;
 using Abyss.Core;
+using Abyss.Core.Addons;
+using Abyss.Core.Entities;
+using Abyss.Core.Services;
+using AbyssalSpotify;
+using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
+using Qmmands;
 
 namespace Abyss.Shared.Hosts
 {
@@ -23,7 +24,8 @@ namespace Abyss.Shared.Hosts
             serviceCollection.AddSingleton(provider =>
             {
                 var configurationModel = provider.GetRequiredService<AbyssConfig>();
-                return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret);
+                return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId,
+                    configurationModel.Connections.Spotify.ClientSecret);
             });
             serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();

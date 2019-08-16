@@ -1,3 +1,6 @@
+using Discord;
+using Discord.Commands;
+
 namespace Abyss.Core.Extensions
 {
     public static class PrimitiveExtensions
@@ -14,6 +17,7 @@ namespace Abyss.Core.Extensions
                     codePoints[currentArrayPlaceIndex] = codePoint;
                     currentArrayPlaceIndex++;
                 }
+
                 if (char.IsHighSurrogate(emojiString[i]))
                     i++;
             }

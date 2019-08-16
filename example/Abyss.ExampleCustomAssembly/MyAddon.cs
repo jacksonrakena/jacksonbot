@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Abyss.Core.Addons;
+using Discord;
+using Discord.Commands;
 using Microsoft.Extensions.Logging;
 
 namespace Abyss.ExampleCustomAssembly
@@ -8,6 +10,11 @@ namespace Abyss.ExampleCustomAssembly
     public class MyAddon : IAddon
     {
         private readonly ILogger<MyAddon> _logger;
+
+        public MyAddon(ILogger<MyAddon> logger)
+        {
+            _logger = logger;
+        }
 
         public AddonDescriptor GetDescriptor()
         {
@@ -31,11 +38,6 @@ namespace Abyss.ExampleCustomAssembly
         {
             _logger.LogInformation("Removing Abyss example addon...");
             return Task.CompletedTask;
-        }
-
-        public MyAddon(ILogger<MyAddon> logger)
-        {
-            _logger = logger;
         }
     }
 }

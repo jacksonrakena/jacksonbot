@@ -1,9 +1,10 @@
-﻿using Abyss.Core.Extensions;
+﻿using System;
+using System.Threading.Tasks;
+using Abyss.Core.Extensions;
 using Abyss.Core.Results;
 using Discord;
+using Discord.Commands;
 using Qmmands;
-using System;
-using System.Threading.Tasks;
 
 namespace Abyss.Core.Entities
 {
@@ -29,34 +30,34 @@ namespace Abyss.Core.Entities
             });
         }
 
-        public ReactSuccessResult Ok() => new ReactSuccessResult();
+        public ReactSuccessResult Ok()
+        {
+            return new ReactSuccessResult();
+        }
 
         public ActionResult Ok(string content, params FileAttachment[] attachments)
         {
-            return (Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at) && at.Options.HasFlag(ResponseFormatOptions.DontEmbed))
+            return Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at) &&
+                   at.Options.HasFlag(ResponseFormatOptions.DontEmbed)
                 ? new OkResult(content, attachments)
                 : Ok(new EmbedBuilder().WithDescription(content), attachments);
         }
 
         public ActionResult Ok(EmbedBuilder builder, params FileAttachment[] attachments)
         {
-            bool attachFooter = false;
+            var attachFooter = false;
             if (builder.Footer == null)
             {
                 if (Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at))
-                {
                     attachFooter = !at.Options.HasFlag(ResponseFormatOptions.DontAttachFooter);
-                }
                 else attachFooter = true;
             }
 
-            bool attachTimestamp = false;
+            var attachTimestamp = false;
             if (builder.Timestamp == null)
             {
                 if (Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at0))
-                {
                     attachTimestamp = !at0.Options.HasFlag(ResponseFormatOptions.DontAttachTimestamp);
-                }
                 else attachTimestamp = true;
             }
 

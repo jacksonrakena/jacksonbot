@@ -1,9 +1,10 @@
-using Abyss.Core.Entities;
-using Discord;
-using Discord.Rest;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Abyss.Core.Entities;
+using Discord;
+using Discord.Commands;
+using Discord.Rest;
 
 namespace Abyss.Core.Results
 {
@@ -32,20 +33,20 @@ namespace Abyss.Core.Results
         public override async Task<ResultCompletionData> ExecuteResultAsync(AbyssRequestContext context)
         {
             if (!context.BotUser.GetPermissions(context.Channel).SendMessages) return new ResultCompletionData();
-            if (Attachments.Length > 0 && !context.BotUser.GetPermissions(context.Channel).AttachFiles) return new ResultCompletionData();
+            if (Attachments.Length > 0 && !context.BotUser.GetPermissions(context.Channel).AttachFiles)
+                return new ResultCompletionData();
 
             var messages = new List<RestUserMessage>();
             if (Attachments.Length == 1)
             {
                 var attach0 = Attachments.First();
-                messages.Add(await context.Channel.SendFileAsync(attach0.Stream, attach0.Filename, Message, false, Embed?.Build()));
+                messages.Add(await context.Channel.SendFileAsync(attach0.Stream, attach0.Filename, Message, false,
+                    Embed?.Build()));
             }
             else if (Attachments.Length > 0)
             {
                 foreach (var attach in Attachments)
-                {
                     messages.Add(await context.Channel.SendFileAsync(attach.Stream, attach.Filename, null));
-                }
 
                 if (Message != null || Embed != null)
                     messages.Add(await context.Channel.SendMessageAsync(Message, false, Embed?.Build()));
@@ -54,6 +55,7 @@ namespace Abyss.Core.Results
             {
                 messages.Add(await context.Channel.SendMessageAsync(Message, false, Embed?.Build()));
             }
+
             return new ResultCompletionData(messages.ToArray());
         }
 

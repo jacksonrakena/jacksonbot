@@ -1,12 +1,13 @@
-using Abyss.Core.Extensions;
-using Discord;
-using Discord.WebSocket;
-using Qmmands;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Abyss.Core.Extensions;
+using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using Qmmands;
 
 namespace Abyss.Core.Parsers.DiscordNet
 {
@@ -22,7 +23,11 @@ namespace Abyss.Core.Parsers.DiscordNet
     [DiscoverableTypeParser]
     public class DiscordRoleTypeParser : TypeParser<SocketRole>, IAbyssTypeParser
     {
-        public override ValueTask<TypeParserResult<SocketRole>> ParseAsync(Parameter parameter, string value, CommandContext context,
+        public (string, string, string) FriendlyName =>
+            ("A server role, by ID, mention or name.", "A list of specific roles.", null);
+
+        public override ValueTask<TypeParserResult<SocketRole>> ParseAsync(Parameter parameter, string value,
+            CommandContext context,
             IServiceProvider provider)
         {
             var abyssContext = context.ToRequestContext();
@@ -45,10 +50,8 @@ namespace Abyss.Core.Parsers.DiscordNet
                 AddResult(results, role, role.Name == value ? 0.80f : 0.70f);
 
             if (results.Count > 0 && results.Values.Count > 0)
-            {
                 return
-                   new TypeParserResult<SocketRole>(results.Values.OrderBy(a => a.Score).FirstOrDefault()?.Value);
-            }
+                    new TypeParserResult<SocketRole>(results.Values.OrderBy(a => a.Score).FirstOrDefault()?.Value);
 
             return new TypeParserResult<SocketRole>("Role not found.");
         }
@@ -56,9 +59,7 @@ namespace Abyss.Core.Parsers.DiscordNet
         private static void AddResult(IDictionary<ulong, RoleParseResult> results, SocketRole role, float score)
         {
             if (role != null && !results.ContainsKey(role.Id))
-                results.Add(role.Id, new RoleParseResult { Score = score, Value = role });
+                results.Add(role.Id, new RoleParseResult {Score = score, Value = role});
         }
-
-        public (string, string, string) FriendlyName => ("A server role, by ID, mention or name.", "A list of specific roles.", null);
     }
 }

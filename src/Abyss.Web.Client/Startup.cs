@@ -6,8 +6,7 @@ namespace Abyss.Web.Client
     public class Startup
     {
         public void ConfigureServices(IServiceCollection _)
-        {
-        }
+        { }
 
         public void Configure(IComponentsApplicationBuilder app)
         {

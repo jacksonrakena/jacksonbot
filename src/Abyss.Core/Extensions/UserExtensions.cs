@@ -1,7 +1,8 @@
-using Discord;
-using Discord.WebSocket;
 using System;
 using System.Linq;
+using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
 
 namespace Abyss.Core.Extensions
 {
@@ -23,7 +24,7 @@ namespace Abyss.Core.Extensions
             var avatarUrl = user.GetAvatarUrl(size: size);
             return !string.IsNullOrWhiteSpace(avatarUrl)
                 ? avatarUrl
-                : (CDN.GetDefaultUserAvatarUrl(user.DiscriminatorValue) + "?size=" + size);
+                : CDN.GetDefaultUserAvatarUrl(user.DiscriminatorValue) + "?size=" + size;
         }
 
         public static Color GetHighestRoleColourOrDefault(this IUser normalUser)
@@ -42,8 +43,9 @@ namespace Abyss.Core.Extensions
 
         public static IRole GetHighestRoleOrDefault(this SocketGuildUser user, Func<IRole, bool> predicate = null)
         {
-            return predicate == null ? user.Roles.OrderByDescending(r => r.Position).FirstOrDefault()
-                                     : user.Roles.OrderByDescending(r => r.Position).FirstOrDefault(predicate);
+            return predicate == null
+                ? user.Roles.OrderByDescending(r => r.Position).FirstOrDefault()
+                : user.Roles.OrderByDescending(r => r.Position).FirstOrDefault(predicate);
         }
 
         public static string GetActualName(this SocketUser user)
@@ -60,7 +62,8 @@ namespace Abyss.Core.Extensions
 
         public static string FormatWithId(this SocketUser su)
         {
-            if (!(su is SocketGuildUser sgu) || sgu.Nickname == null) return $"{su.Username}#{su.Discriminator} ({su.Id})";
+            if (!(su is SocketGuildUser sgu) || sgu.Nickname == null)
+                return $"{su.Username}#{su.Discriminator} ({su.Id})";
             return $"{sgu.Nickname} ({sgu.Username}#{sgu.Discriminator}, {su.Id})";
         }
     }

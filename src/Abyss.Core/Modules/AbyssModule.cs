@@ -1,19 +1,20 @@
-﻿using Abyss.Core.Attributes;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Versioning;
+using System.Threading.Tasks;
+using Abyss.Core.Attributes;
 using Abyss.Core.Checks.Command;
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
 using Abyss.Core.Results;
 using Abyss.Core.Services;
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using Humanizer;
 using Qmmands;
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Versioning;
-using System.Threading.Tasks;
 
 namespace Abyss.Core.Modules
 {
@@ -21,12 +22,13 @@ namespace Abyss.Core.Modules
     [Description("Provides commands related to me.")]
     public class AbyssModule : AbyssModuleBase
     {
+        private readonly DiscordSocketClient _client;
         private readonly ICommandService _commandService;
         private readonly AbyssConfig _config;
-        private readonly DiscordSocketClient _client;
         private readonly DataService _data;
 
-        public AbyssModule(DiscordSocketClient client, ICommandService commandService, AbyssConfig config, DataService data)
+        public AbyssModule(DiscordSocketClient client, ICommandService commandService, AbyssConfig config,
+            DataService data)
         {
             _commandService = commandService;
             _config = config;
@@ -69,12 +71,10 @@ namespace Abyss.Core.Modules
                 .AddField("Heartbeat", Context.Client.Latency + "ms", true)
                 .AddField("Commands", _commandService.GetAllCommands().Count(), true)
                 .AddField("Modules", _commandService.GetAllModules().Count(), true)
-                .AddField("Source", $"https://github.com/abyssal/Abyss");
+                .AddField("Source", "https://github.com/abyssal/Abyss");
 
             if (!string.IsNullOrWhiteSpace(_config.Connections.Discord.SupportServer))
-            {
                 response.AddField("Support Server", _config.Connections.Discord.SupportServer, true);
-            }
 
             response
                 .AddField("Language",
@@ -90,8 +90,10 @@ namespace Abyss.Core.Modules
         [AbyssCooldown(1, 24, CooldownMeasure.Hours, CooldownType.User)]
         public Task<ActionResult> Command_SendFeedbackAsync([Remainder] [Range(1, 500)] string feedback)
         {
-            if (_config.Notifications.Feedback == null || !(_client.GetChannel(_config.Notifications.Feedback.Value) is SocketTextChannel stc))
-                return BadRequest("Feedback has been disabled for this bot. (Bot owner: you need to set the `Feedback` property in your configuration.)");
+            if (_config.Notifications.Feedback == null ||
+                !(_client.GetChannel(_config.Notifications.Feedback.Value) is SocketTextChannel stc))
+                return BadRequest(
+                    "Feedback has been disabled for this bot. (Bot owner: you need to set the `Feedback` property in your configuration.)");
 
             var _ = stc.SendMessageAsync(
                 $"Feedback from {Context.Invoker} in {Context.Guild?.ToString() ?? "their DM channel"}:\n\"{feedback}\"");
@@ -145,7 +147,8 @@ namespace Abyss.Core.Modules
         [Description("Shows the prefix.")]
         public Task<ActionResult> ViewPrefixesAsync()
         {
-            return Ok($"The prefix is `{Context.GetPrefix()}`, but you can invoke commands by mention as well, such as: \"{Context.BotUser.Mention} help\".");
+            return Ok(
+                $"The prefix is `{Context.GetPrefix()}`, but you can invoke commands by mention as well, such as: \"{Context.BotUser.Mention} help\".");
         }
 
         [Command("DevInfo")]
@@ -159,12 +162,15 @@ namespace Abyss.Core.Modules
             return Ok(e =>
             {
                 e.Author = Context.BotUser.ToEmbedAuthorBuilder();
-                e.Description = $"{info.ServiceName} instance running on {info.OperatingSystem} (runtime version {info.RuntimeVersion}), powering {info.Guilds} guilds ({info.Channels} channels, and {info.Users} users)";
-                e.AddField("Command statistics", $"{info.Modules} modules | {info.Commands} commands | {info.CommandSuccesses} successful calls | {info.CommandFailures} unsuccessful calls");
-                e.AddField("Process statistics", $"Process name {info.ProcessName} on machine name {info.MachineName} (thread {info.CurrentThreadId}, {info.ProcessorCount} processors)");
+                e.Description =
+                    $"{info.ServiceName} instance running on {info.OperatingSystem} (runtime version {info.RuntimeVersion}), powering {info.Guilds} guilds ({info.Channels} channels, and {info.Users} users)";
+                e.AddField("Command statistics",
+                    $"{info.Modules} modules | {info.Commands} commands | {info.CommandSuccesses} successful calls | {info.CommandFailures} unsuccessful calls");
+                e.AddField("Process statistics",
+                    $"Process name {info.ProcessName} on machine name {info.MachineName} (thread {info.CurrentThreadId}, {info.ProcessorCount} processors)");
                 e.AddField("Addons", $"{info.AddonsLoaded} addons loaded");
                 e.AddField("Content root", info.ContentRootPath);
-                e.AddField("Start time", info.StartTime.ToString("F"), false);
+                e.AddField("Start time", info.StartTime.ToString("F"));
             });
         }
     }

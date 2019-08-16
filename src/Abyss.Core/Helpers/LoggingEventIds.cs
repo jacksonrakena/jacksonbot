@@ -1,3 +1,5 @@
+using Discord;
+using Discord.Commands;
 using Microsoft.Extensions.Logging;
 
 namespace Abyss.Core.Helpers
@@ -8,12 +10,16 @@ namespace Abyss.Core.Helpers
         public static readonly EventId CommandExecutedSuccess = new EventId(1, "Command executed");
 
         // Internal error.
-        public static readonly EventId ExceptionThrownInPipeline = new EventId(100, "Exception thrown in parsing pipeline");
+        public static readonly EventId ExceptionThrownInPipeline =
+            new EventId(100, "Exception thrown in parsing pipeline");
+
         public static readonly EventId UnknownResultType = new EventId(101, "Unknown result type");
         public static readonly EventId ExceptionThrownInCommand = new EventId(102, "Exception thrown in command");
         public static readonly EventId UnknownError = new EventId(103, "Unknown error");
         public static readonly EventId CommandReturnedBadType = new EventId(104, "Command returned bad type");
-        public static readonly EventId CommandErroredRaisedWithUnknownType = new EventId(105, "CommandErrored event raised with unknown type");
+
+        public static readonly EventId CommandErroredRaisedWithUnknownType =
+            new EventId(105, "CommandErrored event raised with unknown type");
 
         // User error.
         public static readonly EventId CommandExecutedUserFailure = new EventId(200, "Command executed - user failure");

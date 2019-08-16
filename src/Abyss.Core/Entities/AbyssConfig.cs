@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Discord;
+using Discord.Commands;
 
 namespace Abyss.Core.Entities
 {
@@ -20,17 +22,20 @@ namespace Abyss.Core.Entities
 
     public class AbyssConfigStartupSection
     {
+        public IEnumerable<AbyssConfigActivity> Activity { get; set; }
+
         public class AbyssConfigActivity
         {
             public string Type { get; set; }
             public string Message { get; set; }
         }
-
-        public IEnumerable<AbyssConfigActivity> Activity { get; set; }
     }
 
     public class AbyssConfigConnectionsSection
     {
+        public AbyssConfigDiscordConnectionSection Discord { get; set; }
+        public AbyssConfigSpotifyConnectionSection Spotify { get; set; }
+
         public class AbyssConfigDiscordConnectionSection
         {
             public string Token { get; set; }
@@ -43,9 +48,6 @@ namespace Abyss.Core.Entities
             public string ClientId { get; set; }
             public string ClientSecret { get; set; }
         }
-
-        public AbyssConfigDiscordConnectionSection Discord { get; set; }
-        public AbyssConfigSpotifyConnectionSection Spotify { get; set; }
     }
 
     public class AbyssConfigNotificationsSection

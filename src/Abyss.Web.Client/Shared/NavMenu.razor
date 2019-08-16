@@ -31,12 +31,12 @@
 </div>
 
 @code {
-    bool collapseNavMenu = true;
+bool collapseNavMenu = true;
 
-    string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-    void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
+void ToggleNavMenu()
+{
+collapseNavMenu = !collapseNavMenu;
+}
 }

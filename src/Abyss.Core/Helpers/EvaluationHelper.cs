@@ -1,8 +1,3 @@
-using Abyss.Core.Entities;
-using Discord;
-using Discord.Rest;
-using Discord.WebSocket;
-using Qmmands;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +5,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Abyss.Core.Entities;
+using Discord;
+using Discord.Commands;
+using Discord.Rest;
+using Discord.WebSocket;
+using Qmmands;
 
 namespace Abyss.Core.Helpers
 {
@@ -43,7 +44,10 @@ namespace Abyss.Core.Helpers
             {
                 if (sb.Length > 1800) break;
                 sb.Append(
-                    "[Name: ").Append(method.Name).Append(", Return-Type: ").Append(method.ReturnType.Name).Append(", Parameters: [").Append(string.Join(", ", method.GetParameters().Select(a => $"({a.ParameterType.Name} {a.Name})"))).AppendLine("]]");
+                        "[Name: ").Append(method.Name).Append(", Return-Type: ").Append(method.ReturnType.Name)
+                    .Append(", Parameters: [")
+                    .Append(string.Join(", ", method.GetParameters().Select(a => $"({a.ParameterType.Name} {a.Name})")))
+                    .AppendLine("]]");
                 sb.AppendLine();
             }
 
@@ -62,19 +66,16 @@ namespace Abyss.Core.Helpers
 
         private static string ReadValue(object prop, object obj)
         {
-
             /* PropertyInfo and FieldInfo both derive from MemberInfo, but that does not have a GetValue method, so the only
                 supported ancestor is object */
             try
             {
                 var value = prop switch
-                {
+                    {
                     PropertyInfo pinfo => pinfo.GetValue(obj),
-
                     FieldInfo finfo => finfo.GetValue(obj),
-
                     _ => throw new ArgumentException($"{nameof(prop)} must be PropertyInfo or FieldInfo", nameof(prop)),
-                };
+                    };
 
                 if (value == null) return "Null";
 
@@ -111,7 +112,7 @@ namespace Abyss.Core.Helpers
 
             while (latestType != null)
             {
-                var l = new List<Type> { latestType };
+                var l = new List<Type> {latestType};
                 l.AddRange(latestType.GetInterfaces());
                 l.Reverse();
                 parents.Add(l);
@@ -120,7 +121,7 @@ namespace Abyss.Core.Helpers
 
             if (parents.Count != 1)
             {
-                var l = new List<Type> { type };
+                var l = new List<Type> {type};
                 l.AddRange(type.GetInterfaces());
                 l.Reverse();
                 parents.Insert(0, l);
@@ -190,7 +191,8 @@ namespace Abyss.Core.Helpers
                     var sep = new string(' ', columnWidth - prop.Name.Length);
 
                     /* Add the property name, then the separator, then the value */
-                    inspection.Append(prop.Name).Append(sep).Append(prop.CanRead ? ReadValue(prop, obj) : "Unreadable").AppendLine();
+                    inspection.Append(prop.Name).Append(sep).Append(prop.CanRead ? ReadValue(prop, obj) : "Unreadable")
+                        .AppendLine();
                 }
             }
 
@@ -232,7 +234,9 @@ namespace Abyss.Core.Helpers
 
         public SocketGuildUser User(string username)
         {
-            return Context.Guild.Users.FirstOrDefault(a => a.Username.Equals(username, StringComparison.OrdinalIgnoreCase) || (a.Nickname != null && a.Nickname.Equals(username, StringComparison.OrdinalIgnoreCase)));
+            return Context.Guild.Users.FirstOrDefault(a =>
+                a.Username.Equals(username, StringComparison.OrdinalIgnoreCase) || a.Nickname != null &&
+                a.Nickname.Equals(username, StringComparison.OrdinalIgnoreCase));
         }
 
         public SocketTextChannel TextChannel(ulong id)
@@ -242,7 +246,8 @@ namespace Abyss.Core.Helpers
 
         public SocketTextChannel TextChannel(string name)
         {
-            return Context.Guild.TextChannels.FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            return Context.Guild.TextChannels.FirstOrDefault(a =>
+                a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 
         public SocketUserMessage Message(ulong id)
@@ -250,6 +255,9 @@ namespace Abyss.Core.Helpers
             return Context.Channel.GetCachedMessage(id) as SocketUserMessage;
         }
 
-        public SocketUserMessage Message(string id) => Message(ulong.Parse(id));
+        public SocketUserMessage Message(string id)
+        {
+            return Message(ulong.Parse(id));
+        }
     }
 }

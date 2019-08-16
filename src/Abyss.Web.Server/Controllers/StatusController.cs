@@ -1,13 +1,15 @@
 ﻿using Abyss.Core.Entities;
 using Abyss.Core.Services;
 using Abyss.Shared;
+using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Abyss.Web.Server.Controllers
 {
     [Route("api/status")]
-    public class StatusController: Controller
+    public class StatusController : Controller
     {
         private readonly DiscordSocketClient _client;
         private readonly AbyssConfig _config;

@@ -1,7 +1,9 @@
-using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Discord;
+using Discord.Commands;
+using Microsoft.CodeAnalysis;
 
 namespace Abyss.Core.Entities
 {

@@ -1,3 +1,9 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Abyss.Core.Attributes;
 using Abyss.Core.Checks.Command;
 using Abyss.Core.Entities;
@@ -6,15 +12,10 @@ using Abyss.Core.Helpers;
 using Abyss.Core.Results;
 using Abyss.Core.Services;
 using Discord;
+using Discord.Commands;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Qmmands;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Abyss.Core.Modules
 {
@@ -103,7 +104,7 @@ namespace Abyss.Core.Modules
                             break;
                     }
 
-                    if ((stringRep.StartsWith("```") && stringRep.EndsWith("```")) || special)
+                    if (stringRep.StartsWith("```") && stringRep.EndsWith("```") || special)
                         canUseEmbed = false;
                     else
                         stringRep = $"```cs\n{stringRep}```";
@@ -139,7 +140,7 @@ namespace Abyss.Core.Modules
             embed.AddField("Input", $"```cs\n{script}```");
             if (result.CompilationDiagnostics?.Count > 0)
             {
-                var field = new EmbedFieldBuilder { Name = "Compilation Errors" };
+                var field = new EmbedFieldBuilder {Name = "Compilation Errors"};
                 var sb = new StringBuilder();
                 foreach (var compilationDiagnostic in result.CompilationDiagnostics.OrderBy(a =>
                     a.Location.SourceSpan.Start))
@@ -196,8 +197,9 @@ namespace Abyss.Core.Modules
         [RequireOwner]
         public async Task<ActionResult> Command_ShutdownAsync()
         {
-            var responses = new List<string> { "Noho mai rā!", "Au revoir!", "Adjö!", "Sayōnara!" };
-            await ReplyAsync($"{responses[new Random().Next(0, responses.Count - 1)]} (Goodbye!)").ConfigureAwait(false);
+            var responses = new List<string> {"Noho mai rā!", "Au revoir!", "Adjö!", "Sayōnara!"};
+            await ReplyAsync($"{responses[new Random().Next(0, responses.Count - 1)]} (Goodbye!)")
+                .ConfigureAwait(false);
             _logger.LogCritical($"Application terminated by user {Context.Invoker} (ID {Context.Invoker.Id})");
             await Context.Client.LogoutAsync().ConfigureAwait(false);
             await Context.Client.StopAsync().ConfigureAwait(false);
@@ -212,7 +214,8 @@ namespace Abyss.Core.Modules
         [Example("edit 562486465645510656 hello")]
         [RequireOwner]
         public async Task<ActionResult> Command_EditAsync([Name("Message")] [Description("The message to edit.")]
-            ulong messageId, [Name("New Content")] [Description("The new content of the message.")] string newContent)
+            ulong messageId, [Name("New Content")] [Description("The new content of the message.")]
+            string newContent)
         {
             var channel = Context.Channel;
             var message = channel.GetCachedMessage(messageId) ?? await channel.GetMessageAsync(messageId);

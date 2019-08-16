@@ -1,7 +1,9 @@
-using Qmmands;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Discord;
+using Discord.Commands;
+using Qmmands;
 
 namespace Abyss.Core.Parsers
 {
@@ -18,23 +20,21 @@ namespace Abyss.Core.Parsers
             "n", "no", "nah", "na", "nej", "nope", "nop", "neg", "nay", "negative", "0"
         };
 
-        public override ValueTask<TypeParserResult<bool>> ParseAsync(Parameter parameter, string value, CommandContext context, IServiceProvider provider)
+        public (string, string, string) FriendlyName =>
+            ("A true/false value, like yes, y, no or n.", "A list of true or false.", null);
+
+        public override ValueTask<TypeParserResult<bool>> ParseAsync(Parameter parameter, string value,
+            CommandContext context, IServiceProvider provider)
         {
             if (bool.TryParse(value, out var r)) return TypeParserResult<bool>.Successful(r);
 
             if (MatchingTrueValues.Exists(a => a.Equals(value, StringComparison.OrdinalIgnoreCase)))
-            {
                 return TypeParserResult<bool>.Successful(true);
-            }
 
             if (MatchingFalseValues.Exists(a => a.Equals(value, StringComparison.OrdinalIgnoreCase)))
-            {
                 return TypeParserResult<bool>.Successful(false);
-            }
 
             return TypeParserResult<bool>.Unsuccessful("Failed to parse a true/false value.");
         }
-
-        public (string, string, string) FriendlyName => ("A true/false value, like yes, y, no or n.", "A list of true or false.", null);
     }
 }

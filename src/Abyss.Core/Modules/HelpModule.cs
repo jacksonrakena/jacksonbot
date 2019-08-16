@@ -1,14 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Abyss.Core.Attributes;
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
 using Abyss.Core.Results;
 using Abyss.Core.Services;
 using Discord;
+using Discord.Commands;
 using Qmmands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Abyss.Core.Modules
 {
@@ -72,9 +73,7 @@ namespace Abyss.Core.Modules
 
                 foreach (var embed0 in await Task.WhenAll(search.Select(a =>
                     _help.CreateCommandEmbedAsync(a.Command, Context))).ConfigureAwait(false))
-                {
                     await Context.Channel.SendMessageAsync(string.Empty, false, embed0).ConfigureAwait(false);
-                }
 
                 return Empty();
             }
@@ -106,10 +105,8 @@ namespace Abyss.Core.Modules
                 }
 
                 if (list.Count > 0)
-                {
                     embed.AddField(string.IsNullOrWhiteSpace(module.Name) ? "[Internal Error]" : module.Name,
-                       string.Join(", ", list), true);
-                }
+                        string.Join(", ", list), true);
             }
 
             return Ok(embed);

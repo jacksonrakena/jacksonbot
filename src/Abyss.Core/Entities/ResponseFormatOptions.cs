@@ -1,4 +1,6 @@
 ﻿using System;
+using Discord;
+using Discord.Commands;
 
 namespace Abyss.Core.Entities
 {
@@ -12,13 +14,13 @@ namespace Abyss.Core.Entities
     }
 
     [AttributeUsage(AttributeTargets.Method)]
-    public class ResponseFormatOptionsAttribute: Attribute
+    public class ResponseFormatOptionsAttribute : Attribute
     {
-        public ResponseFormatOptions Options { get; }
-
         public ResponseFormatOptionsAttribute(ResponseFormatOptions options)
         {
             Options = options;
         }
+
+        public ResponseFormatOptions Options { get; }
     }
 }

@@ -1,25 +1,28 @@
-﻿using Abyss.Core.Addons;
-using Abyss.Shared;
-using Discord.WebSocket;
-using Microsoft.Extensions.Hosting;
-using Qmmands;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using Abyss.Core.Addons;
+using Abyss.Shared;
+using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using Microsoft.Extensions.Hosting;
+using Qmmands;
 
 namespace Abyss.Core.Services
 {
     public class DataService
     {
-        private readonly IHostEnvironment _hostingEnvironment;
-        private readonly MessageReceiver _messageReceiver;
+        private readonly AddonService _addons;
         private readonly ICommandService _commandService;
         private readonly DiscordSocketClient _discord;
-        private readonly AddonService _addons;
+        private readonly IHostEnvironment _hostingEnvironment;
+        private readonly MessageReceiver _messageReceiver;
 
-        public DataService(IHostEnvironment hostingEnvironment, DiscordSocketClient client, MessageReceiver receiver, ICommandService commandService,
+        public DataService(IHostEnvironment hostingEnvironment, DiscordSocketClient client, MessageReceiver receiver,
+            ICommandService commandService,
             AddonService addons)
         {
             _hostingEnvironment = hostingEnvironment;
@@ -29,7 +32,10 @@ namespace Abyss.Core.Services
             _addons = addons;
         }
 
-        public string GetBasePath() => _hostingEnvironment.ContentRootPath;
+        public string GetBasePath()
+        {
+            return _hostingEnvironment.ContentRootPath;
+        }
 
         // /Assets/ is packed with the application assembly
         public static string GetAssetLocation(string assetName)
@@ -37,8 +43,15 @@ namespace Abyss.Core.Services
             return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", assetName);
         }
 
-        public string GetConfigurationBasePath() => GetBasePath();
-        public string GetCustomAssemblyBasePath() => Path.Combine(GetBasePath(), "Addons");
+        public string GetConfigurationBasePath()
+        {
+            return GetBasePath();
+        }
+
+        public string GetCustomAssemblyBasePath()
+        {
+            return Path.Combine(GetBasePath(), "Addons");
+        }
 
         public ServiceInfo GetServiceInfo()
         {
