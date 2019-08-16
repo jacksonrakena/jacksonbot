@@ -20,8 +20,9 @@ namespace Abyss.Core.Services
     public sealed class MessageReceiver
     {
         public MessageReceiver(ICommandService commandService, HelpService help, ILoggerFactory logger,
-            DiscordSocketClient discordClient, ResponseCacheService responseCache, AbyssConfig config, IServiceProvider services)
+            DiscordSocketClient discordClient, ResponseCacheService responseCache, AbyssConfig config, IServiceProvider services, NotificationsService notifications)
         {
+            _notifications = notifications;
             _commandService = commandService;
             _helpService = help;
             _successfulCommandsTracking = logger.CreateLogger("Successful Commands Tracking");
@@ -46,6 +47,7 @@ namespace Abyss.Core.Services
         private readonly ILogger<MessageReceiver> _logger;
 
         private readonly ResponseCacheService _responseCache;
+        private readonly NotificationsService _notifications;
         private readonly ICommandService _commandService;
         private readonly IServiceProvider _services;
         private readonly HelpService _helpService;
@@ -229,6 +231,8 @@ namespace Abyss.Core.Services
             {
                 _failedCommandsTracking.LogCritical(LoggingEventIds.UnknownError, $"Exception thrown in main MessageReceiver: " + e.Message + ". Stack trace:\n" + e.StackTrace);
 
+                await _notifications.NotifyExceptionAsync(e).ConfigureAwait(false);
+
                 var response = "An unknown error occurred. If all is good, no need to worry, and the bot developer is stupid. If it's not, ";
                 if (_config.Connections.Discord.SupportServer != null) response += "you might want to hop into " + _config.Connections.Discord.SupportServer + " for help.";
                 else response += "panic.";
@@ -280,6 +284,8 @@ namespace Abyss.Core.Services
 
             _failedCommandsTracking.LogError(LoggingEventIds.ExceptionThrownInPipeline, exception, $"Pipeline failed at step {step} for command {context.Command.Name} (message {context.Message.Id} - channel {context.Channel.Name}/{context.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id}). Reason: {reason}");
 
+            await _notifications.NotifyExceptionAsync(exception).ConfigureAwait(false);
+
             await context.Channel.SendMessageAsync(string.Empty, false, embed.Build()).ConfigureAwait(false);
         }
 
@@ -330,12 +336,7 @@ namespace Abyss.Core.Services
 
         public Task HandleCommandExecutionFailedAsync(CommandExecutionFailedEventArgs e)
         {
-            if (!(e.Result is ExecutionFailedResult efr))
-            {
-                _logger.LogCritical(LoggingEventIds.CommandErroredRaisedWithUnknownType, $"CommandErrored event raised with unknown type: {e.Result.GetType().Name}");
-                return Task.CompletedTask;
-            }
-            return HandleRuntimeExceptionAsync(e.Context.ToRequestContext(), efr.Exception, efr.CommandExecutionStep, efr.Reason);
+            return HandleRuntimeExceptionAsync(e.Context.ToRequestContext(), e.Result.Exception, e.Result.CommandExecutionStep, e.Result.Reason);
         }
 
         public void LoadTypesFromAssembly(Assembly assembly)

@@ -80,5 +80,19 @@ namespace Abyss.Core.Services
                  .WithCurrentTimestamp()
                  .Build());
         }
+
+        public async Task NotifyExceptionAsync(Exception exception)
+        {
+            if (!_sendNotifications || _notifyConfig.Exception == null) return;
+            var notifChannel = _client.GetChannel(_notifyConfig.Exception.Value);
+            if (!(notifChannel is SocketTextChannel stc)) return;
+            await stc.TrySendMessageAsync(null, false, new EmbedBuilder()
+                .WithAuthor("Exception thrown", _client.CurrentUser.GetEffectiveAvatarUrl())
+                .WithDescription($"Exception of type \"{exception.GetType().Name}\" thrown.")
+                .AddField("Message", exception.Message)
+                .WithColor(Color.Red)
+                .WithCurrentTimestamp()
+                .Build());
+        }
     }
 }
