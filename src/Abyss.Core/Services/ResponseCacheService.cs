@@ -1,7 +1,9 @@
-﻿using Abyss.Core.Results;
+﻿using Abyss.Core.Extensions;
+using Abyss.Core.Results;
 using Discord.WebSocket;
 using Microsoft.Extensions.Caching.Memory;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Abyss.Core.Services
@@ -29,23 +31,14 @@ namespace Abyss.Core.Services
             });
         }
 
-        private async Task OnMessageDeleted(Discord.Cacheable<Discord.IMessage, ulong> message, ISocketMessageChannel arg2)
+        private Task OnMessageDeleted(Discord.Cacheable<Discord.IMessage, ulong> message, ISocketMessageChannel arg2)
         {
-            var id = message.Id;
-
-            if (_responseCache.TryGetValue(id, out var record) && record is ResultCompletionData action)
+            if (_responseCache.TryGetValue(message.Id, out var record) && record is ResultCompletionData action)
             {
-                foreach (var msg in action.Messages)
-                {
-                    try
-                    {
-                        await msg.DeleteAsync();
-                    }
-                    finally
-                    {
-                    }
-                }
+                return Task.WhenAll(action.Messages.Select(a => DiscordExtensions.TryDeleteAsync(a)));
             }
+
+            return Task.CompletedTask;
         }
 
         private readonly IMemoryCache _responseCache;

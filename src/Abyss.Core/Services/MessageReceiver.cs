@@ -233,10 +233,6 @@ namespace Abyss.Core.Services
 
                 await _notifications.NotifyExceptionAsync(e).ConfigureAwait(false);
 
-                var response = "An unknown error occurred. If all is good, no need to worry, and the bot developer is stupid. If it's not, ";
-                if (_config.Connections.Discord.SupportServer != null) response += "you might want to hop into " + _config.Connections.Discord.SupportServer + " for help.";
-                else response += "panic.";
-                await context.Channel.TrySendMessageAsync(response);
                 CommandFailures++;
             }
         }
@@ -278,9 +274,6 @@ namespace Abyss.Core.Services
                 },
                 Timestamp = DateTimeOffset.Now
             };
-
-            if (_config.Connections.Discord.SupportServer != null)
-                embed.Footer.Text += " You might want to join the support server: " + _config.Connections.Discord.SupportServer;
 
             _failedCommandsTracking.LogError(LoggingEventIds.ExceptionThrownInPipeline, exception, $"Pipeline failed at step {step} for command {context.Command.Name} (message {context.Message.Id} - channel {context.Channel.Name}/{context.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id}). Reason: {reason}");
 
