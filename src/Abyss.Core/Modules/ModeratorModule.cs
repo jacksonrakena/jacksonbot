@@ -6,9 +6,13 @@ using Abyss.Core.Parsers.DiscordNet;
 using Abyss.Core.Results;
 using Discord;
 using Discord.Net;
+using Discord.WebSocket;
+using Q4Unix;
 using Qmmands;
+using System;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Abyss.Core.Modules
@@ -64,23 +68,48 @@ namespace Abyss.Core.Modules
             });
         }
 
-        [Command("Clear")]
+        [Command("Purge", "Clear")]
         [Description("Clears a number of messages from a source message, in a certain direction.")]
-        [Example("clear 100")]
+        [Example("purge --user 255950165200994307 --count 50")]
         [RequireUserPermission(ChannelPermission.ManageMessages)]
         [RequireBotPermission(ChannelPermission.ManageMessages)]
+        [OverrideArgumentParser(typeof(UnixArgumentParser))]
         public async Task<ActionResult> Command_ClearAllAsync(
-            [Name("Count")] [Description("The number of messages to delete.")] [Range(1, 100)]
-            int count = 50
+            [Name("Count")] [Description("The number of messages to delete.")] [Range(1, 100, true, true)]
+            int count = 100,
+            [Name("User")] [Description("The user to target.")]
+            DiscordUserReference user = null,
+            [Name("Channel")] [Description("The channel to target.")]
+            SocketTextChannel channel = null,
+            [Name("Embeds")] [Description("Whether to only delete messages with embeds in them.")]
+            bool embeds = false,
+            [Name("Before")] [Description("The message ID to start at.")]
+            ulong? messageId = null
         )
         {
+            var ch = channel ?? Context.Channel;
+
             var messages =
-                (await Context.Channel.GetMessagesAsync(Context.Message.Id, Direction.Before, count).FlattenAsync().ConfigureAwait(false))
-                .ToArray();
+                (await (channel ?? Context.Channel).GetMessagesAsync(messageId ?? Context.Message.Id, Direction.Before, count).FlattenAsync().ConfigureAwait(false))
+                .Where(m =>
+                {
+                    var pass = m is IUserMessage && (DateTimeOffset.UtcNow - m.Timestamp).TotalDays < 14;
+                    if (user != null && m.Author.Id != user.Id) pass = false;
+                    if (embeds && !string.IsNullOrWhiteSpace(m.Content)) pass = false;
 
-            await Context.Channel.DeleteMessagesAsync(messages).ConfigureAwait(false);
+                    return pass;
+                }).ToList();
 
-            return Ok(a => a.WithDescription($"Deleted `{messages.Length}` messages."));
+            await ch.DeleteMessagesAsync(messages).ConfigureAwait(false);
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"Deleted `{messages.Count}` messages.");
+            sb.AppendLine();
+            foreach (var author in messages.GroupBy(b => b.Author, new UserEqualityComparer()))
+            {
+                sb.AppendLine($"**{author.Key}**: {author.Count()} messages");
+            }
+            return Ok(sb.ToString());
         }
     }
 }

@@ -9,6 +9,7 @@ using Discord.WebSocket;
 using Discord;
 using Qmmands;
 using Abyss.Core;
+using Q4Unix;
 
 namespace Abyss.Shared.Hosts
 {
@@ -38,16 +39,20 @@ namespace Abyss.Shared.Hosts
                 MessageCacheSize = 100,
                 LogLevel = LogSeverity.Debug,
                 DefaultRetryMode = RetryMode.RetryTimeouts,
-                AlwaysDownloadUsers = true
+                AlwaysDownloadUsers = true,
+                ExclusiveBulkDelete = false
             }));
 
-            serviceCollection.AddSingleton<ICommandService>(new CommandService(new CommandServiceConfiguration
+            var commandService = new CommandService(new CommandServiceConfiguration
             {
                 StringComparison = StringComparison.OrdinalIgnoreCase,
                 DefaultRunMode = RunMode.Sequential,
                 IgnoresExtraArguments = true,
-                CooldownBucketKeyGenerator = AbyssCooldownBucketKeyGenerators.Default
-            }));
+                CooldownBucketKeyGenerator = AbyssCooldownBucketKeyGenerators.Default,
+                DefaultArgumentParser = DefaultArgumentParser.Instance
+            });
+            commandService.AddArgumentParser(UnixArgumentParser.Instance);
+            serviceCollection.AddSingleton<ICommandService>(commandService);
         }
     }
 }

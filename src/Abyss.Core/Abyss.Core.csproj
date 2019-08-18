@@ -25,10 +25,11 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0-preview8.19405.4" />
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.0.0-preview8.19405.4" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0-preview8.19405.4" />
-        <PackageReference Include="Qmmands" Version="3.0.0-nightly-00204" />
+        <PackageReference Include="Qmmands" Version="3.0.0-nightly-00205" />
         <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Abyss.Shared\Abyss.Shared.csproj" />
+      <ProjectReference Include="..\Q4Unix\Q4Unix.csproj" />
     </ItemGroup>
 </Project>

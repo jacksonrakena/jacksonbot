@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Q4Unix;
 
 namespace Abyss.Core.Services
 {
@@ -149,18 +150,18 @@ namespace Abyss.Core.Services
                             $"Parse failed for {apfr.Command.Name}. Reason: {apfr.Failure?.Humanize()} " +
                             $"(message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
 
-                        if (apfr.Failure == DefaultArgumentParserFailure.TooFewArguments)
-                        {
-                            await context.Channel.SendMessageAsync(
-                                $"I can't read that, you didn't provide enough information. Here's the command listing for `{apfr.Command.Name}`:",
-                                false, await _helpService.CreateCommandEmbedAsync(apfr.Command, context).ConfigureAwait(false)).ConfigureAwait(false);
-                            break;
-                        }
-
                         await context.Channel.SendMessageAsync(
                             $"I couldn't read whatever you just said: {apfr.Failure?.Humanize() ?? "A parsing error occurred."}.").ConfigureAwait(false);
                         break;
 
+                    case ArgumentParseFailedResult apfr1 when apfr1.ParserResult is UnixArgumentParserResult upfr:
+                        _failedCommandsTracking.LogWarning(LoggingEventIds.ArgumentParseFailed,
+                            $"UNIX parse failed for {upfr.Context.Command.Name}. Reason: {upfr.ParseFailure.Humanize()} " +
+                            $"(message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
+
+                        await context.Channel.SendMessageAsync(
+                            $"I couldn't read whatever you just said: {upfr.ParseFailure.Humanize()}.").ConfigureAwait(false);
+                        break;
                     case TypeParseFailedResult tpfr:
                         _failedCommandsTracking.LogWarning(LoggingEventIds.TypeParserFailed, $"Failed to parse type {tpfr.Parameter.Type.Name} in command {tpfr.Parameter.Command.Name} - received {tpfr.Value} " +
                             $"(message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
