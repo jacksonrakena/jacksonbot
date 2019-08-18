@@ -40,21 +40,23 @@ namespace Abyss.Core.Services
 
         public string GetFriendlyName(Parameter info)
         {
+            var type = Nullable.GetUnderlyingType(info.Type) ?? info.Type;
+
             // Check if enum type first, to avoid reflection logic
-            if (info.Type.IsEnum) return info.Type.GetEnumNames().HumanizeChoiceCollection();
+            if (type.IsEnum) return type.GetEnumNames().HumanizeChoiceCollection();
 
             (string Singular, string Multiple, string Remainder) friendlyNameSet = (null, null, null);
 
             // Look for friendly name data in the above table (unimplemented primitive parsers)
-            if (FriendlyNames.TryGetValue(info.Type, out var fnPair))
+            if (FriendlyNames.TryGetValue(type, out var fnPair))
             {
                 friendlyNameSet = fnPair;
             }
             // Look for friendly name data in the type parser of the type
             else
             {
-                var rawParserObject = _getTypeParserMethod.MakeGenericMethod(info.Type)
-                    .Invoke(_commandService, new object[] { info.Type.IsPrimitive });
+                var rawParserObject = _getTypeParserMethod.MakeGenericMethod(type)
+                    .Invoke(_commandService, new object[] { type.IsPrimitive });
                 if (rawParserObject is IAbyssTypeParser iptp)
                 {
                     friendlyNameSet = iptp.FriendlyName;
@@ -69,7 +71,7 @@ namespace Abyss.Core.Services
             }
 
             // Return type name if no friendly data found
-            return info.Type.Name;
+            return type.Name;
         }
 
         public async Task<Embed> CreateCommandEmbedAsync(Command command, AbyssRequestContext context)
@@ -151,7 +153,7 @@ namespace Abyss.Core.Services
             var type = GetFriendlyName(parameterInfo);
 
             return
-                $"`{parameterInfo.Name}`: {type}{FormatParameterTags(ctx, parameterInfo)}";
+                $"`{parameterInfo.Name}`: {type}{(parameterInfo.IsOptional ? " Optional." : "")}{FormatParameterTags(ctx, parameterInfo)}";
         }
 
         private string FormatParameterTags(AbyssRequestContext ctx, Parameter parameterInfo)
@@ -165,9 +167,6 @@ namespace Abyss.Core.Services
 
             if (!string.IsNullOrEmpty(parameterInfo.Remarks))
                 sb.AppendLine($"- Remarks: {parameterInfo.Remarks}");
-
-            sb.AppendLine(
-                $"- Optional: {(parameterInfo.IsOptional ? "Yes" : "No")}");
 
             if (parameterInfo.IsOptional)
             {
