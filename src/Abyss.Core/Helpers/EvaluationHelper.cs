@@ -36,14 +36,14 @@ namespace Abyss.Core.Helpers
 
             var methods = type.GetMethods();
 
-            sb.Append("<< Inspecting methods for type [").Append(type.Name).AppendLine("] >>");
+            sb.Append($"<< Inspecting methods for type [{type.Name}] >>");
             sb.AppendLine();
 
             foreach (var method in methods.Where(m => !m.IsSpecialName))
             {
                 if (sb.Length > 1800) break;
                 sb.Append(
-                    "[Name: ").Append(method.Name).Append(", Return-Type: ").Append(method.ReturnType.Name).Append(", Parameters: [").Append(string.Join(", ", method.GetParameters().Select(a => $"({a.ParameterType.Name} {a.Name})"))).AppendLine("]]");
+                    $"[Name: {method.Name}, Return-Type: {method.ReturnType.Name}, Parameters: [{string.Join(", ", method.GetParameters().Select(a => $"({a.ParameterType.Name} {a.Name})"))}]");
                 sb.AppendLine();
             }
 
@@ -78,24 +78,18 @@ namespace Abyss.Core.Helpers
 
                 if (value == null) return "Null";
 
-                static string HandleEnumerable(IEnumerable @enum)
+                if (value is IEnumerable e && !(value is string))
                 {
-                    var enu = @enum.Cast<object>().ToList();
+                    var enu = e.Cast<object>().ToList();
                     return $"{enu.Count} [{enu.GetType().Name}]";
-                }
-
-                string HandleNormal()
+                } else
                 {
                     return value + $" [{value.GetType().Name}]";
                 }
-
-                return value is IEnumerable enumerable && !(value is string)
-                    ? HandleEnumerable(enumerable)
-                    : HandleNormal();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return "{{failed to read property or field}}";
+                return $"[[{e.GetType().Name} thrown]]";
             }
         }
 
@@ -106,50 +100,43 @@ namespace Abyss.Core.Helpers
 
         public static string InspectInheritance(Type type)
         {
-            var parents = new List<List<Type>>();
+            var baseTypes = new List<Type>() { type };
             var latestType = type.BaseType;
 
             while (latestType != null)
             {
-                var l = new List<Type> { latestType };
-                l.AddRange(latestType.GetInterfaces());
-                l.Reverse();
-                parents.Add(l);
+                baseTypes.Add(latestType);
                 latestType = latestType.BaseType;
             }
 
-            if (parents.Count != 1)
+            var sb = new StringBuilder().AppendLine($"Inheritance graph for type [{type.FullName}]").AppendLine();
+
+            foreach (var baseType in baseTypes)
             {
-                var l = new List<Type> { type };
-                l.AddRange(type.GetInterfaces());
-                l.Reverse();
-                parents.Insert(0, l);
+                sb.Append($"[{FormatType(baseType)}]");
+                IList<Type> inheritors = baseType.GetInterfaces();
+                if (baseType.BaseType != null)
+                {
+                    inheritors = inheritors.ToList();
+                    inheritors.Add(baseType.BaseType);
+                }
+                if (inheritors.Count > 0) sb.Append($": {string.Join(", ", inheritors.Select(b => b.FullName))}");
+
+                sb.AppendLine();
             }
 
-            parents.Reverse();
+            return Format.Code(sb.ToString(), "ini");
+        }
 
-            static string FormatType(Type atype)
-            {
-                var vs = atype.Namespace + "." + atype.Name;
+        private static string FormatType(Type atype)
+        {
+            var vs = atype.Namespace + "." + atype.Name;
 
-                var t = atype.GenericTypeArguments;
+            var t = atype.GenericTypeArguments;
 
-                if (t.Length > 0) vs += $"<{string.Join(", ", t.Select(a => a.Name))}>";
+            if (t.Length > 0) vs += $"<{string.Join(", ", t.Select(a => a.Name))}>";
 
-                return vs;
-            }
-
-            var index = 1;
-            return Format.Code(new StringBuilder()
-                .Append("Inheritance graph for type [").Append(type.FullName).AppendLine("]")
-                .AppendLine()
-                .AppendLine(string.Join("\n\n",
-                    parents.Select(ab => index++ + ") " + string.Join(" -> ", ab.Select(b => $"[{FormatType(b)}]")))))
-                .AppendLine()
-                .AppendLine(string.Join(" -> ",
-                    parents.Where(a => a.Any(b => !b.IsInterface))
-                        .Select(d => "[" + d.Find(bx => !bx.IsInterface)?.Name + "]")))
-                .ToString(), "ini");
+            return vs;
         }
 
         public string InspectInheritance(object obj)

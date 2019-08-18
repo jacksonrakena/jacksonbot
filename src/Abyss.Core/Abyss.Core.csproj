@@ -29,14 +29,6 @@
         <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
     </ItemGroup>
     <ItemGroup>
-        <None Update="Assets\transparent_200x200.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Assets" />
-    </ItemGroup>
-    <ItemGroup>
       <ProjectReference Include="..\Abyss.Shared\Abyss.Shared.csproj" />
     </ItemGroup>
 </Project>
