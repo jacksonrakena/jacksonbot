@@ -33,6 +33,14 @@ namespace Abyss.Core.Modules
             _scripting = scripting;
         }
 
+        [Command("ThrowException", "ThrowEx")]
+        [Description("Throws a .NET exception. For testing purposes.")]
+        [Example("throwexception Meow.")]
+        public async Task<ActionResult> Command_ThrowExceptionAsync([Name("Message")] [Description("The message for the exception.")] [Remainder] string message = "Test exception.")
+        {
+            throw new InvalidOperationException(message);
+        }
+
         [Command("Game", "SetGame")]
         [Description("Sets my current Discord activity.")]
         [Example("game Playing \"with Abyss\"", "setgame Streaming \"Just programming!\" http://twitch.tv/twitch")]
