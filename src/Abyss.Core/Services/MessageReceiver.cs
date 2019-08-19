@@ -15,6 +15,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Q4Unix;
+using Sentry;
 
 namespace Abyss.Core.Services
 {
@@ -58,6 +59,29 @@ namespace Abyss.Core.Services
         public int CommandFailures { get; private set; }
         public int CommandSuccesses { get; private set; }
 
+        private Scope CreateSentryScope(AbyssRequestContext context)
+        {
+            var s = new Scope(new SentryOptions())
+            {
+                User = new Sentry.Protocol.User
+                {
+                    Id = context.Invoker.Id.ToString(),
+                    Username = context.Invoker.ToString(),
+                    Other = new Dictionary<string, string>
+                    {
+                        {"created_at", context.Invoker.CreatedAt == null ? "unknown" : context.Invoker.CreatedAt.ToString("F") },
+                        {"status", context.Invoker.Status.Humanize() }
+                    }
+                }
+            };
+            s.SetExtra("guild", context.Guild.Name);
+            s.SetExtra("guild_id", context.Guild.Id);
+            s.SetExtra("channel", context.Channel.Name);
+            s.SetExtra("channel_id", context.Channel.Id);
+            s.SetExtra("message", context.Message.Id);
+            return s;
+        }
+
         public async Task ReceiveMessageAsync(SocketMessage incomingMessage)
         {
             if (!(incomingMessage is SocketUserMessage message) || message.Author is SocketWebhookUser
@@ -68,7 +92,7 @@ namespace Abyss.Core.Services
                 await message.Channel.TrySendMessageAsync(
                         "Sorry, but I can only respond to commands in servers. Please try using your command in any of the servers that I share with you!")
                     .ConfigureAwait(false);
-                _failedCommandsTracking.LogError(LoggingEventIds.UserDirectMessaged, $"Received direct message from {message.Author}, ignoring.");
+                _failedCommandsTracking.LogInformation(LoggingEventIds.UserDirectMessaged, $"Received direct message from {message.Author}, ignoring.");
                 return;
             }
 
@@ -83,6 +107,7 @@ namespace Abyss.Core.Services
 
             try
             {
+                context.RequestScopeHandle = SentrySdk.PushScope(CreateSentryScope(context));
                 var result =
                     await _commandService.ExecuteAsync(requestString, context, context.Services).ConfigureAwait(false);
 
@@ -91,6 +116,10 @@ namespace Abyss.Core.Services
                     if (!(result is SuccessfulResult)) CommandSuccesses++; // SuccessfulResult indicates a RunMode.Async
                     return;
                 }
+                SentrySdk.ConfigureScope(sc =>
+                {
+                    sc.SetExtra("raw_arguments", context.RawArguments);
+                });
 
                 switch (result)
                 {
@@ -98,17 +127,20 @@ namespace Abyss.Core.Services
                         return;
 
                     case CommandNotFoundResult cnfr:
-                        _failedCommandsTracking.LogWarning(LoggingEventIds.UnknownCommand, $"No command found matching {requestString} (message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
-                        //await context.Message.AddReactionAsync(UnknownCommandReaction).ConfigureAwait(false);
-                        return;
+                        _failedCommandsTracking.LogInformation(LoggingEventIds.UnknownCommand, $"No command found matching {requestString}.");
+                        break;
 
                     case ExecutionFailedResult _:
                         return;
 
                     case ChecksFailedResult cfr:
-                        _failedCommandsTracking.LogWarning(LoggingEventIds.ChecksFailed, $"{cfr.FailedChecks.Count} checks ({string.Join(", ", cfr.FailedChecks.Select(c => c.Check.GetType().Name))}) " +
-                            $"failed for command {cfr.Command.Name} (message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
 
+                        SentrySdk.ConfigureScope(sc =>
+                        {
+                            sc.SetExtra("failed_checks", string.Join(", ", cfr.FailedChecks.Select(a => a.Check.GetType().Name)));
+                        });
+
+                        _failedCommandsTracking.LogInformation(LoggingEventIds.ChecksFailed, $"{cfr.FailedChecks.Count} checks failed for command {cfr.Command.Name}.)");
 
                         if (cfr.FailedChecks.Count == 1 && cfr.FailedChecks.FirstOrDefault().Check.GetType()
                                 .CustomAttributes.Any(a => a.AttributeType == typeof(SilentCheckAttribute))) break;
@@ -128,9 +160,13 @@ namespace Abyss.Core.Services
                         break;
 
                     case ParameterChecksFailedResult pcfr:
-                        _failedCommandsTracking.LogWarning(LoggingEventIds.ParameterChecksFailed, 
-                            $"{pcfr.FailedChecks.Count} parameter checks on {pcfr.Parameter.Name} ({string.Join(", ", pcfr.FailedChecks.Select(c => c.Check.GetType().Name))}) failed for command {pcfr.Parameter.Command.Name}" +
-                            $" (message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
+                        SentrySdk.ConfigureScope(sc =>
+                        {
+                            sc.SetExtra("failed_parameter_checks", string.Join(", ", pcfr.FailedChecks.Select(a => a.Check.GetType().Name)));
+                        });
+
+                        _failedCommandsTracking.LogInformation(LoggingEventIds.ParameterChecksFailed, 
+                            $"{pcfr.FailedChecks.Count} parameter checks on {pcfr.Parameter.Name} ({string.Join(", ", pcfr.FailedChecks.Select(c => c.Check.GetType().Name))}) failed for command {pcfr.Parameter.Command.Name}.");
 
                         await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
                             .WithTitle(
@@ -146,25 +182,37 @@ namespace Abyss.Core.Services
                         break;
 
                     case ArgumentParseFailedResult apfr0 when apfr0.ParserResult is DefaultArgumentParserResult apfr:
-                        _failedCommandsTracking.LogWarning(LoggingEventIds.ArgumentParseFailed,
-                            $"Parse failed for {apfr.Command.Name}. Reason: {apfr.Failure?.Humanize()} " +
-                            $"(message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
+                        SentrySdk.ConfigureScope(sc =>
+                        {
+                            sc.SetExtra("reason", apfr0.ParserResult.GetFailureReason());
+                        });
+
+                        _failedCommandsTracking.LogInformation(LoggingEventIds.ArgumentParseFailed,
+                            $"Parse failed for {apfr.Command.Name}. Reason: {apfr.Failure?.Humanize()}.");
 
                         await context.Channel.SendMessageAsync(
                             $"I couldn't read whatever you just said: {apfr.Failure?.Humanize() ?? "A parsing error occurred."}.").ConfigureAwait(false);
                         break;
 
                     case ArgumentParseFailedResult apfr1 when apfr1.ParserResult is UnixArgumentParserResult upfr:
-                        _failedCommandsTracking.LogWarning(LoggingEventIds.ArgumentParseFailed,
-                            $"UNIX parse failed for {upfr.Context.Command.Name}. Reason: {upfr.ParseFailure.Humanize()} " +
-                            $"(message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
+                        SentrySdk.ConfigureScope(sc =>
+                        {
+                            sc.SetExtra("reason", apfr1.ParserResult.GetFailureReason());
+                        });
+
+                        _failedCommandsTracking.LogInformation(LoggingEventIds.ArgumentParseFailed,
+                            $"UNIX parse failed for {upfr.Context.Command.Name}. Reason: {upfr.ParseFailure.Humanize()}.");
 
                         await context.Channel.SendMessageAsync(
                             $"I couldn't read whatever you just said: {upfr.ParseFailure.Humanize()}.").ConfigureAwait(false);
                         break;
                     case TypeParseFailedResult tpfr:
-                        _failedCommandsTracking.LogWarning(LoggingEventIds.TypeParserFailed, $"Failed to parse type {tpfr.Parameter.Type.Name} in command {tpfr.Parameter.Command.Name} - received {tpfr.Value} " +
-                            $"(message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
+                        SentrySdk.ConfigureScope(sc =>
+                        {
+                            sc.SetExtra("reason", tpfr.Reason);
+                        });
+
+                        _failedCommandsTracking.LogInformation(LoggingEventIds.TypeParserFailed, $"Failed to parse type {tpfr.Parameter.Type.Name} in command {tpfr.Parameter.Command.Name}.");
 
                         await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
                             .WithAuthor("I don't understand what you just said.", context.Bot.GetEffectiveAvatarUrl())
@@ -181,6 +229,11 @@ namespace Abyss.Core.Services
                         break;
 
                     case CommandOnCooldownResult cdr:
+                        SentrySdk.ConfigureScope(sc =>
+                        {
+                            sc.SetExtra("cooldowns_violated", string.Join(", ", cdr.Cooldowns.Select(c => $"{c.Cooldown.Amount}/{c.Cooldown.Per.TotalSeconds}sec")));
+                        });
+
                         var cooldowns = new List<string>();
 
                         foreach (var (cooldown, retryAfter) in cdr.Cooldowns)
@@ -199,14 +252,16 @@ namespace Abyss.Core.Services
                                 .Build()).ConfigureAwait(false);
                             cooldowns.Add($"({bucketType}-{cooldown.Amount}/{cooldown.Per.Humanize(20)})");
                         }
-                        _failedCommandsTracking.LogWarning($"Cooldown(s) activated for command {cdr.Command.Name}. Cooldowns:" +
-                            string.Join(" ", cooldowns) + " " +
-                            $"(message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})"); ;
+                        _failedCommandsTracking.LogInformation($"Cooldown(s) activated for command {cdr.Command.Name}");
                         break;
 
                     case OverloadsFailedResult ofr:
-                        _failedCommandsTracking.LogWarning("Failed to find a matching command from input " + context.Message.Content + ". " +
-                            $"(message {message.Id} - channel {message.Channel.Name}/{message.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
+                        SentrySdk.ConfigureScope(sc =>
+                        {
+                            sc.SetExtra("overloads", string.Join(", ", ofr.FailedOverloads.Select(c => c.Key.Name)));
+                        });
+
+                        _failedCommandsTracking.LogInformation("Failed to find a matching command from input " + context.Message.Content + ".");
 
                         await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
                             .WithTitle("Failed to find a matching command")
@@ -224,17 +279,18 @@ namespace Abyss.Core.Services
 
                     default:
                         _failedCommandsTracking.LogCritical(LoggingEventIds.UnknownResultType, $"Unknown result type: {result.GetType().Name}. Must be addressed immediately.");
-                        return;
+                        break;
                 }
+                context.RequestScopeHandle.Dispose();
                 CommandFailures++;
             }
             catch (Exception e)
             {
-                _failedCommandsTracking.LogCritical(LoggingEventIds.UnknownError, $"Exception thrown in main MessageReceiver: " + e.Message + ". Stack trace:\n" + e.StackTrace);
-
+                _failedCommandsTracking.LogCritical(LoggingEventIds.UnknownError, e, $"Exception thrown in main MessageReceiver: " + e.Message + ". Stack trace:\n" + e.StackTrace);
                 await _notifications.NotifyExceptionAsync(e).ConfigureAwait(false);
 
                 CommandFailures++;
+                context.RequestScopeHandle.Dispose();
             }
         }
 
@@ -276,11 +332,18 @@ namespace Abyss.Core.Services
                 Timestamp = DateTimeOffset.Now
             };
 
-            _failedCommandsTracking.LogError(LoggingEventIds.ExceptionThrownInPipeline, exception, $"Pipeline failed at step {step} for command {context.Command.Name} (message {context.Message.Id} - channel {context.Channel.Name}/{context.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id}). Reason: {reason}");
+            SentrySdk.ConfigureScope(sc =>
+            {
+                sc.SetExtra("raw_arguments", context.RawArguments);
+            });
+
+            _failedCommandsTracking.LogError(LoggingEventIds.ExceptionThrownInPipeline, exception, $"Pipeline failed at step {step}.");
 
             await _notifications.NotifyExceptionAsync(exception).ConfigureAwait(false);
 
             await context.Channel.SendMessageAsync(string.Empty, false, embed.Build()).ConfigureAwait(false);
+
+            context.RequestScopeHandle?.Dispose();
         }
 
         public async Task HandleCommandExecutedAsync(CommandExecutedEventArgs args)
@@ -294,6 +357,7 @@ namespace Abyss.Core.Services
             {
                 _failedCommandsTracking.LogCritical(LoggingEventIds.CommandReturnedBadType, $"Command {command.Name} returned a result of type {result.GetType().Name} and not {typeof(ActionResult).Name}.");
                 await context.Channel.TrySendMessageAsync($"Man, this bot sucks. Command {command.Name} is broken, and will need to be recompiled. Try again later. (Developer: The command returned a type that isn't a {typeof(ActionResult).Name}.)");
+                context.RequestScopeHandle.Dispose();
                 return;
             }
 
@@ -326,6 +390,7 @@ namespace Abyss.Core.Services
             {
                 await HandleRuntimeExceptionAsync(context, e, CommandExecutionStep.Command, $"An exception of type {e.GetType().Name} was thrown.");
             }
+            context.RequestScopeHandle?.Dispose();
         }
 
         public Task HandleCommandExecutionFailedAsync(CommandExecutionFailedEventArgs e)

@@ -34,6 +34,7 @@ namespace Abyss.Console
                 {
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     logging.AddConsole();
+                    logging.AddAbyssSentry();
                 })
                 .ConfigureServices((hostBuildingContext, serviceCollection) =>
                 {

@@ -61,6 +61,7 @@ namespace Abyss.Web.Server
                 {
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     logging.AddConsole();
+                    logging.AddAbyssSentry();
                 })
                 .ConfigureKestrel(k =>
                 {

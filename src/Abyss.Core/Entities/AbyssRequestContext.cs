@@ -3,6 +3,7 @@ using Discord.Rest;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
+using Sentry;
 using System;
 using System.Threading.Tasks;
 
@@ -22,6 +23,7 @@ namespace Abyss.Core.Entities
             BotUser = Guild.GetUser(Bot.Id);
         }
 
+        public IDisposable RequestScopeHandle { get; set; }
         public SocketGuildUser Invoker { get; }
         public SocketSelfUser Bot { get; }
         public SocketGuildUser BotUser { get; }
