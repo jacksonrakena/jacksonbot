@@ -287,7 +287,6 @@ namespace Abyss.Core.Services
             catch (Exception e)
             {
                 _failedCommandsTracking.LogCritical(LoggingEventIds.UnknownError, e, $"Exception thrown in main MessageReceiver: " + e.Message + ". Stack trace:\n" + e.StackTrace);
-                await _notifications.NotifyExceptionAsync(e).ConfigureAwait(false);
 
                 CommandFailures++;
                 context.RequestScopeHandle.Dispose();
@@ -338,8 +337,6 @@ namespace Abyss.Core.Services
             });
 
             _failedCommandsTracking.LogError(LoggingEventIds.ExceptionThrownInPipeline, exception, $"Pipeline failed at step {step}.");
-
-            await _notifications.NotifyExceptionAsync(exception).ConfigureAwait(false);
 
             await context.Channel.SendMessageAsync(string.Empty, false, embed.Build()).ConfigureAwait(false);
 

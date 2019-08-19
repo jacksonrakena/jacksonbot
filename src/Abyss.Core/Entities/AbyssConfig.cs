@@ -54,7 +54,6 @@ namespace Abyss.Core.Entities
         public ulong? ServerMembershipChange { get; set; }
         public ulong? Feedback { get; set; }
         public ulong? Stopping { get; set; }
-        public ulong? Exception { get; set; }
     }
 
     public class AbyssConfigEmoteSection

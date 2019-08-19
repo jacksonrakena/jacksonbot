@@ -24,8 +24,7 @@
     "Ready": 598437593721602068,
     "ServerMembershipChange": 598437593721602068,
     "Feedback": 600565543010828288,
-    "Stopping": 598437593721602068,
-    "Exception": 60143715479125910
+    "Stopping": 598437593721602068
   },
   "Logging": { // Logging scopes.
     "LogLevel": {
