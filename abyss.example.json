@@ -20,7 +20,7 @@
       "ClientSecret": "Spotify client secret. Required."
     }
   },
-  "Notifications": { // Abyss will notify you of these events. Blank/missing values will be ignored.
+  "Notifications": { // Abyss will notify you of these events. Blank/missing values will be ignored. These are Discord channels that the bot should have read/write access to.
     "Ready": 598437593721602068,
     "ServerMembershipChange": 598437593721602068,
     "Feedback": 600565543010828288,
