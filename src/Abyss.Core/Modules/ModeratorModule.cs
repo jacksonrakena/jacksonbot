@@ -84,7 +84,9 @@ namespace Abyss.Core.Modules
             [Name("Embeds")] [Description("Whether to only delete messages with embeds in them.")]
             bool embeds = false,
             [Name("Before")] [Description("The message ID to start at.")]
-            ulong? messageId = null
+            ulong? messageId = null,
+            [Name("Bots Only")] [Description("Whether to only delete messages from bots.")]
+            bool botsOnly = false
         )
         {
             var ch = channel ?? Context.Channel;
@@ -96,6 +98,7 @@ namespace Abyss.Core.Modules
                     var pass = m is IUserMessage && (DateTimeOffset.UtcNow - m.Timestamp).TotalDays < 14;
                     if (user != null && m.Author.Id != user.Id) pass = false;
                     if (embeds && !string.IsNullOrWhiteSpace(m.Content)) pass = false;
+                    if (botsOnly && !m.Author.IsBot) pass = false;
 
                     return pass;
                 }).ToList();
