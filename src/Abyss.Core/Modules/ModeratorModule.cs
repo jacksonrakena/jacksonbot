@@ -85,7 +85,7 @@ namespace Abyss.Core.Modules
             bool embeds = false,
             [Name("Before")] [Description("The message ID to start at.")]
             ulong? messageId = null,
-            [Name("Bots Only")] [Description("Whether to only delete messages from bots.")]
+            [Name("Bots")] [Description("Whether to only delete messages from bots.")]
             bool botsOnly = false
         )
         {
