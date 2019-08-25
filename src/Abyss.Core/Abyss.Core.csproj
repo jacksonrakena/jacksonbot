@@ -23,6 +23,7 @@
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.3.0-beta1-final" />
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.0.0-preview8.19405.4" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0-preview8.19405.4" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0-preview8.19405.4" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0-preview8.19405.4" />
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.0.0-preview8.19405.4" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0-preview8.19405.4" />

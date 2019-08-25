@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import * as React from 'react';
 import Button from 'antd/es/button';
-import { BotStatus } from '../types/status';
+import BotStatus from '../types/status';
 
 interface HomeState extends React.ComponentState {
     status: BotStatus;

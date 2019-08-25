@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Builder;
 using System.Linq;
 using Abyss.Core.Entities;
-using Abyss.Shared.Hosts;
+using Abyss.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;

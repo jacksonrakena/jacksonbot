@@ -11,7 +11,7 @@ using Qmmands;
 using Abyss.Core;
 using Q4Unix;
 
-namespace Abyss.Shared.Hosts
+namespace Abyss.Hosting
 {
     public static class ServiceCollectionExtensions
     {

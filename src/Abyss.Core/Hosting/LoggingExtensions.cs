@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Abyss.Shared.Hosts
+namespace Abyss.Hosting
 {
     public static class LoggingExtensions
     {

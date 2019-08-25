@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Configuration;
 using System;
-using Abyss.Shared.Hosts;
+using Abyss.Hosting;
 
 namespace Abyss.Console
 {

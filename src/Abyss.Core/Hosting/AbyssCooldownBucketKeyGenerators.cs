@@ -3,7 +3,7 @@ using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
 using Qmmands;
 
-namespace Abyss.Shared.Hosts
+namespace Abyss.Hosting
 {
     public static class AbyssCooldownBucketKeyGenerators
     {

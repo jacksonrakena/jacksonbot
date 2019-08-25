@@ -1,4 +1,4 @@
-export interface BotStatus {
+export default interface BotStatus {
     addonsLoaded: number;
     avatarUrl: string;
     channels: number;

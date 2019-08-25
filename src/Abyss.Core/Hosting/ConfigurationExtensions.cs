@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace Abyss.Shared.Hosts
+namespace Abyss.Hosting
 {
     public static class ConfigurationExtensions
     {

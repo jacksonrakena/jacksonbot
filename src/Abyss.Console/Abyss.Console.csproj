@@ -22,6 +22,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Abyss.Core\Abyss.Core.csproj" />
-    <ProjectReference Include="..\Abyss.Shared.Hosts\Abyss.Shared.Hosts.csproj" />
   </ItemGroup>
 </Project>
