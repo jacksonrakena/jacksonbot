@@ -23,6 +23,8 @@ namespace Abyss.Shared
         public string Culture { get; set; }
         public string ContentRootPath { get; set; }
         public int AddonsLoaded { get; set; }
+        public string? AvatarUrl { get; set; }
+        public string? UsernameDiscriminator { get; set; }
     }
 
     public class BotSupportServerInfo

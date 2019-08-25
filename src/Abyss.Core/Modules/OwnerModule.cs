@@ -36,7 +36,7 @@ namespace Abyss.Core.Modules
         [Command("ThrowException", "ThrowEx")]
         [Description("Throws a .NET exception. For testing purposes.")]
         [Example("throwexception Meow.")]
-        public async Task<ActionResult> Command_ThrowExceptionAsync([Name("Message")] [Description("The message for the exception.")] [Remainder] string message = "Test exception.")
+        public Task<ActionResult> Command_ThrowExceptionAsync([Name("Message")] [Description("The message for the exception.")] [Remainder] string message = "Test exception.")
         {
             throw new InvalidOperationException(message);
         }
@@ -50,7 +50,7 @@ namespace Abyss.Core.Modules
             [Description("The target of the verb.")] [Name("Target")]
             string game,
             [Description("The URL link (streaming only)")] [Name("Stream URL")]
-            Uri streamUrl = null)
+            Uri? streamUrl = null)
         {
             await Context.Client.SetGameAsync(game, streamUrl?.ToString(), type).ConfigureAwait(false);
             return Ok($"Set game to `{type} {game} (url: {streamUrl?.ToString() ?? "None"})`.");
@@ -69,7 +69,7 @@ namespace Abyss.Core.Modules
             var result = await _scripting.EvaluateScriptAsync(script, props).ConfigureAwait(false);
 
             var canUseEmbed = true;
-            string stringRep;
+            string? stringRep;
 
             if (result.IsSuccess)
             {
@@ -89,7 +89,7 @@ namespace Abyss.Core.Modules
                         case IDictionary dictionary:
                             var asb = new StringBuilder();
                             asb.AppendLine("Dictionary of type ``" + dictionary.GetType().Name + "``");
-                            foreach (var ent in dictionary.Keys) asb.AppendLine($"- ``{ent}``: ``{dictionary[ent]}``");
+                            foreach (var ent in dictionary.Keys) asb.AppendLine($"- ``{ent}``: ``{dictionary[ent!]}``");
 
                             stringRep = asb.ToString();
                             special = true;
@@ -109,6 +109,10 @@ namespace Abyss.Core.Modules
                         default:
                             stringRep = result.ReturnValue.ToString();
                             break;
+                    }
+                    if (stringRep == null)
+                    {
+                        stringRep = "No results returned.";
                     }
 
                     if ((stringRep.StartsWith("```") && stringRep.EndsWith("```")) || special)

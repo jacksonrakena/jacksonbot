@@ -12,7 +12,7 @@ namespace Abyss.Core.Parsers.DiscordNet
     [DiscoverableTypeParser]
     public class DiscordChannelTypeParser : TypeParser<SocketTextChannel>, IAbyssTypeParser
     {
-        public (string Singular, string Multiple, string Remainder) FriendlyName => ("A channel in this server.", "A list of server channels.", null);
+        public (string Singular, string Multiple, string? Remainder) FriendlyName => ("A channel in this server.", "A list of server channels.", null);
 
         public override ValueTask<TypeParserResult<SocketTextChannel>> ParseAsync(Parameter parameter, string value, CommandContext context, IServiceProvider provider)
         {

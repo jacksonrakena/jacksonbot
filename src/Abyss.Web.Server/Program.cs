@@ -9,6 +9,7 @@ using Abyss.Core.Entities;
 using Abyss.Shared.Hosts;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 namespace Abyss.Web.Server
 {
@@ -24,31 +25,34 @@ namespace Abyss.Web.Server
             return WebHost.CreateDefaultBuilder(args)
                 .Configure((buildingContext, applicationBuilder) =>
                 {
-                    applicationBuilder.UseResponseCompression();
-
                     if (buildingContext.HostingEnvironment.IsDevelopment())
-                    {
                         applicationBuilder.UseDeveloperExceptionPage();
-                        applicationBuilder.UseBlazorDebugging();
+                    else
+                    {
+                        applicationBuilder.UseExceptionHandler("/Error");
+                        applicationBuilder.UseHsts();
                     }
 
-                    applicationBuilder.UseClientSideBlazorFiles<Client.Startup>();
-
+                    applicationBuilder.UseHttpsRedirection();
+                    applicationBuilder.UseStaticFiles();
+                    applicationBuilder.UseSpaStaticFiles();
                     applicationBuilder.UseRouting();
 
                     applicationBuilder.UseEndpoints(endpoints =>
                     {
-                        endpoints.MapDefaultControllerRoute();
-#if DEBUG
-                        endpoints.MapFallbackToClientSideBlazor<Client.Startup>("index.html");
-#else
-                endpoints.MapFallbackToClientSideBlazor<Client.Startup>("_content/abysswebclient/index.html");
-                applicationBuilder.UseStaticFiles(new StaticFileOptions()
-                {
-                    FileProvider = new PhysicalFileProvider(Path.Combine(path1: Directory.GetCurrentDirectory(), "wwwroot/_content/abysswebclient")),
-                    RequestPath = new PathString("")
-                }); 
-#endif
+                        endpoints.MapControllerRoute(
+                            name: "default",
+                            pattern: "{controller}/{action=Index}/{id?}");
+                    });
+
+                    applicationBuilder.UseSpa(spa =>
+                    {
+                        spa.Options.SourcePath = "client";
+
+                        if (buildingContext.HostingEnvironment.IsDevelopment())
+                        {
+                            spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
+                        }
                     });
                 })
                 .ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
@@ -69,11 +73,10 @@ namespace Abyss.Web.Server
                 })
                 .ConfigureServices((hostBuildingContext, serviceCollection) =>
                 {
-                    serviceCollection.AddMvc().AddNewtonsoftJson();
-                    serviceCollection.AddResponseCompression(opts =>
+                    serviceCollection.AddControllers();
+                    serviceCollection.AddSpaStaticFiles(spa =>
                     {
-                        opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-                            new[] { "application/octet-stream" });
+                        spa.RootPath = "client/build";
                     });
 
                     // Abyss common service core

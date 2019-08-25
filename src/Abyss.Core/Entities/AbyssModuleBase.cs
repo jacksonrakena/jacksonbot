@@ -9,18 +9,18 @@ namespace Abyss.Core.Entities
 {
     public abstract class AbyssModuleBase : ModuleBase<AbyssRequestContext>
     {
-        public Task ReplyAsync(string content = null, EmbedBuilder embed = null,
-            RequestOptions options = null)
+        public Task ReplyAsync(string? content = null, EmbedBuilder? embed = null,
+            RequestOptions? options = null)
         {
             return Context.ReplyAsync(content, embed, options);
         }
 
         public ActionResult Image(params FileAttachment[] attachments)
         {
-            return new OkResult((string) null, attachments);
+            return new OkResult((string?) null, attachments);
         }
 
-        public ActionResult Image(string title, string imageUrl)
+        public ActionResult Image(string? title, string imageUrl)
         {
             return Ok(e =>
             {
@@ -33,7 +33,7 @@ namespace Abyss.Core.Entities
 
         public ActionResult Ok(string content, params FileAttachment[] attachments)
         {
-            return (Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at) && at.Options.HasFlag(ResponseFormatOptions.DontEmbed))
+            return (Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at) && at!.Options.HasFlag(ResponseFormatOptions.DontEmbed))
                 ? new OkResult(content, attachments)
                 : Ok(new EmbedBuilder().WithDescription(content), attachments);
         }
@@ -45,7 +45,7 @@ namespace Abyss.Core.Entities
             {
                 if (Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at))
                 {
-                    attachFooter = !at.Options.HasFlag(ResponseFormatOptions.DontAttachFooter);
+                    attachFooter = !at!.Options.HasFlag(ResponseFormatOptions.DontAttachFooter);
                 }
                 else attachFooter = true;
             }
@@ -55,7 +55,7 @@ namespace Abyss.Core.Entities
             {
                 if (Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at0))
                 {
-                    attachTimestamp = !at0.Options.HasFlag(ResponseFormatOptions.DontAttachTimestamp);
+                    attachTimestamp = !at0!.Options.HasFlag(ResponseFormatOptions.DontAttachTimestamp);
                 }
                 else attachTimestamp = true;
             }

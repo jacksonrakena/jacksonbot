@@ -7,8 +7,8 @@ namespace Abyss.Core.Entities
 {
     public sealed class ScriptingResult
     {
-        private ScriptingResult(bool success = true, object returnValue = null,
-            IEnumerable<Diagnostic> compilationDiagnostics = null, Exception exception = null,
+        private ScriptingResult(bool success = true, object? returnValue = null,
+            IEnumerable<Diagnostic>? compilationDiagnostics = null, Exception? exception = null,
             long compilationTime = -1, long executionTime = -1, ScriptStage failedStage = default)
         {
             ReturnValue = returnValue;
@@ -20,10 +20,10 @@ namespace Abyss.Core.Entities
             FailedStage = failedStage;
         }
 
-        public object ReturnValue { get; }
+        public object? ReturnValue { get; }
         public bool IsSuccess { get; }
-        public List<Diagnostic> CompilationDiagnostics { get; }
-        public Exception Exception { get; }
+        public List<Diagnostic>? CompilationDiagnostics { get; }
+        public Exception? Exception { get; }
         public ScriptStage FailedStage { get; }
 
         public long CompilationTime { get; }
@@ -37,7 +37,7 @@ namespace Abyss.Core.Entities
         }
 
         public static ScriptingResult FromError(IEnumerable<Diagnostic> diagnostics, ScriptStage failedStage,
-            Exception exception = null, long compilationTime = -1, long executionTime = -1)
+            Exception? exception = null, long compilationTime = -1, long executionTime = -1)
         {
             return new ScriptingResult(false, compilationDiagnostics: diagnostics, exception: exception,
                 compilationTime: compilationTime, executionTime: executionTime, failedStage: failedStage);

@@ -6,7 +6,7 @@ namespace Abyss.Core.Extensions
 {
     public static class CommandsExtensions
     {
-        public static bool HasAttribute<T>(this Command info, out T attr) where T : Attribute
+        public static bool HasAttribute<T>(this Command info, out T? attr) where T : Attribute
         {
             if (info.Attributes.FirstOrDefault(b => b is T) is T t)
             {
@@ -14,7 +14,7 @@ namespace Abyss.Core.Extensions
                 return true;
             }
 
-            attr = default;
+            attr = null;
             return false;
         }
 
@@ -23,7 +23,7 @@ namespace Abyss.Core.Extensions
             return HasAttribute<T>(info, out _);
         }
 
-        public static bool HasAttribute<T>(this Parameter info, out T attr) where T : Attribute
+        public static bool HasAttribute<T>(this Parameter info, out T? attr) where T : Attribute
         {
             if (info.Attributes.FirstOrDefault(b => b is T) is T t)
             {
@@ -31,7 +31,7 @@ namespace Abyss.Core.Extensions
                 return true;
             }
 
-            attr = default;
+            attr = null;
             return false;
         }
 
@@ -40,7 +40,7 @@ namespace Abyss.Core.Extensions
             return HasAttribute<T>(info, out _);
         }
 
-        public static bool HasAttribute<T>(this Module info, out T attr) where T : Attribute
+        public static bool HasAttribute<T>(this Module info, out T? attr) where T : Attribute
         {
             if (info.Attributes.FirstOrDefault(b => b is T) is T t)
             {
@@ -48,7 +48,7 @@ namespace Abyss.Core.Extensions
                 return true;
             }
 
-            attr = default;
+            attr = null;
             return false;
         }
 

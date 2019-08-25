@@ -35,6 +35,6 @@ namespace Abyss.Core.Parsers
             return TypeParserResult<bool>.Unsuccessful("Failed to parse a true/false value.");
         }
 
-        public (string, string, string) FriendlyName => ("A true/false value, like yes, y, no or n.", "A list of true or false.", null);
+        public (string, string, string?) FriendlyName => ("A true/false value, like yes, y, no or n.", "A list of true or false.", null);
     }
 }

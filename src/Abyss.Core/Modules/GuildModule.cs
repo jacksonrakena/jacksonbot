@@ -149,7 +149,7 @@ namespace Abyss.Core.Modules
             [Name("Target")]
             [Description("The user to get permissions for.")]
             [DefaultValueDescription("The user who invoked this command.")]
-            SocketGuildUser user = null)
+            SocketGuildUser? user = null)
         {
             user ??= Context.Invoker; // Get the user (or the invoker, if none specified)
 
@@ -174,7 +174,7 @@ namespace Abyss.Core.Modules
                 .Where(a => a.PropertyType.IsAssignableFrom(typeof(bool)))
                 .ToList(); // Get all properties that have a property type of Boolean
 
-            var propDict = booleanTypeProperties.Select(a => (a.Name.Humanize(), (bool) a.GetValue(guildPerms)))
+            var propDict = booleanTypeProperties.Select(a => (a.Name.Humanize(), (bool) a.GetValue(guildPerms)!))
                 .OrderByDescending(ab => ab.Item2 ? 1 : 0 /* Allowed permissions first */)
                 .ToList(); // Store permissions as a tuple of (string Name, bool Allowed) and order by allowed permissions first
 
@@ -209,7 +209,7 @@ namespace Abyss.Core.Modules
 
             var perm = boolProps[0];
             var name = perm.Name.Humanize();
-            var value = (bool) perm.GetValue(guildPerms);
+            var value = (bool) perm.GetValue(guildPerms)!;
 
             return Ok(a => a.WithDescription($"I **{(value ? "do" : "do not")}** have permission `{name}`!"));
         }
@@ -257,8 +257,8 @@ namespace Abyss.Core.Modules
                 return Ok(embed);
             }
 
-            var grantedRoles = user.Roles.Where(r => (bool) perm.GetValue(r.Permissions));
-            var deniedRoles = user.Roles.Where(r => !((bool) perm.GetValue(r.Permissions)));
+            var grantedRoles = user.Roles.Where(r => (bool) perm.GetValue(r.Permissions)!);
+            var deniedRoles = user.Roles.Where(r => !(bool) perm.GetValue(r.Permissions)!);
 
             var gRolesString = string.Join(", ", grantedRoles.Select(r => r.Name));
             var dRolesString = string.Join(", ", deniedRoles.Select(r => r.Name));

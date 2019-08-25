@@ -10,14 +10,12 @@ namespace Abyss.Core.Services
 {
     public class NotificationsService
     {
-        private readonly bool _sendNotifications = true;
-        private readonly AbyssConfigNotificationsSection _notifyConfig;
+        private readonly AbyssConfigNotificationsSection? _notifyConfig;
         private readonly IHostEnvironment _environment;
         private readonly DiscordSocketClient _client;
 
         public NotificationsService(AbyssConfig config, DiscordSocketClient client, IHostEnvironment env)
         {
-            if (config.Notifications == null) _sendNotifications = false;
             _notifyConfig = config.Notifications;
             _client = client;
             _environment = env;
@@ -25,7 +23,7 @@ namespace Abyss.Core.Services
 
         public async Task NotifyReadyAsync(bool firstTime = false)
         {
-            if (!_sendNotifications || _notifyConfig.Ready == null) return;
+            if (_notifyConfig?.Ready == null) return;
             var ch = _client.GetChannel(_notifyConfig.Ready.Value);
             if (!(ch != null && ch is SocketTextChannel stc)) return;
 
@@ -52,7 +50,7 @@ namespace Abyss.Core.Services
 
         public async Task NotifyStoppingAsync()
         {
-            if (!_sendNotifications || _notifyConfig.Stopping == null) return;
+            if (_notifyConfig?.Stopping == null) return;
 
             var ch = _client.GetChannel(_notifyConfig.Stopping.Value);
             if (!(ch != null && ch is SocketTextChannel stc)) return;
@@ -69,7 +67,7 @@ namespace Abyss.Core.Services
 
         public async Task NotifyServerMembershipChangeAsync(SocketGuild arg, bool botIsJoining)
         {
-            if (!_sendNotifications || _notifyConfig.ServerMembershipChange == null) return;
+            if (_notifyConfig?.ServerMembershipChange == null) return;
             var updateChannel = _client.GetChannel(_notifyConfig.ServerMembershipChange.Value);
             if (!(updateChannel is SocketTextChannel stc)) return;
              await stc.SendMessageAsync(null, false, new EmbedBuilder()

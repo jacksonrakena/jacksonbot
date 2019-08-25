@@ -6,9 +6,9 @@ namespace Abyss.Core.Results
 {
     public class ResultCompletionData
     {
-        public List<RestUserMessage> Messages { get; set; }
+        public List<RestUserMessage?> Messages { get; set; }
 
-        public ResultCompletionData(params RestUserMessage[] messages)
+        public ResultCompletionData(params RestUserMessage?[] messages)
         {
             Messages = messages.ToList();
         }

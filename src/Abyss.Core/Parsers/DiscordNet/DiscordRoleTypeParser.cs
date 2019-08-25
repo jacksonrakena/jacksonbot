@@ -16,7 +16,7 @@ namespace Abyss.Core.Parsers.DiscordNet
     internal class RoleParseResult
     {
         public float Score { get; set; }
-        public SocketRole Value { get; set; }
+        public SocketRole? Value { get; set; }
     }
 
     [DiscoverableTypeParser]
@@ -47,7 +47,7 @@ namespace Abyss.Core.Parsers.DiscordNet
             if (results.Count > 0 && results.Values.Count > 0)
             {
                 return
-                   new TypeParserResult<SocketRole>(results.Values.OrderBy(a => a.Score).FirstOrDefault()?.Value);
+                   new TypeParserResult<SocketRole>(results.Values.OrderBy(a => a.Score).FirstOrDefault()?.Value!);
             }
 
             return new TypeParserResult<SocketRole>("Role not found.");
@@ -59,6 +59,6 @@ namespace Abyss.Core.Parsers.DiscordNet
                 results.Add(role.Id, new RoleParseResult { Score = score, Value = role });
         }
 
-        public (string, string, string) FriendlyName => ("A server role, by ID, mention or name.", "A list of specific roles.", null);
+        public (string, string, string?) FriendlyName => ("A server role, by ID, mention or name.", "A list of specific roles.", null);
     }
 }

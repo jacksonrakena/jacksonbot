@@ -33,7 +33,7 @@ namespace Abyss.Core.Modules
             [Name("User")]
             [Description("The user who you wish to get the avatar for.")]
             [DefaultValueDescription("The user who invoked this command.")]
-            SocketGuildUser target = null,
+            SocketGuildUser? target = null,
             [Name("Image_Size")] [Description("The size of the resulting image, in pixels.")]
             int size = 1024)
         {
@@ -53,7 +53,7 @@ namespace Abyss.Core.Modules
             [Name("Member")]
             [Description("The user to get information for.")]
             [DefaultValueDescription("The user who invoked this command.")]
-            SocketGuildUser member = null)
+            SocketGuildUser? member = null)
         {
             member ??= Context.Invoker;
 

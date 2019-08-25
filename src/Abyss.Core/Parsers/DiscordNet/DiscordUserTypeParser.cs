@@ -13,7 +13,7 @@ namespace Abyss.Core.Parsers.DiscordNet
     internal class UserParseResolveResult
     {
         public float Score { get; set; }
-        public SocketGuildUser Value { get; set; }
+        public SocketGuildUser? Value { get; set; }
     }
 
     [DiscoverableTypeParser]
@@ -75,6 +75,6 @@ namespace Abyss.Core.Parsers.DiscordNet
                 results.Add(user.Id, new UserParseResolveResult { Score = score, Value = user });
         }
 
-        public (string, string, string) FriendlyName => ("A server member, by name, ID, nickname or mention.", "A list of specific server members.", null);
+        public (string, string, string?) FriendlyName => ("A server member, by name, ID, nickname or mention.", "A list of specific server members.", null);
     }
 }

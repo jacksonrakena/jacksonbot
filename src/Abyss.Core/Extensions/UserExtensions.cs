@@ -40,7 +40,7 @@ namespace Abyss.Core.Extensions
             return orderedRoles?.Color;
         }
 
-        public static IRole GetHighestRoleOrDefault(this SocketGuildUser user, Func<IRole, bool> predicate = null)
+        public static IRole GetHighestRoleOrDefault(this SocketGuildUser user, Func<IRole, bool>? predicate = null)
         {
             return predicate == null ? user.Roles.OrderByDescending(r => r.Position).FirstOrDefault()
                                      : user.Roles.OrderByDescending(r => r.Position).FirstOrDefault(predicate);

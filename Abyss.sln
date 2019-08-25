@@ -10,8 +10,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.ExampleCustomAssembly
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Web.Server", "src\Abyss.Web.Server\Abyss.Web.Server.csproj", "{B7938177-6B05-49FC-816C-A9B0E544F622}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Web.Client", "src\Abyss.Web.Client\Abyss.Web.Client.csproj", "{940A73BF-DD24-43DA-A63F-61CD945A7D2C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Shared", "src\Abyss.Shared\Abyss.Shared.csproj", "{54ED94B2-A83C-4307-BEBB-61ED731AB70D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{61F43844-FA4E-42CF-8628-46FE2AF7B6F9}"
@@ -28,7 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Shared.Hosts", "src\Abyss.Shared.Hosts\Abyss.Shared.Hosts.csproj", "{1BEF4199-8279-431A-8D2B-2D70F16F6DFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Q4Unix", "src\Q4Unix\Q4Unix.csproj", "{0F155A00-6A0B-4DDF-98B6-A713D209116C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Q4Unix", "src\Q4Unix\Q4Unix.csproj", "{0F155A00-6A0B-4DDF-98B6-A713D209116C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -124,26 +122,6 @@ Global
 		{B7938177-6B05-49FC-816C-A9B0E544F622}.Release|x64.Build.0 = Release|Any CPU
 		{B7938177-6B05-49FC-816C-A9B0E544F622}.Release|x86.ActiveCfg = Release|Any CPU
 		{B7938177-6B05-49FC-816C-A9B0E544F622}.Release|x86.Build.0 = Release|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Debug|ARM.Build.0 = Debug|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Debug|x64.Build.0 = Debug|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Debug|x86.Build.0 = Debug|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Release|ARM.ActiveCfg = Release|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Release|ARM.Build.0 = Release|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Release|ARM64.Build.0 = Release|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Release|x64.ActiveCfg = Release|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Release|x64.Build.0 = Release|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Release|x86.ActiveCfg = Release|Any CPU
-		{940A73BF-DD24-43DA-A63F-61CD945A7D2C}.Release|x86.Build.0 = Release|Any CPU
 		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Debug|ARM.ActiveCfg = Debug|Any CPU

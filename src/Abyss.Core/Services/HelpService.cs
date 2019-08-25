@@ -20,7 +20,7 @@ namespace Abyss.Core.Services
     {
         private readonly ICommandService _commandService;
         private readonly AbyssConfig _config;
-        private readonly MethodInfo _getTypeParserMethod = typeof(ICommandService).GetMethod("GetTypeParser");
+        private readonly MethodInfo _getTypeParserMethod = typeof(ICommandService).GetMethod("GetTypeParser") ?? throw new Exception("Cannot find method GetTypeParser on ICommandService. Check dependency versions.");
 
         public HelpService(ICommandService service, AbyssConfig config)
         {
@@ -28,9 +28,9 @@ namespace Abyss.Core.Services
             _commandService = service;
         }
 
-        private static readonly ImmutableDictionary<Type, (string Singular, string Multiple, string Remainder)>
+        private static readonly ImmutableDictionary<Type, (string Singular, string Multiple, string? Remainder)>
             FriendlyNames =
-                new Dictionary<Type, (string, string, string)>
+                new Dictionary<Type, (string, string, string?)>
                 {
                     [typeof(string)] = ("Any text (surround with quotes if more than one word long).", "A list of words.",
                         "Any text."),
@@ -45,7 +45,7 @@ namespace Abyss.Core.Services
             // Check if enum type first, to avoid reflection logic
             if (type.IsEnum) return type.GetEnumNames().HumanizeChoiceCollection();
 
-            (string Singular, string Multiple, string Remainder) friendlyNameSet = (null, null, null);
+            (string? Singular, string? Multiple, string? Remainder) friendlyNameSet = (null, null, null);
 
             // Look for friendly name data in the above table (unimplemented primitive parsers)
             if (FriendlyNames.TryGetValue(type, out var fnPair))
@@ -67,7 +67,7 @@ namespace Abyss.Core.Services
             if (friendlyNameSet != (null, null, null))
             {
                 if (friendlyNameSet.Remainder != null && info.IsRemainder) return friendlyNameSet.Remainder;
-                return info.IsMultiple ? friendlyNameSet.Multiple : friendlyNameSet.Singular;
+                return (info.IsMultiple ? friendlyNameSet.Multiple : friendlyNameSet.Singular) ?? type.Name;
             }
 
             // Return type name if no friendly data found
@@ -104,7 +104,7 @@ namespace Abyss.Core.Services
 
             if (command.Remarks != null) embed.AddField("Remarks", command.Remarks);
 
-            if (command.HasAttribute<ExampleAttribute>(out var example) && example.ExampleUsage.Length > 0)
+            if (command.HasAttribute<ExampleAttribute>(out var example) && example!.ExampleUsage.Length > 0)
             {
                 embed.AddField($"Example{(example.ExampleUsage.Length == 1 ? "" : "s")}",
                    string.Join("\n", example.ExampleUsage.Select(c => Format.Code(prefix + c))));
@@ -131,7 +131,7 @@ namespace Abyss.Core.Services
 
             if (!command.HasAttribute<ThumbnailAttribute>(out var imageUrlAttribute)) return embed.Build();
             embed.Author = new EmbedAuthorBuilder().WithName($"Command {command.Aliases.FirstOrDefault()}")
-                .WithIconUrl(imageUrlAttribute.ImageUrl);
+                .WithIconUrl(imageUrlAttribute!.ImageUrl);
             embed.Title = null;
 
             return embed.Build();
@@ -171,7 +171,7 @@ namespace Abyss.Core.Services
             if (parameterInfo.IsOptional)
             {
                 if (parameterInfo.HasAttribute<DefaultValueDescriptionAttribute>(out var defaultValueDescription))
-                    sb.AppendLine($" - Default: {defaultValueDescription.DefaultValueDescription}");
+                    sb.AppendLine($" - Default: {defaultValueDescription!.DefaultValueDescription}");
                 else if (parameterInfo.DefaultValue != null)
                     sb.AppendLine(" - Default: " + parameterInfo.DefaultValue);
                 else

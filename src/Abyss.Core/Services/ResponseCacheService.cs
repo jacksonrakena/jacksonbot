@@ -35,7 +35,11 @@ namespace Abyss.Core.Services
         {
             if (_responseCache.TryGetValue(message.Id, out var record) && record is ResultCompletionData action)
             {
-                return Task.WhenAll(action.Messages.Select(a => DiscordExtensions.TryDeleteAsync(a)));
+                return Task.WhenAll(action.Messages.Select(a =>
+                {
+                    if (a != null) return a.TryDeleteAsync();
+                    return Task.CompletedTask;
+                }));
             }
 
             return Task.CompletedTask;

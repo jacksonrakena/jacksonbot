@@ -23,7 +23,7 @@ namespace Abyss.Core.Helpers
 
         public new AbyssRequestContext Context { get; }
 
-        public Task<RestUserMessage> ReplyAsync(string content, Embed embed = null)
+        public Task<RestUserMessage> ReplyAsync(string content, Embed? embed = null)
         {
             return Context.Channel.SendMessageAsync(content, embed: embed);
         }
@@ -232,11 +232,11 @@ namespace Abyss.Core.Helpers
             return Context.Guild.TextChannels.FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 
-        public SocketUserMessage Message(ulong id)
+        public SocketUserMessage? Message(ulong id)
         {
             return Context.Channel.GetCachedMessage(id) as SocketUserMessage;
         }
 
-        public SocketUserMessage Message(string id) => Message(ulong.Parse(id));
+        public SocketUserMessage? Message(string id) => Message(ulong.Parse(id));
     }
 }

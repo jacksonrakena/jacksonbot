@@ -12,7 +12,7 @@ namespace Abyss.Core.Addons
         /// <summary>
         ///     A URL that points to this addon's homepage or source code.
         /// </summary>
-        public string Url { get; set; }
+        public string? Url { get; set; }
         
         /// <summary>
         ///     A <see cref="Version"/> object representing the version of this addon.
@@ -27,6 +27,15 @@ namespace Abyss.Core.Addons
         /// <summary>
         ///     The description of this addon.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
+
+        public AddonDescriptor(string author, Version version, string friendlyName, string? description, string? url)
+        {
+            Version = version;
+            Author = author;
+            FriendlyName = friendlyName;
+            Description = description;
+            Url = url;
+        }
     }
 }

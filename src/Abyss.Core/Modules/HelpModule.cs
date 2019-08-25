@@ -36,7 +36,7 @@ namespace Abyss.Core.Modules
             [Name("Query")]
             [Description("The command or module to view, or nothing to see a list of commands.")]
             [Remainder]
-            string query = null)
+            string? query = null)
         {
             if (query != null)
             {

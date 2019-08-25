@@ -9,14 +9,14 @@ namespace Abyss.Core.Results
 {
     public class OkResult : ActionResult
     {
-        public OkResult(string text, params FileAttachment[] attachments)
+        public OkResult(string? text, params FileAttachment[] attachments)
         {
             Message = text;
             Embed = null;
             Attachments = attachments;
         }
 
-        public OkResult(EmbedBuilder embed, params FileAttachment[] attachments)
+        public OkResult(EmbedBuilder? embed, params FileAttachment[] attachments)
         {
             Message = null;
             Embed = embed;
@@ -25,8 +25,8 @@ namespace Abyss.Core.Results
 
         public override bool IsSuccessful => true;
 
-        private string Message { get; }
-        private EmbedBuilder Embed { get; }
+        private string? Message { get; }
+        private EmbedBuilder? Embed { get; }
         private FileAttachment[] Attachments { get; }
 
         public override async Task<ResultCompletionData> ExecuteResultAsync(AbyssRequestContext context)

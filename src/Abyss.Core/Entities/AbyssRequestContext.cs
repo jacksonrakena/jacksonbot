@@ -23,7 +23,7 @@ namespace Abyss.Core.Entities
             BotUser = Guild.GetUser(Bot.Id);
         }
 
-        public IDisposable RequestScopeHandle { get; set; }
+        public IDisposable? RequestScopeHandle { get; set; }
         public SocketGuildUser Invoker { get; }
         public SocketSelfUser Bot { get; }
         public SocketGuildUser BotUser { get; }
@@ -45,10 +45,10 @@ namespace Abyss.Core.Entities
             return Services.GetRequiredService<AbyssConfig>().CommandPrefix;
         }
 
-        public Task<RestUserMessage> ReplyAsync(string content = null, EmbedBuilder embed = null,
-            RequestOptions options = null)
+        public Task<RestUserMessage?> ReplyAsync(string? content = null, EmbedBuilder? embed = null,
+            RequestOptions? options = null)
         {
-            if (!BotUser.GetPermissions(Channel).SendMessages) return Task.FromResult((RestUserMessage) null);
+            if (!BotUser.GetPermissions(Channel).SendMessages) return Task.FromResult((RestUserMessage?) null);
             return Channel.SendMessageAsync(content, false, embed?.Build(), options);
         }
     }

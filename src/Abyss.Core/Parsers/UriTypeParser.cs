@@ -15,6 +15,6 @@ namespace Abyss.Core.Parsers
                 : TypeParserResult<Uri>.Unsuccessful("Unknown URL.");
         }
 
-        public (string, string, string) FriendlyName => ("A URL of a webpage or image.", "A list of URLs.", null);
+        public (string, string, string?) FriendlyName => ("A URL of a webpage or image.", "A list of URLs.", null);
     }
 }

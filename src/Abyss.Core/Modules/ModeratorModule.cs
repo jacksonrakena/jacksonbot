@@ -30,7 +30,7 @@ namespace Abyss.Core.Modules
             [Name("Victim")] [Description("The user to ban.")] [MustNotBeBot] [MustNotBeInvoker]
             DiscordUserReference target,
             [Name("Ban Reason")] [Description("The audit log reason for the ban.")] [Remainder] [Maximum(50)]
-            string reason = null)
+            string? reason = null)
         {
             var guildUser = Context.Guild.GetUser(target.Id);
             if (guildUser != null && guildUser.Hierarchy > Context.Invoker.Hierarchy)
@@ -78,9 +78,9 @@ namespace Abyss.Core.Modules
             [Name("Count")] [Description("The number of messages to delete.")] [Range(1, 100, true, true)]
             int count = 100,
             [Name("User")] [Description("The user to target.")]
-            DiscordUserReference user = null,
+            DiscordUserReference? user = null,
             [Name("Channel")] [Description("The channel to target.")]
-            SocketTextChannel channel = null,
+            SocketTextChannel? channel = null,
             [Name("Embeds")] [Description("Whether to only delete messages with embeds in them.")]
             bool embeds = false,
             [Name("Before")] [Description("The message ID to start at.")]

@@ -34,7 +34,7 @@ namespace Abyss.Core.Services
         // /Assets/ is packed with the application assembly
         public static string GetAssetLocation(string assetName)
         {
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", assetName);
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory(), "Assets", assetName);
         }
 
         public string GetConfigurationBasePath() => GetBasePath();
@@ -63,7 +63,9 @@ namespace Abyss.Core.Services
                 RuntimeVersion = Environment.Version.ToString(),
                 Culture = CultureInfo.InstalledUICulture.EnglishName,
                 ContentRootPath = _hostingEnvironment.ContentRootPath,
-                AddonsLoaded = _addons.GetAllAddons().Count
+                AddonsLoaded = _addons.GetAllAddons().Count,
+                AvatarUrl = _discord.CurrentUser?.GetAvatarUrl(size:2048),
+                UsernameDiscriminator = _discord.CurrentUser?.ToString()
             };
         }
     }

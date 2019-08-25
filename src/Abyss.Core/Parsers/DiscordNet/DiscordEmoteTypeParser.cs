@@ -18,6 +18,6 @@ namespace Abyss.Core.Parsers.DiscordNet
                     : new TypeParserResult<IEmote>("Emote not found.");
         }
 
-        public (string, string, string) FriendlyName => ("An emote.", "A list of emotes.", null);
+        public (string, string, string?) FriendlyName => ("An emote.", "A list of emotes.", null);
     }
 }

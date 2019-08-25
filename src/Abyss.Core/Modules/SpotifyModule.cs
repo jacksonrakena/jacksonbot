@@ -37,7 +37,7 @@ namespace Abyss.Core.Modules
             [Description("The track to search for.")]
             [Remainder]
             [DefaultValueDescription("The track that you're currently listening to.")]
-            string trackQuery = null)
+            string? trackQuery = null)
         {
             SpotifyTrack track;
             if (trackQuery != null)
@@ -67,7 +67,7 @@ namespace Abyss.Core.Modules
             [Description("The user to get Spotify data for.")]
             [DefaultValueDescription("The user who invoked this command.")]
             [Remainder]
-            SocketGuildUser user = null)
+            SocketGuildUser? user = null)
         {
             user ??= Context.Invoker;
 
@@ -88,7 +88,7 @@ namespace Abyss.Core.Modules
             [Description("The album name to search for.")]
             [Remainder]
             [DefaultValueDescription("The album of the track you're currently listening to.")]
-            string albumQuery = null)
+            string? albumQuery = null)
         {
             SpotifyAlbum album;
             if (albumQuery == null)

@@ -289,7 +289,7 @@ namespace Abyss.Core.Services
                 _failedCommandsTracking.LogCritical(LoggingEventIds.UnknownError, e, $"Exception thrown in main MessageReceiver: " + e.Message + ". Stack trace:\n" + e.StackTrace);
 
                 CommandFailures++;
-                context.RequestScopeHandle.Dispose();
+                context.RequestScopeHandle?.Dispose();
             }
         }
 
@@ -354,7 +354,7 @@ namespace Abyss.Core.Services
             {
                 _failedCommandsTracking.LogCritical(LoggingEventIds.CommandReturnedBadType, $"Command {command.Name} returned a result of type {result.GetType().Name} and not {typeof(ActionResult).Name}.");
                 await context.Channel.TrySendMessageAsync($"Man, this bot sucks. Command {command.Name} is broken, and will need to be recompiled. Try again later. (Developer: The command returned a type that isn't a {typeof(ActionResult).Name}.)");
-                context.RequestScopeHandle.Dispose();
+                context.RequestScopeHandle?.Dispose();
                 return;
             }
 
@@ -365,7 +365,7 @@ namespace Abyss.Core.Services
             {
                 var data = await baseResult.ExecuteResultAsync(context).ConfigureAwait(false);
 
-                var cache = !(command.HasAttribute<ResponseFormatOptionsAttribute>(out var at) && at.Options.HasFlag(ResponseFormatOptions.DontCache));
+                var cache = !(command.HasAttribute<ResponseFormatOptionsAttribute>(out var at) && at!.Options.HasFlag(ResponseFormatOptions.DontCache));
 
                 if (cache)
                 {
@@ -404,7 +404,7 @@ namespace Abyss.Core.Services
 
             var discoverableAttributeType = typeof(DiscoverableTypeParserAttribute);
             var typeParserType = typeof(TypeParser<>);
-            var addTypeParserMethod = typeof(CommandService).GetMethod("AddTypeParser");
+            var addTypeParserMethod = typeof(CommandService).GetMethod("AddTypeParser") ?? throw new Exception("Cannot find method AddTypeParser on CommandService");
 
             var loadedTypes = new List<Type>();
 
@@ -412,8 +412,8 @@ namespace Abyss.Core.Services
             {
                 if (!(type.GetCustomAttributes().FirstOrDefault(a => a is DiscoverableTypeParserAttribute) is DiscoverableTypeParserAttribute attr)) continue;
 
-                var parser = type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
-                var method = addTypeParserMethod.MakeGenericMethod(type.BaseType.GenericTypeArguments[0]);
+                var parser = type.GetConstructor(Type.EmptyTypes)!.Invoke(Array.Empty<object>());
+                var method = addTypeParserMethod.MakeGenericMethod(type.BaseType!.GenericTypeArguments[0]);
                 method.Invoke(_commandService, new object[] { parser, attr.ReplacingPrimitive });
                 loadedTypes.Add(type);
             }

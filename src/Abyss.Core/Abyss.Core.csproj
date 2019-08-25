@@ -12,6 +12,7 @@
         <PackageProjectUrl>http://github.com/abyssal512/Abyss</PackageProjectUrl>
         <RepositoryUrl>http://github.com/abyssal512/Abyss</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>

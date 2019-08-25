@@ -11,14 +11,7 @@ namespace Abyss.ExampleCustomAssembly
 
         public AddonDescriptor GetDescriptor()
         {
-            return new AddonDescriptor
-            {
-                Author = "abyssal",
-                Version = new Version(1, 0, 1),
-                Description = "An example addon that shows how to use Abyss' addon platform.",
-                FriendlyName = "Example Abyss Addon",
-                Url = "https://github.com/abyssal512/Abyss/tree/master/example/Abyss.ExampleCustomAssembly"
-            };
+            return new AddonDescriptor("abyssal", new Version(1, 0, 1), "Example Addon", "An example addon.", "https://github.com/abyssal512/Abyss/tree/master/example/Abyss.ExampleCustomAssembly");
         }
 
         public Task OnAddedAsync()
