@@ -140,7 +140,7 @@ namespace Abyss.Core.Services
                             sc.SetExtra("failed_checks", string.Join(", ", cfr.FailedChecks.Select(a => a.Check.GetType().Name)));
                         });
 
-                        _failedCommandsTracking.LogInformation(LoggingEventIds.ChecksFailed, $"{cfr.FailedChecks.Count} checks failed for command {cfr.Command.Name}.)");
+                        _failedCommandsTracking.LogInformation(LoggingEventIds.ChecksFailed, $"{cfr.FailedChecks.Count} checks failed for {(cfr.Command == null ? "Module " + cfr.Module.Name : "Command " + cfr.Command.Name)}.)");
 
                         if (cfr.FailedChecks.Count == 1 && cfr.FailedChecks.FirstOrDefault().Check.GetType()
                                 .CustomAttributes.Any(a => a.AttributeType == typeof(SilentCheckAttribute))) break;
