@@ -32,19 +32,27 @@ namespace Abyss.Core.Modules
         [Command("OTP", "Ship")]
         [Example("otp")]
         [Description("Ships two random members of this server.")]
+        [RunMode(RunMode.Parallel)]
         public Task<ActionResult> Command_OtpAsync()
         {
-            var guildUsers = Context.Guild.Users.ToArray();
+            try
+            {
+                var guildUsers = Context.Guild.Users.Where(c => !c.IsBot).ToArray();
 
-            if (guildUsers.Length < 2) return Ok("This guild is too small!");
+                if (guildUsers.Length < 2) return Ok("This guild is too small!");
 
-            var member1 = guildUsers.Random(_random);
-            var member2 = guildUsers.Random(_random);
+                var member1 = guildUsers.Random(_random);
+                var member2 = guildUsers.Random(_random);
 
-            while (member1 == member2) member1 = guildUsers.Random(_random);
+                while (member1 == member2) member1 = guildUsers.Random(_random);
 
-            return Ok(
-                $":heart: I ship **{member1.Nickname ?? member1.Username}** x **{member2.Nickname ?? member2.Username}**! :heart:");
+                return Ok(
+                    $":heart: I ship **{member1.Nickname ?? member1.Username}** x **{member2.Nickname ?? member2.Username}**! :heart:");
+
+            } catch (Exception e)
+            {
+                return Ok("Can't ship. This server is probably too big for my awful code.");
+            }
         }
 
         [Command("Roll", "Dice", "RollDice")]
