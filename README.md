@@ -4,8 +4,10 @@
 # Abyss
 
 A **fully modular, expandable, open-source (for life)** Discord bot and platform, written in C# using .NET Core and Discord.Net.  
-You can add the public instance, running on the default addon set, [here.](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)  
-You can join the support server [here.](https://discord.gg/RsRps9M)
+  
+| Prefix | Developer | Language/Runtime | Library | Support Server | Invite Link |
+|------------|---|---|---|---|---|
+| a. | Abyssal | C#/.NET Core 3.0 | Discord.Net | [Invite](https://discord.gg/RsRps9M) | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
   
 ### Features
 - Complete modularity including custom event hooks, custom commands (using the existing command system), and full expandability, through .NET's powerful assembly loading system   
