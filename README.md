@@ -26,7 +26,7 @@ A **fully modular, expandable, open-source (for life)** Discord bot and platform
 - `Abyss.json` configuration file set out as below
 
 ### Configuration
-An example Abyss configuration file can be found at [abyss.example.json](https://github.com/abyssal/Abyss/blob/master/abyss.example.json), which should be renamed to `abyss.json` before running. This needs to be mounted in Abyss' content root, which is explained in [the Docker instructions.](DOCKER.md)
+An example Abyss configuration file can be found at [abyss.example.json](https://github.com/abyssbot/Abyss/blob/master/abyss.example.json), which should be renamed to `abyss.json` before running. This needs to be mounted in Abyss' content root, which is explained in [the Docker instructions.](DOCKER.md)
   
 ### Creating Addons
 Abyss has fully modular runtime addon support, using .NET assemblies. Here's a quick guide on doing so:
