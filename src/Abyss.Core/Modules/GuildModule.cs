@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Abyss.Core.Modules
@@ -212,6 +213,36 @@ namespace Abyss.Core.Modules
             var value = (bool) perm.GetValue(guildPerms)!;
 
             return Ok(a => a.WithDescription($"I **{(value ? "do" : "do not")}** have permission `{name}`!"));
+        }
+
+        [Command("Tree", "ChannelTree", "Channels")]
+        [Description("Creates a tree of channels and categories in this server.")]
+        [Example("tree")]
+        public Task<ActionResult> Command_CreateChannelTreeAsync()
+        {
+            var guild = Context.Guild;
+
+            var uncategorized = new StringBuilder().AppendLine("**Uncategorized**");
+            var categories = new StringBuilder();
+            var channelsProcessed = new List<ulong>();
+
+            foreach (var channel in guild.TextChannels.Where(c => c.CategoryId == null).Cast<SocketGuildChannel>().Concat(guild.VoiceChannels.Where(a => a.CategoryId == null)))
+            {
+                uncategorized.AppendLine($"- {(channel is IVoiceChannel ? "" : "#")}{channel.Name} ({channel.Id})");
+            }
+            uncategorized.AppendLine();
+            foreach (var category in guild.CategoryChannels)
+            {
+                var categoryBuilder = new StringBuilder().AppendLine($"**{category.Name}**");
+                foreach (var childChannel in category.Channels)
+                {
+                    categoryBuilder.AppendLine($"- {(childChannel is IVoiceChannel ? "" : "#")}{childChannel.Name} ({childChannel.Id})");
+                }
+                categories.AppendLine(categoryBuilder.ToString());
+            }
+            var res = uncategorized.AppendLine(categories.ToString()).ToString();
+            if (res.Length >= 4000) return BadRequest("Server too big.");  
+            return Ok(res);
         }
 
         [Command("AnalyzePermission", "AnalyzePerm", "Analyze")]
