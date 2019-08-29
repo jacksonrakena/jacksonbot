@@ -83,16 +83,24 @@ namespace Abyss.Core.Modules
             SocketTextChannel? channel = null,
             [Name("Embeds")] [Description("Whether to only delete messages with embeds in them.")]
             bool embeds = false,
-            [Name("Before")] [Description("The message ID to start at.")]
+            [Name("Before")] [Description("The message ID to start at, going backward.")]
             ulong? messageId = null,
             [Name("Bots")] [Description("Whether to only delete messages from bots.")]
-            bool botsOnly = false
+            bool botsOnly = false,
+            [Name("After")] [Description("The message ID to start at, going forward.")]
+            ulong? afterMessageId = null,
+            [Name("Silent")] [Description("Whether or not to return the results of the purge.")]
+            bool silent = false
         )
         {
+            if (afterMessageId != null && messageId != null) return BadRequest("You can only supply one direction, `--before` or `--after`, not both!");
             var ch = channel ?? Context.Channel;
 
+            var id = afterMessageId ?? messageId ?? Context.Message.Id;
+            var direction = afterMessageId != null ? Direction.After : Direction.Before;
+
             var messages =
-                (await (channel ?? Context.Channel).GetMessagesAsync(messageId ?? Context.Message.Id, Direction.Before, count).FlattenAsync().ConfigureAwait(false))
+                (await (channel ?? Context.Channel).GetMessagesAsync(id, direction, count).FlattenAsync().ConfigureAwait(false))
                 .Where(m =>
                 {
                     var pass = m is IUserMessage && (DateTimeOffset.UtcNow - m.Timestamp).TotalDays < 14;
@@ -105,6 +113,7 @@ namespace Abyss.Core.Modules
 
             await ch.DeleteMessagesAsync(messages).ConfigureAwait(false);
 
+            if (silent) return Empty();
             var sb = new StringBuilder();
             sb.AppendLine($"Deleted `{messages.Count}` messages.");
             sb.AppendLine();
