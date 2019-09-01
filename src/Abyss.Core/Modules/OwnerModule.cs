@@ -6,6 +6,7 @@ using Abyss.Core.Helpers;
 using Abyss.Core.Results;
 using Abyss.Core.Services;
 using Discord;
+using HandlebarsDotNet;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Qmmands;
@@ -15,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DescriptionAttribute = Qmmands.DescriptionAttribute;
 
 namespace Abyss.Core.Modules
 {
@@ -54,6 +56,38 @@ namespace Abyss.Core.Modules
         {
             await Context.Client.SetGameAsync(game, streamUrl?.ToString(), type).ConfigureAwait(false);
             return Ok($"Set game to `{type} {game} (url: {streamUrl?.ToString() ?? "None"})`.");
+        }
+
+        [Command("Handlebars", "Hb")]
+        [RunMode(RunMode.Parallel)]
+        [Description("Evaluates and compiles a Handlebars template against the current execution context.")]
+        [Example("hb {{Context.Client.CurrentUser}}")]
+        public ActionResult Command_HandlebarsEvaluate([Name("Template")] [Description("A Handlebars-compatible template.")] [Remainder]
+            string script)
+        {
+            var props = new EvaluationHelper(Context);
+            var handlebars = Handlebars.Create(new HandlebarsConfiguration { });
+            handlebars.RegisterHelper("create_message", async (output, context, arguments) =>
+            {
+                var str = string.Join(" ", arguments);
+                await Context.ReplyAsync(str);
+            });
+
+            try
+            {
+                var hbscript = handlebars.Compile(script);
+
+                var output = hbscript(new EvaluationHelper(Context));
+
+                return Ok(output);
+            }
+            catch (HandlebarsException e)
+            {
+                return BadRequest("Handlebars failed: " + e.Message);
+            } catch (Exception e)
+            {
+                return BadRequest("Generic error: " + e.Message);
+            }
         }
 
         [Command("Script", "Eval")]
