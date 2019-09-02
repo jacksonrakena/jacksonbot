@@ -65,7 +65,6 @@ namespace Abyss.Core.Modules
         public ActionResult Command_HandlebarsEvaluate([Name("Template")] [Description("A Handlebars-compatible template.")] [Remainder]
             string script)
         {
-            var props = new EvaluationHelper(Context);
             var handlebars = Handlebars.Create(new HandlebarsConfiguration { });
             handlebars.RegisterHelper("create_message", async (output, context, arguments) =>
             {
