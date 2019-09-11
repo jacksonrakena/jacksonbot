@@ -5,10 +5,10 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup Condition="$(Configuration) == 'Debug'">
-    <Content Include="abyss.json">
+    <Content Condition="Exists('abyss.Development.json')" Include="abyss.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="abyss.Development.json">
+    <Content Condition="Exists('abyss.json')" Include="abyss.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
