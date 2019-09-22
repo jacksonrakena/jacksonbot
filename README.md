@@ -7,7 +7,7 @@ A **fully modular, expandable, open-source (for life)** Discord bot and platform
   
 | Prefix | Developer | Language/Runtime | Library | Support Server | Invite Link |
 |------------|---|---|---|---|---|
-| a. | Abyssal | C#/.NET Core 3.0 | Discord.Net | [Invite](https://discord.gg/RsRps9M) | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
+| a. | [@abyssbot](https://github.com/abyssbot) | C#/.NET Core 3.0 | Discord.Net | [Invite](https://discord.gg/RsRps9M) | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
   
 ### Features
 - Complete modularity including custom event hooks, custom commands (using the existing command system), and full expandability, through .NET's powerful assembly loading system   
@@ -60,6 +60,6 @@ The project is broken down into the following projects:
 
 
 ### Copyright
-Copyright (c) 2019 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
+Copyright (c) 2019 [@abyssbot](https://github.com/abyssbot) under the MIT License, available at [the LICENSE file.](LICENSE.md)  
   
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss?ref=badge_large)
