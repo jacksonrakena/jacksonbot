@@ -5,9 +5,9 @@
 
 A **fully modular, expandable, open-source (for life)** Discord bot and platform, written in C# using .NET Core and Discord.Net.  
   
-| Prefix | Developer | Language/Runtime | Library | Support Server | Invite Link |
+| Prefix | Developer | Language/Runtime | Library | Invite Link |
 |------------|---|---|---|---|---|
-| a. | Abyssal | C#/.NET Core 3.0 | Discord.Net | [Invite](https://discord.gg/RsRps9M) | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
+| a. | Abyssal | C#/.NET Core 3.0 | Discord.Net | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
   
 ### Features
 - Complete modularity including custom event hooks, custom commands (using the existing command system), and full expandability, through .NET's powerful assembly loading system   
@@ -26,7 +26,7 @@ A **fully modular, expandable, open-source (for life)** Discord bot and platform
 - `Abyss.json` configuration file set out as below
 
 ### Configuration
-An example Abyss configuration file can be found at [abyss.example.json](https://github.com/abyssbot/Abyss/blob/master/abyss.example.json), which should be renamed to `abyss.json` before running. This needs to be mounted in Abyss' content root, which is explained in [the Docker instructions.](DOCKER.md)
+An example Abyss configuration file can be found at [abyss.example.json](https://github.com/abyssal/Abyss/blob/master/abyss.example.json), which should be renamed to `abyss.json` before running. This needs to be mounted in Abyss' content root, which is explained in [the Docker instructions.](DOCKER.md)
   
 ### Creating Addons
 Abyss has fully modular runtime addon support, using .NET assemblies. Here's a quick guide on doing so:
@@ -36,7 +36,6 @@ Abyss has fully modular runtime addon support, using .NET assemblies. Here's a q
 4) Build `Abyss.Console` (or whatever frontend you are using) in your preferred configuration.
 5) Build your assembly, and copy the assembly file (something like `MyCommandAssembly.dll`) into your `Addons` folder. If you don't provide an absolute or relative directory path as the first argument to the application, it will default to the directory of the built DLL, plus `Addons`. If you do, it will use the `Addons` directory in that path.
 6) Abyss will automatically discover addons and modules and register them. This will be logged in the console.
-7) If there are any issues, join the [support server for help.](https://discord.gg/RsRps9M)
 
 
 ### Contributing
@@ -53,11 +52,6 @@ The project is broken down into the following projects:
 
 **Addons**  
 - `Abyss.ExampleCustomAssembly` (library) This is an example project, which shows how you can make your own projects to expand and add new functionality and commands to Abyss.  
-  
-*External addons*  
-- [abyssal/Abyss.Addons.TheLair](https://github.com/abyssal/Abyss.Addons.TheLair) (library) This is an external Abyss addon for Abyss' support server.  
-- [abyssal/Abyss.Addons.Guardian](https://github.com/abyssal/Abyss.Addons.Guardian) (library) This is an external Abyss addon for server protection.
-
 
 ### Copyright
 Copyright (c) 2019 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
