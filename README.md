@@ -54,6 +54,6 @@ The project is broken down into the following projects:
 - `Abyss.ExampleCustomAssembly` (library) This is an example project, which shows how you can make your own projects to expand and add new functionality and commands to Abyss.  
 
 ### Copyright
-Copyright (c) 2019 [@abyssbot](https://github.com/abyssbot) under the MIT License, available at [the LICENSE file.](LICENSE.md)  
+Copyright (c) 2019 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
   
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss?ref=badge_large)

@@ -1,4 +1,4 @@
-Copyright (c) 2019 Abyssbot Team
+Copyright (c) 2019 Abyssal
 
 MIT License
 
