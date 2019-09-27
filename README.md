@@ -5,7 +5,7 @@
 
 A **fully modular, expandable, open-source (for life)** Discord bot and platform, written in C# using .NET Core and Discord.Net.  
   
-| Prefix | Developer | Language/Runtime | Library | Invite Link |
+| Prefix | Developer | Language/Runtime | Library | Support Server
 |------------|---|---|---|---|---|
 | a. | Abyssal | C#/.NET Core 3.0 | Discord.Net | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
   
@@ -21,7 +21,7 @@ A **fully modular, expandable, open-source (for life)** Discord bot and platform
   
 ### Requirements
 - It is heavily recommended to run Abyss on a Docker daemon running with Linux containers. Instructions for running with Docker are [here.](DOCKER.md) If you don't want to run on Docker, you're on your own.
-- .NET Core 3.0 Preview 7 SDK for building (or Runtime for a pre-compiled version)
+- .NET Core 3.0 SDK for building (or Runtime for a pre-compiled version)
 - A Discord bot application with registered user and token
 - `Abyss.json` configuration file set out as below
 
@@ -54,6 +54,6 @@ The project is broken down into the following projects:
 - `Abyss.ExampleCustomAssembly` (library) This is an example project, which shows how you can make your own projects to expand and add new functionality and commands to Abyss.  
 
 ### Copyright
-Copyright (c) 2019 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
+Copyright (c) 2019 [@abyssbot](https://github.com/abyssbot) under the MIT License, available at [the LICENSE file.](LICENSE.md)  
   
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss?ref=badge_large)
