@@ -6,7 +6,7 @@
 A **fully modular, expandable, open-source (for life)** Discord bot and platform, written in C# using .NET Core and Discord.Net.  
   
 | Prefix | Developer | Language/Runtime | Library | Support Server
-|------------|---|---|---|---|---|
+|------------|---|---|---|---|
 | a. | Abyssal | C#/.NET Core 3.0 | Discord.Net | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
   
 ### Features
