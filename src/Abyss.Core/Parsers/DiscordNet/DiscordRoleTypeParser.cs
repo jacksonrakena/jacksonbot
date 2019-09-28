@@ -22,8 +22,7 @@ namespace Abyss.Core.Parsers.DiscordNet
     [DiscoverableTypeParser]
     public class DiscordRoleTypeParser : TypeParser<SocketRole>, IAbyssTypeParser
     {
-        public override ValueTask<TypeParserResult<SocketRole>> ParseAsync(Parameter parameter, string value, CommandContext context,
-            IServiceProvider provider)
+        public override ValueTask<TypeParserResult<SocketRole>> ParseAsync(Parameter parameter, string value, CommandContext context)
         {
             var abyssContext = context.ToRequestContext();
 

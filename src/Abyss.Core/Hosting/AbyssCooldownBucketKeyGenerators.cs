@@ -7,7 +7,7 @@ namespace Abyss.Hosting
 {
     public static class AbyssCooldownBucketKeyGenerators
     {
-        public static CooldownBucketKeyGeneratorDelegate Default = (t, ctx, services) =>
+        public static CooldownBucketKeyGeneratorDelegate Default = (t, ctx) =>
         {
             if (!(t is CooldownType ct))
             {

@@ -19,7 +19,7 @@ namespace Abyss.Core.Checks.Command
             Ids = id;
         }
 
-        public override ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
+        public override ValueTask<CheckResult> CheckAsync(CommandContext context)
         {
             var ctx = context.ToRequestContext();
 

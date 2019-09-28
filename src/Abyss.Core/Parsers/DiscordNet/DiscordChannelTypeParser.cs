@@ -14,7 +14,7 @@ namespace Abyss.Core.Parsers.DiscordNet
     {
         public (string Singular, string Multiple, string? Remainder) FriendlyName => ("A channel in this server.", "A list of server channels.", null);
 
-        public override ValueTask<TypeParserResult<SocketTextChannel>> ParseAsync(Parameter parameter, string value, CommandContext context, IServiceProvider provider)
+        public override ValueTask<TypeParserResult<SocketTextChannel>> ParseAsync(Parameter parameter, string value, CommandContext context)
         {
             var ctx = context.ToRequestContext();
             SocketTextChannel c;

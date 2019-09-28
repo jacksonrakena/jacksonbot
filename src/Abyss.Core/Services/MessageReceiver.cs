@@ -14,17 +14,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Q4Unix;
 using Sentry;
+using Abyss.Core.Parsers.UnixArguments;
 
 namespace Abyss.Core.Services
 {
     public sealed class MessageReceiver
     {
         public MessageReceiver(ICommandService commandService, HelpService help, ILoggerFactory logger,
-            DiscordSocketClient discordClient, ResponseCacheService responseCache, AbyssConfig config, IServiceProvider services, NotificationsService notifications)
+            DiscordSocketClient discordClient, ResponseCacheService responseCache, AbyssConfig config, IServiceProvider services)
         {
-            _notifications = notifications;
             _commandService = commandService;
             _helpService = help;
             _successfulCommandsTracking = logger.CreateLogger("Successful Commands Tracking");
@@ -49,7 +48,6 @@ namespace Abyss.Core.Services
         private readonly ILogger<MessageReceiver> _logger;
 
         private readonly ResponseCacheService _responseCache;
-        private readonly NotificationsService _notifications;
         private readonly ICommandService _commandService;
         private readonly IServiceProvider _services;
         private readonly HelpService _helpService;
@@ -109,7 +107,7 @@ namespace Abyss.Core.Services
             {
                 context.RequestScopeHandle = SentrySdk.PushScope(CreateSentryScope(context));
                 var result =
-                    await _commandService.ExecuteAsync(requestString, context, context.Services).ConfigureAwait(false);
+                    await _commandService.ExecuteAsync(requestString, context).ConfigureAwait(false);
 
                 if (result.IsSuccessful)
                 {

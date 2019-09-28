@@ -9,7 +9,7 @@ namespace Abyss.Core.Checks.Command
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class RequireNsfwAttribute : CheckAttribute, IAbyssCheck
     {
-        public override ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
+        public override ValueTask<CheckResult> CheckAsync(CommandContext context)
         {
             var discordContext = context.ToRequestContext();
 

@@ -25,7 +25,7 @@ namespace Abyss.Core.Parsers.DiscordNet
         public (string Singular, string Multiple, string? Remainder) FriendlyName =>
             ("Either a Discord user, or an ID of one.", "A list of Discord users, or Discord user IDs.", null);
 
-        public override ValueTask<TypeParserResult<DiscordUserReference>> ParseAsync(Parameter parameter, string value, CommandContext context, IServiceProvider provider)
+        public override ValueTask<TypeParserResult<DiscordUserReference>> ParseAsync(Parameter parameter, string value, CommandContext context)
         {
             var abyssContext = context.ToRequestContext();
             var channel = abyssContext.Channel;

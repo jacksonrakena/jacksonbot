@@ -11,8 +11,7 @@ namespace Abyss.Core.Checks.Parameter
     [AttributeUsage(AttributeTargets.Parameter)]
     public class MustNotBeInvokerAttribute : ParameterCheckAttribute, IAbyssCheck
     {
-        public override ValueTask<CheckResult> CheckAsync(object argument, CommandContext context,
-            IServiceProvider provider)
+        public override ValueTask<CheckResult> CheckAsync(object argument, CommandContext context)
         {
             if (argument == null) return CheckResult.Successful;
             var id = argument is SocketUser user ? user.Id : argument is DiscordUserReference dur ? dur.Id : throw new InvalidOperationException($"{nameof(MustNotBeInvokerAttribute)} is being executed on an invalid object type. Expected a SocketUser or DiscordUserReference variant, got {argument.GetType().Name}."); ;

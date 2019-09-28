@@ -10,7 +10,7 @@ namespace Abyss.Core.Checks.Command
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class RequireOwnerAttribute : CheckAttribute, IAbyssCheck
     {
-        public override async ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
+        public override async ValueTask<CheckResult> CheckAsync(CommandContext context)
         {
             var abyssContext = context.ToRequestContext();
 

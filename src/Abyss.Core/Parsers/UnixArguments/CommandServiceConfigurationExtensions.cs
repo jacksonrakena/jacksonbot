@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Qmmands;
 
-namespace Q4Unix
+namespace Abyss.Core.Parsers.UnixArguments
 {
     public static class CommandServiceConfigurationExtensions
     {

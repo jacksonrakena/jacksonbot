@@ -9,7 +9,7 @@ using Discord.WebSocket;
 using Discord;
 using Qmmands;
 using Abyss.Core;
-using Q4Unix;
+using Abyss.Core.Parsers.UnixArguments;
 
 namespace Abyss.Hosting
 {

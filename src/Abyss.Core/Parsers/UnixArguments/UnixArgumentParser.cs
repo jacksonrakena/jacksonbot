@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Qmmands;
 
-namespace Q4Unix
+namespace Abyss.Core.Parsers.UnixArguments
 {
     internal enum UnixParserState
     {
@@ -21,7 +21,7 @@ namespace Q4Unix
 
         private static readonly Type _booleanType = typeof(bool);
 
-        private Parameter GetParameter(CommandContext context, string name)
+        private Parameter? GetParameter(CommandContext context, string name)
         {
             for (var i = 0; i < context.Command.Parameters.Count; i++)
             {
@@ -91,7 +91,7 @@ namespace Q4Unix
                             state = UnixParserState.Neutral;
                             var can = parameterName.ToString();
                             var parameter = GetParameter(context, can);
-                            if (parameter == null) return UnixArgumentParserResult.UnknownParameter(context, rawArguments.ToString(), parameters, can, tokenPosition);
+                            if (parameter == null) return UnixArgumentParserResult.UnknownParameter(context, parameters, can, tokenPosition);
                             parameters.TryAdd(parameter, parameterValue.ToString());
                             parameterName.Clear();
                             parameterValue.Clear();
@@ -109,7 +109,7 @@ namespace Q4Unix
                             inQuote = false;
                             var can = parameterName.ToString();
                             var parameter = GetParameter(context, can);
-                            if (parameter == null) return UnixArgumentParserResult.UnknownParameter(context, rawArguments.ToString(), parameters, can, tokenPosition);
+                            if (parameter == null) return UnixArgumentParserResult.UnknownParameter(context, parameters, can, tokenPosition);
                             parameters.TryAdd(parameter, parameterValue.ToString());
                             parameterName.Clear();
                             parameterValue.Clear();
@@ -119,7 +119,7 @@ namespace Q4Unix
 
                     // unexpected quote
                     case '"':
-                        return UnixArgumentParserResult.UnexpectedQuote(context, rawArguments.ToString(), parameters, tokenPosition);
+                        return UnixArgumentParserResult.UnexpectedQuote(context, parameters, tokenPosition);
 
                     // data value
                     default:
@@ -138,7 +138,7 @@ namespace Q4Unix
             }
 
             // unclosed quote
-            if (inQuote) return UnixArgumentParserResult.UnclosedQuote(context, rawArguments.ToString(), parameters, rawArguments.Length);
+            if (inQuote) return UnixArgumentParserResult.UnclosedQuote(context, parameters, rawArguments.Length);
 
             foreach (var expectedParameter in context.Command.Parameters)
             {
@@ -151,12 +151,12 @@ namespace Q4Unix
                     }
                     if (expectedParameter.IsOptional)
                     {
-                        parameters.TryAdd(expectedParameter, expectedParameter.DefaultValue);
+                        parameters.TryAdd(expectedParameter, expectedParameter.DefaultValue!);
                         continue;
                     }
                     else
                     {
-                        return UnixArgumentParserResult.TooFewArguments(context, rawArguments.ToString(), parameters, expectedParameter);
+                        return UnixArgumentParserResult.TooFewArguments(context, parameters, expectedParameter);
                     }
                 }
             }

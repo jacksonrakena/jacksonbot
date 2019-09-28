@@ -140,7 +140,7 @@ namespace Abyss.Core.Services
         private async Task<string> FormatCheck(CheckAttribute cba, AbyssRequestContext context)
         {
             var message = GetCheckFriendlyMessage(context, cba);
-            return $"- {((await cba.CheckAsync(context, context.Services).ConfigureAwait(false)).IsSuccessful ? _config.Emotes.YesEmote : _config.Emotes.NoEmote)} {message}";
+            return $"- {((await cba.CheckAsync(context).ConfigureAwait(false)).IsSuccessful ? _config.Emotes.YesEmote : _config.Emotes.NoEmote)} {message}";
         }
 
         public string GetCheckFriendlyMessage(AbyssRequestContext context, CheckAttribute cba)

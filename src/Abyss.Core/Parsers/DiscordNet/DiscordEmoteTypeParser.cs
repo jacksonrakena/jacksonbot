@@ -9,7 +9,7 @@ namespace Abyss.Core.Parsers.DiscordNet
     [DiscoverableTypeParser]
     public class DiscordEmoteTypeParser : TypeParser<IEmote>, IAbyssTypeParser
     {
-        public override ValueTask<TypeParserResult<IEmote>> ParseAsync(Parameter parameter, string value, CommandContext context, IServiceProvider provider)
+        public override ValueTask<TypeParserResult<IEmote>> ParseAsync(Parameter parameter, string value, CommandContext context)
         {
             return Emote.TryParse(value, out var emote)
                 ? new TypeParserResult<IEmote>(emote)

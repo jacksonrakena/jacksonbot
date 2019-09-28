@@ -43,30 +43,10 @@ namespace Abyss.Core.Services
         public ServiceInfo GetServiceInfo()
         {
             var proc = Process.GetCurrentProcess();
-            return new ServiceInfo
-            {
-                ServiceName = _hostingEnvironment.ApplicationName,
-                Environment = _hostingEnvironment.EnvironmentName,
-                ProcessName = proc.ProcessName,
-                StartTime = proc.StartTime,
-                CommandSuccesses = _messageReceiver.CommandSuccesses,
-                CommandFailures = _messageReceiver.CommandFailures,
-                Guilds = _discord.Guilds.Count,
-                Users = _discord.Guilds.Select(a => a.MemberCount).Sum(),
-                Channels = _discord.Guilds.Select(a => a.TextChannels.Count + a.VoiceChannels.Count).Sum(),
-                Modules = _commandService.GetAllModules().Count,
-                Commands = _commandService.GetAllCommands().Count,
-                OperatingSystem = Environment.OSVersion.VersionString,
-                MachineName = Environment.MachineName,
-                ProcessorCount = Environment.ProcessorCount,
-                CurrentThreadId = Environment.CurrentManagedThreadId,
-                RuntimeVersion = Environment.Version.ToString(),
-                Culture = CultureInfo.InstalledUICulture.EnglishName,
-                ContentRootPath = _hostingEnvironment.ContentRootPath,
-                AddonsLoaded = _addons.GetAllAddons().Count,
-                AvatarUrl = _discord.CurrentUser?.GetAvatarUrl(size:2048),
-                UsernameDiscriminator = _discord.CurrentUser?.ToString()
-            };
+            return new ServiceInfo(_hostingEnvironment.ApplicationName, _hostingEnvironment.EnvironmentName, Process.GetCurrentProcess(),
+                _messageReceiver.CommandSuccesses, _messageReceiver.CommandFailures, _discord.Guilds.Count, _discord.Guilds.Select(a => a.MemberCount).Sum(),
+                _discord.Guilds.Select(a => a.TextChannels.Count + a.VoiceChannels.Count).Sum(), _commandService.GetAllModules().Count, _commandService.GetAllCommands().Count,
+                _hostingEnvironment.ContentRootPath, _addons.GetAllAddons().Count, _discord.CurrentUser?.GetAvatarUrl(size: 2048), _discord.CurrentUser?.ToString());
         }
     }
 }

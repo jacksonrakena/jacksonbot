@@ -49,7 +49,7 @@ namespace Abyss.Core.Modules
                 return Ok(
                     $":heart: I ship **{member1.Nickname ?? member1.Username}** x **{member2.Nickname ?? member2.Username}**! :heart:");
 
-            } catch (Exception e)
+            } catch (Exception)
             {
                 return Ok("Can't ship. This server is probably too big for my awful code.");
             }

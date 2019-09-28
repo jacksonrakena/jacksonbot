@@ -19,13 +19,11 @@ namespace Abyss.Core.Modules
         private readonly ICommandService _commandService;
         private readonly HelpService _help;
 
-        private readonly IServiceProvider _services;
 
-        public HelpModule(HelpService help, ICommandService commandService, IServiceProvider services)
+        public HelpModule(HelpService help, ICommandService commandService)
         {
             _help = help;
             _commandService = commandService;
-            _services = services;
         }
 
         [Command("Help", "Commands")]
@@ -117,7 +115,7 @@ namespace Abyss.Core.Modules
 
         private async Task<bool> CanShowCommandAsync(Command command)
         {
-            if (!(await command.RunChecksAsync(Context, _services).ConfigureAwait(false)).IsSuccessful)
+            if (!(await command.RunChecksAsync(Context).ConfigureAwait(false)).IsSuccessful)
                 return false;
             return !command.HasAttribute<HiddenAttribute>();
         }

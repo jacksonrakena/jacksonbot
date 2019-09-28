@@ -7,8 +7,7 @@ namespace Abyss.Core.Parsers
     [DiscoverableTypeParser]
     public class UriTypeParser : TypeParser<Uri>, IAbyssTypeParser
     {
-        public override ValueTask<TypeParserResult<Uri>> ParseAsync(Parameter parameter, string value, CommandContext context,
-            IServiceProvider provider)
+        public override ValueTask<TypeParserResult<Uri>> ParseAsync(Parameter parameter, string value, CommandContext context)
         {
             return Uri.IsWellFormedUriString(value, UriKind.Absolute)
                 ? TypeParserResult<Uri>.Successful(new Uri(value))

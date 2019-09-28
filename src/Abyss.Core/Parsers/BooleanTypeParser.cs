@@ -18,7 +18,7 @@ namespace Abyss.Core.Parsers
             "n", "no", "nah", "na", "nej", "nope", "nop", "neg", "nay", "negative", "0"
         };
 
-        public override ValueTask<TypeParserResult<bool>> ParseAsync(Parameter parameter, string value, CommandContext context, IServiceProvider provider)
+        public override ValueTask<TypeParserResult<bool>> ParseAsync(Parameter parameter, string value, CommandContext context)
         {
             if (bool.TryParse(value, out var r)) return TypeParserResult<bool>.Successful(r);
 

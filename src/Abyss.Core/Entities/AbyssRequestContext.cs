@@ -11,7 +11,7 @@ namespace Abyss.Core.Entities
 {
     public class AbyssRequestContext : CommandContext
     {
-        public AbyssRequestContext(SocketUserMessage message, IServiceProvider services)
+        public AbyssRequestContext(SocketUserMessage message, IServiceProvider services) : base(services)
         {
             Message = message;
             Channel = (SocketTextChannel) message.Channel;

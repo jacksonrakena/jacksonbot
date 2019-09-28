@@ -26,7 +26,7 @@ namespace Abyss.Core.Checks.Command
             GuildPermissions.AddRange(permissions);
         }
 
-        public override ValueTask<CheckResult> CheckAsync(CommandContext context, IServiceProvider provider)
+        public override ValueTask<CheckResult> CheckAsync(CommandContext context)
         {
             var discordContext = context.ToRequestContext();
             if (discordContext.InvokerIsOwner) return CheckResult.Successful;

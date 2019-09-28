@@ -42,17 +42,14 @@ Abyss has fully modular runtime addon support, using .NET assemblies. Here's a q
 The project is broken down into the following projects:     
 **Platform core** 
 - `Abyss.Core` (library) The core of Abyss. This project contains the robust, fast, and safe architecture that sits at the heart of Abyss operation. It also contains all of the default commands that come with every instance.  
-- `Abyss.Shared` This library contains data classes and code that is shared between `Abyss.Core`, and `Abyss.Web.Server`.  
-
+- `Abyss.Shared` This library contains data classes and other shared components.
+  
 **Console host**  
 - `Abyss.Console` This is an executable which wraps `Abyss.Core`, and pipes output to the console. This executable does not support web functionality.  
-
-**Web host**  
-- `Abyss.Web.Server` An alternative to `Abyss.Console`, this executable starts up the Abyss administration panel on `[Any IP]:2003` and serves a TypeScript/React user interface. This web server contains many useful administration tools.   
-
+  
 **Addons**  
 - `Abyss.ExampleCustomAssembly` (library) This is an example project, which shows how you can make your own projects to expand and add new functionality and commands to Abyss.  
-
+  
 ### Copyright
 Copyright (c) 2019 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
   
