@@ -16,13 +16,13 @@ Make sure Docker is installed, then:
 ```
 3) Build the Docker image:
 ```bash
-docker build --pull -t abyssalnz/abyss:latest github.com/abyssbot/Abyss
+docker build --pull -t abyssalnz/abyss:latest github.com/abyssal/Abyss
 ```
 4) Run the Docker container image, mounting the `abyss-data` directory as a Docker bind mount at `/data`. This will use the latest image from the [Docker Hub registry](https://hub.docker.com/r/abyssalnz/abyss), but you can build it manually if you wish.
 ```bash
 > docker run -d --name abyssconsole --mount type=bind,source="$(pwd)"/abyss-data,target=/data abyssalnz/abyss:latest
 ```
-5) Abyss should now be running! If you have any issues, feel free to join [the support server.](https://discord.gg/RsRps9M)
+5) Abyss should now be running!
    
    
 ### Updating
