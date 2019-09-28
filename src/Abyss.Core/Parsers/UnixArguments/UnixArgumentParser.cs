@@ -41,6 +41,7 @@ namespace Abyss.Core.Parsers.UnixArguments
             var parameterName = new StringBuilder();
             var parameterValue = new StringBuilder();
             var rawArguments = new StringBuilder(context.RawArguments).Append(' '); // big smart plays
+            Parameter? currentParameter = null;
 
             for (var tokenPosition = 0; tokenPosition < rawArguments.Length; tokenPosition++)
             {
@@ -52,13 +53,20 @@ namespace Abyss.Core.Parsers.UnixArguments
                     case '-' when state == UnixParserState.DashSequence:
                         state = UnixParserState.ArgumentName;
                         break;
+
                     // first dash in dash sequence
                     case '-':
                         state = UnixParserState.DashSequence;
                         break;
 
-                    // value set
+                    // name set
                     case '=' when state == UnixParserState.ArgumentName:
+                        // lookup parameter
+                        var argumentName = parameterName.ToString();
+                        currentParameter = GetParameter(context, argumentName);
+                        if (currentParameter == null) return UnixArgumentParserResult.UnknownParameter(context, parameters, argumentName, tokenPosition);
+                        
+                        // begin reading value
                         state = UnixParserState.ArgumentValue;
                         break;
 
@@ -70,10 +78,10 @@ namespace Abyss.Core.Parsers.UnixArguments
                     // if the argument name is interrupted, check for a boolean (making sure not to overwrite a default value) otherwise return error
                     case ' ' when state == UnixParserState.ArgumentName:
                         {
-                            var parameter = GetParameter(context, parameterName.ToString());
-                            if (parameter != null && parameter.Type == _booleanType)
+                            currentParameter = GetParameter(context, parameterName.ToString());
+                            if (currentParameter != null && currentParameter.Type == _booleanType)
                             {
-                                parameters.TryAdd(parameter, true);
+                                parameters.TryAdd(currentParameter, true);
                                 parameterName.Clear();
                                 parameterValue.Clear();
                                 state = UnixParserState.Neutral;
@@ -89,10 +97,12 @@ namespace Abyss.Core.Parsers.UnixArguments
                     case ' ' when state == UnixParserState.ArgumentValue:
                         {
                             state = UnixParserState.Neutral;
-                            var can = parameterName.ToString();
-                            var parameter = GetParameter(context, can);
-                            if (parameter == null) return UnixArgumentParserResult.UnknownParameter(context, parameters, can, tokenPosition);
-                            parameters.TryAdd(parameter, parameterValue.ToString());
+                            if (currentParameter == null)
+                            {
+                                // theoretically, this should never happen
+                                return UnixArgumentParserResult.UnknownParameter(context, parameters, parameterName.ToString(), tokenPosition);
+                            }
+                            parameters.TryAdd(currentParameter, parameterValue.ToString());
                             parameterName.Clear();
                             parameterValue.Clear();
                             break;
@@ -107,10 +117,12 @@ namespace Abyss.Core.Parsers.UnixArguments
                     case '"' when state == UnixParserState.ArgumentValue && inQuote:
                         {
                             inQuote = false;
-                            var can = parameterName.ToString();
-                            var parameter = GetParameter(context, can);
-                            if (parameter == null) return UnixArgumentParserResult.UnknownParameter(context, parameters, can, tokenPosition);
-                            parameters.TryAdd(parameter, parameterValue.ToString());
+                            if (currentParameter == null)
+                            {
+                                // theoretically, this should never happen
+                                return UnixArgumentParserResult.UnknownParameter(context, parameters, parameterName.ToString(), tokenPosition);
+                            }
+                            parameters.TryAdd(currentParameter, parameterValue.ToString());
                             parameterName.Clear();
                             parameterValue.Clear();
                             state = UnixParserState.Neutral;
