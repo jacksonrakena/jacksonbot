@@ -1,2 +1,2 @@
 # Abyss.Shared
-Contains code that is shared between `Abyss.Core`, `Abyss.Web.Client`, and `Abyss.Web.Server.`
+Contains code that is shared between frontend contexts, and the core library.
