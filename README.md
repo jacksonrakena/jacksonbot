@@ -3,7 +3,7 @@
 [![DBL Small](https://discordbots.org/api/widget/owner/532099058941034498.svg)](https://discordbots.org/bot/532099058941034498)
 # Abyss
 
-A **fully modular, expandable, open-source (for life)** Discord bot and platform, written in C# using .NET Core and Discord.Net.  
+A **fully modular, expandable, open-source (for life)** Discord bot, written in C# using .NET Core and Discord.Net, atop the Violet application stack. 
   
 | Prefix | Developer | Language/Runtime | Library | Add To Server
 |------------|---|---|---|---|
