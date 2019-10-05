@@ -3,11 +3,11 @@
 [![DBL Small](https://discordbots.org/api/widget/owner/532099058941034498.svg)](https://discordbots.org/bot/532099058941034498)
 # Abyss
 
-A **fully modular, expandable, open-source (for life)** Discord bot, written in C# using .NET Core and Discord.Net, atop the Violet application stack. 
+A **fully modular, expandable, open-source (for life)** Discord bot, written in C# using .NET Core and Discord.Net, atop the [Akemi framework.](https://github.com/abyssal/akemi)
   
 | Prefix | Developer | Language/Runtime | Library | Add To Server
 |------------|---|---|---|---|
-| a. | Abyssal | C#/.NET Core 3.0 | Discord.Net | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
+| a. | Abyssal | C#/.NET Core 3.0 | Akemi-DNET | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
   
 ### Features
 - Complete modularity including custom event hooks, custom commands (using the existing command system), and full expandability, through .NET's powerful assembly loading system   
