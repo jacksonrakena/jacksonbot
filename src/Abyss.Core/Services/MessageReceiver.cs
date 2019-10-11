@@ -292,9 +292,9 @@ namespace Abyss.Core.Services
                     _successfulCommandsTracking.LogInformation($"Command {command.Name} completed successfully for {context.Invoker} " +
                         $"(message {context.Message.Id} - channel {context.Channel.Name}/{context.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
                 }
-                else if (baseResult is BadRequestResult badRequest)
+                else
                 {
-                    _failedCommandsTracking.LogInformation($"User {context.Invoker} sent bad request: {badRequest.Reason} " +
+                    _failedCommandsTracking.LogInformation($"Command {command.Name} didn't complete successfully for {context.Invoker} " +
                         $"(message {context.Message.Id} - channel {context.Channel.Name}/{context.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
                 }
             }
