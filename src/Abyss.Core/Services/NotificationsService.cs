@@ -61,7 +61,7 @@ namespace Abyss.Core.Services
             if (_notifyConfig?.ServerMembershipChange == null) return;
             var updateChannel = _client.GetChannel(_notifyConfig.ServerMembershipChange.Value);
             if (!(updateChannel is SocketTextChannel stc)) return;
-             await stc.SendMessageAsync(null, false, new EmbedBuilder()
+            await stc.SendMessageAsync(null, false, new EmbedBuilder()
                  .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
                  .WithDescription($"{(botIsJoining ? "Joined" : "Left")} {arg.Name} at {DateTime.Now:F}")
                  .AddField("Member count", arg.MemberCount, true)

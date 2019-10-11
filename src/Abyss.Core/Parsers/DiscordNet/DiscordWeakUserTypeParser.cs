@@ -29,7 +29,6 @@ namespace Abyss.Core.Parsers.DiscordNet
         {
             var abyssContext = context.ToRequestContext();
             var channel = abyssContext.Channel;
-            var results = new Dictionary<ulong, UserParseResolveResult>();
             var channelUsers = abyssContext.Guild.Users;
 
             // Parse mention

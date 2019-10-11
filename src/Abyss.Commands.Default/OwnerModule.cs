@@ -266,9 +266,9 @@ namespace Abyss.Commands.Default
         [RequireOwner]
         [RunMode(RunMode.Parallel)]
         public async Task<ActionResult> Command_ExecuteAsync([Name("Executable")] [Description("The executable to run.")] string executable,
-            [Name("Arguments")] [Description("The arguments to provide.")] [Remainder] string arguments = null)
+            [Name("Arguments")] [Description("The arguments to provide.")] [Remainder] string? arguments = null)
         {
-            var process = new Process
+            using var process = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {

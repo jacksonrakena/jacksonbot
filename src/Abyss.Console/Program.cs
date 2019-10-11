@@ -15,22 +15,16 @@ namespace Abyss.Console
     {
         private static void Main(string[] args)
         {
-            System.Console.WriteLine("Abyss console host application starting at " + DateTime.Now.ToString("F"));
-
             var contentRoot = args.Length > 0 ? args[0] : AppDomain.CurrentDomain.BaseDirectory;
+            System.Console.WriteLine($"Abyss console host application starting at {DateTime.Now:F}");
 
             var host = new HostBuilder()
                 .UseContentRoot(contentRoot)
-                .ConfigureHostConfiguration(hostConfig =>
-                {
-                    hostConfig.SetBasePath(contentRoot);
-                    hostConfig.AddJsonFile("hostsettings.json", optional: true);
-                    hostConfig.AddEnvironmentVariables("Abyss_");
-                })
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath);
-                    config.AddAbyssJsonFiles(hostingContext.HostingEnvironment.EnvironmentName);
+                    config.AddJsonFile("abyss.json", false, true);
+                    config.AddJsonFile($"abyss.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true);
                 })
                 .ConfigureLogging((hostingContext, logging) =>
                 {
@@ -47,6 +41,7 @@ namespace Abyss.Console
                     // Application name
                     hostBuildingContext.HostingEnvironment.ApplicationName = abyssConfig.Name;
 
+                    // Core services
                     serviceCollection.ConfigureSharedServices();
                 })
                 .UseConsoleLifetime()

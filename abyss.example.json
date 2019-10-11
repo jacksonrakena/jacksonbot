@@ -11,8 +11,7 @@
   },
   "Connections": {
     "Discord": {
-      "Token": "Discord bot user token. Required.",
-      "SupportServer": "An invite to the bot's home base. Optional. Used in error reports, and information commands."
+      "Token": "Discord bot user token. Required."
     },
     "Spotify": {
       "ClientId": "Spotify client ID. Required.",

@@ -10,12 +10,6 @@ using System.Threading.Tasks;
 
 namespace Abyss.Core.Parsers.DiscordNet
 {
-    internal class UserParseResolveResult
-    {
-        public float Score { get; set; }
-        public SocketGuildUser? Value { get; set; }
-    }
-
     [DiscoverableTypeParser]
     public class DiscordUserTypeParser : TypeParser<SocketGuildUser>, IAbyssTypeParser
     {
@@ -23,23 +17,15 @@ namespace Abyss.Core.Parsers.DiscordNet
         {
             var abyssContext = context.ToRequestContext();
             var channel = abyssContext.Channel;
-            var results = new Dictionary<ulong, UserParseResolveResult>();
             var channelUsers = abyssContext.Guild.Users;
 
             // Parse mention
             if (MentionUtils.TryParseUser(value, out var id))
-            {
-                AddResult(results,
-                   channel.GetUser(id),
-                   1.00f);
-            }
+                return new TypeParserResult<SocketGuildUser>(channelUsers.FirstOrDefault(a => a.Id == id));
 
             // by Discord snowflake ID
             if (ulong.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out id) && abyssContext.Guild != null)
-            {
-                AddResult(results,
-                    channel.GetUser(id), 0.90f);
-            }
+                return new TypeParserResult<SocketGuildUser>(channelUsers.FirstOrDefault(a => a.Id == id));
 
             // Parse username & discrim
             var index = value.LastIndexOf('#');
@@ -48,30 +34,12 @@ namespace Abyss.Core.Parsers.DiscordNet
                 var username = value.Substring(0, index);
                 if (ushort.TryParse(value.Substring(index + 1), out var discriminator))
                 {
-                    var guildUser = channelUsers.FirstOrDefault(x => x.DiscriminatorValue == discriminator
-                                                                     && string.Equals(username, x.Username,
-                                                                         StringComparison.OrdinalIgnoreCase));
-
-                    AddResult(results, guildUser, guildUser?.Username == username ? 0.85f : 0.75f);
+                    return new TypeParserResult<SocketGuildUser>(
+                        channelUsers.FirstOrDefault(x => x.DiscriminatorValue == discriminator
+                    && string.Equals(username, x.Username, StringComparison.OrdinalIgnoreCase)));
                 }
             }
-
-            var user = results.Count > 0
-                ? results.OrderBy(d => d.Value.Score).FirstOrDefault().Value.Value
-                : channelUsers.FirstOrDefault(a =>
-                    a.Username.StartsWith(value, StringComparison.OrdinalIgnoreCase)
-                    || (a.Nickname?.ToLower().StartsWith(value.ToLower()) ?? false));
-
-            return user == null
-                ? new TypeParserResult<SocketGuildUser>($"A user by the name/ID of {value} was not found.")
-                : new TypeParserResult<SocketGuildUser>(user);
-        }
-
-        private static void AddResult(IDictionary<ulong, UserParseResolveResult> results, SocketGuildUser user,
-            float score)
-        {
-            if (user != null && !results.ContainsKey(user.Id))
-                results.Add(user.Id, new UserParseResolveResult { Score = score, Value = user });
+            return new TypeParserResult<SocketGuildUser>($"A user by the name/ID of {value} was not found.");
         }
 
         public (string, string, string?) FriendlyName => ("A server member, by name, ID, nickname or mention.", "A list of specific server members.", null);

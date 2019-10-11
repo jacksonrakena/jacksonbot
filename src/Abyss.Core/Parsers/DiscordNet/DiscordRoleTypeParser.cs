@@ -10,15 +10,6 @@ using System.Threading.Tasks;
 
 namespace Abyss.Core.Parsers.DiscordNet
 {
-    // Source: https://github.com/RogueException/Discord.Net/blob/dev/src/Discord.Net.Commands/Readers/RoleTypeReader.cs
-    // Copyright (c) 2018 Discord.Net contributors
-
-    internal class RoleParseResult
-    {
-        public float Score { get; set; }
-        public SocketRole? Value { get; set; }
-    }
-
     [DiscoverableTypeParser]
     public class DiscordRoleTypeParser : TypeParser<SocketRole>, IAbyssTypeParser
     {
@@ -28,34 +19,19 @@ namespace Abyss.Core.Parsers.DiscordNet
 
             if (abyssContext.Guild == null)
                 return new TypeParserResult<SocketRole>("Not applicable in a DM.");
-            var results = new Dictionary<ulong, RoleParseResult>();
             var roles = abyssContext.Guild.Roles;
 
-            //By Mention (1.0)
             if (MentionUtils.TryParseRole(value, out var id))
-                AddResult(results, abyssContext.Guild.GetRole(id), 1.00f);
+                return new TypeParserResult<SocketRole>(abyssContext.Guild.GetRole(id));
 
-            //By Id (0.9)
             if (ulong.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out id))
-                AddResult(results, abyssContext.Guild.GetRole(id), 0.90f);
+                return new TypeParserResult<SocketRole>(abyssContext.Guild.GetRole(id));
 
             //By Name (0.7-0.8)
             foreach (var role in roles.Where(x => string.Equals(value, x.Name, StringComparison.OrdinalIgnoreCase)))
-                AddResult(results, role, role.Name == value ? 0.80f : 0.70f);
-
-            if (results.Count > 0 && results.Values.Count > 0)
-            {
-                return
-                   new TypeParserResult<SocketRole>(results.Values.OrderBy(a => a.Score).FirstOrDefault()?.Value!);
-            }
+                return new TypeParserResult<SocketRole>(role);
 
             return new TypeParserResult<SocketRole>("Role not found.");
-        }
-
-        private static void AddResult(IDictionary<ulong, RoleParseResult> results, SocketRole role, float score)
-        {
-            if (role != null && !results.ContainsKey(role.Id))
-                results.Add(role.Id, new RoleParseResult { Score = score, Value = role });
         }
 
         public (string, string, string?) FriendlyName => ("A server role, by ID, mention or name.", "A list of specific roles.", null);

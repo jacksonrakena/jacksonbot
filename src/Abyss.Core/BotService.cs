@@ -47,7 +47,7 @@ namespace Abyss.Core
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation(
-                $"{_config.Name} on {Environment.OSVersion.VersionString} with CLR {Environment.Version}");
+                $"{_config.Name} bot hosted service on {Environment.OSVersion.VersionString} with CLR {Environment.Version} initialized.");
 
             var discordConfiguration = _config.Connections.Discord;
 

@@ -7,9 +7,9 @@ namespace Abyss.Core.Results
     {
         public override bool IsSuccessful => true;
 
-        public override async Task ExecuteResultAsync(AbyssRequestContext context)
+        public override Task ExecuteResultAsync(AbyssRequestContext context)
         {
-            await context.ReplyAsync(":ok_hand:");
+            return context.ReplyAsync(":ok_hand:");
         }
     }
 }

@@ -33,7 +33,7 @@ namespace Abyss.Core.Services
         {
             if (_config.Marketing?.DiscordBoatsToken == null)
             {
-                _logger.LogError("Failed to update Discord.Boats: token missing");
+                _logger.LogWarning("Failed to update Discord.Boats: token missing");
                 return;
             }
 
@@ -47,7 +47,7 @@ namespace Abyss.Core.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogError($"Failed to update Discord.boats: error code " + response.StatusCode);
+                _logger.LogWarning($"Failed to update Discord.boats: error code " + response.StatusCode);
                 response.Dispose();
                 return;
             }
@@ -59,7 +59,7 @@ namespace Abyss.Core.Services
         {
             if (_config.Marketing?.DiscordBotsListToken == null)
             {
-                _logger.LogError("Failed to update Discord Bots List: token missing");
+                _logger.LogWarning("Failed to update Discord Bots List: token missing");
                 return;
             }
 
@@ -73,7 +73,7 @@ namespace Abyss.Core.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogError($"Failed to update Discord Bots List: error code " + response.StatusCode);
+                _logger.LogWarning($"Failed to update Discord Bots List: error code " + response.StatusCode);
                 response.Dispose();
                 return;
             }
@@ -85,7 +85,7 @@ namespace Abyss.Core.Services
         {
             if (_config.Marketing?.DblDotComToken == null)
             {
-                _logger.LogError("Failed to update Discordbotlist.com: token missing");
+                _logger.LogWarning("Failed to update Discordbotlist.com: token missing");
                 return;
             }
 
@@ -104,7 +104,7 @@ namespace Abyss.Core.Services
 
             if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
             {
-                _logger.LogError($"Failed to update Discordbotlist.com: error code " + response.StatusCode);
+                _logger.LogWarning($"Failed to update Discordbotlist.com: error code " + response.StatusCode);
                 response.Dispose();
                 return;
             }
