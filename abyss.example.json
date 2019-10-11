@@ -12,8 +12,7 @@
   "Connections": {
     "Discord": {
       "Token": "Discord bot user token. Required.",
-      "SupportServer": "An invite to the bot's home base. Optional. Used in error reports, and information commands.",
-      "SupportServerId": "The ID of your support server. Optional. Used in the web interface."
+      "SupportServer": "An invite to the bot's home base. Optional. Used in error reports, and information commands."
     },
     "Spotify": {
       "ClientId": "Spotify client ID. Required.",
@@ -44,10 +43,5 @@
     "DndEmote": "<:discordDnd:609952141620150418>",
     "StaffEmote": "<:discordStaff:609952142379188235>",
     "GuildOwnerEmote": "<:discordGuildOwner:609952141599309875>"
-  },
-  "Marketing": { // Connection tokens for Discord bot lists. These shouldn't be used by clones, as they will get rejected.
-    "DblBotComToken": "The token for Discordbotslist.com",
-    "DiscordBoatsToken": "The token for discord.boats",
-    "DiscordBotsListToken": "The token for Discord Bots List"
   }
 }
