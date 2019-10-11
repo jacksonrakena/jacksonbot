@@ -33,9 +33,6 @@
     },
     "Console": {
       "IncludeScopes": "true" // Keep this on.
-    },
-    "Sentry": {
-      "Dsn": "Your Sentry.io DSN. This is used for error logging."
     }
   },
   "Emotes": { // The emotes that Abyss will use. All of these must be filled.

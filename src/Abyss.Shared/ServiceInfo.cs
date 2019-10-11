@@ -24,13 +24,12 @@ namespace Abyss.Shared
         public string RuntimeVersion { get; set; }
         public string Culture { get; set; }
         public string ContentRootPath { get; set; }
-        public int AddonsLoaded { get; set; }
         public string? AvatarUrl { get; set; }
         public string? UsernameDiscriminator { get; set; }
 
         public ServiceInfo(string serviceName, string environmentName, Process currentProcess, int commandSuccesses,
             int commandFailures, int guildCount, int guildMemberCount, int channels, int moduleCount, int commandCount, string contentRootPath,
-                int addonCount, string? avatarUrl2048, string? usernameDiscriminator)
+                string? avatarUrl2048, string? usernameDiscriminator)
         {
             ServiceName = serviceName;
             Environment = environmentName;
@@ -50,7 +49,6 @@ namespace Abyss.Shared
             RuntimeVersion = System.Environment.Version.ToString();
             Culture = CultureInfo.InstalledUICulture.EnglishName;
             ContentRootPath = contentRootPath;
-            AddonsLoaded = addonCount;
             AvatarUrl = avatarUrl2048;
             UsernameDiscriminator = usernameDiscriminator;
         }

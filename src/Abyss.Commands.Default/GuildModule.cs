@@ -1,4 +1,5 @@
-﻿using Abyss.Core.Attributes;
+﻿using Abyss.Core;
+using Abyss.Core.Attributes;
 using Abyss.Core.Checks.Command;
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
@@ -17,7 +18,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Core.Modules
+namespace Abyss.Commands.Default
 {
     [Name("Server Information")]
     [Description("Commands that help you interact with your server in useful and efficient ways.")]
@@ -35,7 +36,7 @@ namespace Abyss.Core.Modules
             string nickname)
         {
             if (nickname.Equals("clear", StringComparison.OrdinalIgnoreCase) && string.IsNullOrEmpty(target.Nickname))
-                return BadRequest($"{target.Format()} doesn't have a nickname!");
+                return BadRequest($"{target.Format()} doesn't have a nickname.");
 
             try
             {
@@ -43,17 +44,15 @@ namespace Abyss.Core.Modules
                 {
                     AuditLogReason = $"Action performed by {Context.Invoker}"
                 }).ConfigureAwait(false);
-                return Ok(nickname != "clear"
-                    ? $"Set {target.Format()}'s nickname to `" + nickname + "`."
-                    : "Done!");
+                return OkReaction();
             }
             catch (HttpException e) when (e.HttpCode == HttpStatusCode.Forbidden)
             {
-                return BadRequest("Received 403 Forbidden changing nickname!");
+                return BadRequest("Not allowed to.");
             }
             catch (HttpException e) when (e.HttpCode == HttpStatusCode.BadRequest)
             {
-                return BadRequest("Received 400 Bad Request, try shortening or extending the name!");
+                return BadRequest("Bad format.");
             }
         }
 
@@ -140,7 +139,7 @@ namespace Abyss.Core.Modules
             var r = user.GetHighestRoleOrDefault(a => a.Color.RawValue != 0);
             return r == null
                 ? BadRequest("That user does not have a coloured role!")
-                : Command_GetColourFromRoleAsync((SocketRole) r);
+                : Command_GetColourFromRoleAsync((SocketRole)r);
         }
 
         [Command("Permissions", "Perms")]
@@ -155,7 +154,7 @@ namespace Abyss.Core.Modules
             user ??= Context.Invoker; // Get the user (or the invoker, if none specified)
 
             var embed = new EmbedBuilder();
-            embed.WithAuthor((IUser) user);
+            embed.WithAuthor(user);
 
             if (user.Id == Context.Guild.OwnerId)
             {
@@ -175,7 +174,7 @@ namespace Abyss.Core.Modules
                 .Where(a => a.PropertyType.IsAssignableFrom(typeof(bool)))
                 .ToList(); // Get all properties that have a property type of Boolean
 
-            var propDict = booleanTypeProperties.Select(a => (a.Name.Humanize(), (bool) a.GetValue(guildPerms)!))
+            var propDict = booleanTypeProperties.Select(a => (a.Name.Humanize(), (bool)a.GetValue(guildPerms)!))
                 .OrderByDescending(ab => ab.Item2 ? 1 : 0 /* Allowed permissions first */)
                 .ToList(); // Store permissions as a tuple of (string Name, bool Allowed) and order by allowed permissions first
 
@@ -210,7 +209,7 @@ namespace Abyss.Core.Modules
 
             var perm = boolProps[0];
             var name = perm.Name.Humanize();
-            var value = (bool) perm.GetValue(guildPerms)!;
+            var value = (bool)perm.GetValue(guildPerms)!;
 
             return Ok(a => a.WithDescription($"I **{(value ? "do" : "do not")}** have permission `{name}`!"));
         }
@@ -241,7 +240,7 @@ namespace Abyss.Core.Modules
                 categories.AppendLine(categoryBuilder.ToString());
             }
             var res = uncategorized.AppendLine(categories.ToString()).ToString();
-            if (res.Length >= 4000) return BadRequest("Server too big.");  
+            if (res.Length >= 4000) return BadRequest("Server too big.");
             return Ok(res);
         }
 
@@ -282,14 +281,14 @@ namespace Abyss.Core.Modules
             var p = user.Roles.Where(a => a.Permissions.Administrator).ToList();
             if (p.Count > 0)
             {
-                embed.Description = 
+                embed.Description =
                     "User has administrator, and has every permission. To deny them administrator, remove the Administrator permission from the following roles:\n" +
                     $"`{string.Join(", ", p.Select(b => b.Name))}`";
                 return Ok(embed);
             }
 
-            var grantedRoles = user.Roles.Where(r => (bool) perm.GetValue(r.Permissions)!);
-            var deniedRoles = user.Roles.Where(r => !(bool) perm.GetValue(r.Permissions)!);
+            var grantedRoles = user.Roles.Where(r => (bool)perm.GetValue(r.Permissions)!);
+            var deniedRoles = user.Roles.Where(r => !(bool)perm.GetValue(r.Permissions)!);
 
             var gRolesString = string.Join(", ", grantedRoles.Select(r => r.Name));
             var dRolesString = string.Join(", ", deniedRoles.Select(r => r.Name));

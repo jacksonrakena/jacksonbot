@@ -1,5 +1,4 @@
-﻿using Abyss.Core.Addons;
-using Abyss.Shared;
+﻿using Abyss.Shared;
 using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
 using Qmmands;
@@ -17,16 +16,13 @@ namespace Abyss.Core.Services
         private readonly MessageReceiver _messageReceiver;
         private readonly ICommandService _commandService;
         private readonly DiscordSocketClient _discord;
-        private readonly AddonService _addons;
 
-        public DataService(IHostEnvironment hostingEnvironment, DiscordSocketClient client, MessageReceiver receiver, ICommandService commandService,
-            AddonService addons)
+        public DataService(IHostEnvironment hostingEnvironment, DiscordSocketClient client, MessageReceiver receiver, ICommandService commandService)
         {
             _hostingEnvironment = hostingEnvironment;
             _messageReceiver = receiver;
             _commandService = commandService;
             _discord = client;
-            _addons = addons;
         }
 
         public string GetBasePath() => _hostingEnvironment.ContentRootPath;
@@ -46,7 +42,7 @@ namespace Abyss.Core.Services
             return new ServiceInfo(_hostingEnvironment.ApplicationName, _hostingEnvironment.EnvironmentName, Process.GetCurrentProcess(),
                 _messageReceiver.CommandSuccesses, _messageReceiver.CommandFailures, _discord.Guilds.Count, _discord.Guilds.Select(a => a.MemberCount).Sum(),
                 _discord.Guilds.Select(a => a.TextChannels.Count + a.VoiceChannels.Count).Sum(), _commandService.GetAllModules().Count, _commandService.GetAllCommands().Count,
-                _hostingEnvironment.ContentRootPath, _addons.GetAllAddons().Count, _discord.CurrentUser?.GetAvatarUrl(size: 2048), _discord.CurrentUser?.ToString());
+                _hostingEnvironment.ContentRootPath, _discord.CurrentUser?.GetAvatarUrl(size: 2048), _discord.CurrentUser?.ToString());
         }
     }
 }

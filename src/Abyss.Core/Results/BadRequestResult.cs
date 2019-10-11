@@ -19,22 +19,15 @@ namespace Abyss.Core.Results
 
         public override bool IsSuccessful => false;
 
-        public override async Task<ResultCompletionData> ExecuteResultAsync(AbyssRequestContext context)
+        public override async Task ExecuteResultAsync(AbyssRequestContext context)
         {
-            var message = await context.Channel.SendMessageAsync(null, false, new EmbedBuilder()
+            await context.Channel.SendMessageAsync(null, false, new EmbedBuilder()
                 .WithTitle("You've been telling me lies, hun.")
                 .WithDescription(Reason)
                 .WithColor(ErrorColor)
                 .WithTimestamp(DateTimeOffset.Now)
                 .WithFooter($"Requested by: {context.Invoker.Format()}", context.Invoker.GetEffectiveAvatarUrl())
                 .Build());
-            return new ResultCompletionData(message);
-        }
-
-        public override async Task<ResultCompletionData> UpdateResultAsync(AbyssRequestUpdateContext context)
-        {
-            await context.Response.DeleteAsync().ConfigureAwait(false);
-            return await ExecuteResultAsync(context.Request).ConfigureAwait(false);
         }
     }
 }

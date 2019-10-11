@@ -18,7 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DescriptionAttribute = Qmmands.DescriptionAttribute;
 
-namespace Abyss.Core.Modules
+namespace Abyss.Commands.Default
 {
     [Name("Owner")]
     [Description("Provides commands for my creator.")]
@@ -36,26 +36,11 @@ namespace Abyss.Core.Modules
         }
 
         [Command("ThrowException", "ThrowEx")]
-        [Description("Throws a .NET exception. For testing purposes.")]
+        [Description("Throws a InvalidOperation .NET exception. For testing purposes.")]
         [Example("throwexception Meow.")]
         public Task<ActionResult> Command_ThrowExceptionAsync([Name("Message")] [Description("The message for the exception.")] [Remainder] string message = "Test exception.")
         {
             throw new InvalidOperationException(message);
-        }
-
-        [Command("Game", "SetGame")]
-        [Description("Sets my current Discord activity.")]
-        [Example("game Playing \"with Abyss\"", "setgame Streaming \"Just programming!\" http://twitch.tv/twitch")]
-        public async Task<ActionResult> Command_SetGameAsync(
-            [Description("The verb to act.")] [Name("Type")]
-            ActivityType type,
-            [Description("The target of the verb.")] [Name("Target")]
-            string game,
-            [Description("The URL link (streaming only)")] [Name("Stream URL")]
-            Uri? streamUrl = null)
-        {
-            await Context.Client.SetGameAsync(game, streamUrl?.ToString(), type).ConfigureAwait(false);
-            return Ok($"Set game to `{type} {game} (url: {streamUrl?.ToString() ?? "None"})`.");
         }
 
         [Command("Handlebars", "Hb")]
@@ -83,7 +68,8 @@ namespace Abyss.Core.Modules
             catch (HandlebarsException e)
             {
                 return BadRequest("Handlebars failed: " + e.Message);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 return BadRequest("Generic error: " + e.Message);
             }
@@ -148,7 +134,7 @@ namespace Abyss.Core.Modules
                         stringRep = "No results returned.";
                     }
 
-                    if ((stringRep.StartsWith("```") && stringRep.EndsWith("```")) || special)
+                    if (stringRep.StartsWith("```") && stringRep.EndsWith("```") || special)
                         canUseEmbed = false;
                     else
                         stringRep = $"```cs\n{stringRep}```";
@@ -241,14 +227,13 @@ namespace Abyss.Core.Modules
         [RequireOwner]
         public async Task<ActionResult> Command_ShutdownAsync()
         {
-            var responses = new List<string> { "Noho mai rā!", "Au revoir!", "Adjö!", "Sayōnara!" };
-            await ReplyAsync($"{responses[new Random().Next(0, responses.Count - 1)]} (Goodbye!)").ConfigureAwait(false);
-            _logger.LogCritical($"Application terminated by user {Context.Invoker} (ID {Context.Invoker.Id})");
+            await ReplyAsync($"Later.").ConfigureAwait(false);
+            _logger.LogInformation($"Application terminated by user {Context.Invoker} (ID {Context.Invoker.Id})");
             await Context.Client.LogoutAsync().ConfigureAwait(false);
             await Context.Client.StopAsync().ConfigureAwait(false);
             Context.Client.Dispose();
 
-            Environment.Exit(0); // Clean exit - trigger daemon NOT to restart
+            Environment.Exit(0);
             return Empty();
         }
 
@@ -267,7 +252,7 @@ namespace Abyss.Core.Modules
             try
             {
                 await msg.ModifyAsync(v => v.Content = newContent);
-                return Empty();
+                return OkReaction();
             }
             catch (Exception)
             {

@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Abyss.Core.Modules
+namespace Abyss.Commands.Default
 {
     [Name("Random")]
     [Description("Commands that involve a computerised RNG calculator.")]

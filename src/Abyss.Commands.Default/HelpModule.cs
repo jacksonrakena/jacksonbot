@@ -1,3 +1,4 @@
+using Abyss.Core;
 using Abyss.Core.Attributes;
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
@@ -10,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Core.Modules
+namespace Abyss.Commands.Default
 {
     [Name("Help")]
     [Description("Contains helpful commands to help you discover your way around my commands and modules.")]
@@ -18,7 +19,6 @@ namespace Abyss.Core.Modules
     {
         private readonly ICommandService _commandService;
         private readonly HelpService _help;
-
 
         public HelpModule(HelpService help, ICommandService commandService)
         {

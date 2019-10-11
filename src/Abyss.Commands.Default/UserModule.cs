@@ -1,6 +1,8 @@
-﻿using Abyss.Core.Attributes;
+﻿using Abyss.Core;
+using Abyss.Core.Attributes;
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
+using Abyss.Core.Helpers;
 using Abyss.Core.Results;
 using Discord;
 using Discord.WebSocket;
@@ -12,7 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Core.Modules
+namespace Abyss.Commands.Default
 {
     [Name("User Information")]
     [Description("Commands that help you interact with other Discord users.")]
@@ -35,14 +37,21 @@ namespace Abyss.Core.Modules
             [DefaultValueDescription("The user who invoked this command.")]
             SocketGuildUser? target = null,
             [Name("Image_Size")] [Description("The size of the resulting image, in pixels.")]
-            int size = 1024)
+            int size = 512)
         {
             target ??= Context.Invoker;
+
+            if (size > ushort.MaxValue) return BadRequest("Can't get a size that big.");
 
             return Ok(a =>
             {
                 a.WithAuthor(target.ToEmbedAuthorBuilder());
-                a.ImageUrl = target.GetEffectiveAvatarUrl(Convert.ToUInt16(size));
+                a.ImageUrl = target.GetEffectiveAvatarUrl((ushort) size);
+                a.Description =
+                    $"{UrlHelper.CreateMarkdownUrl("128", target.GetEffectiveAvatarUrl(128))} | " +
+                    $"{UrlHelper.CreateMarkdownUrl("256", target.GetEffectiveAvatarUrl(256))} | " +
+                    $"{UrlHelper.CreateMarkdownUrl("1024", target.GetEffectiveAvatarUrl(1024))} | " +
+                    $"{UrlHelper.CreateMarkdownUrl("2048", target.GetEffectiveAvatarUrl(2048))}";
             });
         }
 

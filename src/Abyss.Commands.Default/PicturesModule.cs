@@ -17,13 +17,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Abyss.Core.Modules
+namespace Abyss.Commands.Default
 {
     [Name("Pictures")]
     [Description("Commands that let you access pictures from various websites.")]
     public class PicturesModule : AbyssModuleBase
     {
-        //private const string BowsetteApi = "https://lewd.bowsette.pictures/api/request";
         private const string CatApi = "http://aws.random.cat/meow";
 
         private readonly HttpClient _httpApi;
@@ -64,7 +63,7 @@ namespace Abyss.Core.Modules
                         using var img = SixLabors.ImageSharp.Image.Load(inStream);
                         img.Mutate(a => a.Resize(a.GetCurrentSize() * 2, new BicubicResampler(), false));
                         img.Save(outStream,
-                            emote.Animated ? (IImageEncoder) new GifEncoder() : new PngEncoder());
+                            emote.Animated ? (IImageEncoder)new GifEncoder() : new PngEncoder());
                         outStream.Position = 0;
                         return Image(FileAttachment.FromStream(outStream, $"emoji.{(emote.Animated ? "gif" : "png")}"));
                     }
@@ -97,7 +96,7 @@ namespace Abyss.Core.Modules
             {
                 using var img = SixLabors.ImageSharp.Image.Load(inStream);
                 img.Mutate(a => a.Resize(new Size(width, height), new BicubicResampler(), false));
-                img.Save(outStream, isGif ? (IImageEncoder) new GifEncoder() : new PngEncoder());
+                img.Save(outStream, isGif ? (IImageEncoder)new GifEncoder() : new PngEncoder());
                 outStream.Position = 0;
                 return Image(FileAttachment.FromStream(outStream, $"resized.{(isGif ? "gif" : "png")}"));
             }

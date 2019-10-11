@@ -4,7 +4,6 @@ using Abyss.Core.Services;
 using Abyss.Core.Entities;
 using AbyssalSpotify;
 using System.Net.Http;
-using Abyss.Core.Addons;
 using Discord.WebSocket;
 using Discord;
 using Qmmands;
@@ -28,8 +27,6 @@ namespace Abyss.Hosting
             });
             serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();
-            serviceCollection.AddSingleton<ResponseCacheService>();
-            serviceCollection.AddSingleton<AddonService>();
             serviceCollection.AddSingleton<NotificationsService>();
             serviceCollection.AddSingleton<DataService>();
             serviceCollection.AddSingleton<MarketingService>();

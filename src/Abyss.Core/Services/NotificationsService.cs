@@ -72,7 +72,10 @@ namespace Abyss.Core.Services
             if (!(updateChannel is SocketTextChannel stc)) return;
              await stc.SendMessageAsync(null, false, new EmbedBuilder()
                  .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
-                 .WithDescription($"{(botIsJoining ? "Joined" : "Left")} {arg.Name} at {DateTime.Now:F} ({arg.MemberCount} members, owner: {arg.Owner})")
+                 .WithDescription($"{(botIsJoining ? "Joined" : "Left")} {arg.Name} at {DateTime.Now:F}")
+                 .AddField("Member count", arg.MemberCount, true)
+                 .AddField("Channel count", arg.TextChannels.Count + " text / " + arg.VoiceChannels.Count + " voice", true)
+                 .AddField("Owner", $"{arg.Owner} ({arg.OwnerId})", true)
                  .WithColor(BotService.DefaultEmbedColour)
                  .WithThumbnailUrl(arg.IconUrl)
                  .WithCurrentTimestamp()

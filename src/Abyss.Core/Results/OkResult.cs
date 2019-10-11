@@ -29,10 +29,10 @@ namespace Abyss.Core.Results
         private EmbedBuilder? Embed { get; }
         private FileAttachment[] Attachments { get; }
 
-        public override async Task<ResultCompletionData> ExecuteResultAsync(AbyssRequestContext context)
+        public override async Task ExecuteResultAsync(AbyssRequestContext context)
         {
-            if (!context.BotUser.GetPermissions(context.Channel).SendMessages) return new ResultCompletionData();
-            if (Attachments.Length > 0 && !context.BotUser.GetPermissions(context.Channel).AttachFiles) return new ResultCompletionData();
+            if (!context.BotUser.GetPermissions(context.Channel).SendMessages) return;
+            if (Attachments.Length > 0 && !context.BotUser.GetPermissions(context.Channel).AttachFiles) return;
 
             var messages = new List<RestUserMessage>();
             if (Attachments.Length == 1)
@@ -54,13 +54,6 @@ namespace Abyss.Core.Results
             {
                 messages.Add(await context.Channel.SendMessageAsync(Message, false, Embed?.Build()));
             }
-            return new ResultCompletionData(messages.ToArray());
-        }
-
-        public override async Task<ResultCompletionData> UpdateResultAsync(AbyssRequestUpdateContext context)
-        {
-            await context.Response.DeleteAsync().ConfigureAwait(false);
-            return await ExecuteResultAsync(context.Request).ConfigureAwait(false);
         }
     }
 }

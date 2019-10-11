@@ -1,3 +1,4 @@
+using Abyss.Core;
 using Abyss.Core.Attributes;
 using Abyss.Core.Entities;
 using Abyss.Core.Helpers;
@@ -11,7 +12,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Core.Modules
+namespace Abyss.Commands.Default
 {
     [Name("Spotify")]
     [Description(
@@ -183,9 +184,9 @@ namespace Abyss.Core.Modules
             embed.AddField("Length", $"{track.Duration.Minutes} minutes, {track.Duration.Seconds} seconds", true);
             embed.AddField("Release Date", track.Album.ReleaseDate.ToString("D"), true);
             embed.AddField("Album", UrlHelper.CreateMarkdownUrl(track.Album.Name, track.Album.Id.Url), true);
-            embed.AddField("Is Explicit", track.HasExplicitLyrics ? "Yes" : "No", true);
+            if (track.HasExplicitLyrics) embed.Description = "This track contains explicit lyrics.";
 
-            embed.AddField("\u200B", UrlHelper.CreateMarkdownUrl("Click to listen!", track.Id.Url));
+            embed.AddField("\u200B", UrlHelper.CreateMarkdownUrl("Open in Spotify", track.Id.Url));
 
             return embed;
         }

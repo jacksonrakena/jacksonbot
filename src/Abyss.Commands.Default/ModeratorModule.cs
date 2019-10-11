@@ -15,7 +15,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Core.Modules
+namespace Abyss.Commands.Default
 {
     [Name("Moderation")]
     [Description("Commands that help you moderate and protect your server.")]

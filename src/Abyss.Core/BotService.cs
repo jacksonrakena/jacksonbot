@@ -12,7 +12,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
-using Abyss.Core.Addons;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Abyss.Core
@@ -24,38 +23,26 @@ namespace Abyss.Core
         private readonly AbyssConfig _config;
         private readonly DiscordSocketClient _discordClient;
 
-        private readonly Type _addonType = typeof(IAddon);
-
         private readonly ILogger<BotService> _logger;
         private readonly ILogger _discordLogger;
-        private readonly IServiceProvider _serviceProvider;
 
-        private readonly AddonService _addonService;
         private readonly NotificationsService _notifications;
-        private readonly DataService _dataService;
         private readonly MarketingService _marketing;
-
-        private readonly MessageReceiver _messageReceiver;
 
         private bool _hasBeenReady = false;
 
-        public BotService(
-            IServiceProvider services, ILogger<BotService> logger, AbyssConfig config, DiscordSocketClient socketClient, MessageReceiver messageReceiver, AddonService addonService,
-            NotificationsService notifications, DataService dataService, ILoggerFactory factory,
+        public BotService(ILogger<BotService> logger, AbyssConfig config, DiscordSocketClient socketClient,
+            NotificationsService notifications, ILoggerFactory factory,
             MarketingService marketing)
         {
             _logger = logger;
             _discordClient = socketClient;
             _config = config;
-            _serviceProvider = services;
             _discordClient.Log += DiscordClient_Log;
             _discordClient.Ready += DiscordClient_Ready;
             _discordClient.JoinedGuild += DiscordClient_JoinedGuild;
             _discordClient.LeftGuild += DiscordClient_LeftGuild;
-            _messageReceiver = messageReceiver;
-            _addonService = addonService;
             _notifications = notifications;
-            _dataService = dataService;
             _discordLogger = factory.CreateLogger("Discord");
             _marketing = marketing;
         }
@@ -69,32 +56,6 @@ namespace Abyss.Core
 
             await _discordClient.LoginAsync(TokenType.Bot, discordConfiguration.Token).ConfigureAwait(false);
             await _discordClient.StartAsync().ConfigureAwait(false);
-
-            _serviceProvider.GetRequiredService<ResponseCacheService>();
-
-            var assemblyDirectory = _dataService.GetCustomAssemblyBasePath();
-
-            if (Directory.Exists(assemblyDirectory))
-            {
-                foreach (var assemblyFile in Directory.GetFiles(assemblyDirectory, "*.dll"))
-                {
-                    try
-                    {
-                        var assembly = Assembly.LoadFrom(assemblyFile);
-                        _messageReceiver.LoadTypesFromAssembly(assembly);
-                        await TryLoadAddonsFromAssemblyAsync(assembly).ConfigureAwait(false);
-                    }
-                    catch (BadImageFormatException)
-                    {
-                        _logger.LogError($"Failed to load assembly \"{assemblyFile}\". Is it compiled correctly?");
-                    }
-                }
-            }
-        }
-
-        private Task TryLoadAddonsFromAssemblyAsync(Assembly assembly)
-        {
-            return Task.WhenAll(assembly.GetExportedTypes().Where(_addonType.IsAssignableFrom).Select(_addonService.AddAddonAsync));
         }
 
         private Task DiscordClient_LeftGuild(SocketGuild arg)

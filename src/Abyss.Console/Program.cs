@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Configuration;
 using System;
 using Abyss.Hosting;
+using Abyss.Core.Services;
+using System.Reflection;
 
 namespace Abyss.Console
 {
@@ -34,7 +36,6 @@ namespace Abyss.Console
                 {
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     logging.AddConsole();
-                    logging.AddAbyssSentry();
                 })
                 .ConfigureServices((hostBuildingContext, serviceCollection) =>
                 {
@@ -50,6 +51,10 @@ namespace Abyss.Console
                 })
                 .UseConsoleLifetime()
                 .Build();
+
+            var receiver = host.Services.GetRequiredService<MessageReceiver>();
+            receiver.LoadTypesFromAssembly(Assembly.LoadFrom("Abyss.Commands.Default.dll"));
+
             host.Run();
         }
     }

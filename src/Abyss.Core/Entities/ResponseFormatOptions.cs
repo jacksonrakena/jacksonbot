@@ -7,8 +7,7 @@ namespace Abyss.Core.Entities
     {
         DontEmbed = 1,
         DontAttachTimestamp = 2,
-        DontAttachFooter = 4,
-        DontCache = 8
+        DontAttachFooter = 4
     }
 
     [AttributeUsage(AttributeTargets.Method)]

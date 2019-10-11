@@ -10,7 +10,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Core.Modules
+namespace Abyss.Commands.Default
 {
     [Name("Utility")]
     [Description("Commands that provide useful utilities.")]
@@ -19,7 +19,7 @@ namespace Abyss.Core.Modules
         [Command("Echo")]
         [Description("Echoes the input text.")]
         [Example("echo THIS IS THE BEST BOT!")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontEmbed | ResponseFormatOptions.DontCache | ResponseFormatOptions.DontAttachFooter
+        [ResponseFormatOptions(ResponseFormatOptions.DontEmbed | ResponseFormatOptions.DontAttachFooter
             | ResponseFormatOptions.DontAttachTimestamp)]
         public Task<ActionResult> Command_EchoAsync([Name("Text")] [Remainder] string echocontent)
         {
@@ -31,10 +31,10 @@ namespace Abyss.Core.Modules
         [Command("Echod")]
         [Description("Attempts to delete the source message, and then echoes the input text.")]
         [Example("echod THIS IS THE BEST BOT!")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontEmbed | ResponseFormatOptions.DontCache)]
+        [ResponseFormatOptions(ResponseFormatOptions.DontEmbed)]
         public async Task<ActionResult> Command_EchoDeleteAsync([Name("Text")] [Remainder] string echocontent)
         {
-            return (await Context.Message.TryDeleteAsync()) ? Ok(Context.InvokerIsOwner
+            return await Context.Message.TryDeleteAsync() ? Ok(Context.InvokerIsOwner
                 ? echocontent
                 : $"{Context.Invoker}: {echocontent}") : Empty();
         }
@@ -44,8 +44,7 @@ namespace Abyss.Core.Modules
         [RequireUserPermission(ChannelPermission.ManageMessages)]
         [RequireBotPermission(ChannelPermission.ManageMessages)]
         [Example("delete 525827581371613184 yes", "delete 525827581371613184 no", "delete 525827581371613184")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp
-            | ResponseFormatOptions.DontCache)]
+        [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
         public async Task<ActionResult> Command_DeleteMessageAsync(
             [Name("Message")] [Description("The ID of the message to delete.")]
             ulong messageId,

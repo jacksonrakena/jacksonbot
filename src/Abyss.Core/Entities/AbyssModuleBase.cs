@@ -29,7 +29,11 @@ namespace Abyss.Core.Entities
             });
         }
 
-        public ReactSuccessResult Ok() => new ReactSuccessResult();
+        public OkResult Text(string raw) => new OkResult(raw);
+
+        public ReplySuccessResult Ok() => new ReplySuccessResult();
+
+        public ReactSuccessResult OkReaction() => new ReactSuccessResult();
 
         public ActionResult Ok(string content, params FileAttachment[] attachments)
         {
@@ -62,7 +66,7 @@ namespace Abyss.Core.Entities
 
             if (attachFooter) builder.WithRequesterFooter(Context);
             if (attachTimestamp) builder.WithCurrentTimestamp();
-            return new OkResult(builder.WithColor(Context.Invoker.GetHighestRoleColourOrDefault()), attachments);
+            return new OkResult(builder.WithColor(Context.BotUser.GetHighestRoleColourOrDefault()), attachments);
         }
 
         public ActionResult Ok(Action<EmbedBuilder> actor, params FileAttachment[] attachments)
