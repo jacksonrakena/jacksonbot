@@ -27,24 +27,15 @@ namespace Abyss.Core.Services
             var ch = _client.GetChannel(_notifyConfig.Ready.Value);
             if (!(ch != null && ch is SocketTextChannel stc)) return;
 
-            if (firstTime)
-            {
-                await stc.SendMessageAsync(null, false, new EmbedBuilder()
-                    .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
-                    .WithDescription($"{_environment.ApplicationName} instance started and ready at " + DateTime.Now.ToString("F"))
-                    .WithColor(BotService.DefaultEmbedColour)
-                    .WithCurrentTimestamp()
-                    .WithThumbnailUrl(_client.CurrentUser.GetEffectiveAvatarUrl(2048))
-                    .Build());
-                return;
-            }
 
-            await stc.SendMessageAsync(null, false, new EmbedBuilder()
+            var embed = new EmbedBuilder()
                 .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
-                .WithDescription("Ready at " + DateTime.Now.ToString("F"))
                 .WithColor(BotService.DefaultEmbedColour)
                 .WithCurrentTimestamp()
-                .WithThumbnailUrl(_client.CurrentUser.GetEffectiveAvatarUrl(2048))
+                .WithThumbnailUrl(_client.CurrentUser.GetEffectiveAvatarUrl(2048));
+
+            await stc.SendMessageAsync(null, false, embed
+                .WithDescription($"Abyss instance {(firstTime ? "started and" : "")} ready at " + DateTime.Now.ToString("F") + ". Connected to " + _client.Guilds.Count + " guilds.")
                 .Build());
         }
 
@@ -76,6 +67,7 @@ namespace Abyss.Core.Services
                  .AddField("Member count", arg.MemberCount, true)
                  .AddField("Channel count", arg.TextChannels.Count + " text / " + arg.VoiceChannels.Count + " voice", true)
                  .AddField("Owner", $"{arg.Owner} ({arg.OwnerId})", true)
+                 .AddField("Total bot guilds", _client.Guilds.Count, true)
                  .WithColor(BotService.DefaultEmbedColour)
                  .WithThumbnailUrl(arg.IconUrl)
                  .WithCurrentTimestamp()

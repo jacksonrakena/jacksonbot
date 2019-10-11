@@ -2,6 +2,7 @@
 using Abyss.Core.Checks.Command;
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
+using Abyss.Core.Helpers;
 using Abyss.Core.Results;
 using Abyss.Core.Services;
 using Discord;
@@ -165,6 +166,14 @@ namespace Abyss.Commands.Default
                 e.AddField("Content root", info.ContentRootPath);
                 e.AddField("Start time", info.StartTime.ToString("F"), false);
             });
+        }
+
+        [Command("Invite")]
+        [Example("invite")]
+        [Description("Creates an invite to add me to another server.")]
+        public Task<ActionResult> Command_GetInviteAsync()
+        {
+            return Ok("You can add me using " + UrlHelper.CreateMarkdownUrl("this link.", $"https://discordapp.com/api/oauth2/authorize?client_id={Context.Client.CurrentUser.Id}&permissions=0&scope=bot"));
         }
     }
 }
