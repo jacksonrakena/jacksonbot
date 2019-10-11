@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Abyss.Core.Checks.Command
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-    public class RequireBotPermissionAttribute : CheckAttribute, IAbyssCheck
+    public sealed class RequireBotPermissionAttribute : CheckAttribute, IAbyssCheck
     {
         public readonly List<ChannelPermission> ChannelPermissions = new List<ChannelPermission>();
         public readonly List<GuildPermission> GuildPermissions = new List<GuildPermission>();

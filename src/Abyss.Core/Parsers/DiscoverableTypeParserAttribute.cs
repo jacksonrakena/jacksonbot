@@ -2,7 +2,7 @@
 
 namespace Abyss.Core.Parsers
 {
-    public class DiscoverableTypeParserAttribute : Attribute
+    public sealed class DiscoverableTypeParserAttribute : Attribute
     {
         public bool ReplacingPrimitive { get; }
 

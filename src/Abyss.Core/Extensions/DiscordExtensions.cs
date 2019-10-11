@@ -16,7 +16,7 @@ namespace Abyss.Core.Extensions
                 await messageChannel.SendMessageAsync(message, isTts, embed, options);
                 return true;
             }
-            catch
+            catch (Exception)
             {
                 return false;
             }

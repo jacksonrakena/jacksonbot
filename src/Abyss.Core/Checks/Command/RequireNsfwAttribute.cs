@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Abyss.Core.Checks.Command
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-    public class RequireNsfwAttribute : CheckAttribute, IAbyssCheck
+    public sealed class RequireNsfwAttribute : CheckAttribute, IAbyssCheck
     {
         public override ValueTask<CheckResult> CheckAsync(CommandContext context)
         {

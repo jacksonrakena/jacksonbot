@@ -39,8 +39,7 @@ namespace Abyss.Commands.Default
         public async Task<ActionResult> Command_GetCatPictureAsync()
         {
             using var response = await _httpApi.GetAsync(CatApi).ConfigureAwait(false);
-            var url = JToken.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false))
-.Value<string>("file");
+            var url = JToken.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Value<string>("file");
             return Image("Meow~!", url);
         }
 

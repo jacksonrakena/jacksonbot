@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Abyss.Core.Checks.Command
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-    public class RequireOwnerAttribute : CheckAttribute, IAbyssCheck
+    public sealed class RequireOwnerAttribute : CheckAttribute, IAbyssCheck
     {
         public override async ValueTask<CheckResult> CheckAsync(CommandContext context)
         {

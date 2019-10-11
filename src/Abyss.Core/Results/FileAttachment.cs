@@ -17,5 +17,25 @@ namespace Abyss.Core.Results
         {
             return new FileAttachment(stream, filename);
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is FileAttachment fa && fa.Filename == Filename;
+        }
+
+        public static bool operator ==(FileAttachment left, FileAttachment right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(FileAttachment left, FileAttachment right)
+        {
+            return !(left == right);
+        }
+
+        public override int GetHashCode()
+        {
+            return Filename.GetHashCode();
+        }
     }
 }

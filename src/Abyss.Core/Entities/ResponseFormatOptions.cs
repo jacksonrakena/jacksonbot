@@ -11,7 +11,7 @@ namespace Abyss.Core.Entities
     }
 
     [AttributeUsage(AttributeTargets.Method)]
-    public class ResponseFormatOptionsAttribute: Attribute
+    public sealed class ResponseFormatOptionsAttribute: Attribute
     {
         public ResponseFormatOptions Options { get; }
 

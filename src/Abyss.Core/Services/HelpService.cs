@@ -150,7 +150,7 @@ namespace Abyss.Core.Services
             return $"- {((await cba.CheckAsync(context).ConfigureAwait(false)).IsSuccessful ? _config.Emotes.YesEmote : _config.Emotes.NoEmote)} {message}";
         }
 
-        public string GetCheckFriendlyMessage(AbyssRequestContext context, CheckAttribute cba)
+        public static string GetCheckFriendlyMessage(AbyssRequestContext context, CheckAttribute cba)
         {
             return (cba as IAbyssCheck ?? throw new InvalidOperationException($"The provided check is not of the Abyss check type, {typeof(IAbyssCheck).Name}.")).GetDescription(context);
         }
@@ -163,7 +163,7 @@ namespace Abyss.Core.Services
                 $"`{parameterInfo.Name}`: {type}{(parameterInfo.IsOptional ? " Optional." : "")}{FormatParameterTags(ctx, parameterInfo)}";
         }
 
-        private string FormatParameterTags(AbyssRequestContext ctx, Parameter parameterInfo)
+        private static string FormatParameterTags(AbyssRequestContext ctx, Parameter parameterInfo)
         {
             var sb = new StringBuilder();
 

@@ -28,7 +28,7 @@ namespace Abyss.Core.Helpers
             return Context.Channel.SendMessageAsync(content, embed: embed);
         }
 
-        public string InspectMethods(object obj)
+        public static string InspectMethods(object obj)
         {
             var type = obj as Type ?? obj.GetType();
 
@@ -139,12 +139,12 @@ namespace Abyss.Core.Helpers
             return vs;
         }
 
-        public string InspectInheritance(object obj)
+        public static string InspectInheritance(object obj)
         {
             return InspectInheritance(obj.GetType());
         }
 
-        public string Inspect(object obj)
+        public static string Inspect(object obj)
         {
             var type = obj.GetType();
 

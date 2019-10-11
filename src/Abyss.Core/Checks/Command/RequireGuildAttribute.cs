@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Abyss.Core.Checks.Command
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class RequireGuildAttribute : CheckAttribute, IAbyssCheck
+    public sealed class RequireGuildAttribute : CheckAttribute, IAbyssCheck
     {
         public ulong[] Ids { get; }
 

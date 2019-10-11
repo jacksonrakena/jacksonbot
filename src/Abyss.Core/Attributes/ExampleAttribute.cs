@@ -3,7 +3,7 @@ using System;
 namespace Abyss.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class ExampleAttribute : Attribute
+    public sealed class ExampleAttribute : Attribute
     {
         public ExampleAttribute(params string[] exampleUsage)
         {

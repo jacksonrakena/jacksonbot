@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Abyss.Core.Checks.Parameter
 {
     [AttributeUsage(AttributeTargets.Parameter)]
-    public class MustNotBeBotAttribute : ParameterCheckAttribute, IAbyssCheck
+    public sealed class MustNotBeBotAttribute : ParameterCheckAttribute, IAbyssCheck
     {
         public override ValueTask<CheckResult> CheckAsync(object argument, CommandContext context)
         {

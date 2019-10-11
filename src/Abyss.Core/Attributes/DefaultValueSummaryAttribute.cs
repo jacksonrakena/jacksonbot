@@ -3,7 +3,7 @@
 namespace Abyss.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Parameter)]
-    public class DefaultValueDescriptionAttribute : Attribute
+    public sealed class DefaultValueDescriptionAttribute : Attribute
     {
         public DefaultValueDescriptionAttribute(string defaultValueDescription)
         {
