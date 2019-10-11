@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Abyss.Core.Parsers.DiscordNet
 {
     [DiscoverableTypeParser]
-    public class DiscordChannelTypeParser : TypeParser<SocketTextChannel>, IAbyssTypeParser
+    public class DiscordChannelTypeParser : AbyssTypeParser<SocketTextChannel>
     {
         public (string Singular, string Multiple, string? Remainder) FriendlyName => ("A channel in this server.", "A list of server channels.", null);
 

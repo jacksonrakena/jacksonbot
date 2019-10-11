@@ -5,6 +5,8 @@ using Abyss.Core.Extensions;
 using Abyss.Core.Parsers;
 using Discord;
 using Humanizer;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.VisualBasic.CompilerServices;
 using Qmmands;
 using System;
 using System.Collections.Generic;
@@ -57,9 +59,14 @@ namespace Abyss.Core.Services
             {
                 var rawParserObject = _getTypeParserMethod.MakeGenericMethod(type)
                     .Invoke(_commandService, new object[] { type.IsPrimitive });
-                if (rawParserObject is IAbyssTypeParser iptp)
+                if (rawParserObject != null)
                 {
-                    friendlyNameSet = iptp.FriendlyName;
+                    var parserType = rawParserObject.GetType();
+
+                    if (parserType.BaseType != null && typeof(AbyssTypeParser<>).IsAssignableFrom(parserType.BaseType.GetGenericTypeDefinition()))
+                    {
+                        friendlyNameSet = (ValueTuple<string, string, string>)parserType.GetProperty("FriendlyName")!.GetValue(rawParserObject)!;
+                    }
                 }
             }
 

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Abyss.Core.Parsers.DiscordNet
 {
     [DiscoverableTypeParser]
-    public class DiscordRoleTypeParser : TypeParser<SocketRole>, IAbyssTypeParser
+    public class DiscordRoleTypeParser : AbyssTypeParser<SocketRole>
     {
         public override ValueTask<TypeParserResult<SocketRole>> ParseAsync(Parameter parameter, string value, CommandContext context)
         {

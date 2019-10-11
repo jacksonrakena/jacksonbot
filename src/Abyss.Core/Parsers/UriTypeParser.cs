@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace Abyss.Core.Parsers
 {
     [DiscoverableTypeParser]
-    public class UriTypeParser : TypeParser<Uri>, IAbyssTypeParser
+    public class UriTypeParser : AbyssTypeParser<Uri>
     {
         public override ValueTask<TypeParserResult<Uri>> ParseAsync(Parameter parameter, string value, CommandContext context)
         {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Abyss.Core.Parsers
 {
     [DiscoverableTypeParser(true)]
-    public class BooleanTypeParser : TypeParser<bool>, IAbyssTypeParser
+    public class BooleanTypeParser : AbyssTypeParser<bool>
     {
         private static readonly List<string> MatchingTrueValues = new List<string>
         {

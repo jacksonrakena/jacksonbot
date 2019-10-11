@@ -20,7 +20,7 @@ namespace Abyss.Core.Parsers.DiscordNet
     }
 
     [DiscoverableTypeParser]
-    public class DiscordWeakUserTypeParser : TypeParser<DiscordUserReference>, IAbyssTypeParser
+    public class DiscordWeakUserTypeParser : AbyssTypeParser<DiscordUserReference>
     {
         public (string Singular, string Multiple, string? Remainder) FriendlyName =>
             ("Either a Discord user, or an ID of one.", "A list of Discord users, or Discord user IDs.", null);
