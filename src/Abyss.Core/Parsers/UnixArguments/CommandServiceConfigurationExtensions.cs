@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Qmmands;
+﻿using Qmmands;
 
 namespace Abyss.Core.Parsers.UnixArguments
 {

@@ -1,10 +1,7 @@
-﻿using Abyss.Core.Services;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.PixelFormats;
+﻿using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using System.IO;
-using SixLabors.Primitives;
 
 namespace Abyss.Core.Helpers
 {
