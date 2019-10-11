@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using Qmmands;
 using System;
 using System.Collections;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -257,6 +259,37 @@ namespace Abyss.Commands.Default
             {
                 return BadRequest("Failed to modify the message!");
             }
+        }
+
+        [Command("Exec")]
+        [Description("Executes an executable on the host platform.")]
+        [RequireOwner]
+        [RunMode(RunMode.Parallel)]
+        public async Task<ActionResult> Command_ExecuteAsync([Name("Executable")] [Description("The executable to run.")] string executable,
+            [Name("Arguments")] [Description("The arguments to provide.")] [Remainder] string arguments = null)
+        {
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                    Arguments = arguments,
+                    UseShellExecute = false,
+                    FileName = executable
+                }
+            };
+            process.Start();
+            if (!process.WaitForExit(8000))
+            {
+                return BadRequest("Timed out after 8 seconds.");
+            }
+            var result = await process.StandardOutput.ReadToEndAsync();
+            if (result.Length > 2048) result = result.Substring(0, 2000);
+            return Ok(c =>
+            {
+                c.Description = new StringBuilder().AppendLine("Standard output:").AppendLine($"```{result}```").ToString();
+            });
         }
     }
 }
