@@ -185,15 +185,5 @@ namespace Abyss.Core.Services
 
             return sb.ToString();
         }
-
-        public Task InitializeAsync()
-        {
-            return Task.CompletedTask;
-        }
-
-        public Task DeinitializeAsync()
-        {
-            return Task.CompletedTask;
-        }
     }
 }

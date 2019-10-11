@@ -21,8 +21,7 @@ namespace Abyss.Core.Services
             "Discord.WebSocket", "Abyss.Core", "Abyss.Core.Entities",
             "Qmmands", "System.IO",
             "Microsoft.Extensions.DependencyInjection", "System.Text", "Abyss.Core.Services",
-            "System.Globalization", "Microsoft.Extensions.Options",
-            "Abyss.Core.Modules", "System.Reflection"
+            "System.Globalization", "System.Reflection"
         });
 
         public async Task<ScriptingResult> EvaluateScriptAsync<T>(string code, T properties)
@@ -35,9 +34,7 @@ namespace Abyss.Core.Services
             }
 
             var options = ScriptOptions.Default
-                .WithReferences(typeof(IDiscordClient).Assembly)
-                .WithReferences(typeof(DiscordSocketClient).Assembly)
-                .WithReferences(typeof(BotService).Assembly)
+                .WithReferences(typeof(IDiscordClient).Assembly, typeof(DiscordSocketClient).Assembly, typeof(BotService).Assembly)
                 .WithImports(Imports);
 
             var script = CSharpScript.Create(code, options, typeof(T));
