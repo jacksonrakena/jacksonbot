@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Qmmands;
 
 namespace Abyss.Core.Parsers.UnixArguments
@@ -31,9 +32,7 @@ namespace Abyss.Core.Parsers.UnixArguments
             return null;
         }
 
-        ArgumentParserResult IArgumentParser.Parse(CommandContext context) => Parse(context);
-
-        public UnixArgumentParserResult Parse(CommandContext context)
+        public ValueTask<ArgumentParserResult> ParseAsync(CommandContext context)
         {
             var state = UnixParserState.Neutral;
             var parameters = new Dictionary<Parameter, object>();

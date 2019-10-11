@@ -28,7 +28,7 @@ namespace Abyss.Core.Parsers.UnixArguments
         internal static UnixArgumentParserResult TooFewArguments(CommandContext context, IReadOnlyDictionary<Parameter, object> arguments, Parameter expectedParameter)
         {
             return new UnixArgumentParserResult(context, arguments, UnixArgumentParseFailure.TooFewArguments,
-                $"A parameter of name \"{expectedParameter.Name}\" is missing.", -1, expectedParameter);
+                $"A parameter of name \"{expectedParameter.Name}\" is missing.", null, expectedParameter);
         }
 
         internal static UnixArgumentParserResult Successful(CommandContext context, IReadOnlyDictionary<Parameter, object> arguments)
@@ -36,7 +36,7 @@ namespace Abyss.Core.Parsers.UnixArguments
             return new UnixArgumentParserResult(context, arguments);
         }
 
-        private UnixArgumentParserResult(CommandContext context, IReadOnlyDictionary<Parameter, object> arguments, UnixArgumentParseFailure failure, string reason, int position, Parameter? parameter = null) : base(arguments)
+        private UnixArgumentParserResult(CommandContext context, IReadOnlyDictionary<Parameter, object> arguments, UnixArgumentParseFailure failure, string reason, int? position, Parameter? parameter = null) : base(arguments)
         {
             _reason = reason;
             ParseFailure = failure;
@@ -59,7 +59,7 @@ namespace Abyss.Core.Parsers.UnixArguments
         public override bool IsSuccessful { get; }
 
         /// <summary>
-        ///     The context that the parse failed on.
+        ///     The context of this parse.
         /// </summary>
         public CommandContext Context { get; }
 
@@ -71,7 +71,7 @@ namespace Abyss.Core.Parsers.UnixArguments
         /// <summary>
         ///     The error that occurred during parsing. This will be null if <see cref="IsSuccessful"/> is true.
         /// </summary>
-        public UnixArgumentParseFailure ParseFailure { get; }
+        public UnixArgumentParseFailure? ParseFailure { get; }
 
         /// <summary>
         ///     The expected parameter. This will always be null, unless <see cref="ParseFailure"/> is <see cref="UnixArgumentParseFailure.TooFewArguments"/>.
@@ -79,12 +79,12 @@ namespace Abyss.Core.Parsers.UnixArguments
         public Parameter? Expected { get; }
 
         /// <summary>
-        ///     The position at which the parsing error occurred. This will be -1 if the <see cref="ParseFailure"/> is <see cref="UnixArgumentParseFailure.TooFewArguments"/>, or <seealso cref="IsSuccessful"/> is true.
+        ///     The position at which the parsing error occurred. This will be null if the <see cref="ParseFailure"/> is <see cref="UnixArgumentParseFailure.TooFewArguments"/>, or <seealso cref="IsSuccessful"/> is true.
         /// </summary>
-        public int Position { get; }
+        public int? Position { get; }
 
         /// <inheritdoc />
-        public override string GetFailureReason() => _reason!;
+        public override string Reason => _reason!;
     }
 
     public enum UnixArgumentParseFailure
