@@ -33,6 +33,6 @@ Make sure Docker and Docker Compose is installed, then:
 ```
 2) Rebuild and recreate with Docker Compose:
 ```bash
-docker-compose up --build -d
+docker-compose up --build -d --force-recreate
 ```
 3) Abyss should now be updated and running!
