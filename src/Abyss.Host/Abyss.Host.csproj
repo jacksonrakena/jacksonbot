@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Abyss.Commands.Default\Abyss.Commands.Default.csproj" />
+    <ProjectReference Include="..\Abyss.Core\Abyss.Core.csproj" />
+    <ProjectReference Include="..\Abyss.Shared\Abyss.Shared.csproj" />
+  </ItemGroup>
+
+</Project>
