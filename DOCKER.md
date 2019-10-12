@@ -23,7 +23,7 @@ Make sure Docker and Docker Compose is installed, then:
 ```bash
 > docker-compose up --build -d
 ```
-4) Abyss should now be running!
+5) Abyss should now be running!
    
    
 ### Updating
