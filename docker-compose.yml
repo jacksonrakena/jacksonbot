@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+  app:
+    build: .
+    ports:
+    - "2110:2110"
+    container_name: abyss
+    volumes:
+    - type: bind
+      source: ./abyss-data
+      target: /data
