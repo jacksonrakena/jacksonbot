@@ -38,7 +38,7 @@ namespace Abyss.Core.Services
         public ServiceInfo GetServiceInfo()
         {
             var proc = Process.GetCurrentProcess();
-            return new ServiceInfo(_hostingEnvironment.ApplicationName, _hostingEnvironment.EnvironmentName, Process.GetCurrentProcess(),
+            return new ServiceInfo("Abyss", _hostingEnvironment.EnvironmentName, Process.GetCurrentProcess(),
                 _messageReceiver.CommandSuccesses, _messageReceiver.CommandFailures, _discord.Guilds.Count, _discord.Guilds.Select(a => a.MemberCount).Sum(),
                 _discord.Guilds.Select(a => a.TextChannels.Count + a.VoiceChannels.Count).Sum(), _commandService.GetAllModules().Count, _commandService.GetAllCommands().Count,
                 _hostingEnvironment.ContentRootPath, _discord.CurrentUser?.GetAvatarUrl(size: 2048), _discord.CurrentUser?.ToString());

@@ -11,14 +11,12 @@ namespace Abyss.Core.Services
     public class NotificationsService
     {
         private readonly AbyssConfigNotificationsSection? _notifyConfig;
-        private readonly IHostEnvironment _environment;
         private readonly DiscordSocketClient _client;
 
-        public NotificationsService(AbyssConfig config, DiscordSocketClient client, IHostEnvironment env)
+        public NotificationsService(AbyssConfig config, DiscordSocketClient client)
         {
             _notifyConfig = config.Notifications;
             _client = client;
-            _environment = env;
         }
 
         public async Task NotifyReadyAsync(bool firstTime = false)
@@ -35,7 +33,7 @@ namespace Abyss.Core.Services
                 .WithThumbnailUrl(_client.CurrentUser.GetEffectiveAvatarUrl(2048));
 
             await stc.SendMessageAsync(null, false, embed
-                .WithDescription($"{_environment.ApplicationName} instance {(firstTime ? "started and" : "")} ready at " + DateTime.Now.ToString("F") + ". Connected to " + _client.Guilds.Count + " guilds.")
+                .WithDescription($"Abyss instance {(firstTime ? "started and" : "")} ready at " + DateTime.Now.ToString("F") + ". Connected to " + _client.Guilds.Count + " guilds.")
                 .Build());
         }
 
@@ -48,7 +46,7 @@ namespace Abyss.Core.Services
 
             await stc.SendMessageAsync(null, false, new EmbedBuilder()
                     .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
-                    .WithDescription($"{_environment.ApplicationName} instance stopping at " + DateTime.Now.ToString("F"))
+                    .WithDescription($"Abyss instance stopping at " + DateTime.Now.ToString("F"))
                     .WithColor(BotService.DefaultEmbedColour)
                     .WithCurrentTimestamp()
                     .WithThumbnailUrl(_client.CurrentUser.GetEffectiveAvatarUrl(2048))
