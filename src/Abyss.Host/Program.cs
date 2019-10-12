@@ -29,7 +29,7 @@ namespace Abyss.Host
             return Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    config.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath);
+                    config.SetBasePath(dataRoot);
                     config.AddJsonFile("abyss.json", false, true);
                     config.AddJsonFile($"abyss.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true);
                 })
