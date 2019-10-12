@@ -3,7 +3,7 @@ Docker is a powerful containerization and orchestration platform that is heavily
 Abyss has a bundled Dockerfile that downloads and installs all the requirements it needs.    
   
 ### Creating a new deployment
-Make sure Docker is installed, then:
+Make sure Docker and Docker Compose is installed, then:
 1) Create a directory for Abyss to store it's configuration and data in:
 ```bash
 > mkdir abyss-data
@@ -14,21 +14,25 @@ Make sure Docker is installed, then:
 > nano abyss.json
 > cd ../
 ```
-3) Build the Docker image:
+3) Download Abyss source code:
 ```bash
-docker build --pull -t abyssalnz/abyss:latest github.com/abyssal/Abyss
+> git clone http://github.com/abyssal/Abyss.git
+> cd abyss
 ```
-4) Run the Docker container image, mounting the `abyss-data` directory as a Docker bind mount at `/data`.
+4) Start with Docker Compose:
 ```bash
-> docker run -d --name abyssconsole --mount type=bind,source="$(pwd)"/abyss-data,target=/data abyssalnz/abyss:latest
+> docker-compose up --build -d
 ```
-5) Abyss should now be running!
+4) Abyss should now be running!
    
    
 ### Updating
-1) Stop the container and remove the container and image:
+1) Update the source code:
 ```bash
-docker stop abyssconsole
-docker rm abyssconsole
+> git pull
 ```
-2) Follow steps 3 onwards in the new deployment guide above.
+2) Rebuild and recreate with Docker Compose:
+```bash
+docker-compose up --build -d
+```
+3) Abyss should now be updated and running!
