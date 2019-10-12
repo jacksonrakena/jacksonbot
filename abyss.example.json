@@ -1,5 +1,4 @@
 {
-  "Name": "Abyss",
   "CommandPrefix": "a.",
   "Startup": {
     "Activity": [ // Bot rotates through these every minute

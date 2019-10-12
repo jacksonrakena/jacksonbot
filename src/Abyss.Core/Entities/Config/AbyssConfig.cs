@@ -5,7 +5,6 @@ namespace Abyss.Core.Entities
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public class AbyssConfig
     {
-        //public string Name { get; set; }
         public string CommandPrefix { get; set; }
 
         public AbyssConfigStartupSection Startup { get; set; }

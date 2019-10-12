@@ -33,8 +33,8 @@ The project is broken down into the following projects:
 - `Abyss.Core` (library) The core of Abyss. This project contains the robust, fast, and safe architecture that sits at the heart of Abyss operation. It also contains all of the default commands that come with every instance.  
 - `Abyss.Shared` This library contains data classes and other shared components.
   
-**Console host**  
-- `Abyss.Console` This is an executable which wraps `Abyss.Core`, and pipes output to the console. This executable does not support web functionality.  
+**Web host**  
+- `Abyss.Host` This is the Abyss web server, which wraps `Abyss.Core` and provides web server functionality, as well as running the bot.  
   
 ### Copyright
 Copyright (c) 2019 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
