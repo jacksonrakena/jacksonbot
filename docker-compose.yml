@@ -7,5 +7,5 @@ services:
     container_name: abyss
     volumes:
     - type: bind
-      source: ./abyss-data
+      source: ~/abyss-data
       target: /data
