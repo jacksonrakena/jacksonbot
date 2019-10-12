@@ -35,7 +35,7 @@ namespace Abyss.Core.Services
                 .WithThumbnailUrl(_client.CurrentUser.GetEffectiveAvatarUrl(2048));
 
             await stc.SendMessageAsync(null, false, embed
-                .WithDescription($"Abyss instance {(firstTime ? "started and" : "")} ready at " + DateTime.Now.ToString("F") + ". Connected to " + _client.Guilds.Count + " guilds.")
+                .WithDescription($"{_environment.ApplicationName} instance {(firstTime ? "started and" : "")} ready at " + DateTime.Now.ToString("F") + ". Connected to " + _client.Guilds.Count + " guilds.")
                 .Build());
         }
 

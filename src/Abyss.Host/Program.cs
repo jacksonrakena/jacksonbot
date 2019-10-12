@@ -37,6 +37,11 @@ namespace Abyss.Host
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseSetting(WebHostDefaults.ApplicationKey, "Abyss");
+                    webBuilder.ConfigureKestrel(kestrel =>
+                    {
+                        kestrel.ListenAnyIP(2110);
+                    });
                     webBuilder.UseStartup<Startup>();
                 });
         }

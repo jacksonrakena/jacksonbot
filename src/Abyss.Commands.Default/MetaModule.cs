@@ -61,7 +61,7 @@ namespace Abyss.Commands.Default
                 Description = string.IsNullOrEmpty(app.Description) ? "None" : app.Description,
                 Author = new EmbedAuthorBuilder
                 {
-                    Name = $"Information about {_config.Name}",
+                    Name = $"Information about Abyss",
                     IconUrl = Context.Bot.GetEffectiveAvatarUrl()
                 }
             };

@@ -39,7 +39,7 @@ namespace Abyss.Console
                     serviceCollection.AddSingleton(abyssConfig);
 
                     // Application name
-                    hostBuildingContext.HostingEnvironment.ApplicationName = abyssConfig.Name;
+                    hostBuildingContext.HostingEnvironment.ApplicationName = "Abyss";
 
                     // Core services
                     serviceCollection.ConfigureSharedServices();

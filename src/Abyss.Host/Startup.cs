@@ -55,8 +55,7 @@ namespace Abyss.Host
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            env.ApplicationName = app.ApplicationServices.GetRequiredService<AbyssConfig>().Name;
-
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
