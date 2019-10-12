@@ -28,7 +28,6 @@ namespace Abyss.Hosting
             serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<NotificationsService>();
-            serviceCollection.AddSingleton<DataService>();
             serviceCollection.AddSingleton<MarketingService>();
 
             serviceCollection.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
