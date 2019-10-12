@@ -2,6 +2,8 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
 ARG Configuration=Release
 WORKDIR /build
 COPY . ./
+ENV ASPNETCORE_URLS=http://0.0.0.0:2110/
+EXPOSE 2110
 RUN dotnet restore src/Abyss.Host/Abyss.Host.csproj
 RUN dotnet build src/Abyss.Host/Abyss.Host.csproj -c $Configuration -o /app
 
