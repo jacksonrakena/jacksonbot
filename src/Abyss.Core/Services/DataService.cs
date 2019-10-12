@@ -15,16 +15,18 @@ namespace Abyss.Core.Services
         private readonly MessageReceiver _messageReceiver;
         private readonly ICommandService _commandService;
         private readonly DiscordSocketClient _discord;
+        private readonly string _dataRoot;
 
-        public DataService(IHostEnvironment hostingEnvironment, DiscordSocketClient client, MessageReceiver receiver, ICommandService commandService)
+        public DataService(string dataRoot, IHostEnvironment hostingEnvironment, DiscordSocketClient client, MessageReceiver receiver, ICommandService commandService)
         {
             _hostingEnvironment = hostingEnvironment;
             _messageReceiver = receiver;
             _commandService = commandService;
             _discord = client;
+            _dataRoot = dataRoot;
         }
 
-        public string GetBasePath() => _hostingEnvironment.ContentRootPath;
+        public string GetBasePath() => _dataRoot;
 
         // /Assets/ is packed with the application assembly
         public static string GetAssetLocation(string assetName)

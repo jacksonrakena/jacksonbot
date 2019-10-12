@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Abyss.Core.Services;
+using Discord.WebSocket;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Qmmands;
 
 namespace Abyss.Host
 {
@@ -20,15 +24,23 @@ namespace Abyss.Host
 
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
-            var contentRoot = args.Length > 0 ? args[0] : AppDomain.CurrentDomain.BaseDirectory;
+            var dataRoot = args.Length > 0 ? args[0] : AppDomain.CurrentDomain.BaseDirectory;
 
             return Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
-                .UseContentRoot(contentRoot)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath);
                     config.AddJsonFile("abyss.json", false, true);
                     config.AddJsonFile($"abyss.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true);
+                })
+                .ConfigureServices(serviceColl =>
+                {
+                    serviceColl.AddSingleton(provider =>
+                    {
+                        return new DataService(dataRoot, provider.GetRequiredService<IHostEnvironment>(),
+                            provider.GetRequiredService<DiscordSocketClient>(), provider.GetRequiredService<MessageReceiver>(),
+                            provider.GetRequiredService<ICommandService>());
+                    });
                 })
                 .ConfigureLogging((hostingContext, logging) =>
                 {
