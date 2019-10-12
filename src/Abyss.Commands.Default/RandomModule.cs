@@ -136,9 +136,7 @@ namespace Abyss.Commands.Default
         {
             private static readonly Regex NumberToken = new Regex("^[0-9]+$");
             private static readonly Regex DiceRollToken = new Regex("^([0-9]*)d([0-9]+|%)$");
-
             public static readonly DiceExpression Zero = new DiceExpression("0");
-
             private readonly List<KeyValuePair<int, IDiceExpressionNode>> _nodes =
                 new List<KeyValuePair<int, IDiceExpressionNode>>();
 
