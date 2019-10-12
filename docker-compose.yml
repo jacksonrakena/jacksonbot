@@ -1,4 +1,4 @@
-version: "3"
+version: 3.6
 services:
   app:
     build: .
@@ -6,6 +6,6 @@ services:
     - "2110:2110"
     container_name: abyss
     volumes:
-    - type: "bind"
+    - type: bind
       source: ./abyss-data
       target: /data
