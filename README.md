@@ -10,16 +10,17 @@ A **fully modular, expandable, open-source (for life)** Discord bot, written in 
 | a. | Abyssal | C#/.NET Core 3.0 | Discord.Net | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
   
 ### Features
-- Spotify track and album lookup (can also read from the current song you're listening to), powered by [AbyssalSpotify](http://github.com/abyssal/AbyssalSpotify)  
-- Resizing (bicubic) of emojis and custom images, both animated and not-animated  
-- Live C# script evaluation  
-- Dice rolling with custom expression support (e.g. `a.roll d20+d48+d10`)  
-- C a t commands  
-- General purpose command set
+- Spotify track and album lookup (can also read from the current song you're listening to), powered by [AbyssalSpotify](http://github.com/abyssal/AbyssalSpotify).
+- Resizing (bicubic) of emojis and custom images, both animated and not-animated.
+- Live C# script evaluation.
+- Dice rolling with custom expression support (e.g. `a.roll d20+d48+d10`).
+- C a t commands.
+- General purpose command set.
+- And much more.
 
   
 ### Requirements
-- It is heavily recommended to run Abyss on a Docker daemon running with Linux containers. Instructions for running with Docker are [here.](DOCKER.md) If you don't want to run on Docker, you're on your own.
+- It is heavily recommended to run Abyss on a Docker daemon running with Linux containers. Instructions for running with Docker are [here](DOCKER.md). If you don't want to run on Docker, you're on your own.
 - .NET Core 3.0 SDK for building (or Runtime for a pre-compiled version)
 - A Discord bot application with registered user and token
 - `Abyss.json` configuration file set out as below
