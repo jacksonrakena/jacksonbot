@@ -34,7 +34,7 @@ The project is broken down into the following projects:
 - `Abyss.Shared` This library contains data classes and other shared components.
   
 **Web host**  
-- `Abyss.Host` This is the Abyss web server, which wraps `Abyss.Core` and provides web server functionality, as well as running the bot.  
+- `Abyss.Hosts.Default` This is the Abyss web server, which wraps `Abyss.Core` and provides web server functionality, as well as running the bot.  
   
 ### Copyright
 Copyright (c) 2019 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  

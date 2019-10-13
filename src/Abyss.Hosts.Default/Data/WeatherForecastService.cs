@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Host.Data
+namespace Abyss.Hosts.Default.Data
 {
     public class WeatherForecastService
     {

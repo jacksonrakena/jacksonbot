@@ -9,13 +9,13 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Abyss.Host.Data;
-using Abyss.Hosting;
+using Abyss.Hosts.Default.Data;
 using Abyss.Core.Services;
 using System.Reflection;
 using Abyss.Core.Entities;
+using Abyss.Hosting;
 
-namespace Abyss.Host
+namespace Abyss.Hosts.Default
 {
     public class Startup
     {

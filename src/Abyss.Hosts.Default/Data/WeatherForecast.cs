@@ -1,6 +1,6 @@
 using System;
 
-namespace Abyss.Host.Data
+namespace Abyss.Hosts.Default.Data
 {
     public class WeatherForecast
     {

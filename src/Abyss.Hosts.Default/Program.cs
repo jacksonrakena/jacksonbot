@@ -13,7 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Qmmands;
 
-namespace Abyss.Host
+namespace Abyss.Hosts.Default
 {
     public class Program
     {
