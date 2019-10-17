@@ -17,7 +17,7 @@ namespace Abyss.Commands.Default
     [Name("Spotify")]
     [Description(
         "Commands that relate to Spotify, a digital music service that gives you access to millions of songs.")]
-    [Group("spotify")]
+    [Group("spotify", "spot", "sp")]
     public class SpotifyCommandGroup : AbyssModuleBase
     {
         public const string SpotifyIconUrl = "https://i.imgur.com/d7HQlA9.png";
