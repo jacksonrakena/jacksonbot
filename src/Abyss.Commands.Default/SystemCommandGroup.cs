@@ -21,22 +21,23 @@ using DescriptionAttribute = Qmmands.DescriptionAttribute;
 
 namespace Abyss.Commands.Default
 {
-    [Name("Owner")]
+    [Name("System")]
+    [Group("sys")]
     [Description("Provides commands for my creator.")]
     [RequireOwner]
-    public class OwnerModule : AbyssModuleBase
+    public class SystemCommandGroup : AbyssModuleBase
     {
-        private readonly ILogger<OwnerModule> _logger;
+        private readonly ILogger<SystemCommandGroup> _logger;
         private readonly ScriptingService _scripting;
 
-        public OwnerModule(ILogger<OwnerModule> logger,
+        public SystemCommandGroup(ILogger<SystemCommandGroup> logger,
             ScriptingService scripting)
         {
             _logger = logger;
             _scripting = scripting;
         }
 
-        [Command("ThrowException", "ThrowEx")]
+        [Command("throwex")]
         [Description("Throws a InvalidOperation .NET exception. For testing purposes.")]
         [Example("throwexception Meow.")]
         public Task<ActionResult> Command_ThrowExceptionAsync([Name("Message")] [Description("The message for the exception.")] [Remainder] string message = "Test exception.")
@@ -44,7 +45,7 @@ namespace Abyss.Commands.Default
             throw new InvalidOperationException(message);
         }
 
-        [Command("Handlebars", "Hb")]
+        [Command("hb")]
         [RunMode(RunMode.Parallel)]
         [Description("Evaluates and compiles a Handlebars template against the current execution context.")]
         [Example("hb {{Context.Client.CurrentUser}}")]
@@ -76,7 +77,7 @@ namespace Abyss.Commands.Default
             }
         }
 
-        [Command("Script", "Eval")]
+        [Command("eval")]
         [RunMode(RunMode.Parallel)]
         [Description("Evaluates a piece of C# code.")]
         [Example("script 1+1")]
@@ -210,7 +211,7 @@ namespace Abyss.Commands.Default
             return $"Ch {loc.SourceSpan.Start}-{loc.SourceSpan.End}";
         }
 
-        [Command("Inspect")]
+        [Command("inspect")]
         [RunMode(RunMode.Parallel)]
         [Example("inspect Context.User")]
         [Description("Evaluates and then inspects a type.")]
@@ -221,7 +222,7 @@ namespace Abyss.Commands.Default
             return Command_EvaluateAsync($"Inspect({evaluateScript})");
         }
 
-        [Command("Kill", "Die", "Stop", "Terminate", "Shutdown", "Shut", "Close")]
+        [Command("kill")]
         [Description("Stops the current bot process.")]
         [RunMode(RunMode.Parallel)]
         [Example("kill")]
@@ -238,12 +239,12 @@ namespace Abyss.Commands.Default
             return Empty();
         }
 
-        [Command("Edit")]
+        [Command("edit")]
         [Description("Edits a message that was sent by me.")]
         [Example("edit 562486465645510656 hello")]
         [RequireOwner]
         public async Task<ActionResult> Command_EditAsync([Name("Message")] [Description("The message to edit.")]
-            ulong messageId, [Name("New Content")] [Description("The new content of the message.")] string newContent)
+            ulong messageId, [Name("New Content")] [Description("The new content of the message.")] [Remainder] string newContent)
         {
             var channel = Context.Channel;
             var message = channel.GetCachedMessage(messageId) ?? await channel.GetMessageAsync(messageId);
@@ -252,7 +253,20 @@ namespace Abyss.Commands.Default
 
             try
             {
-                await msg.ModifyAsync(v => v.Content = newContent);
+                if (string.IsNullOrEmpty(message.Content))
+                {
+                    var embed = msg.Embeds.FirstOrDefault();
+                    if (embed != null && embed.Type == EmbedType.Rich)
+                    {
+                        var newEmbed = embed.ToEmbedBuilder();
+                        newEmbed.Description = newContent;
+                        await msg.ModifyAsync(v => v.Embed = newEmbed.Build());
+                    }
+                }
+                else
+                {
+                    await msg.ModifyAsync(v => v.Content = newContent);
+                }
                 return OkReaction();
             }
             catch (Exception)
@@ -261,7 +275,7 @@ namespace Abyss.Commands.Default
             }
         }
 
-        [Command("Exec")]
+        [Command("exec")]
         [Description("Executes an executable on the host platform.")]
         [RequireOwner]
         [RunMode(RunMode.Parallel)]

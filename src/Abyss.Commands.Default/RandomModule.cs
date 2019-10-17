@@ -29,9 +29,9 @@ namespace Abyss.Commands.Default
             _random = random;
         }
 
-        [Command("OTP", "Ship")]
+        [Command("otp")]
         [Example("otp")]
-        [Description("Ships two random members of this server.")]
+        [Description("One True Pairing: Ships two random members of this server.")]
         [RunMode(RunMode.Parallel)]
         public Task<ActionResult> Command_OtpAsync()
         {
@@ -55,7 +55,7 @@ namespace Abyss.Commands.Default
             }
         }
 
-        [Command("Roll", "Dice", "RollDice")]
+        [Command("roll", "dice")]
         [Example("roll d20+d18+4 5", "roll 6", "roll 300 2")]
         [Remarks("This command also supports complex dice types, like `d20+d18+4`.")]
         [Description("Rolls a dice of the supplied size.")]
@@ -91,9 +91,10 @@ namespace Abyss.Commands.Default
             }
         }
 
-        [Command("Is")]
+        [Command("is")]
         [Example("is @OtherUser lying to me?")]
         [Description("Determines if a user has a specific attribute.")]
+        [ResponseFormatOptions(ResponseFormatOptions.DontAttachTimestamp | ResponseFormatOptions.DontAttachFooter)]
         public Task<ActionResult> IsUserAsync(SocketGuildUser target, [Remainder] string attribute)
         {
             var @is = _random.Next(0, 2) == 1;
@@ -105,9 +106,10 @@ namespace Abyss.Commands.Default
             return Ok(response);
         }
 
-        [Command("Does")]
+        [Command("does")]
         [Example("does @ThisBot need more cats?")]
         [Description("Determines if a user does something, or has an attribute.")]
+        [ResponseFormatOptions(ResponseFormatOptions.DontAttachTimestamp | ResponseFormatOptions.DontAttachFooter)]
         public Task<ActionResult> DoesUserAsync(SocketGuildUser target, [Remainder] string attribute)
         {
             var does = _random.Next(0, 2) == 1;
@@ -119,9 +121,10 @@ namespace Abyss.Commands.Default
             return Ok(response);
         }
 
-        [Command("Choose", "Pick")]
+        [Command("choose")]
         [Example("choose \"Go to bed\" \"Keep watching TV\" \"Use this bot :)\"")]
         [Description("Picks an option out of a list.")]
+        [ResponseFormatOptions(ResponseFormatOptions.DontAttachTimestamp | ResponseFormatOptions.DontAttachFooter)]
         public Task<ActionResult> Command_PickOptionAsync(
             [Name("Options")] [Description("The options to choose from.")]
             params string[] options)

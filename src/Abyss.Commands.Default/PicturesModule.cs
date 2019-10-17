@@ -32,7 +32,7 @@ namespace Abyss.Commands.Default
             _httpApi = httpApi;
         }
 
-        [Command("Cat", "Meow")]
+        [Command("cat")]
         [Description("Meow.")]
         [Example("cat")]
         [AbyssCooldown(1, 5, CooldownMeasure.Seconds, CooldownType.User)]
@@ -43,7 +43,7 @@ namespace Abyss.Commands.Default
             return Image("Meow~!", url);
         }
 
-        [Command("Bigmoji", "BigEmoji")]
+        [Command("bigmoji")]
         [RunMode(RunMode.Parallel)]
         [Example("bigmoji :ablobcatparhteyboyes:", "bigmoji :apple:")]
         [Description("Shows an enlarged form of an emoji.")]
@@ -75,7 +75,7 @@ namespace Abyss.Commands.Default
             return Empty();
         }
 
-        [Command("Resize", "Upscale", "Downscale")]
+        [Command("resize")]
         [Description("Resizes an image from a URL to specified dimensions.")]
         [AbyssCooldown(1, 30, CooldownMeasure.Seconds, CooldownType.User)]
         [Example("resize https://i.imgur.com/N8VZJI1.jpg 250 250", "resize https://i.imgur.com/N8VZJI1.jpg 500 500")]

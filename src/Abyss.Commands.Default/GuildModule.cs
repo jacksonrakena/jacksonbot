@@ -24,15 +24,15 @@ namespace Abyss.Commands.Default
     [Description("Commands that help you interact with your server in useful and efficient ways.")]
     public class GuildModule : AbyssModuleBase
     {
-        [Command("Nickname", "SetNick", "SetNickname", "Nick")]
+        [Command("nickname", "nick")]
         [Description("Sets the current nickname for a user.")]
         [Remarks("You can provide `clear` to remove their current nickname (if any).")]
-        [Example("nickname @pyjamaclub BestPerson", "nick @pyjamaclub This Is The Best Person")]
+        [Example("nickname abyssal hello world", "nick abyssal clear")]
         [RequireBotPermission(GuildPermission.ChangeNickname)]
         [RequireUserPermission(GuildPermission.ChangeNickname)]
         public async Task<ActionResult> Command_SetNicknameAsync(
             [Name("Target")] [Description("The user you would like me to change username of.")] SocketGuildUser target,
-            [Description("The nickname to set to. `clear` to remove one (if set).")] [Name("Nickname")] [Remainder]
+            [Description("The nickname to set to. `clear` to remove one (if set).")] [Name("New Nickname")] [Remainder]
             string nickname)
         {
             if (nickname.Equals("clear", StringComparison.OrdinalIgnoreCase) && string.IsNullOrEmpty(target.Nickname))
@@ -56,7 +56,7 @@ namespace Abyss.Commands.Default
             }
         }
 
-        [Command("Server", "ServerInfo", "Guild", "GuildInfo")]
+        [Command("server", "serverinfo")]
         [Description("Grabs information around this server.")]
         [Example("server")]
         public Task<ActionResult> Command_GuildInfoAsync()
@@ -66,7 +66,7 @@ namespace Abyss.Commands.Default
                 Color = BotService.DefaultEmbedColour,
                 Author = new EmbedAuthorBuilder
                 {
-                    Name = "Information for server " + Context.Guild.Name,
+                    Name = "Server " + Context.Guild.Name,
                     IconUrl = Context.Guild.IconUrl
                 },
                 ThumbnailUrl = Context.Guild.IconUrl,
@@ -104,7 +104,7 @@ namespace Abyss.Commands.Default
             return Ok(embed);
         }
 
-        [Command("Colour", "Color")]
+        [Command("colour", "color")]
         [Description("Grabs the colour of a role.")]
         [RunMode(RunMode.Parallel)]
         [Example("color Admin", "color @Owner", "color 413956873256042496")]
@@ -128,9 +128,9 @@ namespace Abyss.Commands.Default
             return Empty();
         }
 
-        [Command("Colour", "Color")]
+        [Command("colour", "color")]
         [Description("Grabs the colour of a user.")]
-        [Example("color pyjamaclub", "color @OtherUser", "color 413956873256042496")]
+        [Example("color abyssal", "color @OtherUser", "color 413956873256042496")]
         [RunMode(RunMode.Parallel)]
         public Task<ActionResult> Command_GetColourFromUserAsync(
             [Name("User")] [Description("The user you wish to view the colour of.")] [Remainder]
@@ -142,13 +142,13 @@ namespace Abyss.Commands.Default
                 : Command_GetColourFromRoleAsync((SocketRole)r);
         }
 
-        [Command("Permissions", "Perms")]
+        [Command("permissions", "perms")]
         [Description("Shows a list of a user's current guild-level permissions.")]
-        [Example("permissions pyjamaclub", "perms @OtherUser", "perms 413956873256042496")]
+        [Example("permissions abyssal", "perms @OtherUser", "perms 413956873256042496")]
         public Task<ActionResult> Command_ShowPermissionsAsync(
             [Name("Target")]
             [Description("The user to get permissions for.")]
-            [DefaultValueDescription("The user who invoked this command.")]
+            [DefaultValueDescription("You.")]
             SocketGuildUser? user = null)
         {
             user ??= Context.Invoker; // Get the user (or the invoker, if none specified)
@@ -189,34 +189,10 @@ namespace Abyss.Commands.Default
             return Ok(embed);
         }
 
-        [Command("HasPerm")]
-        [Description("Checks if I have a permission accepted.")]
-        [Example("hasperm Manage Messages", "hasperm Ban Members")]
-        public Task<ActionResult> Command_HasPermissionAsync(
-            [Name("Permission")] [Remainder] [Description("The permission to check for.")]
-            string permission)
-        {
-            var guildPerms = Context.Guild.CurrentUser.GuildPermissions;
-            var props = guildPerms.GetType().GetProperties();
-
-            var boolProps = props.Where(a =>
-                a.PropertyType.IsAssignableFrom(typeof(bool))
-                && (a.Name.Equals(permission, StringComparison.OrdinalIgnoreCase)
-                 || a.Name.Humanize().Equals(permission, StringComparison.OrdinalIgnoreCase))).ToList();
-            /* Get a list of all properties of Boolean type and that match either the permission specified, or match it   when humanized */
-
-            if (boolProps.Count == 0) return BadRequest($"Unknown permission `{permission}` :(");
-
-            var perm = boolProps[0];
-            var name = perm.Name.Humanize();
-            var value = (bool)perm.GetValue(guildPerms)!;
-
-            return Ok(a => a.WithDescription($"I **{(value ? "do" : "do not")}** have permission `{name}`!"));
-        }
-
-        [Command("Tree", "ChannelTree", "Channels")]
+        [Command("tree", "channels")]
         [Description("Creates a tree of channels and categories in this server.")]
         [Example("tree")]
+        [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
         public Task<ActionResult> Command_CreateChannelTreeAsync()
         {
             var guild = Context.Guild;
@@ -225,15 +201,15 @@ namespace Abyss.Commands.Default
             var categories = new StringBuilder();
             var channelsProcessed = new List<ulong>();
 
-            foreach (var channel in guild.TextChannels.Where(c => c.CategoryId == null).Cast<SocketGuildChannel>().Concat(guild.VoiceChannels.Where(a => a.CategoryId == null)))
+            foreach (var channel in guild.TextChannels.Where(c => c.CategoryId == null).Cast<SocketGuildChannel>().Concat(guild.VoiceChannels.Where(a => a.CategoryId == null)).OrderBy(c => c.Position))
             {
                 uncategorized.AppendLine($"- {(channel is IVoiceChannel ? "" : "#")}{channel.Name} ({channel.Id})");
             }
             uncategorized.AppendLine();
-            foreach (var category in guild.CategoryChannels)
+            foreach (var category in guild.CategoryChannels.OrderBy(c => c.Position))
             {
-                var categoryBuilder = new StringBuilder().AppendLine($"**{category.Name}**");
-                foreach (var childChannel in category.Channels)
+                var categoryBuilder = new StringBuilder().AppendLine($"**{category.Name}** ({category.Id})");
+                foreach (var childChannel in category.Channels.OrderBy(c => c.Position))
                 {
                     categoryBuilder.AppendLine($"- {(childChannel is IVoiceChannel ? "" : "#")}{childChannel.Name} ({childChannel.Id})");
                 }
@@ -244,9 +220,10 @@ namespace Abyss.Commands.Default
             return Ok(res);
         }
 
-        [Command("AnalyzePermission", "AnalyzePerm", "Analyze")]
+        [Command("analyzeperm")]
         [Description("Analyzes a permission for a user, and sees which role grants or denies that permission to them.")]
         [Example("analyzeperm Abyssal Manage Messages")]
+        [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
         public Task<ActionResult> Command_AnalyzePermissionAsync(
             [Name("User")] [Description("The user to check for the specified permission.")]
             SocketGuildUser user,

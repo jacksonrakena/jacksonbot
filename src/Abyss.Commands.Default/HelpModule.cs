@@ -9,6 +9,7 @@ using Qmmands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Abyss.Commands.Default
@@ -26,89 +27,87 @@ namespace Abyss.Commands.Default
             _commandService = commandService;
         }
 
-        [Command("Help", "Commands")]
+        public async Task<ActionResult> CommandSubroutine_HelpQueryAsync(string query)
+        {
+            // Searching for command or module
+            var search = _commandService.FindCommands(query).ToList();
+            if (search.Count == 0)
+            {
+                // Searching for group
+                var group = _commandService.GetAllModules().Where(m => m.IsGroup()).Search(query);
+                if (group == null) return BadRequest($"No command or command group found for `{query}`.");
+
+                var embed0 = new EmbedBuilder
+                {
+                    Title = "Group information"
+                };
+
+                embed0.Description = $"{Format.Code(group.FullAliases.First())}: {group.Description ?? "No description provided."}";
+
+                if (group.FullAliases.Count > 1) embed0.AddField("Aliases", string.Join(", ", group.FullAliases.Select(c => Format.Code(c))));
+
+                var commands = new List<string>();
+                foreach (var command in group.Commands)
+                {
+                    if (await CanShowCommandAsync(command))
+                    {
+                        var format = FormatCommandShort(command);
+                        if (format != null) commands.Add(format);
+                    }
+                }
+                if (commands.Count != 0)
+                    embed0.AddField(new EmbedFieldBuilder().WithName("Subcommands").WithValue(string.Join(", ", commands)));
+
+                return Ok(embed0);
+            }
+
+            return Ok(await _help.CreateCommandEmbedAsync(search[0].Command, Context));
+        }
+
+        [Command("help", "commands")]
         [Description(
             "Retrieves a list of commands that you can use, or, if a command or module is provided, displays information on that command or module.")]
         [Example("help", "help ping", "help utility")]
+        [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
         public async Task<ActionResult> Command_ListCommandsAsync(
             [Name("Query")]
             [Description("The command or module to view, or nothing to see a list of commands.")]
             [Remainder]
             string? query = null)
         {
-            if (query != null)
-            {
-                // Searching for command or module
-                var search = _commandService.FindCommands(query).ToList();
-                if (search.Count == 0)
-                {
-                    // Searching for module
-                    var module = _commandService.GetAllModules().Search(query.Replace("\"", ""));
-                    if (module == null) return BadRequest($"No module or command found for `{query}`.");
-
-                    var embed0 = new EmbedBuilder
-                    {
-                        Timestamp = DateTimeOffset.Now,
-                        Color = BotService.DefaultEmbedColour,
-                        Title = $"Module '{module.Name}'"
-                    };
-
-                    if (!string.IsNullOrWhiteSpace(module.Description)) embed0.Description = module.Description;
-
-                    if (module.Parent != null) embed0.AddField("Parent", module.Parent.Aliases.FirstOrDefault());
-
-                    var commands = module.Commands.Where(a => !a.HasAttribute<HiddenAttribute>()).ToList();
-
-                    embed0.AddField("Commands",
-                        commands.Count > 0
-                            ? string.Join(", ", commands.Select(a => a.Aliases.FirstOrDefault())) + " (" +
-                              commands.Count + ")"
-                            : "None (all hidden)");
-
-                    return Ok(embed0);
-                }
-
-                foreach (var embed0 in await Task.WhenAll(search.Select(a =>
-                    _help.CreateCommandEmbedAsync(a.Command, Context))).ConfigureAwait(false))
-                {
-                    await Context.Channel.SendMessageAsync(string.Empty, false, embed0).ConfigureAwait(false);
-                }
-
-                return Empty();
-            }
+            if (query != null) return await CommandSubroutine_HelpQueryAsync(query);
 
             var prefix = Context.GetPrefix();
 
             var embed = new EmbedBuilder();
 
-            embed.WithAuthor(Context.BotUser);
+            embed.WithTitle("Help listing for " + Context.BotUser.Format());
 
             embed.WithDescription(
-                $"Use `{prefix}help <command>` for more details on a command.");
+                $"Listing all top-level commands and groups. Commands that are above your permission level are hidden. You can use `{prefix}help <command/group>` for more details on a command or group.");
 
-            embed.WithFooter(
-                $"You can use \"{prefix}help <command name>\" to see help on a specific command.",
-                Context.BotUser.GetAvatarUrl());
-
-            foreach (var module in _commandService.GetAllModules().Where(module =>
-                !module.HasAttribute<HiddenAttribute>()))
+            var commands = new List<string>();
+            foreach (var command in _commandService.GetAllCommands())
             {
-                var list = new List<string>();
-                var seenCommands = new List<string>();
-                foreach (var command in module.Commands.Where(command => !command.HasAttribute<HiddenAttribute>()))
+                if (!command.Module.IsGroup() && await CanShowCommandAsync(command))
                 {
-                    if (!await CanShowCommandAsync(command).ConfigureAwait(false)) continue;
-                    if (seenCommands.Contains(command.FullAliases[0])) continue;
-                    seenCommands.Add(command.FullAliases[0]);
-                    list.Add(FormatCommandShort(command));
-                }
-
-                if (list.Count > 0)
-                {
-                    embed.AddField(string.IsNullOrWhiteSpace(module.Name) ? "[Internal Error]" : module.Name,
-                       string.Join(", ", list), true);
+                    var format = FormatCommandShort(command);
+                    if (format != null) commands.Add(format);
                 }
             }
+            if (commands.Count != 0)
+                embed.AddField(new EmbedFieldBuilder().WithName("Commands").WithValue(string.Join(", ", commands)));
+
+            var groups = new List<string>();
+            foreach (var module in _commandService.GetAllModules().Where(m => m.IsGroup()))
+            {
+                if (await CanShowModuleAsync(module))
+                {
+                    groups.Add(Format.Code(module.FullAliases.First()));
+                }
+            }
+            if (groups.Count != 0)
+                embed.AddField(new EmbedFieldBuilder().WithName("Groups").WithValue(string.Join(", ", groups)));
 
             return Ok(embed);
         }
@@ -120,9 +119,17 @@ namespace Abyss.Commands.Default
             return !command.HasAttribute<HiddenAttribute>();
         }
 
-        private static string FormatCommandShort(Command command)
+        private async Task<bool> CanShowModuleAsync(Module module)
         {
-            return Format.Code(command.FullAliases.FirstOrDefault() ?? "[Error]");
+            if (!(await module.RunChecksAsync(Context).ConfigureAwait(false)).IsSuccessful)
+                return false;
+            return !module.HasAttribute<HiddenAttribute>();
+        }
+
+        private static string? FormatCommandShort(Command command)
+        {
+            var firstAlias = command.FullAliases.FirstOrDefault();
+            return firstAlias != null ? Format.Code(firstAlias) : null;
         }
     }
 }

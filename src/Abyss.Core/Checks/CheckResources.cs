@@ -7,7 +7,7 @@ namespace Abyss.Core.Checks
 {
     public static class CheckResources
     {
-        public static Predicate<Type> UserTypes = CreatePredicate(typeof(SocketGuildUser), typeof(SocketUser), typeof(DiscordUserReference));
+        public static Predicate<Type> UserTypes = CreatePredicate(typeof(SocketGuildUser), typeof(SocketUser), typeof(ulong));
         public static Predicate<Type> GuildUser = CreatePredicate<SocketGuildUser>();
 
         public static Predicate<Type> CreatePredicate(params Type[] t)

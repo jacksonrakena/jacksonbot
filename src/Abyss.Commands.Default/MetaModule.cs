@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 namespace Abyss.Commands.Default
 {
     [Name("Meta")]
+    [Group("meta")]
     [Description("Provides commands related to me.")]
     public class MetaModule : AbyssModuleBase
     {
@@ -36,16 +37,16 @@ namespace Abyss.Commands.Default
             _data = data;
         }
 
-        [Command("Uptime")]
-        [Example("uptime")]
+        [Command("uptime")]
+        [Example("meta uptime")]
         [Description("Displays the time that this bot process has been running.")]
         public Task<ActionResult> Command_GetUptimeAsync()
         {
             return Ok($"**Uptime:** {(DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize(20)}");
         }
 
-        [Command("Info", "Abyss", "About")]
-        [Example("info")]
+        [Command("info", "about")]
+        [Example("meta info")]
         [RunMode(RunMode.Parallel)]
         [Description("Shows some information about me.")]
         public async Task<ActionResult> Command_GetAbyssInfoAsync()
@@ -81,8 +82,8 @@ namespace Abyss.Commands.Default
             return Ok(response);
         }
 
-        [Command("Feedback", "Request")]
-        [Example("feedback Bot is great!", "feedback Add more cats!!!")]
+        [Command("feedback")]
+        [Example("meta feedback Bot is great!", "meta feedback Add more cats!!!")]
         [Description("Sends feedback to the developer.")]
         [AbyssCooldown(1, 24, CooldownMeasure.Hours, CooldownType.User)]
         public Task<ActionResult> Command_SendFeedbackAsync([Remainder] [Range(1, 500)] string feedback)
@@ -96,56 +97,16 @@ namespace Abyss.Commands.Default
             return Ok();
         }
 
-        [Command("Ping")]
-        [Description("Benchmarks the connection to the Discord servers.")]
-        [AbyssCooldown(1, 3, CooldownMeasure.Seconds, CooldownType.User)]
-        public async Task<ActionResult> Command_PingAsync()
-        {
-            if (!Context.BotUser.GetPermissions(Context.Channel).SendMessages) return Empty();
-            var sw = Stopwatch.StartNew();
-            var initial = await Context.Channel.SendMessageAsync("Pinging...").ConfigureAwait(false);
-            var restTime = sw.ElapsedMilliseconds.ToString();
-
-            Task Handler(SocketMessage msg)
-            {
-                if (msg.Id != initial.Id) return Task.CompletedTask;
-
-                var _ = initial.ModifyAsync(m =>
-                {
-                    var rtt = sw.ElapsedMilliseconds.ToString();
-                    Context.Client.MessageReceived -= Handler;
-                    m.Content = null;
-                    m.Embed = new EmbedBuilder()
-                        .WithAuthor("Results", Context.Bot.GetEffectiveAvatarUrl())
-                        .WithTimestamp(DateTime.Now)
-                        .WithDescription(new StringBuilder()
-                            .AppendLine($"**Heartbeat** {Context.Client.Latency}ms")
-                            .AppendLine($"**REST** {restTime}ms")
-                            .AppendLine($"**Round-trip** {rtt}ms")
-                            .ToString())
-                        .WithColor(Context.BotUser.GetHighestRoleColourOrDefault())
-                        .Build();
-                });
-                sw.Stop();
-
-                return Task.CompletedTask;
-            }
-
-            Context.Client.MessageReceived += Handler;
-
-            return Empty();
-        }
-
-        [Command("Prefix")]
-        [Example("prefix")]
+        [Command("prefix")]
+        [Example("meta prefix")]
         [Description("Shows the prefix.")]
         public Task<ActionResult> ViewPrefixesAsync()
         {
             return Text($"The prefix is `{Context.GetPrefix()}`, but you can invoke commands by mention as well, such as: \"{Context.BotUser.Mention} help\".");
         }
 
-        [Command("DevInfo")]
-        [Example("devinfo")]
+        [Command("devinfo")]
+        [Example("meta devinfo")]
         [Description(
             "Dumps current information about the client, the commands system and the current execution environment.")]
         [RequireOwner]
@@ -163,8 +124,33 @@ namespace Abyss.Commands.Default
             });
         }
 
-        [Command("Invite")]
-        [Example("invite")]
+        [Command("hasperm")]
+        [Description("Checks if I have a permission accepted.")]
+        [Example("hasperm Manage Messages", "hasperm Ban Members")]
+        public Task<ActionResult> Command_HasPermissionAsync(
+            [Name("Permission")] [Remainder] [Description("The permission to check for.")]
+            string permission)
+        {
+            var guildPerms = Context.Guild.CurrentUser.GuildPermissions;
+            var props = guildPerms.GetType().GetProperties();
+
+            var boolProps = props.Where(a =>
+                a.PropertyType.IsAssignableFrom(typeof(bool))
+                && (a.Name.Equals(permission, StringComparison.OrdinalIgnoreCase)
+                 || a.Name.Humanize().Equals(permission, StringComparison.OrdinalIgnoreCase))).ToList();
+            /* Get a list of all properties of Boolean type and that match either the permission specified, or match it   when humanized */
+
+            if (boolProps.Count == 0) return BadRequest($"Unknown permission `{permission}` :(");
+
+            var perm = boolProps[0];
+            var name = perm.Name.Humanize();
+            var value = (bool)perm.GetValue(guildPerms)!;
+
+            return Ok(a => a.WithDescription($"I **{(value ? "do" : "do not")}** have permission `{name}`!"));
+        }
+
+        [Command("invite")]
+        [Example("meta invite")]
         [Description("Creates an invite to add me to another server.")]
         public Task<ActionResult> Command_GetInviteAsync()
         {

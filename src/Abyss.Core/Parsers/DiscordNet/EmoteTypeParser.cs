@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Abyss.Core.Parsers.DiscordNet
 {
     [DiscoverableTypeParser]
-    public class DiscordEmoteTypeParser : AbyssTypeParser<IEmote>
+    public class EmoteTypeParser : AbyssTypeParser<IEmote>
     {
         public override ValueTask<TypeParserResult<IEmote>> ParseAsync(Parameter parameter, string value, CommandContext context)
         {

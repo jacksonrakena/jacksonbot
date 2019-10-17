@@ -15,16 +15,16 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Abyss.Core.Parsers.UnixArguments;
+using System.Text;
 
 namespace Abyss.Core.Services
 {
     public sealed class MessageReceiver
     {
-        public MessageReceiver(ICommandService commandService, HelpService help, ILoggerFactory logger,
+        public MessageReceiver(ICommandService commandService, ILoggerFactory logger,
             DiscordSocketClient discordClient, AbyssConfig config, IServiceProvider services)
         {
             _commandService = commandService;
-            _helpService = help;
             _successfulCommandsTracking = logger.CreateLogger("Successful Commands Tracking");
             _failedCommandsTracking = logger.CreateLogger("Failed Commands Tracking");
             _discordClient = discordClient;
@@ -47,7 +47,6 @@ namespace Abyss.Core.Services
 
         private readonly ICommandService _commandService;
         private readonly IServiceProvider _services;
-        private readonly HelpService _helpService;
         private readonly DiscordSocketClient _discordClient;
         private readonly AbyssConfig _config;
 
@@ -61,9 +60,6 @@ namespace Abyss.Core.Services
 
             if (!(message.Channel is SocketGuildChannel))
             {
-                await message.Channel.TrySendMessageAsync(
-                        "Sorry, but I can only respond to commands in servers. Please try using your command in any of the servers that I share with you!")
-                    .ConfigureAwait(false);
                 _failedCommandsTracking.LogInformation(LoggingEventIds.UserDirectMessaged, $"Received direct message from {message.Author}, ignoring.");
                 return;
             }
@@ -91,27 +87,26 @@ namespace Abyss.Core.Services
                 switch (result)
                 {
                     case CommandResult _:
+                    case ExecutionFailedResult _:
                         return;
 
                     case CommandNotFoundResult cnfr:
                         _failedCommandsTracking.LogInformation(LoggingEventIds.UnknownCommand, $"No command found matching {requestString}.");
                         break;
 
-                    case ExecutionFailedResult _:
-                        return;
-
                     case ChecksFailedResult cfr:
                         _failedCommandsTracking.LogInformation(LoggingEventIds.ChecksFailed, $"{cfr.FailedChecks.Count} checks failed for {(cfr.Command == null ? "Module " + cfr.Module.Name : "Command " + cfr.Command.Name)}.)");
 
-                        if (cfr.FailedChecks.Count == 1 && cfr.FailedChecks.FirstOrDefault().Check.GetType()
-                                .CustomAttributes.Any(a => a.AttributeType == typeof(SilentCheckAttribute))) break;
+                        var silentCheckType = typeof(SilentCheckAttribute);
+                        var checks = cfr.FailedChecks.Where(check => check.Check.GetType().CustomAttributes.Any(a => a.AttributeType != typeof(SilentCheckAttribute))).ToList();
+
+                        if (checks.Count == 0) break;
 
                         await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
                             .WithTitle(
                                 $"No can do.")
                             .WithDescription("Can't do that, because: \n" + string.Join("\n",
-                                cfr.FailedChecks.Where(a => a.Check.GetType().CustomAttributes.All(b => b.AttributeType != typeof(SilentCheckAttribute)))
-                                    .Select(a => $"- {a.Result.Reason}")))
+                                checks.Select(a => $"{(checks.Count == 1 ? "" : "- ")}{a.Result.Reason}")))
                             .WithColor(Color.Red)
                             .WithFooter(
                                 $"{(cfr.Command == null ? $"Module {cfr.Module.Name}" : $"Command {cfr.Command.Name} in module {cfr.Command.Module.Name}")}, " +
@@ -124,12 +119,16 @@ namespace Abyss.Core.Services
                         _failedCommandsTracking.LogInformation(LoggingEventIds.ParameterChecksFailed, 
                             $"{pcfr.FailedChecks.Count} parameter checks on {pcfr.Parameter.Name} ({string.Join(", ", pcfr.FailedChecks.Select(c => c.Check.GetType().Name))}) failed for command {pcfr.Parameter.Command.Name}.");
 
+                        var silentCheckType0 = typeof(SilentCheckAttribute);
+                        var pchecks = pcfr.FailedChecks.Where(check => check.Check.GetType().CustomAttributes.Any(a => a.AttributeType != typeof(SilentCheckAttribute))).ToList();
+
+                        if (pchecks.Count == 0) break;
+
                         await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
                             .WithTitle(
                                 $"No can do.")
                             .WithDescription(string.Join("\n",
-                                pcfr.FailedChecks.Where(a => a.Check.GetType().CustomAttributes.All(b => b.AttributeType != typeof(SilentCheckAttribute)))
-                                    .Select(a => $"{(pcfr.FailedChecks.Count == 1 ? "" : "- ")}{a.Result.Reason}")))
+                                pchecks.Select(a => $"{(pchecks.Count == 1 ? "" : "- ")}{a.Result.Reason}")))
                             .WithColor(Color.Red)
                             .WithFooter(
                                 $"Parameter {pcfr.Parameter.Name} in command {pcfr.Parameter.Command.Name} (module {pcfr.Parameter.Command.Module.Name}), executed by {context.Invoker.Format()}")
@@ -153,43 +152,22 @@ namespace Abyss.Core.Services
                             $"I couldn't read whatever you just said: {upfr.ParseFailure.Humanize()}.").ConfigureAwait(false);
                         break;
                     case TypeParseFailedResult tpfr:
-
                         _failedCommandsTracking.LogInformation(LoggingEventIds.TypeParserFailed, $"Failed to parse type {tpfr.Parameter.Type.Name} in command {tpfr.Parameter.Command.Name}.");
 
-                        await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
-                            .WithAuthor("I don't understand what you just said.", context.Bot.GetEffectiveAvatarUrl())
-                            .WithDescription(tpfr.Reason)
-                            .WithColor(Color.Red)
-                            .AddField("Expected", _helpService.GetFriendlyName(tpfr.Parameter))
-                            .AddField("Received", tpfr.Value)
-                            .AddField("\u200b",
-                                $"Try using {context.GetPrefix()}help {tpfr.Parameter.Command.Name} for more information on this command and it's parameters.")
-                            .WithCurrentTimestamp()
-                            .WithFooter(
-                                $"Parameter {tpfr.Parameter.Name} in command {tpfr.Parameter.Command.Name} (module {tpfr.Parameter.Command.Module.Name}), executed by {context.Invoker.Format()}")
-                            .Build()).ConfigureAwait(false);
+                        var sb = new StringBuilder().AppendLine(tpfr.Reason);
+                        sb.AppendLine();
+                        sb.AppendLine($"**Expected:** {HelpService.GetFriendlyName(tpfr.Parameter, tpfr.Parameter.Service)}");
+                        sb.AppendLine($"**Received:** {tpfr.Value}");
+                        sb.AppendLine($"Try using {context.GetPrefix()}help {tpfr.Parameter.Command.Name} for help on this command.");
+
+                        await context.Channel.SendMessageAsync(sb.ToString()).ConfigureAwait(false);
                         break;
 
                     case CommandOnCooldownResult cdr:
-                        var cooldowns = new List<string>();
-
-                        foreach (var (cooldown, retryAfter) in cdr.Cooldowns)
-                        {
-                            var bucketType = ((CooldownType) cooldown.BucketType).GetPerName();
-
-                            await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
-                                .WithColor(Color.Red)
-                                .WithTitle(
-                                    $"Slow down, bucko. (Cooldown)")
-                                .AddField("Rate Limit", $"{cooldown.Amount} run{(cooldown.Amount == 1 ? "" : "s")} / {cooldown.Per.Humanize(20)}",
-                                    true)
-                                .AddField("Try Again In", retryAfter.Humanize(20), true)
-                                .AddField("Type", bucketType)
-                                .WithFooter($"Command {cdr.Command.Name} (module {cdr.Command.Module.Name}), executed by {context.Invoker.Format()}")
-                                .Build()).ConfigureAwait(false);
-                            cooldowns.Add($"({bucketType}-{cooldown.Amount}/{cooldown.Per.Humanize(20)})");
-                        }
                         _failedCommandsTracking.LogInformation($"Cooldown(s) activated for command {cdr.Command.Name}");
+
+                        await context.Channel.SendMessageAsync($"Cooldown(s) activated for command {cdr.Command.Name}. " +
+                            $"Try again in {cdr.Cooldowns.Select(a => a.RetryAfter).OrderByDescending(c => c.TotalSeconds).First().Humanize(20, maxUnit: Humanizer.Localisation.TimeUnit.Hour)}.");
                         break;
 
                     case OverloadsFailedResult ofr:
@@ -231,7 +209,7 @@ namespace Abyss.Core.Services
             var embed = new EmbedBuilder
             {
                 Color = Color.Red,
-                Title = "Hands down, this is the WORST. DAY. EVER. (Internal error)",
+                Title = "Internal error",
                 Description = reason,
                 ThumbnailUrl = context.Bot.GetEffectiveAvatarUrl(),
                 Fields = new List<EmbedFieldBuilder>

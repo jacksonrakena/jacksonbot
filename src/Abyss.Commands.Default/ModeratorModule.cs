@@ -19,26 +19,27 @@ namespace Abyss.Commands.Default
 {
     [Name("Moderation")]
     [Description("Commands that help you moderate and protect your server.")]
+    [Group("mod")]
     public class ModeratorModule : AbyssModuleBase
     {
-        [Command("Ban", "B")]
+        [Command("ban")]
         [Description("Bans a member from this server.")]
         [Example("ban pyjamaclub Being stupid.", "ban \"The Mightiest One\" Breaking rule 5.", "ban pyjamaclub")]
         [RequireUserPermission(GuildPermission.BanMembers)]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<ActionResult> BanUserAsync(
             [Name("Victim")] [Description("The user to ban.")] [MustNotBeBot] [MustNotBeInvoker]
-            DiscordUserReference target,
+            ulong target,
             [Name("Ban Reason")] [Description("The audit log reason for the ban.")] [Remainder] [Maximum(50)]
             string? reason = null)
         {
-            var guildUser = Context.Guild.GetUser(target.Id);
+            var guildUser = Context.Guild.GetUser(target);
             if (guildUser != null && guildUser.Hierarchy > Context.Invoker.Hierarchy)
                 return BadRequest("That member is a higher rank than you!");
 
             try
             {
-                await Context.Guild.AddBanAsync(target.Id, 7, $"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : "")}");
+                await Context.Guild.AddBanAsync(target, 7, $"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : "")}");
             }
             catch (HttpException e) when (e.HttpCode == HttpStatusCode.Forbidden)
             {
@@ -47,10 +48,10 @@ namespace Abyss.Commands.Default
             }
 
             return Ok(
-                $"Banned user {target.Id}{(reason != null ? " with reason: " + reason : "")}.");
+                $"Banned user {guildUser?.ToString() ?? target.ToString()}{(reason != null ? " with reason: " + reason : "")}.");
         }
 
-        [Command("Bans")]
+        [Command("bans")]
         [Example("bans")]
         [Description("Shows a list of all users banned in this server.")]
         [RequireBotPermission(GuildPermission.BanMembers)]
@@ -68,7 +69,7 @@ namespace Abyss.Commands.Default
             });
         }
 
-        [Command("Purge", "Clear")]
+        [Command("purge")]
         [Description("Clears a number of messages from a source message, in a certain direction.")]
         [Example("purge --user 255950165200994307 --count 50")]
         [RequireUserPermission(ChannelPermission.ManageMessages)]
@@ -78,7 +79,7 @@ namespace Abyss.Commands.Default
             [Name("Count")] [Description("The number of messages to delete.")] [Range(1, 100, true, true)]
             int count = 100,
             [Name("User")] [Description("The user to target.")]
-            DiscordUserReference? user = null,
+            ulong? user = null,
             [Name("Channel")] [Description("The channel to target.")]
             SocketTextChannel? channel = null,
             [Name("Embeds")] [Description("Whether to only delete messages with embeds in them.")]
@@ -104,7 +105,7 @@ namespace Abyss.Commands.Default
                 .Where(m =>
                 {
                     var pass = m is IUserMessage && (DateTimeOffset.UtcNow - m.Timestamp).TotalDays < 14;
-                    if (user != null && m.Author.Id != user.Id) pass = false;
+                    if (user != null && m.Author.Id != user) pass = false;
                     if (embeds && !string.IsNullOrWhiteSpace(m.Content)) pass = false;
                     if (botsOnly && !m.Author.IsBot) pass = false;
 

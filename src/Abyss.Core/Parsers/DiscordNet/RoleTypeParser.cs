@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Abyss.Core.Parsers.DiscordNet
 {
     [DiscoverableTypeParser]
-    public class DiscordRoleTypeParser : AbyssTypeParser<SocketRole>
+    public class RoleTypeParser : AbyssTypeParser<SocketRole>
     {
         public override ValueTask<TypeParserResult<SocketRole>> ParseAsync(Parameter parameter, string value, CommandContext context)
         {
@@ -21,17 +21,17 @@ namespace Abyss.Core.Parsers.DiscordNet
                 return new TypeParserResult<SocketRole>("Not applicable in a DM.");
             var roles = abyssContext.Guild.Roles;
 
-            if (MentionUtils.TryParseRole(value, out var id))
-                return new TypeParserResult<SocketRole>(abyssContext.Guild.GetRole(id));
+            if (ulong.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id) || MentionUtils.TryParseRole(value, out id))
+            {
+                var role = abyssContext.Guild.GetRole(id);
+                if (role != null) return new TypeParserResult<SocketRole>(role);
+                return new TypeParserResult<SocketRole>($"Can't find a role with ID {id}.");
+            }
 
-            if (ulong.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out id))
-                return new TypeParserResult<SocketRole>(abyssContext.Guild.GetRole(id));
+            var searchRole = roles.FirstOrDefault(x => x.Name.Equals(value, StringComparison.OrdinalIgnoreCase));
+            if (searchRole != null) return new TypeParserResult<SocketRole>(searchRole);
 
-            //By Name (0.7-0.8)
-            foreach (var role in roles.Where(x => string.Equals(value, x.Name, StringComparison.OrdinalIgnoreCase)))
-                return new TypeParserResult<SocketRole>(role);
-
-            return new TypeParserResult<SocketRole>("Role not found.");
+            return new TypeParserResult<SocketRole>($"Can't find a role with name {value}.");
         }
 
         public (string, string, string?) FriendlyName => ("A server role, by ID, mention or name.", "A list of specific roles.", null);

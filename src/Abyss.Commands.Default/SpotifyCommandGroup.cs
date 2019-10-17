@@ -17,18 +17,19 @@ namespace Abyss.Commands.Default
     [Name("Spotify")]
     [Description(
         "Commands that relate to Spotify, a digital music service that gives you access to millions of songs.")]
-    public class SpotifyModule : AbyssModuleBase
+    [Group("spotify")]
+    public class SpotifyCommandGroup : AbyssModuleBase
     {
         public const string SpotifyIconUrl = "https://i.imgur.com/d7HQlA9.png";
 
         private readonly SpotifyClient _spotify;
 
-        public SpotifyModule(SpotifyClient spotify)
+        public SpotifyCommandGroup(SpotifyClient spotify)
         {
             _spotify = spotify;
         }
 
-        [Command("Track", "Song")]
+        [Command("track")]
         [Description("Searches the Spotify database for a song.")]
         [Example("track", "track Love Myself", "track Despacito")]
         [Thumbnail(SpotifyIconUrl)]
@@ -58,28 +59,7 @@ namespace Abyss.Commands.Default
             return Ok(CreateTrackEmbed(track));
         }
 
-        [Command("Spotify")]
-        [Description("Retrieves information about a user's Spotify status, if any.")]
-        [Example("spotify", "spotify @pyjamaclub", "spotify smartusername")]
-        [Thumbnail(SpotifyIconUrl)]
-        [RunMode(RunMode.Parallel)]
-        public async Task<ActionResult> Command_GetSpotifyDataAsync(
-            [Name("User")]
-            [Description("The user to get Spotify data for.")]
-            [DefaultValueDescription("The user who invoked this command.")]
-            [Remainder]
-            SocketGuildUser? user = null)
-        {
-            user ??= Context.Invoker;
-
-            if (user.Activity == null || !(user.Activity is SpotifyGame spotify))
-                return BadRequest("User is not listening to anything~!");
-
-            var track = await _spotify.GetTrackAsync(spotify.TrackId).ConfigureAwait(false);
-            return Ok(CreateTrackEmbed(track));
-        }
-
-        [Command("Album")]
+        [Command("album")]
         [Description("Searches the Spotify database for an album.")]
         [Example("album Pray For The Wicked", "album HAIZ", "album In Our Bones")]
         [Thumbnail(SpotifyIconUrl)]

@@ -22,7 +22,7 @@ namespace Abyss.Core.Services
     {
         private readonly ICommandService _commandService;
         private readonly AbyssConfig _config;
-        private readonly MethodInfo _getTypeParserMethod = typeof(ICommandService).GetMethod("GetTypeParser") ?? throw new Exception("Cannot find method GetTypeParser on ICommandService. Check dependency versions.");
+        private static readonly MethodInfo _getTypeParserMethod = typeof(ICommandService).GetMethod("GetTypeParser") ?? throw new Exception("Cannot find method GetTypeParser on ICommandService. Check dependency versions.");
 
         public HelpService(ICommandService service, AbyssConfig config)
         {
@@ -40,7 +40,9 @@ namespace Abyss.Core.Services
                     [typeof(ulong)] = ("A Discord ID.", "A list of Discord IDs.", null),
                 }.ToImmutableDictionary();
 
-        public string GetFriendlyName(Parameter info)
+        public ICommandService CommandService => _commandService;
+
+        public static string GetFriendlyName(Parameter info, CommandService commandService)
         {
             var type = Nullable.GetUnderlyingType(info.Type) ?? info.Type;
 
@@ -58,7 +60,7 @@ namespace Abyss.Core.Services
             else
             {
                 var rawParserObject = _getTypeParserMethod.MakeGenericMethod(type)
-                    .Invoke(_commandService, new object[] { type.IsPrimitive });
+                    .Invoke(commandService, new object[] { type.IsPrimitive });
                 if (rawParserObject != null)
                 {
                     var parserType = rawParserObject.GetType();
@@ -81,24 +83,16 @@ namespace Abyss.Core.Services
             return type.Name;
         }
 
-        public async Task<Embed> CreateCommandEmbedAsync(Command command, AbyssRequestContext context)
+        public async Task<EmbedBuilder> CreateCommandEmbedAsync(Command command, AbyssRequestContext context)
         {
             var prefix = context.GetPrefix();
 
             var embed = new EmbedBuilder
             {
-                Title = $"Command '{command.Name}' (in Module '{command.Module.Name}')",
-                Color = context.Invoker.GetHighestRoleColourOrDefault(),
-                Description = string.IsNullOrEmpty(command.Description) ? "None" : command.Description,
-                Timestamp = DateTimeOffset.Now
+                Title = $"Command information",
+                Description = $"{Format.Code(command.FullAliases.First())}: {command.Description ?? "No description provided."}"
             };
-
-            // Check for group
-            if ((command.Name == command.Module.Name && command.Module.Commands.Count > 1) || command.HasAttribute<IsRootAttribute>())
-            {
-                var commands = command.Module.Commands.Where(c => c.FullAliases[0] != command.Name).Select(c => Format.Code(c.FullAliases[0]));
-                embed.AddField("Subcommands", string.Join(", ", commands));
-            }
+            if (command.Remarks != null) embed.Description += " " + command.Remarks;
 
             if (command.FullAliases.Count > 1)
                 embed.AddField("Aliases", string.Join(", ", command.FullAliases.Skip(1)), true);
@@ -108,8 +102,6 @@ namespace Abyss.Core.Services
                 embed.AddField("Parameters",
                    string.Join("\n", command.Parameters.Select((p, i) => $"**{i + 1})** {FormatParameter(context, p)}")));
             }
-
-            if (command.Remarks != null) embed.AddField("Remarks", command.Remarks);
 
             if (command.HasAttribute<ExampleAttribute>(out var example) && example!.ExampleUsage.Length > 0)
             {
@@ -136,12 +128,12 @@ namespace Abyss.Core.Services
             if (command.Parameters.Count != 0) embed.WithFooter("You can use quotes to encapsulate inputs that are more than one word long.",
                 context.Bot.GetEffectiveAvatarUrl());
 
-            if (!command.HasAttribute<ThumbnailAttribute>(out var imageUrlAttribute)) return embed.Build();
+            if (!command.HasAttribute<ThumbnailAttribute>(out var imageUrlAttribute)) return embed;
             embed.Author = new EmbedAuthorBuilder().WithName($"Command {command.Aliases.FirstOrDefault()}")
                 .WithIconUrl(imageUrlAttribute!.ImageUrl);
             embed.Title = null;
 
-            return embed.Build();
+            return embed;
         }
 
         private async Task<string> FormatCheck(CheckAttribute cba, AbyssRequestContext context)
@@ -157,7 +149,7 @@ namespace Abyss.Core.Services
 
         private string FormatParameter(AbyssRequestContext ctx, Parameter parameterInfo)
         {
-            var type = GetFriendlyName(parameterInfo);
+            var type = GetFriendlyName(parameterInfo, ctx.Command.Service);
 
             return
                 $"`{parameterInfo.Name}`: {type}{(parameterInfo.IsOptional ? " Optional." : "")}{FormatParameterTags(ctx, parameterInfo)}";

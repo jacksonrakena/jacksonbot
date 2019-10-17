@@ -5,9 +5,12 @@ using Abyss.Core.Extensions;
 using Abyss.Core.Helpers;
 using Abyss.Core.Results;
 using Discord;
+using Discord.WebSocket;
 using Qmmands;
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Abyss.Commands.Default
@@ -16,7 +19,47 @@ namespace Abyss.Commands.Default
     [Description("Commands that provide useful utilities.")]
     public class UtilityModule : AbyssModuleBase
     {
-        [Command("Echo")]
+        [Command("ping")]
+        [Description("Benchmarks the connection to the Discord servers.")]
+        [AbyssCooldown(1, 3, CooldownMeasure.Seconds, CooldownType.User)]
+        public async Task<ActionResult> Command_PingAsync()
+        {
+            if (!Context.BotUser.GetPermissions(Context.Channel).SendMessages) return Empty();
+            var sw = Stopwatch.StartNew();
+            var initial = await Context.Channel.SendMessageAsync("Pinging...").ConfigureAwait(false);
+            var restTime = sw.ElapsedMilliseconds.ToString();
+
+            Task Handler(SocketMessage msg)
+            {
+                if (msg.Id != initial.Id) return Task.CompletedTask;
+
+                var _ = initial.ModifyAsync(m =>
+                {
+                    var rtt = sw.ElapsedMilliseconds.ToString();
+                    Context.Client.MessageReceived -= Handler;
+                    m.Content = null;
+                    m.Embed = new EmbedBuilder()
+                        .WithAuthor("Results", Context.Bot.GetEffectiveAvatarUrl())
+                        .WithTimestamp(DateTime.Now)
+                        .WithDescription(new StringBuilder()
+                            .AppendLine($"**Heartbeat** {Context.Client.Latency}ms")
+                            .AppendLine($"**REST** {restTime}ms")
+                            .AppendLine($"**Round-trip** {rtt}ms")
+                            .ToString())
+                        .WithColor(Context.BotUser.GetHighestRoleColourOrDefault())
+                        .Build();
+                });
+                sw.Stop();
+
+                return Task.CompletedTask;
+            }
+
+            Context.Client.MessageReceived += Handler;
+
+            return Empty();
+        }
+
+        [Command("echo")]
         [Description("Echoes the input text.")]
         [Example("echo THIS IS THE BEST BOT!")]
         [ResponseFormatOptions(ResponseFormatOptions.DontEmbed | ResponseFormatOptions.DontAttachFooter
@@ -28,7 +71,7 @@ namespace Abyss.Commands.Default
                 : $"{Context.Invoker}: {echocontent}");
         }
 
-        [Command("Echod")]
+        [Command("echod")]
         [Description("Attempts to delete the source message, and then echoes the input text.")]
         [Example("echod THIS IS THE BEST BOT!")]
         [ResponseFormatOptions(ResponseFormatOptions.DontEmbed)]
@@ -39,7 +82,7 @@ namespace Abyss.Commands.Default
                 : $"{Context.Invoker}: {echocontent}") : Empty();
         }
 
-        [Command("Delete")]
+        [Command("delete")]
         [Description("Deletes a message by ID.")]
         [RequireUserPermission(ChannelPermission.ManageMessages)]
         [RequireBotPermission(ChannelPermission.ManageMessages)]
@@ -59,7 +102,7 @@ namespace Abyss.Commands.Default
             else return BadRequest("Failed to delete message.");
         }
 
-        [Command("Quote")]
+        [Command("quote")]
         [Description("Quotes a message sent by a user.")]
         [Example("quote 525827581371613184")]
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter)]

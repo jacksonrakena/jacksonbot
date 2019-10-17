@@ -32,13 +32,13 @@ namespace Abyss.Core.Entities
         {
             return type switch
             {
-                CooldownType.Server => "Per server",
+                CooldownType.Server => "per server",
 
-                CooldownType.Channel => "Per channel",
+                CooldownType.Channel => "per channel",
 
-                CooldownType.User => "Per user",
+                CooldownType.User => "per user",
 
-                CooldownType.Global => "Global",
+                CooldownType.Global => "for everyone",
 
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null),
             };
