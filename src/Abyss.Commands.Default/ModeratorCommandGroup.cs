@@ -24,7 +24,6 @@ namespace Abyss.Commands.Default
     {
         [Command("ban")]
         [Description("Bans a member from this server.")]
-        [Example("ban abyssal Being stupid.", "ban \"some user\" Breaking rule 5.", "ban abyssal")]
         [RequireUserPermission(GuildPermission.BanMembers)]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<ActionResult> BanUserAsync(
@@ -52,7 +51,6 @@ namespace Abyss.Commands.Default
 
         [Command("kick")]
         [Description("Kicks a member.")]
-        [Example("kick abyssal Loser.")]
         [RequireUserPermission(GuildPermission.KickMembers)]
         [RequireBotPermission(GuildPermission.KickMembers)]
         public async Task<ActionResult> Command_KickUserAsync(
@@ -69,7 +67,6 @@ namespace Abyss.Commands.Default
 
         [Command("hackban")]
         [Description("Bans a user who is not in this server.")]
-        [Example("hackban 255950165200994307 Being stupid.")]
         [RequireUserPermission(GuildPermission.BanMembers)]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<ActionResult> Command_HackBanUserAsync(
@@ -97,7 +94,6 @@ namespace Abyss.Commands.Default
         }
 
         [Command("bans")]
-        [Example("bans")]
         [Description("Shows a list of all users banned in this server.")]
         [RequireBotPermission(GuildPermission.BanMembers)]
         [RequireUserPermission(GuildPermission.BanMembers)]
@@ -116,7 +112,6 @@ namespace Abyss.Commands.Default
 
         [Command("softban")]
         [Description("Bans and then unbans a user from this server, effectively kicking them, but removes all their messages.")]
-        [Example("softban @user")]
         [RequireUserPermission(GuildPermission.KickMembers)]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<ActionResult> Command_SoftbanAsync([Name("Target")] [Description("The user to softban.")] [MustNotBeBot, MustNotBeInvoker] SocketGuildUser user)
@@ -138,7 +133,6 @@ namespace Abyss.Commands.Default
 
         [Command("purge")]
         [Description("Clears a number of messages from a source message, in a certain direction.")]
-        [Example("purge --user 255950165200994307 --count 50")]
         [RequireUserPermission(ChannelPermission.ManageMessages)]
         [RequireBotPermission(ChannelPermission.ManageMessages)]
         [OverrideArgumentParser(typeof(UnixArgumentParser))]

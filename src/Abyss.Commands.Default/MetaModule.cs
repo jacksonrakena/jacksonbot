@@ -38,7 +38,6 @@ namespace Abyss.Commands.Default
         }
 
         [Command("uptime")]
-        [Example("meta uptime")]
         [Description("Displays the time that this bot process has been running.")]
         public Task<ActionResult> Command_GetUptimeAsync()
         {
@@ -46,7 +45,6 @@ namespace Abyss.Commands.Default
         }
 
         [Command("info", "about")]
-        [Example("meta info")]
         [RunMode(RunMode.Parallel)]
         [Description("Shows some information about me.")]
         public async Task<ActionResult> Command_GetAbyssInfoAsync()
@@ -83,7 +81,6 @@ namespace Abyss.Commands.Default
         }
 
         [Command("feedback")]
-        [Example("meta feedback Bot is great!", "meta feedback Add more cats!!!")]
         [Description("Sends feedback to the developer.")]
         [AbyssCooldown(1, 24, CooldownMeasure.Hours, CooldownType.User)]
         public Task<ActionResult> Command_SendFeedbackAsync([Remainder] [Range(1, 500)] string feedback)
@@ -98,7 +95,6 @@ namespace Abyss.Commands.Default
         }
 
         [Command("prefix")]
-        [Example("meta prefix")]
         [Description("Shows the prefix.")]
         public Task<ActionResult> ViewPrefixesAsync()
         {
@@ -106,7 +102,6 @@ namespace Abyss.Commands.Default
         }
 
         [Command("devinfo")]
-        [Example("meta devinfo")]
         [Description(
             "Dumps current information about the client, the commands system and the current execution environment.")]
         [RequireOwner]
@@ -126,7 +121,6 @@ namespace Abyss.Commands.Default
 
         [Command("hasperm")]
         [Description("Checks if I have a permission accepted.")]
-        [Example("hasperm Manage Messages", "hasperm Ban Members")]
         public Task<ActionResult> Command_HasPermissionAsync(
             [Name("Permission")] [Remainder] [Description("The permission to check for.")]
             string permission)
@@ -150,7 +144,6 @@ namespace Abyss.Commands.Default
         }
 
         [Command("invite")]
-        [Example("meta invite")]
         [Description("Creates an invite to add me to another server.")]
         public Task<ActionResult> Command_GetInviteAsync()
         {

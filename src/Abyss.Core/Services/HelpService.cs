@@ -103,10 +103,10 @@ namespace Abyss.Core.Services
                    string.Join("\n", command.Parameters.Select((p, i) => $"**{i + 1})** {FormatParameter(context, p)}")));
             }
 
-            if (command.HasAttribute<ExampleAttribute>(out var example) && example!.ExampleUsage.Length > 0)
+            if (command.CustomArgumentParserType == null)
             {
-                embed.AddField($"Example{(example.ExampleUsage.Length == 1 ? "" : "s")}",
-                   string.Join("\n", example.ExampleUsage.Select(c => Format.Code(prefix + c))));
+                var cExecString = $"{context.GetPrefix()}{command.FullAliases.First()} {string.Join(" ", command.Parameters.Select(a => $"{(a.IsOptional ? "[" : "{")}{a.Name}{(a.IsOptional ? "]" : "}")}"))}";
+                embed.AddField("Usage", cExecString);
             }
 
             var cd = command.Cooldowns;

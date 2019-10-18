@@ -30,7 +30,6 @@ namespace Abyss.Commands.Default
         }
 
         [Command("otp")]
-        [Example("otp")]
         [Description("One True Pairing: Ships two random members of this server.")]
         [RunMode(RunMode.Parallel)]
         public Task<ActionResult> Command_OtpAsync()
@@ -56,7 +55,6 @@ namespace Abyss.Commands.Default
         }
 
         [Command("roll", "dice")]
-        [Example("roll d20+d18+4 5", "roll 6", "roll 300 2")]
         [Remarks("This command also supports complex dice types, like `d20+d18+4`.")]
         [Description("Rolls a dice of the supplied size.")]
         public Task<ActionResult> Command_DiceRollAsync(
@@ -92,7 +90,6 @@ namespace Abyss.Commands.Default
         }
 
         [Command("is")]
-        [Example("is @OtherUser lying to me?")]
         [Description("Determines if a user has a specific attribute.")]
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachTimestamp | ResponseFormatOptions.DontAttachFooter)]
         public Task<ActionResult> IsUserAsync(SocketGuildUser target, [Remainder] string attribute)
@@ -107,7 +104,6 @@ namespace Abyss.Commands.Default
         }
 
         [Command("does")]
-        [Example("does @ThisBot need more cats?")]
         [Description("Determines if a user does something, or has an attribute.")]
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachTimestamp | ResponseFormatOptions.DontAttachFooter)]
         public Task<ActionResult> DoesUserAsync(SocketGuildUser target, [Remainder] string attribute)
@@ -122,7 +118,6 @@ namespace Abyss.Commands.Default
         }
 
         [Command("choose")]
-        [Example("choose \"Go to bed\" \"Keep watching TV\" \"Use this bot :)\"")]
         [Description("Picks an option out of a list.")]
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachTimestamp | ResponseFormatOptions.DontAttachFooter)]
         public Task<ActionResult> Command_PickOptionAsync(
