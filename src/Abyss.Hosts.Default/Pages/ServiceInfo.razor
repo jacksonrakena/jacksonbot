@@ -1,0 +1,46 @@
+﻿@page "/info"
+
+@using Abyss.Core.Services
+@inject DataService DataService
+
+<h1>Service information</h1>
+
+@if(serviceInfo == null)
+{
+    <h3>Loading service information...</h3>
+} else
+{
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    <b>Name</b>
+                </td>
+                <td>
+                    <b>Value</b>
+                </td>
+            </tr>
+        </thead>
+        @foreach (var prop in serviceInfo.GetType().GetProperties())
+        {
+            <tr>
+                <td>
+                    @prop.Name
+                </td>
+                <td>
+                    @(prop.GetValue(serviceInfo)?.ToString() ?? "Null.")
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+@code {
+    Abyss.Shared.ServiceInfo serviceInfo;
+
+    protected override Task OnInitializedAsync()
+    {
+        serviceInfo = DataService.GetServiceInfo();
+        return Task.CompletedTask;
+    }
+}

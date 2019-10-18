@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Abyss.Hosts.Default.Data;
 using Abyss.Core.Services;
 using System.Reflection;
 using Abyss.Core.Entities;
@@ -32,7 +31,6 @@ namespace Abyss.Hosts.Default
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
 
             services.ConfigureSharedServices();
 
