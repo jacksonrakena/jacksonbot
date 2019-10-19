@@ -7,28 +7,30 @@ A **fully modular, expandable, open-source (for life)** Discord bot, written in 
   
 | Prefix | Developer | Language/Runtime | Library | Add To Server
 |------------|---|---|---|---|
-| a. | Abyssal | C#/.NET Core 3.0 | Discord.Net | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
+| a. | Abyssal | C# 8/.NET Core 3.0 | Discord.Net | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
   
 ### Features
-- Spotify track and album lookup (can also read from the current song you're listening to), powered by [AbyssalSpotify](http://github.com/abyssal/AbyssalSpotify).
-- Resizing (bicubic) of emojis and custom images, both animated and not-animated.
-- Live C# script evaluation.
+- Spotify track and album lookup, via [AbyssalSpotify](http://github.com/abyssal/AbyssalSpotify).
+- Bicubic resizing of emojis and custom images, both animated and not-animated.
+- Live C# script evaluation. (owner-only)
 - Dice rolling with custom expression support (e.g. `a.roll d20+d48+d10`).
 - C a t commands.
 - General purpose command set.
+- Moderation tools, including an advanced customizable message purge.
 - And much more.
-
   
 ### Requirements
-- It is heavily recommended to run Abyss on a Docker daemon running with Linux containers. Instructions for running with Docker are [here](DOCKER.md). If you don't want to run on Docker, you're on your own.
-- .NET Core 3.0 SDK for building (or Runtime for a pre-compiled version)
-- A Discord bot application with registered user and token
-- `Abyss.json` configuration file set out as below
+- Docker Engine (17.06.0+) and Docker Compose (3.3+)
+- A [Discord bot application](https://discordapp.com/developers/applications/) with registered user and token (app -> Bot -> Add Bot)
+- `abyss.json` configuration file set out as below  
+  
+### Setup
+Follow the Docker instructions that are [available here.](DOCKER.md)
 
 ### Configuration
-An example Abyss configuration file can be found at [abyss.example.json](https://github.com/abyssal/Abyss/blob/master/abyss.example.json), which should be renamed to `abyss.json` before running. This needs to be mounted in Abyss' content root, which is explained in [the Docker instructions.](DOCKER.md)
+An example Abyss configuration file can be found at [abyss.example.json](abyss.example.json), which should be renamed to `abyss.json` before running. This needs to be mounted in Abyss' data root, which is explained in [the Docker instructions.](DOCKER.md)
 
-### Contributing
+### Structure
 The project is broken down into the following projects:     
 **Platform core** 
 - `Abyss` (library) The core of Abyss. This project contains the robust, fast, and safe architecture that sits at the heart of Abyss operation.

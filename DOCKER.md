@@ -4,11 +4,12 @@ Abyss has a bundled Dockerfile that downloads and installs all the requirements 
   
 ### Creating a new deployment
 Make sure Docker and Docker Compose is installed, then:
-1) Create a directory for Abyss to store it's configuration and data in:
+1) Create a directory for Abyss (the **Abyss data root**) to store it's configuration and data in:
 ```bash
 > mkdir abyss-data
 ```
-2) Navigate to that directory, and store your configuration file:
+This directory must be called `abyss-data`.  
+2) Navigate to that directory, and store your configuration file (example available [here](abyss.example.json))
 ```bash
 > cd abyss-data
 > nano abyss.json
