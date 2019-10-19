@@ -27,7 +27,6 @@ namespace Abyss.Commands.Default
         [Command("nickname", "nick")]
         [Description("Sets the current nickname for a user.")]
         [Remarks("You can provide `clear` to remove their current nickname (if any).")]
-        [Example("nickname abyssal hello world", "nick abyssal clear")]
         [RequireBotPermission(GuildPermission.ChangeNickname)]
         [RequireUserPermission(GuildPermission.ChangeNickname)]
         public async Task<ActionResult> Command_SetNicknameAsync(
@@ -58,7 +57,6 @@ namespace Abyss.Commands.Default
 
         [Command("server", "serverinfo")]
         [Description("Grabs information around this server.")]
-        [Example("server")]
         public Task<ActionResult> Command_GuildInfoAsync()
         {
             var embed = new EmbedBuilder
@@ -107,7 +105,6 @@ namespace Abyss.Commands.Default
         [Command("colour", "color")]
         [Description("Grabs the colour of a role.")]
         [RunMode(RunMode.Parallel)]
-        [Example("color Admin", "color @Owner", "color 413956873256042496")]
         public async Task<ActionResult> Command_GetColourFromRoleAsync(
             [Name("Role")] [Description("The role you wish to view the colour of.")] [Remainder]
             SocketRole role)
@@ -130,7 +127,6 @@ namespace Abyss.Commands.Default
 
         [Command("colour", "color")]
         [Description("Grabs the colour of a user.")]
-        [Example("color abyssal", "color @OtherUser", "color 413956873256042496")]
         [RunMode(RunMode.Parallel)]
         public Task<ActionResult> Command_GetColourFromUserAsync(
             [Name("User")] [Description("The user you wish to view the colour of.")] [Remainder]
@@ -144,7 +140,6 @@ namespace Abyss.Commands.Default
 
         [Command("permissions", "perms")]
         [Description("Shows a list of a user's current guild-level permissions.")]
-        [Example("permissions abyssal", "perms @OtherUser", "perms 413956873256042496")]
         public Task<ActionResult> Command_ShowPermissionsAsync(
             [Name("Target")]
             [Description("The user to get permissions for.")]
@@ -191,7 +186,6 @@ namespace Abyss.Commands.Default
 
         [Command("tree", "channels")]
         [Description("Creates a tree of channels and categories in this server.")]
-        [Example("tree")]
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
         public Task<ActionResult> Command_CreateChannelTreeAsync()
         {
@@ -222,7 +216,6 @@ namespace Abyss.Commands.Default
 
         [Command("analyzeperm")]
         [Description("Analyzes a permission for a user, and sees which role grants or denies that permission to them.")]
-        [Example("analyzeperm Abyssal Manage Messages")]
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
         public Task<ActionResult> Command_AnalyzePermissionAsync(
             [Name("User")] [Description("The user to check for the specified permission.")]

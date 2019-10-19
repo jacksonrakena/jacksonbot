@@ -20,21 +20,19 @@ namespace Abyss.Commands.Default
     [Name("Moderation")]
     [Description("Commands that help you moderate and protect your server.")]
     [Group("mod")]
-    public class ModeratorModule : AbyssModuleBase
+    public class ModeratorCommandGroup : AbyssModuleBase
     {
         [Command("ban")]
         [Description("Bans a member from this server.")]
-        [Example("ban pyjamaclub Being stupid.", "ban \"The Mightiest One\" Breaking rule 5.", "ban pyjamaclub")]
         [RequireUserPermission(GuildPermission.BanMembers)]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<ActionResult> BanUserAsync(
             [Name("Victim")] [Description("The user to ban.")] [MustNotBeBot] [MustNotBeInvoker]
-            ulong target,
+            SocketGuildUser target,
             [Name("Ban Reason")] [Description("The audit log reason for the ban.")] [Remainder] [Maximum(50)]
             string? reason = null)
         {
-            var guildUser = Context.Guild.GetUser(target);
-            if (guildUser != null && guildUser.Hierarchy > Context.Invoker.Hierarchy)
+            if (target.Hierarchy > Context.Invoker.Hierarchy)
                 return BadRequest("That member is a higher rank than you!");
 
             try
@@ -48,11 +46,54 @@ namespace Abyss.Commands.Default
             }
 
             return Ok(
-                $"Banned user {guildUser?.ToString() ?? target.ToString()}{(reason != null ? " with reason: " + reason : "")}.");
+                $"Banned user {target}{(reason != null ? " with reason: " + reason : "")}.");
+        }
+
+        [Command("kick")]
+        [Description("Kicks a member.")]
+        [RequireUserPermission(GuildPermission.KickMembers)]
+        [RequireBotPermission(GuildPermission.KickMembers)]
+        public async Task<ActionResult> Command_KickUserAsync(
+            [Name("Target")] [Description("The user to kick.")] [MustNotBeBot] [MustNotBeInvoker] SocketGuildUser target,
+            [Name("Reason")] [Maximum(50)] [Remainder] [Description("The kick reason.")] string? reason = null)
+        {
+            if (target.Hierarchy > Context.Invoker.Hierarchy) return BadRequest("That member is a higher rank than you!");
+            if (target.Hierarchy > Context.BotUser.Hierarchy) return BadRequest("That member is a higher rank than me!");
+
+            await target.KickAsync($"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : ": No reason provided")}").ConfigureAwait(false);
+
+            return Ok($"Kicked {target}.");
+        }
+
+        [Command("hackban")]
+        [Description("Bans a user who is not in this server.")]
+        [RequireUserPermission(GuildPermission.BanMembers)]
+        [RequireBotPermission(GuildPermission.BanMembers)]
+        public async Task<ActionResult> Command_HackBanUserAsync(
+            [Name("Victim")] [Description("The user to ban.")] [MustNotBeBot] [MustNotBeInvoker]
+            ulong target,
+            [Name("Ban Reason")] [Description("The audit log reason for the ban.")] [Remainder] [Maximum(50)]
+            string? reason = null)
+        {
+            var guildUser = Context.Guild.GetUser(target);
+            if (guildUser != null && guildUser.Hierarchy > Context.Invoker.Hierarchy)
+                return BadRequest("That member is a higher rank than you!");
+
+            try
+            {
+                await Context.Guild.AddBanAsync(target, 7, $"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : ": No reason provided")}");
+            }
+            catch (HttpException e) when (e.HttpCode == HttpStatusCode.Forbidden)
+            {
+                return BadRequest(
+                    $"I don't have permission to ban them.");
+            }
+
+            return Ok(
+                $"Added ban for user {guildUser?.ToString() ?? target.ToString()}{(reason != null ? " with reason: " + reason : "")}.");
         }
 
         [Command("bans")]
-        [Example("bans")]
         [Description("Shows a list of all users banned in this server.")]
         [RequireBotPermission(GuildPermission.BanMembers)]
         [RequireUserPermission(GuildPermission.BanMembers)]
@@ -69,9 +110,29 @@ namespace Abyss.Commands.Default
             });
         }
 
+        [Command("softban")]
+        [Description("Bans and then unbans a user from this server, effectively kicking them, but removes all their messages.")]
+        [RequireUserPermission(GuildPermission.KickMembers)]
+        [RequireBotPermission(GuildPermission.BanMembers)]
+        public async Task<ActionResult> Command_SoftbanAsync([Name("Target")] [Description("The user to softban.")] [MustNotBeBot, MustNotBeInvoker] SocketGuildUser user)
+        {
+            if (user.Hierarchy > Context.Invoker.Hierarchy) return BadRequest("That member is a higher rank than you!");
+
+            try
+            {
+                await Context.Guild.AddBanAsync(user, 7).ConfigureAwait(false);
+                await Context.Guild.RemoveBanAsync(user).ConfigureAwait(false);
+                return Ok($"Softbanned {user}.");
+            }
+            catch (HttpException e) when (e.HttpCode == HttpStatusCode.Forbidden)
+            {
+                return BadRequest(
+                    $"I don't have permission to ban/unban them.");
+            }
+        }
+
         [Command("purge")]
         [Description("Clears a number of messages from a source message, in a certain direction.")]
-        [Example("purge --user 255950165200994307 --count 50")]
         [RequireUserPermission(ChannelPermission.ManageMessages)]
         [RequireBotPermission(ChannelPermission.ManageMessages)]
         [OverrideArgumentParser(typeof(UnixArgumentParser))]

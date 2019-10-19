@@ -67,7 +67,6 @@ namespace Abyss.Commands.Default
         [Command("help", "commands")]
         [Description(
             "Retrieves a list of commands that you can use, or, if a command or module is provided, displays information on that command or module.")]
-        [Example("help", "help ping", "help utility")]
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
         public async Task<ActionResult> Command_ListCommandsAsync(
             [Name("Query")]

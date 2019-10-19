@@ -39,7 +39,6 @@ namespace Abyss.Commands.Default
 
         [Command("throwex")]
         [Description("Throws a InvalidOperation .NET exception. For testing purposes.")]
-        [Example("throwexception Meow.")]
         public Task<ActionResult> Command_ThrowExceptionAsync([Name("Message")] [Description("The message for the exception.")] [Remainder] string message = "Test exception.")
         {
             throw new InvalidOperationException(message);
@@ -48,7 +47,6 @@ namespace Abyss.Commands.Default
         [Command("hb")]
         [RunMode(RunMode.Parallel)]
         [Description("Evaluates and compiles a Handlebars template against the current execution context.")]
-        [Example("hb {{Context.Client.CurrentUser}}")]
         public ActionResult Command_HandlebarsEvaluate([Name("Template")] [Description("A Handlebars-compatible template.")] [Remainder]
             string script)
         {
@@ -80,7 +78,6 @@ namespace Abyss.Commands.Default
         [Command("eval")]
         [RunMode(RunMode.Parallel)]
         [Description("Evaluates a piece of C# code.")]
-        [Example("script 1+1")]
         [ResponseFormatOptions(ResponseFormatOptions.DontEmbed)]
         public async Task<ActionResult> Command_EvaluateAsync(
             [Name("Code")] [Description("The code to execute.")] [Remainder]
@@ -213,7 +210,6 @@ namespace Abyss.Commands.Default
 
         [Command("inspect")]
         [RunMode(RunMode.Parallel)]
-        [Example("inspect Context.User")]
         [Description("Evaluates and then inspects a type.")]
         public Task<ActionResult> Command_InspectObjectAsync(
             [Name("Object")] [Description("The object to inspect.")] [Remainder]
@@ -225,7 +221,6 @@ namespace Abyss.Commands.Default
         [Command("kill")]
         [Description("Stops the current bot process.")]
         [RunMode(RunMode.Parallel)]
-        [Example("kill")]
         [RequireOwner]
         public async Task<ActionResult> Command_ShutdownAsync()
         {
@@ -241,7 +236,6 @@ namespace Abyss.Commands.Default
 
         [Command("edit")]
         [Description("Edits a message that was sent by me.")]
-        [Example("edit 562486465645510656 hello")]
         [RequireOwner]
         public async Task<ActionResult> Command_EditAsync([Name("Message")] [Description("The message to edit.")]
             ulong messageId, [Name("New Content")] [Description("The new content of the message.")] [Remainder] string newContent)

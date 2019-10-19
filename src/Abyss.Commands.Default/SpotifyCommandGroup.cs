@@ -31,7 +31,6 @@ namespace Abyss.Commands.Default
 
         [Command("track")]
         [Description("Searches the Spotify database for a song.")]
-        [Example("track", "track Love Myself", "track Despacito")]
         [Thumbnail(SpotifyIconUrl)]
         [RunMode(RunMode.Parallel)]
         public async Task<ActionResult> Command_TrackAsync(
@@ -61,7 +60,6 @@ namespace Abyss.Commands.Default
 
         [Command("album")]
         [Description("Searches the Spotify database for an album.")]
-        [Example("album Pray For The Wicked", "album HAIZ", "album In Our Bones")]
         [Thumbnail(SpotifyIconUrl)]
         [RunMode(RunMode.Parallel)]
         public async Task<ActionResult> Command_SearchAlbumAsync(

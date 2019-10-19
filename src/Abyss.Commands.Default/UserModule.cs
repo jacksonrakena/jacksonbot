@@ -29,7 +29,6 @@ namespace Abyss.Commands.Default
 
         [Command("avatar")]
         [Description("Grabs the avatar for a user.")]
-        [Example("avatar", "avatar @OtherUser")]
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
         public Task<ActionResult> Command_GetAvatarAsync(
             [Name("User")]
@@ -56,7 +55,6 @@ namespace Abyss.Commands.Default
         }
 
         [Command("user", "userinfo")]
-        [Example("user", "user @OtherUser")]
         [Description("Grabs information around a member.")]
         public Task<ActionResult> Command_GetUserInfoAsync(
             [Name("Member")]
@@ -114,7 +112,6 @@ namespace Abyss.Commands.Default
         }
 
         [Command("hug")]
-        [Example("hug @OtherUser", "hug @me")]
         [Description("Gives them all your hugging potential.")]
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
         public Task<ActionResult> Command_HugUserAsync([Name("Member")] [Description("The user to hug.")]
