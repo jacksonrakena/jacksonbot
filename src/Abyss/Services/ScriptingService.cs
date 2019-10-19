@@ -17,9 +17,9 @@ namespace Abyss
         public static readonly IReadOnlyList<string> Imports = new ReadOnlyCollection<string>(new List<string>
         {
             "System", "System.Math", "System.Linq", "Discord", "System.Diagnostics", "System.Collections.Generic",
-            "Discord.WebSocket", "Abyss.Core", "Abyss.Core.Entities",
+            "Discord.WebSocket", "Abyss", 
             "Qmmands", "System.IO",
-            "Microsoft.Extensions.DependencyInjection", "System.Text", "Abyss.Core.Services",
+            "Microsoft.Extensions.DependencyInjection", "System.Text", 
             "System.Globalization", "System.Reflection"
         });
 
