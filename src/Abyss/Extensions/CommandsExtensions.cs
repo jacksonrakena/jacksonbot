@@ -1,3 +1,4 @@
+using Abyssal.Common;
 using Qmmands;
 using System.Linq;
 
@@ -7,7 +8,7 @@ namespace Abyss
     {
         public static bool IsGroup(this Module module)
         {
-            return module.Type.GetCustomAttributes(typeof(GroupAttribute), true).Length != 0;
+            return module.Type.HasCustomAttribute<GroupAttribute>();
         }
 
         public static string CreateCommandString(this Command command)

@@ -23,11 +23,13 @@ namespace Abyss
         private readonly NotificationsService _notifications;
         private readonly MarketingService _marketing;
 
+        private readonly DataService _dataService;
+
         private bool _hasBeenReady = false;
 
         public BotService(ILogger<BotService> logger, AbyssConfig config, DiscordSocketClient socketClient,
             NotificationsService notifications, ILoggerFactory factory,
-            MarketingService marketing)
+            MarketingService marketing, DataService dataService)
         {
             _logger = logger;
             _discordClient = socketClient;
@@ -39,12 +41,16 @@ namespace Abyss
             _notifications = notifications;
             _discordLogger = factory.CreateLogger("Discord");
             _marketing = marketing;
+            _dataService = dataService;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation(
-                $"Abyss hosted service on {Environment.OSVersion.VersionString} with CLR {Environment.Version} initialized.");
+                $"Abyss hosted service starting on {Environment.OSVersion.VersionString}/CLR {Environment.Version} (args {string.Join(" ", Environment.GetCommandLineArgs())})");
+            _logger.LogInformation($"Environment.CurrentDirectory: {Environment.CurrentDirectory}");
+            _logger.LogInformation($"Directory.GetCurrentDirectory: {System.IO.Directory.GetCurrentDirectory()}");
+            _logger.LogInformation($"Data root: {_dataService.GetBasePath()}");
 
             var discordConfiguration = _config.Connections.Discord;
 
