@@ -1,16 +1,8 @@
-using Abyss.Core;
-using Abyss.Core.Attributes;
-using Abyss.Core.Entities;
-using Abyss.Core.Extensions;
-using Abyss.Core.Results;
-using Abyss.Core.Services;
 using Abyssal.Common;
 using Discord;
 using Qmmands;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Abyss.Commands.Default

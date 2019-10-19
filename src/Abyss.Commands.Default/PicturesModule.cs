@@ -1,7 +1,3 @@
-using Abyss.Core.Attributes;
-using Abyss.Core.Entities;
-using Abyss.Core.Extensions;
-using Abyss.Core.Results;
 using Discord;
 using Newtonsoft.Json.Linq;
 using Qmmands;

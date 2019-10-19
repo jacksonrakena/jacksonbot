@@ -1,10 +1,3 @@
-using Abyss.Core.Attributes;
-using Abyss.Core.Checks.Command;
-using Abyss.Core.Entities;
-using Abyss.Core.Extensions;
-using Abyss.Core.Helpers;
-using Abyss.Core.Results;
-using Abyss.Core.Services;
 using Discord;
 using HandlebarsDotNet;
 using Microsoft.CodeAnalysis;
@@ -12,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Qmmands;
 using System;
 using System.Collections;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;

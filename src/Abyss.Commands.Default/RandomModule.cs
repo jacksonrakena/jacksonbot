@@ -1,7 +1,4 @@
-﻿using Abyss.Core.Attributes;
-using Abyss.Core.Entities;
-using Abyss.Core.Results;
-using Abyssal.Common;
+﻿using Abyssal.Common;
 using Discord.WebSocket;
 using Qmmands;
 using System;

@@ -1,10 +1,4 @@
-﻿using Abyss.Core;
-using Abyss.Core.Attributes;
-using Abyss.Core.Entities;
-using Abyss.Core.Extensions;
-using Abyss.Core.Helpers;
-using Abyss.Core.Results;
-using Abyssal.Common;
+﻿using Abyssal.Common;
 using Discord;
 using Discord.WebSocket;
 using Humanizer;

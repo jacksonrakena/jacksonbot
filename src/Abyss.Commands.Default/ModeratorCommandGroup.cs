@@ -1,11 +1,4 @@
-﻿using Abyss.Core.Attributes;
-using Abyss.Core.Checks.Command;
-using Abyss.Core.Checks.Parameter;
-using Abyss.Core.Entities;
-using Abyss.Core.Parsers.DiscordNet;
-using Abyss.Core.Parsers.UnixArguments;
-using Abyss.Core.Results;
-using Discord;
+﻿using Discord;
 using Discord.Net;
 using Discord.WebSocket;
 using Qmmands;

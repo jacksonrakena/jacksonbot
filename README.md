@@ -31,15 +31,13 @@ An example Abyss configuration file can be found at [abyss.example.json](https:/
 ### Contributing
 The project is broken down into the following projects:     
 **Platform core** 
-- `Abyss.Core` (library) The core of Abyss. This project contains the robust, fast, and safe architecture that sits at the heart of Abyss operation.
+- `Abyss` (library) The core of Abyss. This project contains the robust, fast, and safe architecture that sits at the heart of Abyss operation.
    
 **Default command packs**
 - `Abyss.Commands.Default` (library) The default command pack for Abyss, this contains all of the default commands.  
   
 **Web host**  
-- `Abyss.Hosts.Default` This is the Abyss web server, which wraps `Abyss.Core` and provides web server functionality, as well as running the bot.  
+- `Abyss.Hosts.Default` This is the Abyss web server, which wraps `Abyss` and `Abyss.Commands.Default` and provides web server functionality, as well as running the bot.  
   
 ### Copyright
 Copyright (c) 2019 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
-  
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fabyssal512%2FAbyss?ref=badge_large)

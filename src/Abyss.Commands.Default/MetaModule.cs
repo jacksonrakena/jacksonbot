@@ -1,11 +1,4 @@
-﻿using Abyss.Core.Attributes;
-using Abyss.Core.Checks.Command;
-using Abyss.Core.Entities;
-using Abyss.Core.Extensions;
-using Abyss.Core.Helpers;
-using Abyss.Core.Results;
-using Abyss.Core.Services;
-using Abyssal.Common;
+﻿using Abyssal.Common;
 using Discord;
 using Discord.WebSocket;
 using Humanizer;
@@ -15,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Abyss.Commands.Default

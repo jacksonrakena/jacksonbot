@@ -1,12 +1,6 @@
-using Abyss.Core;
-using Abyss.Core.Attributes;
-using Abyss.Core.Entities;
-using Abyss.Core.Helpers;
-using Abyss.Core.Results;
 using Abyssal.Common;
 using AbyssalSpotify;
 using Discord;
-using Discord.WebSocket;
 using Humanizer;
 using Qmmands;
 using System;

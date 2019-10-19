@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Abyss.Commands.Default\Abyss.Commands.Default.csproj" />
-    <ProjectReference Include="..\Abyss.Core\Abyss.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿@page "/info"
 
-@using Abyss.Core.Services
+@using Abyss
 @inject DataService DataService
 
 <h1>Service information</h1>
@@ -36,7 +36,7 @@
 }
 
 @code {
-    Abyss.Core.Entities.ServiceInfo serviceInfo;
+    Abyss.ServiceInfo serviceInfo;
 
     protected override Task OnInitializedAsync()
     {
