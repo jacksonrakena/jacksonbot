@@ -179,7 +179,7 @@ namespace Abyss.Commands.Default
             var sb = new StringBuilder();
             sb.AppendLine($"Deleted `{messages.Count}` messages.");
             sb.AppendLine();
-            foreach (var author in messages.GroupBy(b => b.Author, new UserEqualityComparer()))
+            foreach (var author in messages.GroupBy(b => b.Author.Id))
             {
                 sb.AppendLine($"**{author.Key}**: {author.Count()} messages");
             }

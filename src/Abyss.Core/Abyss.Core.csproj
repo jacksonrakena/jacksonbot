@@ -3,7 +3,6 @@
     <PropertyGroup>
         <OutputType>Library</OutputType>
         <TargetFramework>netcoreapp3.0</TargetFramework>
-        <LangVersion>preview</LangVersion>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
         <Authors>Abyssal</Authors>
         <Company>Abyssal</Company>
@@ -28,7 +27,7 @@
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
         <PackageReference Include="Qmmands" Version="3.0.0-nightly-00221" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0007" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Abyss.Shared\Abyss.Shared.csproj" />
