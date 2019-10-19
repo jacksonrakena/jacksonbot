@@ -3,6 +3,7 @@ using Abyss.Core.Checks;
 using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
 using Abyss.Core.Parsers;
+using Abyssal.Common;
 using Discord;
 using Humanizer;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -128,7 +129,7 @@ namespace Abyss.Core.Services
             if (command.Parameters.Count != 0) embed.WithFooter("You can use quotes to encapsulate inputs that are more than one word long.",
                 context.Bot.GetEffectiveAvatarUrl());
 
-            if (!command.HasAttribute<ThumbnailAttribute>(out var imageUrlAttribute)) return embed;
+            if (!command.GetType().HasCustomAttribute<ThumbnailAttribute>(out var imageUrlAttribute)) return embed;
             embed.Author = new EmbedAuthorBuilder().WithName($"Command {command.Aliases.FirstOrDefault()}")
                 .WithIconUrl(imageUrlAttribute!.ImageUrl);
             embed.Title = null;
@@ -169,7 +170,7 @@ namespace Abyss.Core.Services
 
             if (parameterInfo.IsOptional)
             {
-                if (parameterInfo.HasAttribute<DefaultValueDescriptionAttribute>(out var defaultValueDescription))
+                if (parameterInfo.GetType().HasCustomAttribute<DefaultValueDescriptionAttribute>(out var defaultValueDescription))
                     sb.AppendLine($" - Default: {defaultValueDescription!.DefaultValueDescription}");
                 else if (parameterInfo.DefaultValue != null)
                     sb.AppendLine(" - Default: " + parameterInfo.DefaultValue);

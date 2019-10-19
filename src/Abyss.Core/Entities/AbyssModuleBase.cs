@@ -1,5 +1,6 @@
 ﻿using Abyss.Core.Extensions;
 using Abyss.Core.Results;
+using Abyssal.Common;
 using Discord;
 using Qmmands;
 using System;
@@ -37,7 +38,7 @@ namespace Abyss.Core.Entities
 
         public ActionResult Ok(string content, params FileAttachment[] attachments)
         {
-            return (Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at) && at!.Options.HasFlag(ResponseFormatOptions.DontEmbed))
+            return (Context.Command.GetType().HasCustomAttribute<ResponseFormatOptionsAttribute>(out var at) && at!.Options.HasFlag(ResponseFormatOptions.DontEmbed))
                 ? new OkResult(content, attachments)
                 : Ok(new EmbedBuilder().WithDescription(content), attachments);
         }
@@ -47,7 +48,7 @@ namespace Abyss.Core.Entities
             bool attachFooter = false;
             if (builder.Footer == null)
             {
-                if (Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at))
+                if (Context.Command.GetType().HasCustomAttribute<ResponseFormatOptionsAttribute>(out var at))
                 {
                     attachFooter = !at!.Options.HasFlag(ResponseFormatOptions.DontAttachFooter);
                 }
@@ -57,7 +58,7 @@ namespace Abyss.Core.Entities
             bool attachTimestamp = false;
             if (builder.Timestamp == null)
             {
-                if (Context.Command.HasAttribute<ResponseFormatOptionsAttribute>(out var at0))
+                if (Context.Command.GetType().HasCustomAttribute<ResponseFormatOptionsAttribute>(out var at0))
                 {
                     attachTimestamp = !at0!.Options.HasFlag(ResponseFormatOptions.DontAttachTimestamp);
                 }

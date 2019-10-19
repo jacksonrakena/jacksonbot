@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Abyss.Core.Parsers.UnixArguments;
 using System.Text;
+using Abyssal.Common;
 
 namespace Abyss.Core.Services
 {
@@ -97,8 +98,8 @@ namespace Abyss.Core.Services
                     case ChecksFailedResult cfr:
                         _failedCommandsTracking.LogInformation(LoggingEventIds.ChecksFailed, $"{cfr.FailedChecks.Count} checks failed for {(cfr.Command == null ? "Module " + cfr.Module.Name : "Command " + cfr.Command.Name)}.)");
 
-                        var silentCheckType = typeof(SilentCheckAttribute);
-                        var checks = cfr.FailedChecks.Where(check => check.Check.GetType().CustomAttributes.Any(a => a.AttributeType != typeof(SilentCheckAttribute))).ToList();
+                        var silentCheckType = typeof(SilentAttribute);
+                        var checks = cfr.FailedChecks.Where(check => check.Check.GetType().CustomAttributes.Any(a => a.AttributeType != typeof(SilentAttribute))).ToList();
 
                         if (checks.Count == 0) break;
 
@@ -119,8 +120,8 @@ namespace Abyss.Core.Services
                         _failedCommandsTracking.LogInformation(LoggingEventIds.ParameterChecksFailed, 
                             $"{pcfr.FailedChecks.Count} parameter checks on {pcfr.Parameter.Name} ({string.Join(", ", pcfr.FailedChecks.Select(c => c.Check.GetType().Name))}) failed for command {pcfr.Parameter.Command.Name}.");
 
-                        var silentCheckType0 = typeof(SilentCheckAttribute);
-                        var pchecks = pcfr.FailedChecks.Where(check => check.Check.GetType().CustomAttributes.Any(a => a.AttributeType != typeof(SilentCheckAttribute))).ToList();
+                        var silentCheckType0 = typeof(SilentAttribute);
+                        var pchecks = pcfr.FailedChecks.Where(check => check.Check.GetType().CustomAttributes.Any(a => a.AttributeType != typeof(SilentAttribute))).ToList();
 
                         if (pchecks.Count == 0) break;
 

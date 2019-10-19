@@ -4,6 +4,7 @@ using Abyss.Core.Entities;
 using Abyss.Core.Extensions;
 using Abyss.Core.Results;
 using Abyss.Core.Services;
+using Abyssal.Common;
 using Discord;
 using Qmmands;
 using System;
@@ -115,14 +116,14 @@ namespace Abyss.Commands.Default
         {
             if (!(await command.RunChecksAsync(Context).ConfigureAwait(false)).IsSuccessful)
                 return false;
-            return !command.HasAttribute<HiddenAttribute>();
+            return !command.GetType().HasCustomAttribute<HiddenAttribute>();
         }
 
         private async Task<bool> CanShowModuleAsync(Module module)
         {
             if (!(await module.RunChecksAsync(Context).ConfigureAwait(false)).IsSuccessful)
                 return false;
-            return !module.HasAttribute<HiddenAttribute>();
+            return !module.GetType().HasCustomAttribute<HiddenAttribute>();
         }
 
         private static string? FormatCommandShort(Command command)

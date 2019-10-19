@@ -5,18 +5,18 @@
         <TargetFramework>netcoreapp3.0</TargetFramework>
         <LangVersion>preview</LangVersion>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-        <Authors>abyssal512</Authors>
-        <Company>abyssal512</Company>
+        <Authors>Abyssal</Authors>
+        <Company>Abyssal</Company>
         <Description>A friendly Discord bot</Description>
-        <Copyright>Copyright (c) 2019 abyssal512</Copyright>
-        <PackageProjectUrl>http://github.com/abyssal512/Abyss</PackageProjectUrl>
-        <RepositoryUrl>http://github.com/abyssal512/Abyss</RepositoryUrl>
+        <Copyright>Copyright (c) 2019 Abyssal</Copyright>
+        <PackageProjectUrl>http://github.com/abyssal/Abyss</PackageProjectUrl>
+        <RepositoryUrl>http://github.com/abyssal/Abyss</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Abyssal.Common" Version="1.0.0-20191018.5" />
+        <PackageReference Include="Abyssal.Common" Version="1.0.0-20191019.1" />
         <PackageReference Include="AbyssalSpotify" Version="1.0.1-20191018.6" />
         <PackageReference Include="Discord.Net.WebSocket" Version="2.2.0-dev-20191003.3" />
         <PackageReference Include="Handlebars.Net" Version="1.10.1" />
