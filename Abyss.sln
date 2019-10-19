@@ -4,8 +4,6 @@ VisualStudioVersion = 16.0.29021.104
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Core", "src\Abyss.Core\Abyss.Core.csproj", "{F94991CA-F7FD-4257-A57D-780CB81A6036}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Shared", "src\Abyss.Shared\Abyss.Shared.csproj", "{54ED94B2-A83C-4307-BEBB-61ED731AB70D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{61F43844-FA4E-42CF-8628-46FE2AF7B6F9}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
@@ -21,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Commands.Default", "src\Abyss.Commands.Default\Abyss.Commands.Default.csproj", "{7F2783E8-0DCB-4BE4-9E7C-FC2C0A598FDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abyss.Hosts.Default", "src\Abyss.Hosts.Default\Abyss.Hosts.Default.csproj", "{B7CAEFA6-6FA2-4968-B779-1E55F1207B68}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Hosts.Default", "src\Abyss.Hosts.Default\Abyss.Hosts.Default.csproj", "{B7CAEFA6-6FA2-4968-B779-1E55F1207B68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,26 +55,6 @@ Global
 		{F94991CA-F7FD-4257-A57D-780CB81A6036}.Release|x64.Build.0 = Release|Any CPU
 		{F94991CA-F7FD-4257-A57D-780CB81A6036}.Release|x86.ActiveCfg = Release|Any CPU
 		{F94991CA-F7FD-4257-A57D-780CB81A6036}.Release|x86.Build.0 = Release|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Debug|ARM.Build.0 = Debug|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Debug|x64.Build.0 = Debug|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Debug|x86.Build.0 = Debug|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Release|ARM.ActiveCfg = Release|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Release|ARM.Build.0 = Release|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Release|ARM64.Build.0 = Release|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Release|x64.ActiveCfg = Release|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Release|x64.Build.0 = Release|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Release|x86.ActiveCfg = Release|Any CPU
-		{54ED94B2-A83C-4307-BEBB-61ED731AB70D}.Release|x86.Build.0 = Release|Any CPU
 		{7F2783E8-0DCB-4BE4-9E7C-FC2C0A598FDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7F2783E8-0DCB-4BE4-9E7C-FC2C0A598FDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F2783E8-0DCB-4BE4-9E7C-FC2C0A598FDC}.Debug|ARM.ActiveCfg = Debug|Any CPU

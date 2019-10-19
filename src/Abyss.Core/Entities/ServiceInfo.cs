@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 
-namespace Abyss.Shared
+namespace Abyss.Core.Entities
 {
     public class ServiceInfo
     {

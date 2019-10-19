@@ -31,8 +31,10 @@ An example Abyss configuration file can be found at [abyss.example.json](https:/
 ### Contributing
 The project is broken down into the following projects:     
 **Platform core** 
-- `Abyss.Core` (library) The core of Abyss. This project contains the robust, fast, and safe architecture that sits at the heart of Abyss operation. It also contains all of the default commands that come with every instance.  
-- `Abyss.Shared` This library contains data classes and other shared components.
+- `Abyss.Core` (library) The core of Abyss. This project contains the robust, fast, and safe architecture that sits at the heart of Abyss operation.
+   
+**Default command packs**
+- `Abyss.Commands.Default` (library) The default command pack for Abyss, this contains all of the default commands.  
   
 **Web host**  
 - `Abyss.Hosts.Default` This is the Abyss web server, which wraps `Abyss.Core` and provides web server functionality, as well as running the bot.  

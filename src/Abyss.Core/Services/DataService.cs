@@ -1,4 +1,4 @@
-﻿using Abyss.Shared;
+﻿using Abyss.Core.Entities;
 using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
 using Qmmands;
