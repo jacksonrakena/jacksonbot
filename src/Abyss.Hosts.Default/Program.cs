@@ -50,6 +50,8 @@ namespace Abyss.Hosts.Default
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.SuppressStatusMessages(false);
+                    webBuilder.CaptureStartupErrors(true);
                     webBuilder.UseSetting(WebHostDefaults.ApplicationKey, "Abyss");
                     webBuilder.ConfigureKestrel(kestrel =>
                     {
