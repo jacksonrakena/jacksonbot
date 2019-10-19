@@ -27,7 +27,7 @@ namespace Abyss
             _logger = logger.CreateLogger<MessageReceiver>();
 
             var currentAssembly = Assembly.GetExecutingAssembly();
-            LoadTypesFromAssembly(currentAssembly);
+            ImportAssembly(currentAssembly);
             
             // Hook events
             _commandService.CommandExecuted += HandleCommandExecutedAsync;
@@ -281,10 +281,8 @@ namespace Abyss
             return HandleRuntimeExceptionAsync(e.Context.ToRequestContext(), e.Result.Exception, e.Result.CommandExecutionStep, e.Result.Reason);
         }
 
-        public void LoadTypesFromAssembly(Assembly assembly)
+        public void ImportAssembly(Assembly assembly)
         {
-            var rootModulesLoaded = _commandService.AddModules(assembly);
-
             var discoverableAttributeType = typeof(DiscoverableTypeParserAttribute);
             var typeParserType = typeof(TypeParser<>);
             var addTypeParserMethod = typeof(CommandService).GetMethod("AddTypeParser") ?? throw new Exception("Cannot find method AddTypeParser on CommandService");
@@ -301,6 +299,8 @@ namespace Abyss
                 method.Invoke(_commandService, new object[] { parser, attr.ReplacingPrimitive });
                 loadedTypes.Add(type);
             }
+
+            var rootModulesLoaded = _commandService.AddModules(assembly);
 
             _logger.LogInformation($"Loaded {rootModulesLoaded.Count} modules, {rootModulesLoaded.Sum(a => a.Commands.Count)} commands, and {loadedTypes.Count} type parsers from {assembly.GetName().Name}.");
         }

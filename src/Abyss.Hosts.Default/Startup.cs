@@ -57,7 +57,7 @@ namespace Abyss.Hosts.Default
             });
 
             var receiver = app.ApplicationServices.GetRequiredService<MessageReceiver>();
-            receiver.LoadTypesFromAssembly(Assembly.Load("Abyss.Commands.Default"));
+            receiver.ImportAssembly(Assembly.Load("Abyss.Commands.Default"));
         }
     }
 }
