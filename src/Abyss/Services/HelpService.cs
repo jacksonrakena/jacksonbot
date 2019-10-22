@@ -30,6 +30,7 @@ namespace Abyss
                         "Any text."),
                     [typeof(int)] = ("A number.", "A list of numbers.", null),
                     [typeof(ulong)] = ("A Discord ID.", "A list of Discord IDs.", null),
+                    [typeof(string[])] = ("A list of words. Surround options with quotes.", "", null)
                 }.ToImmutableDictionary();
 
         public static string GetFriendlyName(Parameter info, CommandService commandService)
@@ -159,9 +160,11 @@ namespace Abyss
 
             if (parameterInfo.IsOptional)
             {
-                if (parameterInfo.GetType().HasCustomAttribute<DefaultValueDescriptionAttribute>(out var defaultValueDescription))
-                    sb.AppendLine($" - Default: {defaultValueDescription!.DefaultValueDescription}");
-                else if (parameterInfo.DefaultValue != null)
+                var dvda = (DefaultValueDescriptionAttribute) parameterInfo.Attributes.FirstOrDefault(d => d is DefaultValueDescriptionAttribute);
+
+                if (dvda != null)
+                    sb.AppendLine($" - Default: {dvda.DefaultValueDescription}");
+                else if (parameterInfo.DefaultValue != null && !(parameterInfo.DefaultValue is string[]))
                     sb.AppendLine(" - Default: " + parameterInfo.DefaultValue);
                 else
                     sb.AppendLine(" - Default: None");

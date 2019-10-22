@@ -29,18 +29,13 @@ namespace Abyss.Commands.Default
             [Name("User")]
             [Description("The user who you wish to get the avatar for.")]
             [DefaultValueDescription("The user who invoked this command.")]
-            SocketGuildUser? target = null,
-            [Name("Image_Size")] [Description("The size of the resulting image, in pixels.")]
-            int size = 512)
+            SocketGuildUser? target = null)
         {
             target ??= Context.Invoker;
-
-            if (size > ushort.MaxValue) return BadRequest("Can't get a size that big.");
-
             return Ok(a =>
             {
                 a.WithAuthor(target.ToEmbedAuthorBuilder());
-                a.ImageUrl = target.GetEffectiveAvatarUrl((ushort) size);
+                a.ImageUrl = target.GetEffectiveAvatarUrl(2048);
                 a.Description =
                     $"{UrlHelper.CreateMarkdownUrl("128", target.GetEffectiveAvatarUrl(128))} | " +
                     $"{UrlHelper.CreateMarkdownUrl("256", target.GetEffectiveAvatarUrl(256))} | " +
