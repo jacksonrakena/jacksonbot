@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Abyss
 {
-    public class AbyssRequestContext : CommandContext
+    public class AbyssRequestContext : CommandContext, IServiceProvider
     {
         public AbyssRequestContext(SocketUserMessage message, IServiceProvider services) : base(services)
         {
             Message = message;
             Channel = (SocketTextChannel) message.Channel;
-            Client = ServiceProvider.GetRequiredService<DiscordSocketClient>();
+            Client = this.GetRequiredService<DiscordSocketClient>();
             Guild = Channel.Guild;
             Bot = Client.CurrentUser;
             Invoker = (SocketGuildUser) message.Author;
@@ -38,8 +38,10 @@ namespace Abyss
 
         public string GetPrefix()
         {
-            return ServiceProvider.GetRequiredService<AbyssConfig>().CommandPrefix;
+            return this.GetRequiredService<AbyssConfig>().CommandPrefix;
         }
+
+        public object GetService(Type serviceType) => ServiceProvider.GetService(serviceType);
 
         public Task<RestUserMessage?> ReplyAsync(string? content = null, EmbedBuilder? embed = null,
             RequestOptions? options = null)
