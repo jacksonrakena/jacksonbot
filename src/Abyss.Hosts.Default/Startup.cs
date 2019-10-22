@@ -22,13 +22,11 @@ namespace Abyss.Hosts.Default
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-
-            services.ConfigureSharedServices();
-
             // Configuration
             var abyssConfig = new AbyssConfig();
             Configuration.Bind(abyssConfig);
             services.AddSingleton(abyssConfig);
+            services.ConfigureSharedServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

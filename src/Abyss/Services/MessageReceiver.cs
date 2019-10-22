@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Text;
 using Abyssal.Common;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Abyss
 {
@@ -33,6 +34,7 @@ namespace Abyss
             _commandService.CommandExecuted += HandleCommandExecutedAsync;
             _commandService.CommandExecutionFailed += HandleCommandExecutionFailedAsync;
             _discordClient.MessageReceived += ReceiveMessageAsync;
+
         }
 
         private readonly ILogger _successfulCommandsTracking;

@@ -15,19 +15,17 @@ namespace Abyss.Commands.Default
     [Name("Meta")]
     [Group("meta")]
     [Description("Provides commands related to me.")]
-    public class MetaModule : AbyssModuleBase
+    public class MetaCommandGroup : AbyssModuleBase
     {
         private readonly ICommandService _commandService;
         private readonly AbyssConfig _config;
         private readonly DiscordSocketClient _client;
-        private readonly DataService _data;
 
-        public MetaModule(DiscordSocketClient client, ICommandService commandService, AbyssConfig config, DataService data)
+        public MetaCommandGroup(DiscordSocketClient client, ICommandService commandService, AbyssConfig config)
         {
             _commandService = commandService;
             _config = config;
             _client = client;
-            _data = data;
         }
 
         [Command("uptime")]
@@ -92,24 +90,6 @@ namespace Abyss.Commands.Default
         public Task<ActionResult> ViewPrefixesAsync()
         {
             return Text($"The prefix is `{Context.GetPrefix()}`, but you can invoke commands by mention as well, such as: \"{Context.BotUser.Mention} help\".");
-        }
-
-        [Command("devinfo")]
-        [Description(
-            "Dumps current information about the client, the commands system and the current execution environment.")]
-        [RequireOwner]
-        public Task<ActionResult> Command_MemoryDumpAsync()
-        {
-            var info = _data.GetServiceInfo();
-            return Ok(e =>
-            {
-                e.Author = Context.BotUser.ToEmbedAuthorBuilder();
-                e.Description = $"{info.ServiceName} instance running on {info.OperatingSystem} (runtime version {info.RuntimeVersion}), powering {info.Guilds} guilds ({info.Channels} channels, and {info.Users} users)";
-                e.AddField("Command statistics", $"{info.Modules} modules | {info.Commands} commands | {info.CommandSuccesses} successful calls | {info.CommandFailures} unsuccessful calls");
-                e.AddField("Process statistics", $"Process name {info.ProcessName} on machine name {info.MachineName} (thread {info.CurrentThreadId}, {info.ProcessorCount} processors)");
-                e.AddField("Content root", info.ContentRootPath);
-                e.AddField("Start time", info.StartTime.ToString("F"), false);
-            });
         }
 
         [Command("hasperm")]

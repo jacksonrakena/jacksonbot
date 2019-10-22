@@ -45,6 +45,7 @@ namespace Abyss
             });
             commandService.AddArgumentParser(UnixArgumentParser.Instance);
             serviceCollection.AddSingleton<ICommandService>(commandService);
+            serviceCollection.AddSingleton(serviceCollection);
         }
     }
 }

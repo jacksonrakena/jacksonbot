@@ -35,8 +35,13 @@ namespace Abyss.Hosts.Default
                     {
                         return new DataService(dataRoot, provider.GetRequiredService<IHostEnvironment>(),
                             provider.GetRequiredService<DiscordSocketClient>(), provider.GetRequiredService<MessageReceiver>(),
-                            provider.GetRequiredService<ICommandService>());
+                            provider.GetRequiredService<ICommandService>(), provider.GetRequiredService<IServiceCollection>());
                     });
+                })
+                .UseDefaultServiceProvider(c =>
+                {
+                    c.ValidateOnBuild = true;
+                    c.ValidateScopes = true;
                 })
                 .ConfigureLogging((hostingContext, logging) =>
                 {

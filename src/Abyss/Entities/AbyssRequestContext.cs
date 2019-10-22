@@ -14,8 +14,7 @@ namespace Abyss
         {
             Message = message;
             Channel = (SocketTextChannel) message.Channel;
-            Services = services;
-            Client = Services.GetRequiredService<DiscordSocketClient>();
+            Client = ServiceProvider.GetRequiredService<DiscordSocketClient>();
             Guild = Channel.Guild;
             Bot = Client.CurrentUser;
             Invoker = (SocketGuildUser) message.Author;
@@ -26,7 +25,6 @@ namespace Abyss
         public SocketSelfUser Bot { get; }
         public SocketGuildUser BotUser { get; }
         public DiscordSocketClient Client { get; }
-        public IServiceProvider Services { get; }
         public SocketUserMessage Message { get; }
         public SocketTextChannel Channel { get; }
         public SocketGuild Guild { get; }
@@ -40,7 +38,7 @@ namespace Abyss
 
         public string GetPrefix()
         {
-            return Services.GetRequiredService<AbyssConfig>().CommandPrefix;
+            return ServiceProvider.GetRequiredService<AbyssConfig>().CommandPrefix;
         }
 
         public Task<RestUserMessage?> ReplyAsync(string? content = null, EmbedBuilder? embed = null,

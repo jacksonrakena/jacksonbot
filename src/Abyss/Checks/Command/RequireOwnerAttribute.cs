@@ -20,6 +20,6 @@ namespace Abyss
                 : new CheckResult($"You aren't my owner, `{owner}`!");
         }
 
-        public string GetDescription(AbyssRequestContext ctx) => $"{ctx.Services.GetRequiredService<AbyssConfig>().Emotes.StaffEmote} You have to be my current owner.";
+        public string GetDescription(AbyssRequestContext ctx) => $"{ctx.ServiceProvider.GetRequiredService<AbyssConfig>().Emotes.StaffEmote} You have to be my current owner.";
     }
 }

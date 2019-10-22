@@ -1,10 +1,12 @@
 using Discord;
 using HandlebarsDotNet;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Qmmands;
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -21,12 +23,14 @@ namespace Abyss.Commands.Default
     {
         private readonly ILogger<SystemCommandGroup> _logger;
         private readonly ScriptingService _scripting;
+        private readonly DataService _dataService;
 
         public SystemCommandGroup(ILogger<SystemCommandGroup> logger,
-            ScriptingService scripting)
+            ScriptingService scripting, DataService dataService)
         {
             _logger = logger;
             _scripting = scripting;
+            _dataService = dataService;
         }
 
         [Command("throwex")]
@@ -289,6 +293,25 @@ namespace Abyss.Commands.Default
             return Ok(c =>
             {
                 c.Description = new StringBuilder().AppendLine("Standard output:").AppendLine($"```{result}```").ToString();
+            });
+        }
+
+        [Command("info")]
+        [Description(
+            "Dumps current information about the client, the commands system and the current execution environment.")]
+        [RequireOwner]
+        public Task<ActionResult> Command_SysInfoAsync()
+        {
+            var info = _dataService.GetServiceInfo();
+            return Ok(e =>
+            {
+                e.Author = Context.BotUser.ToEmbedAuthorBuilder();
+                e.Description = $"{info.ServiceName} instance running on {info.OperatingSystem} (runtime version {info.RuntimeVersion}), powering {info.Guilds} guilds ({info.Channels} channels, and {info.Users} users)";
+                e.AddField("Command statistics", $"{info.Modules} modules | {info.Commands} commands | {info.CommandSuccesses} successful calls | {info.CommandFailures} unsuccessful calls");
+                e.AddField("Process statistics", $"Process name {info.ProcessName} on machine name {info.MachineName} (thread {info.CurrentThreadId}, {info.ProcessorCount} processors)");
+                e.AddField("Content root", info.ContentRootPath);
+                e.AddField("Start time", info.StartTime.ToString("F"));
+                e.AddField("Service count", info.ServicesRegistered, true);
             });
         }
     }
