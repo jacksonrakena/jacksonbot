@@ -95,7 +95,7 @@ namespace Abyss.Commands.Default
             {
                 if (await CanShowModuleAsync(module))
                 {
-                    groups.Add(Format.Code(module.FullAliases.First()));
+                    groups.Add(Format.Bold(Format.Code(module.FullAliases.First())));
                 }
             }
             if (groups.Count != 0)
@@ -121,7 +121,7 @@ namespace Abyss.Commands.Default
         private static string? FormatCommandShort(Command command)
         {
             var firstAlias = command.FullAliases.FirstOrDefault();
-            return firstAlias != null ? Format.Code(firstAlias) : null;
+            return firstAlias != null ? Format.Bold(Format.Code(firstAlias)) : null;
         }
     }
 }
