@@ -13,6 +13,13 @@ namespace Abyss.Commands.Default
     [Description("Commands that provide useful utilities.")]
     public class UtilityModule : AbyssModuleBase
     {
+        [Command("time")]
+        [Description("Displays time.")]
+        public Task<ActionResult> Command_TimeAsync([Name("The time string.")] [Remainder] string text)
+        {
+            return Ok($"`{text}` => {HumanDateParser.HumanDateParser.Parse(text)}");
+        }
+
         [Command("ping")]
         [Description("Benchmarks the connection to the Discord servers.")]
         [AbyssCooldown(1, 3, CooldownMeasure.Seconds, CooldownType.User)]
