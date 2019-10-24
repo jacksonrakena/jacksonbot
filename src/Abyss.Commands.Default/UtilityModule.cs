@@ -15,9 +15,18 @@ namespace Abyss.Commands.Default
     {
         [Command("time")]
         [Description("Displays time.")]
-        public Task<ActionResult> Command_TimeAsync([Name("The time string.")] [Remainder] string text)
+        public Task<ActionResult> Command_TimeAsync([Name("Text")] [Remainder] string text)
         {
             return Ok($"`{text}` => {HumanDateParser.HumanDateParser.Parse(text)}");
+        }
+
+        [Command("timed")]
+        [Description("Displays time, in debug mode.")]
+        public Task<ActionResult> Command_TimeDetailedAsync([Name("Text")] [Remainder] string text)
+        {
+            var res = HumanDateParser.HumanDateParser.ParseDetailed(text);
+            return Ok($"`{text}` => {res.Result.ToString()}\n" +
+                $"**Tokens:** {string.Join(", ", res.Tokens.Select(c => Format.Code(c.GetType().Name)))}");
         }
 
         [Command("ping")]

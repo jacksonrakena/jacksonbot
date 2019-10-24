@@ -7,7 +7,7 @@
 
   
   <ItemGroup>
-    <PackageReference Include="Abyssal.HumanDateParser" Version="2.0.0-20191023.7" />
+    <PackageReference Include="Abyssal.HumanDateParser" Version="2.0.0-20191024.2" />
     <ProjectReference Include="..\Abyss\Abyss.csproj" />
   </ItemGroup>
 
