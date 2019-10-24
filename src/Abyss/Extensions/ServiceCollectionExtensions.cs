@@ -5,13 +5,30 @@ using System.Net.Http;
 using Discord.WebSocket;
 using Discord;
 using Qmmands;
+using Microsoft.Extensions.Hosting;
 
 namespace Abyss
 {
+    public class AbyssConfigOptions
+    {
+        /// <summary>
+        ///     The data root for this Abyss instance. Should contain the abyss configuration file, and any plugins.
+        /// </summary>
+        public string DataRoot { get; set; }
+    }
+
     public static class ServiceCollectionExtensions
     {
-        public static void ConfigureSharedServices(this IServiceCollection serviceCollection)
+        public static void ConfigureAbyss(this IServiceCollection serviceCollection, Action<AbyssConfigOptions> acoAction)
         {
+            var aco = new AbyssConfigOptions();
+            acoAction(aco);
+            if (string.IsNullOrWhiteSpace(aco.DataRoot)) throw new InvalidOperationException($"A data root must be set.");
+            serviceCollection.AddSingleton(prov =>
+            {
+                return new DataService(aco.DataRoot, prov.GetRequiredService<IHostEnvironment>(), prov.GetRequiredService<DiscordSocketClient>(),
+                    prov.GetRequiredService<MessageReceiver>(), prov.GetRequiredService<ICommandService>(), prov.GetRequiredService<IServiceCollection>()); ;
+            });
             serviceCollection.AddHostedService<BotService>();
             serviceCollection.AddSingleton<HelpService>();
             serviceCollection.AddSingleton<MessageReceiver>();

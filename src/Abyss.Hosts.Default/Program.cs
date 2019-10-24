@@ -22,7 +22,7 @@ namespace Abyss.Hosts.Default
             var dataRoot = args.Length > 0 ? args[0] : AppDomain.CurrentDomain.BaseDirectory;
             if (!Directory.Exists(dataRoot)) dataRoot = AppDomain.CurrentDomain.BaseDirectory; // IIS tomfoolery
 
-            return Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
+            return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config.SetBasePath(dataRoot);
@@ -31,11 +31,9 @@ namespace Abyss.Hosts.Default
                 })
                 .ConfigureServices(serviceColl =>
                 {
-                    serviceColl.AddSingleton(provider =>
+                    serviceColl.ConfigureAbyss(abyss =>
                     {
-                        return new DataService(dataRoot, provider.GetRequiredService<IHostEnvironment>(),
-                            provider.GetRequiredService<DiscordSocketClient>(), provider.GetRequiredService<MessageReceiver>(),
-                            provider.GetRequiredService<ICommandService>(), provider.GetRequiredService<IServiceCollection>());
+                        abyss.DataRoot = dataRoot;
                     });
                 })
                 .UseDefaultServiceProvider(c =>
