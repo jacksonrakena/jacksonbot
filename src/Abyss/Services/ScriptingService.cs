@@ -33,7 +33,7 @@ namespace Abyss
             }
 
             var options = ScriptOptions.Default
-                .WithReferences(typeof(IDiscordClient).Assembly, typeof(DiscordSocketClient).Assembly, typeof(BotService).Assembly)
+                .WithReferences(typeof(IDiscordClient).Assembly, typeof(DiscordSocketClient).Assembly, typeof(AbyssHostedService).Assembly)
                 .WithImports(Imports);
 
             var script = CSharpScript.Create(code, options, typeof(T));

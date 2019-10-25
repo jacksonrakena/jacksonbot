@@ -54,7 +54,7 @@ namespace Abyss.Commands.Default
         {
             var embed = new EmbedBuilder
             {
-                Color = BotService.DefaultEmbedColour,
+                Color = AbyssHostedService.DefaultEmbedColour,
                 Author = new EmbedAuthorBuilder
                 {
                     Name = "Server " + Context.Guild.Name,

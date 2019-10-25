@@ -25,7 +25,7 @@ namespace Abyss
 
             var embed = new EmbedBuilder()
                 .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
-                .WithColor(BotService.DefaultEmbedColour)
+                .WithColor(AbyssHostedService.DefaultEmbedColour)
                 .WithCurrentTimestamp()
                 .WithThumbnailUrl(_client.CurrentUser.GetEffectiveAvatarUrl(2048));
 
@@ -44,7 +44,7 @@ namespace Abyss
             await stc.SendMessageAsync(null, false, new EmbedBuilder()
                     .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
                     .WithDescription($"Abyss instance stopping at " + DateTime.Now.ToString("F"))
-                    .WithColor(BotService.DefaultEmbedColour)
+                    .WithColor(AbyssHostedService.DefaultEmbedColour)
                     .WithCurrentTimestamp()
                     .WithThumbnailUrl(_client.CurrentUser.GetEffectiveAvatarUrl(2048))
                     .Build());
@@ -63,7 +63,7 @@ namespace Abyss
                  .AddField("Channel count", arg.TextChannels.Count + " text / " + arg.VoiceChannels.Count + " voice", true)
                  .AddField("Owner", $"{arg.Owner} ({arg.OwnerId})", true)
                  .AddField("Total bot guilds", _client.Guilds.Count, true)
-                 .WithColor(BotService.DefaultEmbedColour)
+                 .WithColor(AbyssHostedService.DefaultEmbedColour)
                  .WithThumbnailUrl(arg.IconUrl)
                  .WithCurrentTimestamp()
                  .Build());

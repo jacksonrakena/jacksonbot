@@ -95,7 +95,7 @@ namespace Abyss.Commands.Default
 
             var embed = new EmbedBuilder
             {
-                Color = BotService.DefaultEmbedColour,
+                Color = AbyssHostedService.DefaultEmbedColour,
                 Author = new EmbedAuthorBuilder
                 {
                     Name = album.Artists.Select(a => a.Name).Humanize(),
@@ -143,7 +143,7 @@ namespace Abyss.Commands.Default
         {
             var embed = new EmbedBuilder
             {
-                Color = BotService.DefaultEmbedColour,
+                Color = AbyssHostedService.DefaultEmbedColour,
                 Author = new EmbedAuthorBuilder
                 {
                     Name = track.Artists.Select(a => a.Name).Humanize(),

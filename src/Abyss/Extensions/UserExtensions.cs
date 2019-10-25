@@ -28,9 +28,9 @@ namespace Abyss
 
         public static Color GetHighestRoleColourOrDefault(this IUser normalUser)
         {
-            if (!(normalUser is SocketGuildUser user)) return BotService.DefaultEmbedColour;
+            if (!(normalUser is SocketGuildUser user)) return AbyssHostedService.DefaultEmbedColour;
             var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color.RawValue != 0);
-            return orderedRoles?.Color ?? BotService.DefaultEmbedColour;
+            return orderedRoles?.Color ?? AbyssHostedService.DefaultEmbedColour;
         }
 
         public static Color? GetHighestRoleColour(this IUser normalUser)

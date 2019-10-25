@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace Abyss
 {
-    public class BotService: IHostedService
+    public class AbyssHostedService: IHostedService
     {
         public const string ZeroWidthSpace = "​";
         public static readonly Color DefaultEmbedColour = new Color(0xB2F7EF);
         private readonly AbyssConfig _config;
         private readonly DiscordSocketClient _discordClient;
 
-        private readonly ILogger<BotService> _logger;
+        private readonly ILogger<AbyssHostedService> _logger;
         private readonly ILogger _discordLogger;
 
         private readonly NotificationsService _notifications;
@@ -27,7 +27,7 @@ namespace Abyss
 
         private bool _hasBeenReady = false;
 
-        public BotService(ILogger<BotService> logger, AbyssConfig config, DiscordSocketClient socketClient,
+        public AbyssHostedService(ILogger<AbyssHostedService> logger, AbyssConfig config, DiscordSocketClient socketClient,
             NotificationsService notifications, ILoggerFactory factory,
             MarketingService marketing, DataService dataService)
         {

@@ -29,7 +29,7 @@ namespace Abyss
                 return new DataService(aco.DataRoot, prov.GetRequiredService<IHostEnvironment>(), prov.GetRequiredService<DiscordSocketClient>(),
                     prov.GetRequiredService<MessageReceiver>(), prov.GetRequiredService<ICommandService>(), prov.GetRequiredService<IServiceCollection>()); ;
             });
-            serviceCollection.AddHostedService<BotService>();
+            serviceCollection.AddHostedService<AbyssHostedService>();
             serviceCollection.AddSingleton<HelpService>();
             serviceCollection.AddSingleton<MessageReceiver>();
             serviceCollection.AddSingleton<ScriptingService>();

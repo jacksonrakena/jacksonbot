@@ -96,7 +96,7 @@ namespace Abyss.Commands.Default
             var roles = member.Roles.Where(r => !r.IsEveryone);
             var socketRoles = roles as SocketRole[] ?? roles.ToArray();
 
-            embed.AddField($"{(socketRoles.Length > 0 ? socketRoles.Length.ToString() : "No")} role{(socketRoles.Length == 1 ? "" : "s")}", socketRoles.Length > 0 ? string.Join(", ", socketRoles.Select(r => r.Name)) : BotService.ZeroWidthSpace);
+            embed.AddField($"{(socketRoles.Length > 0 ? socketRoles.Length.ToString() : "No")} role{(socketRoles.Length == 1 ? "" : "s")}", socketRoles.Length > 0 ? string.Join(", ", socketRoles.Select(r => r.Name)) : AbyssHostedService.ZeroWidthSpace);
 
             return Ok(embed);
         }
