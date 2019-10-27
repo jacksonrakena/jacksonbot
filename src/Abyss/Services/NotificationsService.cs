@@ -1,6 +1,8 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Abyss
@@ -9,11 +11,13 @@ namespace Abyss
     {
         private readonly AbyssConfigNotificationsSection? _notifyConfig;
         private readonly DiscordSocketClient _client;
+        private readonly MessageService _messageService;
 
-        public NotificationsService(AbyssConfig config, DiscordSocketClient client)
+        public NotificationsService(MessageService messages, AbyssConfig config, DiscordSocketClient client)
         {
             _notifyConfig = config.Notifications;
             _client = client;
+            _messageService = messages;
         }
 
         public async Task NotifyReadyAsync(bool firstTime = false)
@@ -27,10 +31,13 @@ namespace Abyss
                 .WithAuthor(_client.CurrentUser.ToEmbedAuthorBuilder())
                 .WithColor(AbyssHostedService.DefaultEmbedColour)
                 .WithCurrentTimestamp()
+                .AddField("Core version", Assembly.GetExecutingAssembly().GetName().Version!.ToString(), true)
+                .AddField("Guilds", _client.Guilds.Count, true)
+                .AddField("Loaded assemblies", string.Join(", ", _messageService.LoadedAssemblies.Select(c => $"{c.GetName().Name} (v{c.GetName().Version})")))
                 .WithThumbnailUrl(_client.CurrentUser.GetEffectiveAvatarUrl(2048));
 
             await stc.SendMessageAsync(null, false, embed
-                .WithDescription($"Abyss instance {(firstTime ? "started and" : "")} ready at " + DateTime.Now.ToString("F") + ". Connected to " + _client.Guilds.Count + " guilds.")
+                .WithDescription($"Abyss instance {(firstTime ? "started and" : "")} ready at {DateTime.Now:F}.")
                 .Build());
         }
 

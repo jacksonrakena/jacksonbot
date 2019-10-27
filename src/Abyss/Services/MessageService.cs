@@ -15,6 +15,8 @@ namespace Abyss
 {
     public sealed class MessageService
     {
+        public List<Assembly> LoadedAssemblies = new List<Assembly>();
+
         public MessageService(ICommandService commandService, ILoggerFactory logger,
             DiscordSocketClient discordClient, AbyssConfig config, IServiceProvider services)
         {
@@ -306,6 +308,7 @@ namespace Abyss
 
             var rootModulesLoaded = _commandService.AddModules(assembly, action: ProcessModule);
 
+            LoadedAssemblies.Add(assembly);
             _logger.LogInformation($"Loaded {rootModulesLoaded.Count} modules, {rootModulesLoaded.Sum(a => a.Commands.Count)} commands, and {loadedTypes.Count} type parsers from {assembly.GetName().Name}.");
         }
 
