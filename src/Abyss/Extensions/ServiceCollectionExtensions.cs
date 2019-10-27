@@ -14,6 +14,7 @@ namespace Abyss
         /// <summary>
         ///     The data root for this Abyss instance. Should contain the abyss configuration file, and any plugins.
         /// </summary>
+        #pragma warning disable CS8618
         public string DataRoot { get; set; }
     }
 
@@ -27,11 +28,11 @@ namespace Abyss
             serviceCollection.AddSingleton(prov =>
             {
                 return new DataService(aco.DataRoot, prov.GetRequiredService<IHostEnvironment>(), prov.GetRequiredService<DiscordSocketClient>(),
-                    prov.GetRequiredService<MessageReceiver>(), prov.GetRequiredService<ICommandService>(), prov.GetRequiredService<IServiceCollection>()); ;
+                    prov.GetRequiredService<MessageService>(), prov.GetRequiredService<ICommandService>(), prov.GetRequiredService<IServiceCollection>()); ;
             });
             serviceCollection.AddHostedService<AbyssHostedService>();
             serviceCollection.AddSingleton<HelpService>();
-            serviceCollection.AddSingleton<MessageReceiver>();
+            serviceCollection.AddSingleton<MessageService>();
             serviceCollection.AddSingleton<ScriptingService>();
             serviceCollection.AddSingleton(provider =>
             {

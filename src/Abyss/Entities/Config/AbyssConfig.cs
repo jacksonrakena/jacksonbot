@@ -20,28 +20,28 @@ namespace Abyss
 
     public class AbyssConfigStartupSection
     {
-        public class AbyssConfigActivity
-        {
-            public string Type { get; set; }
-            public string Message { get; set; }
-        }
-
         public IEnumerable<AbyssConfigActivity> Activity { get; set; }
+    }
+
+    public class AbyssConfigActivity
+    {
+        public string Type { get; set; }
+        public string Message { get; set; }
+    }
+
+    public class AbyssConfigDiscordConnectionSection
+    {
+        public string Token { get; set; }
+    }
+
+    public class AbyssConfigSpotifyConnectionSection
+    {
+        public string ClientId { get; set; }
+        public string ClientSecret { get; set; }
     }
 
     public class AbyssConfigConnectionsSection
     {
-        public class AbyssConfigDiscordConnectionSection
-        {
-            public string Token { get; set; }
-        }
-
-        public class AbyssConfigSpotifyConnectionSection
-        {
-            public string ClientId { get; set; }
-            public string ClientSecret { get; set; }
-        }
-
         public AbyssConfigDiscordConnectionSection Discord { get; set; }
         public AbyssConfigSpotifyConnectionSection Spotify { get; set; }
     }

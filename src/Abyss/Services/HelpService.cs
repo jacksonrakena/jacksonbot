@@ -184,7 +184,7 @@ namespace Abyss
             return (cba as IAbyssCheck ?? throw new InvalidOperationException($"The provided check is not of the Abyss check type, {typeof(IAbyssCheck).Name}.")).GetDescription(context);
         }
 
-        private string FormatParameter(AbyssRequestContext ctx, Parameter parameterInfo)
+        private static string FormatParameter(AbyssRequestContext ctx, Parameter parameterInfo)
         {
             var type = GetFriendlyName(parameterInfo, ctx.Command.Service);
 

@@ -14,7 +14,7 @@ namespace Abyss
             return Context.ReplyAsync(content, embed, options);
         }
 
-        public ActionResult Image(params FileAttachment[] attachments)
+        public static ActionResult Image(params FileAttachment[] attachments)
         {
             return new OkResult((string?) null, attachments);
         }
@@ -28,11 +28,11 @@ namespace Abyss
             });
         }
 
-        public OkResult Text(string raw) => new OkResult(raw);
+        public static OkResult Text(string raw) => new OkResult(raw);
 
-        public ReplySuccessResult Ok() => new ReplySuccessResult();
+        public static ReplySuccessResult Ok() => new ReplySuccessResult();
 
-        public ReactSuccessResult OkReaction() => new ReactSuccessResult();
+        public static ReactSuccessResult OkReaction() => new ReactSuccessResult();
 
         public ActionResult Ok(string content, params FileAttachment[] attachments)
         {
@@ -80,12 +80,12 @@ namespace Abyss
             return Ok(eb, attachments);
         }
 
-        public ActionResult BadRequest(string reason)
+        public static ActionResult BadRequest(string reason)
         {
             return new BadRequestResult(reason);
         }
 
-        public ActionResult Empty()
+        public static ActionResult Empty()
         {
             return new EmptyResult();
         }

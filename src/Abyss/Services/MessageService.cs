@@ -10,13 +10,12 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Text;
 using Abyssal.Common;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Abyss
 {
-    public sealed class MessageReceiver
+    public sealed class MessageService
     {
-        public MessageReceiver(ICommandService commandService, ILoggerFactory logger,
+        public MessageService(ICommandService commandService, ILoggerFactory logger,
             DiscordSocketClient discordClient, AbyssConfig config, IServiceProvider services)
         {
             _commandService = commandService;
@@ -25,7 +24,7 @@ namespace Abyss
             _discordClient = discordClient;
             _config = config;
             _services = services;
-            _logger = logger.CreateLogger<MessageReceiver>();
+            _logger = logger.CreateLogger<MessageService>();
 
             var currentAssembly = Assembly.GetExecutingAssembly();
             ImportAssembly(currentAssembly);
@@ -39,7 +38,7 @@ namespace Abyss
 
         private readonly ILogger _successfulCommandsTracking;
         private readonly ILogger _failedCommandsTracking;
-        private readonly ILogger<MessageReceiver> _logger;
+        private readonly ILogger<MessageService> _logger;
 
         private readonly ICommandService _commandService;
         private readonly IServiceProvider _services;

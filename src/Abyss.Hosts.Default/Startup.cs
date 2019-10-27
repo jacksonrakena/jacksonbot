@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.Reflection;
 
 namespace Abyss.Hosts.Default
@@ -16,8 +17,6 @@ namespace Abyss.Hosts.Default
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
@@ -28,9 +27,9 @@ namespace Abyss.Hosts.Default
             services.AddSingleton(abyssConfig);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static void Configure(IApplicationBuilder app)
         {
+            var env = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -53,7 +52,7 @@ namespace Abyss.Hosts.Default
                 endpoints.MapFallbackToPage("/_Host");
             });
 
-            var receiver = app.ApplicationServices.GetRequiredService<MessageReceiver>();
+            var receiver = app.ApplicationServices.GetRequiredService<MessageService>();
             receiver.ImportAssembly(Assembly.Load("Abyss.Commands.Default"));
         }
     }

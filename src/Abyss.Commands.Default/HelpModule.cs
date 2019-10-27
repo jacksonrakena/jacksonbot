@@ -1,4 +1,3 @@
-using Abyssal.Common;
 using Discord;
 using Qmmands;
 using System.Collections.Generic;

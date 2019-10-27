@@ -12,13 +12,13 @@ namespace Abyss
     public class DataService
     {
         private readonly IHostEnvironment _hostingEnvironment;
-        private readonly MessageReceiver _messageReceiver;
+        private readonly MessageService _messageReceiver;
         private readonly ICommandService _commandService;
         private readonly DiscordSocketClient _discord;
         private readonly string _dataRoot;
         private readonly IServiceCollection _serviceCollection;
 
-        public DataService(string dataRoot, IHostEnvironment hostingEnvironment, DiscordSocketClient client, MessageReceiver receiver, ICommandService commandService, IServiceCollection sColl)
+        public DataService(string dataRoot, IHostEnvironment hostingEnvironment, DiscordSocketClient client, MessageService receiver, ICommandService commandService, IServiceCollection sColl)
         {
             _hostingEnvironment = hostingEnvironment;
             _messageReceiver = receiver;

@@ -127,7 +127,7 @@ namespace Abyss.Commands.Default
             return Ok($"I choose **{options[roll]}**.");
         }
 
-        public class DiceExpression
+        private class DiceExpression
         {
             private static readonly Regex NumberToken = new Regex("^[0-9]+$");
             private static readonly Regex DiceRollToken = new Regex("^([0-9]*)d([0-9]+|%)$");
