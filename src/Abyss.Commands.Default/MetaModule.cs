@@ -8,20 +8,20 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Abyss.Commands.Default
 {
     [Name("Meta")]
-    [Group("meta")]
     [Description("Provides commands related to me.")]
-    public class MetaCommandGroup : AbyssModuleBase
+    public class MetaModule : AbyssModuleBase
     {
         private readonly ICommandService _commandService;
         private readonly AbyssConfig _config;
         private readonly DiscordSocketClient _client;
 
-        public MetaCommandGroup(DiscordSocketClient client, ICommandService commandService, AbyssConfig config)
+        public MetaModule(DiscordSocketClient client, ICommandService commandService, AbyssConfig config)
         {
             _commandService = commandService;
             _config = config;
@@ -33,6 +33,32 @@ namespace Abyss.Commands.Default
         public Task<ActionResult> Command_GetUptimeAsync()
         {
             return Ok($"**Uptime:** {(DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize(20)}");
+        }
+
+        [Command("version")]
+        [RunMode(RunMode.Parallel)]
+        [Description("Provides some detailed information about the current version.")]
+        public Task<ActionResult> Command_GetVersionInfoAsync()
+        {
+            var dotnetVersion =
+                Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ??
+                ".NET Core";
+
+            var fwAssembly = Assembly.GetAssembly(typeof(AbyssHostedService))!;
+
+            var stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine("```");
+
+            stringBuilder.AppendLine($"              Runtime: {dotnetVersion}");
+            stringBuilder.AppendLine($"      Abyss framework: {fwAssembly.GetName().Version!}");
+            stringBuilder.AppendLine($"          Command set: {Assembly.GetExecutingAssembly()!.GetName().Version!}");
+            stringBuilder.AppendLine($"          Discord.Net: {DiscordConfig.Version}");
+            stringBuilder.AppendLine($"Release configuration: {fwAssembly.GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration}");
+            stringBuilder.AppendLine($"        Total modules: {_commandService.GetAllModules().Count}");
+            stringBuilder.AppendLine($"       Total commands: {_commandService.GetAllCommands().Count}");
+
+            stringBuilder.AppendLine("```");
+            return Text(stringBuilder.ToString());
         }
 
         [Command("info", "about")]
@@ -62,11 +88,6 @@ namespace Abyss.Commands.Default
                 .AddField("Commands", _commandService.GetAllCommands().Count(), true)
                 .AddField("Modules", _commandService.GetAllModules().Count(), true)
                 .AddField("Source", $"https://github.com/abyssal/Abyss");
-
-            response
-                .AddField("Language",
-                    $"C# 8.0 ({dotnetVersion})")
-                .AddField("Libraries", $"Discord.Net {DiscordConfig.Version} w/ Qmmands");
 
             return Ok(response);
         }
