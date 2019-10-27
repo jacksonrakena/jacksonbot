@@ -1,7 +1,9 @@
 using System;
 using System.IO;
+using AbyssalSpotify;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -31,6 +33,11 @@ namespace Abyss.Hosts.Default
                     serviceColl.ConfigureAbyss(abyss =>
                     {
                         abyss.DataRoot = dataRoot;
+                    });
+                    serviceColl.AddSingleton(provider =>
+                    {
+                        var configurationModel = provider.GetRequiredService<AbyssConfig>();
+                        return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret);
                     });
                 })
                 .UseDefaultServiceProvider(c =>

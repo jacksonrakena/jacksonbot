@@ -20,14 +20,11 @@ namespace Abyss.Commands.Default
     public class SystemCommandGroup : AbyssModuleBase
     {
         private readonly ILogger<SystemCommandGroup> _logger;
-        private readonly ScriptingService _scripting;
         private readonly DataService _dataService;
 
-        public SystemCommandGroup(ILogger<SystemCommandGroup> logger,
-            ScriptingService scripting, DataService dataService)
+        public SystemCommandGroup(ILogger<SystemCommandGroup> logger, DataService dataService)
         {
             _logger = logger;
-            _scripting = scripting;
             _dataService = dataService;
         }
 
@@ -78,7 +75,7 @@ namespace Abyss.Commands.Default
             string script)
         {
             var props = new EvaluationHelper(Context);
-            var result = await _scripting.EvaluateScriptAsync(script, props).ConfigureAwait(false);
+            var result = await ScriptingHelper.EvaluateScriptAsync(script, props).ConfigureAwait(false);
 
             var canUseEmbed = true;
             string? stringRep;

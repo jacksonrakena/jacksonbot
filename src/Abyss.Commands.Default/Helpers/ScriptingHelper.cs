@@ -10,9 +10,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss
+namespace Abyss.Commands.Default
 {
-    public sealed class ScriptingService
+    public sealed class ScriptingHelper
     {
         public static readonly IReadOnlyList<string> Imports = new ReadOnlyCollection<string>(new List<string>
         {
@@ -23,7 +23,7 @@ namespace Abyss
             "System.Globalization", "System.Reflection"
         });
 
-        public async Task<ScriptingResult> EvaluateScriptAsync<T>(string code, T properties)
+        public static async Task<ScriptingResult> EvaluateScriptAsync<T>(string code, T properties)
         {
             if (string.IsNullOrWhiteSpace(code))
             {

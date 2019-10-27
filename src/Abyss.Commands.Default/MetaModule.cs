@@ -1,4 +1,5 @@
 ﻿using Abyssal.Common;
+using AbyssalSpotify;
 using Discord;
 using Discord.WebSocket;
 using Humanizer;
@@ -49,13 +50,16 @@ namespace Abyss.Commands.Default
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("```");
 
-            stringBuilder.AppendLine($"              Runtime: {dotnetVersion}");
-            stringBuilder.AppendLine($"      Abyss framework: {fwAssembly.GetName().Version!}");
-            stringBuilder.AppendLine($"          Command set: {Assembly.GetExecutingAssembly()!.GetName().Version!}");
-            stringBuilder.AppendLine($"          Discord.Net: {DiscordConfig.Version}");
-            stringBuilder.AppendLine($"Release configuration: {fwAssembly.GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration}");
-            stringBuilder.AppendLine($"        Total modules: {_commandService.GetAllModules().Count}");
-            stringBuilder.AppendLine($"       Total commands: {_commandService.GetAllCommands().Count}");
+            stringBuilder.AppendLine($"                 Runtime: {dotnetVersion}");
+            stringBuilder.AppendLine($"         Abyss framework: {fwAssembly.GetName().Version!}");
+            stringBuilder.AppendLine($"             Command set: {Assembly.GetExecutingAssembly()!.GetName().Version!}");
+            stringBuilder.AppendLine($"             Discord.Net: {DiscordConfig.Version}");
+            stringBuilder.AppendLine($"                 Qmmands: {Assembly.GetAssembly(typeof(CommandService))!.GetName().Version}");
+            stringBuilder.AppendLine($"          AbyssalSpotify: {Assembly.GetAssembly(typeof(SpotifyClient))!.GetName().Version}");
+            stringBuilder.AppendLine($"Abyssal Common Libraries: {Assembly.GetAssembly(typeof(HiddenAttribute))!.GetName().Version}");
+            stringBuilder.AppendLine($"   Release configuration: {fwAssembly.GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration}");
+            stringBuilder.AppendLine($"           Total modules: {_commandService.GetAllModules().Count}");
+            stringBuilder.AppendLine($"          Total commands: {_commandService.GetAllCommands().Count}");
 
             stringBuilder.AppendLine("```");
             return Text(stringBuilder.ToString());
@@ -66,10 +70,6 @@ namespace Abyss.Commands.Default
         [Description("Shows some information about me.")]
         public async Task<ActionResult> Command_GetAbyssInfoAsync()
         {
-            var dotnetVersion =
-                Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ??
-                ".NET Core";
-
             var app = await Context.Client.GetApplicationInfoAsync().ConfigureAwait(false);
             var response = new EmbedBuilder
             {

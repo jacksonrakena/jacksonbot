@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using AbyssalSpotify;
 using System.Net.Http;
 using Discord.WebSocket;
 using Discord;
@@ -33,12 +32,6 @@ namespace Abyss
             serviceCollection.AddHostedService<AbyssHostedService>();
             serviceCollection.AddSingleton<HelpService>();
             serviceCollection.AddSingleton<MessageService>();
-            serviceCollection.AddSingleton<ScriptingService>();
-            serviceCollection.AddSingleton(provider =>
-            {
-                var configurationModel = provider.GetRequiredService<AbyssConfig>();
-                return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret);
-            });
             serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<NotificationsService>();

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Abyss
+namespace Abyss.Commands.Default
 {
     public sealed class ScriptingResult
     {
