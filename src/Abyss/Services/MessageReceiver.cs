@@ -249,7 +249,10 @@ namespace Abyss
 
             if (!(result is ActionResult baseResult))
             {
-                _failedCommandsTracking.LogCritical(LoggingEventIds.CommandReturnedBadType, $"Command {command.Name} returned a result of type {result.GetType().Name} and not {typeof(ActionResult).Name}.");
+                if (result == null)
+                {
+                    _failedCommandsTracking.LogCritical(LoggingEventIds.CommandReturnedBadType, $"Command {command.Name} returned a null result type.");
+                } else _failedCommandsTracking.LogCritical(LoggingEventIds.CommandReturnedBadType, $"Command {command.Name} returned a result of type {result.GetType().Name} and not {typeof(ActionResult).Name}.");
                 await context.Channel.TrySendMessageAsync($"Man, this bot sucks. Command {command.Name} is broken, and will need to be recompiled. Try again later. (Developer: The command returned a type that isn't a {typeof(ActionResult).Name}.)");
                 return;
             }
@@ -302,9 +305,29 @@ namespace Abyss
                 loadedTypes.Add(type);
             }
 
-            var rootModulesLoaded = _commandService.AddModules(assembly);
+            var rootModulesLoaded = _commandService.AddModules(assembly, action: ProcessModule);
 
             _logger.LogInformation($"Loaded {rootModulesLoaded.Count} modules, {rootModulesLoaded.Sum(a => a.Commands.Count)} commands, and {loadedTypes.Count} type parsers from {assembly.GetName().Name}.");
+        }
+
+        private void ProcessModule(ModuleBuilder moduleBuilder)
+        {
+            if (moduleBuilder.Type.HasCustomAttribute<GroupAttribute>())
+            {
+                Console.WriteLine("Processing group " + moduleBuilder.Name);
+                moduleBuilder.AddCommand(CreateGroupRootBuilder, b =>
+                {
+                    b.AddAttribute(new HiddenAttribute());
+                });
+            }
+        }
+
+        // Qmmands requires this to return Task<CommandResult> (instead of Task<ActionResult>)
+        // otherwise the command will return null. Strange.
+        private async Task<CommandResult> CreateGroupRootBuilder(CommandContext c)
+        {
+            var embed = await HelpService.CreateGroupEmbedAsync(c.ToRequestContext(), c.Command.Module);
+            return AbyssModuleBase.Ok(c.ToRequestContext(), embed);
         }
     }
 }

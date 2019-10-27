@@ -41,12 +41,12 @@ namespace Abyss
                 : Ok(new EmbedBuilder().WithDescription(content), attachments);
         }
 
-        public ActionResult Ok(EmbedBuilder builder, params FileAttachment[] attachments)
+        public static ActionResult Ok(AbyssRequestContext context, EmbedBuilder builder, params FileAttachment[] attachments)
         {
             bool attachFooter = false;
             if (builder.Footer == null)
             {
-                if (Context.Command.GetType().HasCustomAttribute<ResponseFormatOptionsAttribute>(out var at))
+                if (context.Command.GetType().HasCustomAttribute<ResponseFormatOptionsAttribute>(out var at))
                 {
                     attachFooter = !at!.Options.HasFlag(ResponseFormatOptions.DontAttachFooter);
                 }
@@ -56,16 +56,21 @@ namespace Abyss
             bool attachTimestamp = false;
             if (builder.Timestamp == null)
             {
-                if (Context.Command.GetType().HasCustomAttribute<ResponseFormatOptionsAttribute>(out var at0))
+                if (context.Command.GetType().HasCustomAttribute<ResponseFormatOptionsAttribute>(out var at0))
                 {
                     attachTimestamp = !at0!.Options.HasFlag(ResponseFormatOptions.DontAttachTimestamp);
                 }
                 else attachTimestamp = true;
             }
 
-            if (attachFooter) builder.WithRequesterFooter(Context);
+            if (attachFooter) builder.WithRequesterFooter(context);
             if (attachTimestamp) builder.WithCurrentTimestamp();
-            return new OkResult(builder.WithColor(Context.BotUser.GetHighestRoleColourOrDefault()), attachments);
+            return new OkResult(builder.WithColor(context.BotUser.GetHighestRoleColourOrDefault()), attachments);
+        }
+
+        public ActionResult Ok(EmbedBuilder builder, params FileAttachment[] attachments)
+        {
+            return Ok(Context, builder, attachments);
         }
 
         public ActionResult Ok(Action<EmbedBuilder> actor, params FileAttachment[] attachments)

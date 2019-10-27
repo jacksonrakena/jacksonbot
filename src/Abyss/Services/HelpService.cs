@@ -33,6 +33,52 @@ namespace Abyss
                     [typeof(string[])] = ("A list of words. Surround options with quotes.", "", null)
                 }.ToImmutableDictionary();
 
+        public static async Task<bool> CanShowCommandAsync(AbyssRequestContext context, Command command)
+        {
+            if (!(await command.RunChecksAsync(context).ConfigureAwait(false)).IsSuccessful)
+                return false;
+            return !command.GetType().HasCustomAttribute<HiddenAttribute>();
+        }
+
+        public static async Task<bool> CanShowModuleAsync(AbyssRequestContext context, Qmmands.Module module)
+        {
+            if (!(await module.RunChecksAsync(context).ConfigureAwait(false)).IsSuccessful)
+                return false;
+            return !module.GetType().HasCustomAttribute<HiddenAttribute>();
+        }
+
+        public static string? FormatCommandShort(Command command)
+        {
+            var firstAlias = command.FullAliases.FirstOrDefault();
+            return firstAlias != null ? Format.Bold(Format.Code(firstAlias)) : null;
+        }
+
+        public static async Task<EmbedBuilder> CreateGroupEmbedAsync(AbyssRequestContext context, Qmmands.Module group)
+        {
+            var embed0 = new EmbedBuilder
+            {
+                Title = "Group information"
+            };
+
+            embed0.Description = $"{Format.Code(group.FullAliases.First())}: {group.Description ?? "No description provided."}";
+
+            if (group.FullAliases.Count > 1) embed0.AddField("Aliases", string.Join(", ", group.FullAliases.Select(c => Format.Code(c))));
+
+            var commands = new List<string>();
+            foreach (var command in group.Commands)
+            {
+                if (await CanShowCommandAsync(context, command))
+                {
+                    var format = FormatCommandShort(command);
+                    if (format != null) commands.Add(format);
+                }
+            }
+            if (commands.Count != 0)
+                embed0.AddField(new EmbedFieldBuilder().WithName("Subcommands").WithValue(string.Join(", ", commands)));
+
+            return embed0;
+        }
+
         public static string GetFriendlyName(Parameter info, CommandService commandService)
         {
             var type = Nullable.GetUnderlyingType(info.Type) ?? info.Type;

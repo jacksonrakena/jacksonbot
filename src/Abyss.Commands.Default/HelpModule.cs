@@ -23,38 +23,17 @@ namespace Abyss.Commands.Default
         public async Task<ActionResult> CommandSubroutine_HelpQueryAsync(string query)
         {
             // Searching for command or module
-            var search = _commandService.FindCommands(query).ToList();
-            if (search.Count == 0)
+            var group = _commandService.GetAllModules().Where(m => m.IsGroup()).Search(query);
+            if (group == null)
             {
-                // Searching for group
-                var group = _commandService.GetAllModules().Where(m => m.IsGroup()).Search(query);
-                if (group == null) return BadRequest($"No command or command group found for `{query}`.");
+                // Search for command
+                var search = _commandService.FindCommands(query).ToList();
+                if (search.Count == 0) return BadRequest($"No command or command group found for `{query}`.");
 
-                var embed0 = new EmbedBuilder
-                {
-                    Title = "Group information"
-                };
-
-                embed0.Description = $"{Format.Code(group.FullAliases.First())}: {group.Description ?? "No description provided."}";
-
-                if (group.FullAliases.Count > 1) embed0.AddField("Aliases", string.Join(", ", group.FullAliases.Select(c => Format.Code(c))));
-
-                var commands = new List<string>();
-                foreach (var command in group.Commands)
-                {
-                    if (await CanShowCommandAsync(command))
-                    {
-                        var format = FormatCommandShort(command);
-                        if (format != null) commands.Add(format);
-                    }
-                }
-                if (commands.Count != 0)
-                    embed0.AddField(new EmbedFieldBuilder().WithName("Subcommands").WithValue(string.Join(", ", commands)));
-
-                return Ok(embed0);
+                return Ok(await _help.CreateCommandEmbedAsync(search[0].Command, Context));
             }
-
-            return Ok(await _help.CreateCommandEmbedAsync(search[0].Command, Context));
+            
+            return Ok(await HelpService.CreateGroupEmbedAsync(Context, group));
         }
 
         [Command("help", "commands")]
@@ -81,9 +60,9 @@ namespace Abyss.Commands.Default
             var commands = new List<string>();
             foreach (var command in _commandService.GetAllCommands())
             {
-                if (!command.Module.IsGroup() && await CanShowCommandAsync(command))
+                if (!command.Module.IsGroup() && await HelpService.CanShowCommandAsync(Context, command))
                 {
-                    var format = FormatCommandShort(command);
+                    var format = HelpService.FormatCommandShort(command);
                     if (format != null) commands.Add(format);
                 }
             }
@@ -93,7 +72,7 @@ namespace Abyss.Commands.Default
             var groups = new List<string>();
             foreach (var module in _commandService.GetAllModules().Where(m => m.IsGroup()))
             {
-                if (await CanShowModuleAsync(module))
+                if (await HelpService.CanShowModuleAsync(Context, module))
                 {
                     groups.Add(Format.Bold(Format.Code(module.FullAliases.First())));
                 }
@@ -102,26 +81,6 @@ namespace Abyss.Commands.Default
                 embed.AddField(new EmbedFieldBuilder().WithName("Groups").WithValue(string.Join(", ", groups)));
 
             return Ok(embed);
-        }
-
-        private async Task<bool> CanShowCommandAsync(Command command)
-        {
-            if (!(await command.RunChecksAsync(Context).ConfigureAwait(false)).IsSuccessful)
-                return false;
-            return !command.GetType().HasCustomAttribute<HiddenAttribute>();
-        }
-
-        private async Task<bool> CanShowModuleAsync(Module module)
-        {
-            if (!(await module.RunChecksAsync(Context).ConfigureAwait(false)).IsSuccessful)
-                return false;
-            return !module.GetType().HasCustomAttribute<HiddenAttribute>();
-        }
-
-        private static string? FormatCommandShort(Command command)
-        {
-            var firstAlias = command.FullAliases.FirstOrDefault();
-            return firstAlias != null ? Format.Bold(Format.Code(firstAlias)) : null;
         }
     }
 }
