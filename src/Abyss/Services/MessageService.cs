@@ -316,7 +316,6 @@ namespace Abyss
         {
             if (moduleBuilder.Type.HasCustomAttribute<GroupAttribute>())
             {
-                Console.WriteLine("Processing group " + moduleBuilder.Name);
                 moduleBuilder.AddCommand(CreateGroupRootBuilder, b =>
                 {
                     b.AddAttribute(new HiddenAttribute());
