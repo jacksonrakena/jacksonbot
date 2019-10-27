@@ -30,15 +30,19 @@ namespace Abyss.Hosts.Default
                 })
                 .ConfigureServices(serviceColl =>
                 {
+                    // add Abyss services
                     serviceColl.ConfigureAbyss(abyss =>
                     {
                         abyss.DataRoot = dataRoot;
                     });
+
+                    // add services required by Abyss.Commands.Default
                     serviceColl.AddSingleton(provider =>
                     {
                         var configurationModel = provider.GetRequiredService<AbyssConfig>();
                         return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret);
                     });
+                    serviceColl.AddTransient<Random>();
                 })
                 .UseDefaultServiceProvider(c =>
                 {

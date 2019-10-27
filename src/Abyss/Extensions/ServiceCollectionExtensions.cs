@@ -27,12 +27,11 @@ namespace Abyss
             serviceCollection.AddSingleton(prov =>
             {
                 return new DataService(aco.DataRoot, prov.GetRequiredService<IHostEnvironment>(), prov.GetRequiredService<DiscordSocketClient>(),
-                    prov.GetRequiredService<MessageService>(), prov.GetRequiredService<ICommandService>(), prov.GetRequiredService<IServiceCollection>()); ;
+                    prov.GetRequiredService<MessageService>(), prov.GetRequiredService<ICommandService>(), prov.GetRequiredService<IServiceCollection>());
             });
             serviceCollection.AddHostedService<AbyssHostedService>();
             serviceCollection.AddSingleton<HelpService>();
             serviceCollection.AddSingleton<MessageService>();
-            serviceCollection.AddTransient<Random>();
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<NotificationsService>();
             serviceCollection.AddSingleton<MarketingService>();

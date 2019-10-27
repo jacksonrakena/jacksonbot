@@ -165,11 +165,6 @@ namespace Abyss
             if (command.Parameters.Count != 0) embed.WithFooter("You can use quotes to encapsulate inputs that are more than one word long.",
                 context.Bot.GetEffectiveAvatarUrl());
 
-            if (!command.GetType().HasCustomAttribute<ThumbnailAttribute>(out var imageUrlAttribute)) return embed;
-            embed.Author = new EmbedAuthorBuilder().WithName($"Command {command.Aliases.FirstOrDefault()}")
-                .WithIconUrl(imageUrlAttribute!.ImageUrl);
-            embed.Title = null;
-
             return embed;
         }
 

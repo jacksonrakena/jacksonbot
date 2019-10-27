@@ -15,8 +15,6 @@ namespace Abyss.Commands.Default
     [Group("spotify", "spot", "sp")]
     public class SpotifyCommandGroup : AbyssModuleBase
     {
-        public const string SpotifyIconUrl = "https://i.imgur.com/d7HQlA9.png";
-
         private readonly SpotifyClient _spotify;
 
         public SpotifyCommandGroup(SpotifyClient spotify)
@@ -26,7 +24,6 @@ namespace Abyss.Commands.Default
 
         [Command("track")]
         [Description("Searches the Spotify database for a song.")]
-        [Thumbnail(SpotifyIconUrl)]
         [RunMode(RunMode.Parallel)]
         public async Task<ActionResult> Command_TrackAsync(
             [Name("Track Name")]
@@ -55,7 +52,6 @@ namespace Abyss.Commands.Default
 
         [Command("album")]
         [Description("Searches the Spotify database for an album.")]
-        [Thumbnail(SpotifyIconUrl)]
         [RunMode(RunMode.Parallel)]
         public async Task<ActionResult> Command_SearchAlbumAsync(
             [Name("Album Name")]
