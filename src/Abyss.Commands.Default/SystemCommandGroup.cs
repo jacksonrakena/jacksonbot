@@ -1,4 +1,5 @@
-using Discord;
+using Disqord;
+using Disqord.Bot;
 using HandlebarsDotNet;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
@@ -16,7 +17,7 @@ namespace Abyss.Commands.Default
     [Name("System")]
     [Group("sys")]
     [Description("Provides commands for my creator.")]
-    [RequireOwner]
+    [BotOwnerOnly]
     public class SystemCommandGroup : AbyssModuleBase
     {
         private readonly ILogger<SystemCommandGroup> _logger;
@@ -146,7 +147,7 @@ namespace Abyss.Commands.Default
                             : "")
                         .AddField("Input", $"```cs\n{script}```")
                         .AddField("Output", stringRep)
-                        .WithFooter(footerString, Context.BotUser.GetEffectiveAvatarUrl()));
+                        .WithFooter(footerString, Context.BotMember.GetAvatarUrl()));
                 }
 
                 return Ok(stringRep);
@@ -160,7 +161,6 @@ namespace Abyss.Commands.Default
             embed.AddField("Input", $"```cs\n{script}```");
             if (result.CompilationDiagnostics?.Count > 0)
             {
-                var field = new EmbedFieldBuilder { Name = "Compilation Errors" };
                 var sb = new StringBuilder();
                 foreach (var compilationDiagnostic in result.CompilationDiagnostics.OrderBy(a =>
                     a.Location.SourceSpan.Start))
@@ -175,11 +175,8 @@ namespace Abyss.Commands.Default
                         $" - ``{compilationDiagnostic.Id}`` ({FormatDiagnosticLocation(compilationDiagnostic.Location)}): **{compilationDiagnostic.GetMessage()}**");
                     sb.AppendLine();
                 }
-
-                field.Value = sb.ToString();
-
                 if (result.Exception != null) sb.AppendLine();
-                embed.AddField(field);
+                embed.AddField("Compilation Errors", sb.ToString());
             }
 
             if (result.Exception != null)
@@ -212,14 +209,13 @@ namespace Abyss.Commands.Default
         [Command("kill")]
         [Description("Stops the current bot process.")]
         [RunMode(RunMode.Parallel)]
-        [RequireOwner]
+        [BotOwnerOnly]
         public async Task<ActionResult> Command_ShutdownAsync()
         {
             await ReplyAsync($"Later.").ConfigureAwait(false);
             _logger.LogInformation($"Application terminated by user {Context.Invoker} (ID {Context.Invoker.Id})");
-            await Context.Client.LogoutAsync().ConfigureAwait(false);
-            await Context.Client.StopAsync().ConfigureAwait(false);
-            Context.Client.Dispose();
+            await Context.Bot.DisconnectAsync().ConfigureAwait(false);
+            Context.Bot.Dispose();
 
             Environment.Exit(0);
             return Empty();
@@ -227,13 +223,13 @@ namespace Abyss.Commands.Default
 
         [Command("edit")]
         [Description("Edits a message that was sent by me.")]
-        [RequireOwner]
+        [BotOwnerOnly]
         public async Task<ActionResult> Command_EditAsync([Name("Message")] [Description("The message to edit.")]
-            ulong messageId, [Name("New Content")] [Description("The new content of the message.")] [Remainder] string newContent)
+            Snowflake messageId, [Name("New Content")] [Description("The new content of the message.")] [Remainder] string newContent)
         {
             var channel = Context.Channel;
-            var message = channel.GetCachedMessage(messageId) ?? await channel.GetMessageAsync(messageId);
-            if (message == null || !(message is IUserMessage msg) || msg.Author.Id != Context.Bot.Id)
+            var message = (IMessage) channel.GetMessage(messageId) ?? await channel.GetMessageAsync(messageId);
+            if (message == null || !(message is IUserMessage msg) || msg.Author.Id != Context.Bot.CurrentUser.Id)
                 return BadRequest("Unknown message!");
 
             try
@@ -241,7 +237,7 @@ namespace Abyss.Commands.Default
                 if (string.IsNullOrEmpty(message.Content))
                 {
                     var embed = msg.Embeds.FirstOrDefault();
-                    if (embed != null && embed.Type == EmbedType.Rich)
+                    if (embed != null && embed.Type == "rich")
                     {
                         var newEmbed = embed.ToEmbedBuilder();
                         newEmbed.Description = newContent;
@@ -262,7 +258,7 @@ namespace Abyss.Commands.Default
 
         [Command("exec")]
         [Description("Executes an executable on the host platform.")]
-        [RequireOwner]
+        [BotOwnerOnly]
         [RunMode(RunMode.Parallel)]
         public async Task<ActionResult> Command_ExecuteAsync([Name("Executable")] [Description("The executable to run.")] string executable,
             [Name("Arguments")] [Description("The arguments to provide.")] [Remainder] string? arguments = null)
@@ -294,19 +290,18 @@ namespace Abyss.Commands.Default
         [Command("info")]
         [Description(
             "Dumps current information about the client, the commands system and the current execution environment.")]
-        [RequireOwner]
+        [BotOwnerOnly]
         public Task<ActionResult> Command_SysInfoAsync()
         {
             var info = _dataService.GetServiceInfo();
             return Ok(e =>
             {
-                e.Author = Context.BotUser.ToEmbedAuthorBuilder();
+                e.Author = Context.BotMember.ToEmbedAuthorBuilder();
                 e.Description = $"{info.ServiceName} instance running on {info.OperatingSystem} (runtime version {info.RuntimeVersion}), powering {info.Guilds} guilds ({info.Channels} channels, and {info.Users} users)";
                 e.AddField("Command statistics", $"{info.Modules} modules | {info.Commands} commands | {info.CommandSuccesses} successful calls | {info.CommandFailures} unsuccessful calls");
                 e.AddField("Process statistics", $"Process name {info.ProcessName} on machine name {info.MachineName} (thread {info.CurrentThreadId}, {info.ProcessorCount} processors)");
                 e.AddField("Content root", info.ContentRootPath);
                 e.AddField("Start time", info.StartTime.ToString("F"));
-                e.AddField("Service count", info.ServicesRegistered, true);
             });
         }
     }

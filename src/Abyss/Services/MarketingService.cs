@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Discord.WebSocket;
+using Disqord;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -10,15 +10,15 @@ namespace Abyss
 {
     public class MarketingService
     {
-        private readonly DiscordSocketClient _client;
+        private readonly AbyssBot _abyss;
         private readonly HttpClient _http;
         private readonly AbyssConfig _config;
         private readonly ILogger<MarketingService> _logger;
 
-        public MarketingService(DiscordSocketClient client, AbyssConfig config, ILogger<MarketingService> logger)
+        public MarketingService(AbyssBot bot, AbyssConfig config, ILogger<MarketingService> logger)
         {
             _http = new HttpClient();
-            _client = client;
+            _abyss = bot;
             _config = config;
             _logger = logger;
         }
@@ -36,10 +36,10 @@ namespace Abyss
                 return;
             }
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, "http://discord.boats/api/v2/bot/" + _client.CurrentUser.Id);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, "http://discord.boats/api/v2/bot/" + _abyss.CurrentUser.Id);
 
             httpRequest.Headers.TryAddWithoutValidation("Authorization", _config.Marketing.DiscordBoatsToken);
-            httpRequest.Content = new StringContent("{\"server_count\":" + _client.Guilds.Count + "}", Encoding.UTF8, "application/json");
+            httpRequest.Content = new StringContent("{\"server_count\":" + _abyss.Guilds.Count + "}", Encoding.UTF8, "application/json");
 
             var response = await _http.SendAsync(httpRequest);
             httpRequest.Dispose();
@@ -62,10 +62,10 @@ namespace Abyss
                 return;
             }
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, "https://discordbots.org/api/bots/" + _client.CurrentUser.Id + "/stats");
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, "https://discordbots.org/api/bots/" + _abyss.CurrentUser.Id + "/stats");
 
             httpRequest.Headers.TryAddWithoutValidation("Authorization", _config.Marketing.DiscordBotsListToken);
-            httpRequest.Content = new StringContent("{\"server_count\":" + _client.Guilds.Count + "}", Encoding.UTF8, "application/json");
+            httpRequest.Content = new StringContent("{\"server_count\":" + _abyss.Guilds.Count + "}", Encoding.UTF8, "application/json");
 
             var response = await _http.SendAsync(httpRequest);
             httpRequest.Dispose();
@@ -88,13 +88,13 @@ namespace Abyss
                 return;
             }
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, "https://discordbotlist.com/api/bots/" + _client.CurrentUser.Id + "/stats");
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, "https://discordbotlist.com/api/bots/" + _abyss.CurrentUser.Id + "/stats");
 
             httpRequest.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bot", _config.Marketing.DblDotComToken);
             httpRequest.Content = new StringContent(JsonConvert.SerializeObject(new
             {
-                guilds = _client.Guilds.Count,
-                users = _client.Guilds.Select(b => b.MemberCount).Sum(),
+                guilds = _abyss.Guilds.Count,
+                users = _abyss.Guilds.Select(b => b.Value.MemberCount).Sum(),
                 voice_connections = 0
             }));
 

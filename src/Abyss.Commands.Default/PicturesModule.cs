@@ -1,4 +1,4 @@
-using Discord;
+/*using Disqord;
 using Newtonsoft.Json.Linq;
 using Qmmands;
 using SixLabors.ImageSharp.Formats;
@@ -43,7 +43,7 @@ namespace Abyss.Commands.Default
         [Description("Shows an enlarged form of an emoji.")]
         [AbyssCooldown(1, 5, CooldownMeasure.Seconds, CooldownType.User)]
         public async Task<ActionResult> Command_GetBigEmojiAsync([Name("Emoji")] [Description("The emoji to enlarge.")]
-            IEmote emote0)
+            IEmoji emote0)
         {
             switch (emote0)
             {
@@ -99,4 +99,4 @@ namespace Abyss.Commands.Default
             }
         }
     }
-}
+}*/

@@ -1,7 +1,4 @@
-﻿using Discord;
-using Discord.Net;
-using Discord.WebSocket;
-using Humanizer;
+﻿using Humanizer;
 using Qmmands;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
@@ -10,6 +7,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Disqord.Bot;
+using Disqord;
+using Disqord.Rest;
 
 namespace Abyss.Commands.Default
 {
@@ -20,29 +20,26 @@ namespace Abyss.Commands.Default
         [Command("nickname", "nick")]
         [Description("Sets the current nickname for a user.")]
         [Remarks("You can provide `clear` to remove their current nickname (if any).")]
-        [RequireBotPermission(GuildPermission.ChangeNickname)]
-        [RequireUserPermission(GuildPermission.ChangeNickname)]
+        [RequireBotGuildPermissions(Permission.ChangeNickname)]
+        [RequireMemberChannelPermissions(Permission.ChangeNickname)]
         public async Task<ActionResult> Command_SetNicknameAsync(
-            [Name("Target")] [Description("The user you would like me to change username of.")] SocketGuildUser target,
+            [Name("Target")] [Description("The user you would like me to change username of.")] CachedMember target,
             [Description("The nickname to set to. `clear` to remove one (if set).")] [Name("New Nickname")] [Remainder]
             string nickname)
         {
-            if (nickname.Equals("clear", StringComparison.OrdinalIgnoreCase) && string.IsNullOrEmpty(target.Nickname))
+            if (nickname.Equals("clear", StringComparison.OrdinalIgnoreCase) && string.IsNullOrEmpty(target.Nick))
                 return BadRequest($"{target.Format()} doesn't have a nickname.");
 
             try
             {
-                await target.ModifyAsync(a => a.Nickname = nickname == "clear" ? null : nickname, new RequestOptions
-                {
-                    AuditLogReason = $"Action performed by {Context.Invoker}"
-                }).ConfigureAwait(false);
+                await target.ModifyAsync(a => a.Nick = nickname == "clear" ? null : nickname, RestRequestOptionsHelper.AuditLog($"Action performed by {Context.Invoker}")).ConfigureAwait(false);
                 return OkReaction();
             }
-            catch (HttpException e) when (e.HttpCode == HttpStatusCode.Forbidden)
+            catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.Forbidden)
             {
                 return BadRequest("Not allowed to.");
             }
-            catch (HttpException e) when (e.HttpCode == HttpStatusCode.BadRequest)
+            catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.BadRequest)
             {
                 return BadRequest("Bad format.");
             }
@@ -58,39 +55,16 @@ namespace Abyss.Commands.Default
                 Author = new EmbedAuthorBuilder
                 {
                     Name = "Server " + Context.Guild.Name,
-                    IconUrl = Context.Guild.IconUrl
+                    IconUrl = Context.Guild.GetIconUrl()
                 },
-                ThumbnailUrl = Context.Guild.IconUrl,
-                Fields = new List<EmbedFieldBuilder>
-                {
-                    new EmbedFieldBuilder
-                    {
-                        Name = "Owner",
-                        Value = Context.Guild.Owner.ToString(),
-                        IsInline = true
-                    },
-                    new EmbedFieldBuilder
-                    {
-                        Name = "Created At",
-                        Value = UserModule.FormatOffset(Context.Guild.CreatedAt),
-                        IsInline = true
-                    },
-                    new EmbedFieldBuilder
-                    {
-                        Name = "Channels",
-                        Value = string.Join(", ", Context.Guild.Channels.Select(c => c.Name)) + " (" +
-                                Context.Guild.Channels.Count + ")",
-                        IsInline = true
-                    },
-                    new EmbedFieldBuilder
-                    {
-                        Name = "Voice Channels",
-                        Value = string.Join(", ", Context.Guild.VoiceChannels.Select(vc => vc.Name)) + " (" +
-                                Context.Guild.VoiceChannels.Count + ")",
-                        IsInline = true
-                    }
-                }
+                ThumbnailUrl = Context.Guild.GetIconUrl()
             };
+            embed.AddField("Owner", Context.Guild.Owner.ToString(), true);
+            // missing in disqord - embed.AddField("Created At", UserModule.FormatOffset(Context.Guild.))
+            embed.AddField("Text Channels", string.Join(", ", Context.Guild.TextChannels.Select(c => c.Value.Name)) + " (" +
+                                Context.Guild.TextChannels.Count + ")", true);
+            embed.AddField("Voice Channels", string.Join(", ", Context.Guild.VoiceChannels.Select(c => c.Value.Name)) + " (" +
+                                Context.Guild.VoiceChannels.Count + ")", true);
 
             return Ok(embed);
         }
@@ -100,12 +74,12 @@ namespace Abyss.Commands.Default
         [RunMode(RunMode.Parallel)]
         public async Task<ActionResult> Command_GetColourFromRoleAsync(
             [Name("Role")] [Description("The role you wish to view the colour of.")] [Remainder]
-            SocketRole role)
+            CachedRole role)
         {
             if (role.Color.RawValue == 0) return BadRequest("That role does not have a colour!");
 
             var outStream = ImageHelper.CreateColourImage(new Rgba32(role.Color.R, role.Color.G, role.Color.B), 200, 200);
-            await Context.Channel.SendFileAsync(outStream, "role.png", null, embed: new EmbedBuilder()
+            await Context.Channel.SendMessageAsync(new LocalAttachment(outStream, "role.png"), null, embed: new EmbedBuilder()
                 .WithColor(role.Color)
                 .WithTitle("Role Color")
                 .WithDescription(
@@ -123,12 +97,12 @@ namespace Abyss.Commands.Default
         [RunMode(RunMode.Parallel)]
         public Task<ActionResult> Command_GetColourFromUserAsync(
             [Name("User")] [Description("The user you wish to view the colour of.")] [Remainder]
-            SocketGuildUser user)
+            CachedMember user)
         {
             var r = user.GetHighestRoleOrDefault(a => a.Color.RawValue != 0);
             return r == null
                 ? BadRequest("That user does not have a coloured role!")
-                : Command_GetColourFromRoleAsync((SocketRole)r);
+                : Command_GetColourFromRoleAsync((CachedRole)r);
         }
 
         [Command("permissions", "perms")]
@@ -137,7 +111,7 @@ namespace Abyss.Commands.Default
             [Name("Target")]
             [Description("The user to get permissions for.")]
             [DefaultValueDescription("You.")]
-            SocketGuildUser? user = null)
+            CachedMember? user = null)
         {
             user ??= Context.Invoker; // Get the user (or the invoker, if none specified)
 
@@ -150,13 +124,13 @@ namespace Abyss.Commands.Default
                 return Ok(embed);
             }
 
-            if (user.GuildPermissions.Administrator)
+            if (user.Permissions.Administrator)
             {
                 embed.WithDescription("User has Administrator permission, and has all permissions");
                 return Ok(embed);
             }
 
-            var guildPerms = user.GuildPermissions; // Get the user's permissions
+            var guildPerms = user.Permissions; // Get the user's permissions
 
             var booleanTypeProperties = guildPerms.GetType().GetProperties()
                 .Where(a => a.PropertyType.IsAssignableFrom(typeof(bool)))
@@ -188,17 +162,17 @@ namespace Abyss.Commands.Default
             var categories = new StringBuilder();
             var channelsProcessed = new List<ulong>();
 
-            foreach (var channel in guild.TextChannels.Where(c => c.CategoryId == null).Cast<SocketGuildChannel>().Concat(guild.VoiceChannels.Where(a => a.CategoryId == null)).OrderBy(c => c.Position))
+            foreach (var channel in guild.TextChannels.Values.Where(c => c.CategoryId == null).Cast<CachedGuildChannel>().Concat(guild.VoiceChannels.Values.Where(a => a.CategoryId == null).Cast<CachedGuildChannel>()).OrderBy(c => c.Position))
             {
                 uncategorized.AppendLine($"- {(channel is IVoiceChannel ? "" : "#")}{channel.Name} ({channel.Id})");
             }
             uncategorized.AppendLine();
-            foreach (var category in guild.CategoryChannels.OrderBy(c => c.Position))
+            foreach (var category in guild.CategoryChannels.OrderBy(c => c.Value.Position))
             {
-                var categoryBuilder = new StringBuilder().AppendLine($"**{category.Name}** ({category.Id})");
-                foreach (var childChannel in category.Channels.OrderBy(c => c.Position))
+                var categoryBuilder = new StringBuilder().AppendLine($"**{category.Value.Name}** ({category.Value.Id})");
+                foreach (var childChannel in category.Value.Channels.OrderBy(c => c.Value.Position))
                 {
-                    categoryBuilder.AppendLine($"- {(childChannel is IVoiceChannel ? "" : "#")}{childChannel.Name} ({childChannel.Id})");
+                    categoryBuilder.AppendLine($"- {(childChannel.Value is IVoiceChannel ? "" : "#")}{childChannel.Value.Name} ({childChannel.Value.Id})");
                 }
                 categories.AppendLine(categoryBuilder.ToString());
             }
@@ -212,12 +186,12 @@ namespace Abyss.Commands.Default
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
         public Task<ActionResult> Command_AnalyzePermissionAsync(
             [Name("User")] [Description("The user to check for the specified permission.")]
-            SocketGuildUser user,
+            CachedMember user,
             [Name("Permission")] [Description("The permission to analyze.")] [Remainder] string permission)
         {
             user ??= Context.Invoker;
 
-            var perm = user.GuildPermissions.GetType().GetProperties().FirstOrDefault(a =>
+            var perm = user.Permissions.GetType().GetProperties().FirstOrDefault(a =>
                 a.PropertyType.IsAssignableFrom(typeof(bool))
                 && (a.Name.Equals(permission, StringComparison.OrdinalIgnoreCase)
                  || a.Name.Humanize().Equals(permission, StringComparison.OrdinalIgnoreCase)));
@@ -241,20 +215,20 @@ namespace Abyss.Commands.Default
                 return Ok(embed);
             }
 
-            var p = user.Roles.Where(a => a.Permissions.Administrator).ToList();
+            var p = user.Roles.Where(a => a.Value.Permissions.Administrator).ToList();
             if (p.Count > 0)
             {
                 embed.Description =
                     "User has administrator, and has every permission. To deny them administrator, remove the Administrator permission from the following roles:\n" +
-                    $"`{string.Join(", ", p.Select(b => b.Name))}`";
+                    $"`{string.Join(", ", p.Select(b => b.Value.Name))}`";
                 return Ok(embed);
             }
 
-            var grantedRoles = user.Roles.Where(r => (bool)perm.GetValue(r.Permissions)!);
-            var deniedRoles = user.Roles.Where(r => !(bool)perm.GetValue(r.Permissions)!);
+            var grantedRoles = user.Roles.Where(r => (bool)perm.GetValue(r.Value.Permissions)!);
+            var deniedRoles = user.Roles.Where(r => !(bool)perm.GetValue(r.Value.Permissions)!);
 
-            var gRolesString = string.Join(", ", grantedRoles.Select(r => r.Name));
-            var dRolesString = string.Join(", ", deniedRoles.Select(r => r.Name));
+            var gRolesString = string.Join(", ", grantedRoles.Select(r => r.Value.Name));
+            var dRolesString = string.Join(", ", deniedRoles.Select(r => r.Value.Name));
 
             if (!string.IsNullOrWhiteSpace(gRolesString)) embed.AddField("Roles that grant this permission", gRolesString);
             if (!string.IsNullOrWhiteSpace(dRolesString)) embed.AddField("Roles that don't have this permission", dRolesString);

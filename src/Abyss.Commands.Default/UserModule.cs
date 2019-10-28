@@ -1,6 +1,5 @@
 ﻿using Abyssal.Common;
-using Discord;
-using Discord.WebSocket;
+using Disqord;
 using Humanizer;
 using Qmmands;
 using System;
@@ -29,18 +28,18 @@ namespace Abyss.Commands.Default
             [Name("User")]
             [Description("The user who you wish to get the avatar for.")]
             [DefaultValueDescription("The user who invoked this command.")]
-            SocketGuildUser? target = null)
+            CachedMember? target = null)
         {
             target ??= Context.Invoker;
             return Ok(a =>
             {
                 a.WithAuthor(target.ToEmbedAuthorBuilder());
-                a.ImageUrl = target.GetEffectiveAvatarUrl(2048);
+                a.ImageUrl = target.GetAvatarUrl();
                 a.Description =
-                    $"{UrlHelper.CreateMarkdownUrl("128", target.GetEffectiveAvatarUrl(128))} | " +
-                    $"{UrlHelper.CreateMarkdownUrl("256", target.GetEffectiveAvatarUrl(256))} | " +
-                    $"{UrlHelper.CreateMarkdownUrl("1024", target.GetEffectiveAvatarUrl(1024))} | " +
-                    $"{UrlHelper.CreateMarkdownUrl("2048", target.GetEffectiveAvatarUrl(2048))}";
+                    $"{UrlHelper.CreateMarkdownUrl("128", target.GetAvatarUrl(size: 128))} | " +
+                    $"{UrlHelper.CreateMarkdownUrl("256", target.GetAvatarUrl(size: 256))} | " +
+                    $"{UrlHelper.CreateMarkdownUrl("1024", target.GetAvatarUrl(size: 1024))} | " +
+                    $"{UrlHelper.CreateMarkdownUrl("2048", target.GetAvatarUrl(size: 2048))}";
             });
         }
 
@@ -50,22 +49,22 @@ namespace Abyss.Commands.Default
             [Name("Member")]
             [Description("The user to get information for.")]
             [DefaultValueDescription("The user who invoked this command.")]
-            SocketGuildUser? member = null)
+            CachedMember? member = null)
         {
             member ??= Context.Invoker;
 
             var embed = new EmbedBuilder
             {
-                ThumbnailUrl = member.GetEffectiveAvatarUrl(256),
+                ThumbnailUrl = member.GetAvatarUrl(),
                 Color = member.GetHighestRoleColourOrDefault(),
                 Author = member.ToEmbedAuthorBuilder()
             };
 
             var desc = new StringBuilder();
 
-            static string FormatActivity(IActivity activity)
+            static string FormatActivity(Activity activity)
             {
-                if (activity is SpotifyGame spotify)
+                if (activity is SpotifyActivity spotify)
                 {
                     return $"Listening to {spotify.TrackTitle} by {spotify.Artists.Humanize()}";
                 }
@@ -75,26 +74,26 @@ namespace Abyss.Commands.Default
             var effectiveColor = member.GetHighestRoleColour();
 
             desc.AppendLine($"**- ID:** {member.Id}");
-            desc.AppendLine($"**- Created:** {FormatOffset(member.CreatedAt)}");
-            if (member.JoinedAt != null) desc.AppendLine($"**- Joined:** {FormatOffset(member.JoinedAt.Value)}");
+            //desc.AppendLine($"**- Created:** {FormatOffset(member.)}");
+            if (member.JoinedAt != null) desc.AppendLine($"**- Joined:** {FormatOffset(member.JoinedAt)}");
             desc.AppendLine(
                 $"**- Position:** {(member.Hierarchy == int.MaxValue ? "Server Owner" : member.Hierarchy.Ordinalize())}");
             desc.AppendLine($"**- Deafened:** {(member.IsDeafened ? "Yes" : "No")}");
             desc.AppendLine($"**- Muted:** {(member.IsMuted ? "Yes" : "No")}");
-            desc.AppendLine($"**- Nickname:** {member.Nickname ?? "None"}");
+            desc.AppendLine($"**- Nickname:** {member.Nick ?? "None"}");
             desc.AppendLine($"**- Voice Status:** {GetVoiceChannelStatus(member)}");
             if (member.Activity != null)
                 desc.AppendLine($"**- Activity:** {FormatActivity(member.Activity)}");
             desc.AppendLine($"**- Status:** {_config.Emotes.GetEmoteFromActivity(member.Status)} {member.Status.Humanize()}");
-            desc.AppendLine($"**- Mutual servers:** {member.MutualGuilds.Count}");
-            if (member.PremiumSince != null) desc.AppendLine($"**- Nitro membership since: {FormatOffset(member.PremiumSince.Value)}");
-            if (member.ActiveClients != null) desc.AppendLine($"**- Active on:** {string.Join(", ", member.ActiveClients)}");
+            desc.AppendLine($"**- Mutual servers:** {Context.Bot.Guilds.Values.Count(c => c.Members.ContainsKey(Context.Bot.CurrentUser.Id))}");
+            //if (member. != null) desc.AppendLine($"**- Nitro membership since: {FormatOffset(member.PremiumSince.Value)}");
+            //if (member.ActiveClients != null) desc.AppendLine($"**- Active on:** {string.Join(", ", member.ActiveClients)}");
             if (effectiveColor != null) desc.AppendLine($"**- Colour:** {effectiveColor.Value.ToString()} (R {effectiveColor.Value.R}, G {effectiveColor.Value.G}, B {effectiveColor.Value.B})");
 
             embed.Description = desc.ToString();
 
-            var roles = member.Roles.Where(r => !r.IsEveryone);
-            var socketRoles = roles as SocketRole[] ?? roles.ToArray();
+            var roles = member.Roles.Values.Where(r => !(r.Id == member.Guild.Id));
+            var socketRoles = roles as CachedRole[] ?? roles.ToArray();
 
             embed.AddField($"{(socketRoles.Length > 0 ? socketRoles.Length.ToString() : "No")} role{(socketRoles.Length == 1 ? "" : "s")}", socketRoles.Length > 0 ? string.Join(", ", socketRoles.Select(r => r.Name)) : AbyssHostedService.ZeroWidthSpace);
 
@@ -105,14 +104,13 @@ namespace Abyss.Commands.Default
         [Description("Gives them all your hugging potential.")]
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
         public Task<ActionResult> Command_HugUserAsync([Name("Member")] [Description("The user to hug.")]
-            SocketGuildUser hugee)
+            CachedMember hugee)
         {
             if (hugee.Id == Context.Invoker.Id) return Ok("You hug yourself.");
 
             return Ok(e =>
             {
-                e.Description = $"**{Context.Invoker.GetActualName()}** hugs **{hugee.GetActualName()}**!";
-                e.ImageUrl = "http://i.imgur.com/6bJxUOb.gif";
+                e.Description = $"**{Context.Invoker.DisplayName}** hugs **{hugee.DisplayName}**!";
             });
         }
 
@@ -121,9 +119,9 @@ namespace Abyss.Commands.Default
             return offset.DateTime.ToUniversalTime().ToString("s", CultureInfo.InvariantCulture);
         }
 
-        private static string GetVoiceChannelStatus(SocketGuildUser user)
+        private static string GetVoiceChannelStatus(CachedMember user)
         {
-            return user.VoiceState == null ? "Not in a voice channel" : $"In {user.VoiceChannel.Name}";
+            return user.VoiceChannel == null ? "Not in a voice channel" : $"In {user.VoiceChannel.Name}";
         }
     }
 }

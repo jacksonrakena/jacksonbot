@@ -1,5 +1,5 @@
-using Discord;
-using Discord.WebSocket;
+using Disqord;
+using Disqord.Logging;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace Abyss
 {
     public static class DiscordExtensions
     {
-        public static async Task<bool> TrySendMessageAsync(this IMessageChannel messageChannel, string? message = null, bool isTts = false, Embed? embed = null, RequestOptions? options = null)
+        public static async Task<bool> TrySendMessageAsync(this IMessageChannel messageChannel, string? message = null, bool isTts = false, Embed? embed = null, RestRequestOptions? options = null)
         {
             try
             {
@@ -22,7 +22,7 @@ namespace Abyss
             }
         }
 
-        public static async Task<bool> TryDeleteAsync(this IDeletable deletable, RequestOptions? options = null)
+        public static async Task<bool> TryDeleteAsync(this IDeletable deletable, RestRequestOptions? options = null)
         {
             try
             {
@@ -35,36 +35,31 @@ namespace Abyss
             }
         }
 
-        public static ITextChannel? GetDefaultChannel(this SocketGuild guild)
+        public static ITextChannel? GetDefaultChannel(this CachedGuild guild)
         {
-            if (guild.DefaultChannel != null) return guild.DefaultChannel;
             if (guild.TextChannels.Count == 0) return null;
+            var defaultChannel = guild.GetDefaultChannel();
+            if (defaultChannel != null) return defaultChannel;
 
             // find channel
-            var firstOrDefault = guild.TextChannels.FirstOrDefault(c =>
+            var firstOrDefault = guild.TextChannels.Values.FirstOrDefault(c =>
                 c.Name.Equals("general", StringComparison.OrdinalIgnoreCase)
-                && guild.CurrentUser.GetPermissions(c).SendMessages);
+                && guild.CurrentMember.GetPermissionsFor(c).SendMessages);
 
-            return firstOrDefault ?? guild.TextChannels.FirstOrDefault(c => guild.CurrentUser.GetPermissions(c).SendMessages);
+            return firstOrDefault ?? guild.TextChannels.FirstOrDefault(c => guild.CurrentMember.GetPermissionsFor(c.Value).SendMessages).Value;
         }
 
-        public static LogLevel ToMicrosoftLogLevel(this LogSeverity logSeverity)
+        public static LogLevel ToMicrosoftLogLevel(this LogMessageSeverity logSeverity)
         {
             return logSeverity switch
             {
-                LogSeverity.Critical => LogLevel.Critical,
-
-                LogSeverity.Error => LogLevel.Error,
-
-                LogSeverity.Warning => LogLevel.Warning,
-
-                LogSeverity.Info => LogLevel.Information,
-
-                LogSeverity.Verbose => LogLevel.Trace,
-
-                LogSeverity.Debug => LogLevel.Debug,
-
-                _ => LogLevel.Information,
+                LogMessageSeverity.Information => LogLevel.Information,
+                LogMessageSeverity.Error => LogLevel.Error,
+                LogMessageSeverity.Debug => LogLevel.Debug,
+                LogMessageSeverity.Critical => LogLevel.Critical,
+                LogMessageSeverity.Trace => LogLevel.Trace,
+                LogMessageSeverity.Warning => LogLevel.Warning,
+                _ => LogLevel.Information
             };
         }
     }

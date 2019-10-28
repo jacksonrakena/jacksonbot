@@ -52,7 +52,7 @@ namespace Abyss.Hosts.Default
                 endpoints.MapFallbackToPage("/_Host");
             });
 
-            var receiver = app.ApplicationServices.GetRequiredService<MessageService>();
+            var receiver = app.ApplicationServices.GetRequiredService<AbyssBot>();
             receiver.ImportAssembly(Assembly.Load("Abyss.Commands.Default"));
         }
     }

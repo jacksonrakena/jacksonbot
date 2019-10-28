@@ -1,11 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using AbyssalSpotify;
+using Disqord;
+using Disqord.Bot;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Qmmands;
 
 namespace Abyss.Hosts.Default
 {
@@ -30,10 +35,10 @@ namespace Abyss.Hosts.Default
                 })
                 .ConfigureServices(serviceColl =>
                 {
-                    // add Abyss services
-                    serviceColl.ConfigureAbyss(abyss =>
+                    // add Abyss framework
+                    serviceColl.AddAbyssFramework((provider, botOptions) =>
                     {
-                        abyss.DataRoot = dataRoot;
+                        botOptions.DataRoot = dataRoot;
                     });
 
                     // add services required by Abyss.Commands.Default

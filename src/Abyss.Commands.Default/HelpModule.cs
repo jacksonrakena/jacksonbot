@@ -1,4 +1,4 @@
-using Discord;
+using Disqord;
 using Qmmands;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,23 +10,23 @@ namespace Abyss.Commands.Default
     [Description("Contains helpful commands to help you discover your way around my commands and modules.")]
     public class HelpModule : AbyssModuleBase
     {
-        private readonly ICommandService _commandService;
         private readonly HelpService _help;
+        private readonly AbyssBot _bot;
 
-        public HelpModule(HelpService help, ICommandService commandService)
+        public HelpModule(HelpService help, AbyssBot bot)
         {
+            _bot = bot;
             _help = help;
-            _commandService = commandService;
         }
 
         public async Task<ActionResult> CommandSubroutine_HelpQueryAsync(string query)
         {
             // Searching for command or module
-            var group = _commandService.GetAllModules().Where(m => m.IsGroup()).Search(query);
+            var group = _bot.GetAllModules().Where(m => m.IsGroup()).Search(query);
             if (group == null)
             {
                 // Search for command
-                var search = _commandService.FindCommands(query).ToList();
+                var search = _bot.FindCommands(query).ToList();
                 if (search.Count == 0) return BadRequest($"No command or command group found for `{query}`.");
 
                 return Ok(await _help.CreateCommandEmbedAsync(search[0].Command, Context));
@@ -47,17 +47,17 @@ namespace Abyss.Commands.Default
         {
             if (query != null) return await CommandSubroutine_HelpQueryAsync(query);
 
-            var prefix = Context.GetPrefix();
+            var prefix = Context.Prefix;;
 
             var embed = new EmbedBuilder();
 
-            embed.WithTitle("Help listing for " + Context.BotUser.Format());
+            embed.WithTitle("Help listing for " + Context.BotMember.Format());
 
             embed.WithDescription(
                 $"Listing all top-level commands and groups. Commands that are above your permission level are hidden. You can use `{prefix}help <command/group>` for more details on a command or group.");
 
             var commands = new List<string>();
-            foreach (var command in _commandService.GetAllCommands())
+            foreach (var command in _bot.GetAllCommands())
             {
                 if (!command.Module.IsGroup() && await HelpService.CanShowCommandAsync(Context, command))
                 {
@@ -66,18 +66,18 @@ namespace Abyss.Commands.Default
                 }
             }
             if (commands.Count != 0)
-                embed.AddField(new EmbedFieldBuilder().WithName("Commands").WithValue(string.Join(", ", commands)));
+                embed.AddField("Commands", string.Join(", ", commands));
 
             var groups = new List<string>();
-            foreach (var module in _commandService.GetAllModules().Where(m => m.IsGroup()))
+            foreach (var module in _bot.GetAllModules().Where(m => m.IsGroup()))
             {
                 if (await HelpService.CanShowModuleAsync(Context, module))
                 {
-                    groups.Add(Format.Bold(Format.Code(module.FullAliases.First())));
+                    groups.Add(FormatHelper.Bold(FormatHelper.Code(module.FullAliases.First())));
                 }
             }
             if (groups.Count != 0)
-                embed.AddField(new EmbedFieldBuilder().WithName("Groups").WithValue(string.Join(", ", groups)));
+                embed.AddField("Groups", string.Join(", ", groups));
 
             return Ok(embed);
         }

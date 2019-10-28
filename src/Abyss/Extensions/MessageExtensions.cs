@@ -1,5 +1,6 @@
-using Discord;
+using Disqord;
 using System;
+using Qmmands;
 
 namespace Abyss
 {
@@ -14,7 +15,7 @@ namespace Abyss
             if (endPos == -1) return false;
             if (text.Length < endPos + 2 || text[endPos + 1] != ' ') return false; //Must end in "> "
 
-            if (!MentionUtils.TryParseUser(text.Substring(0, endPos + 1), out var userId)) return false;
+            if (!Discord.TryParseUserMention(text.Substring(0, endPos + 1), out var userId)) return false;
             if (userId != user.Id) return false;
             argPos = endPos + 2;
             return true;
@@ -24,7 +25,7 @@ namespace Abyss
             StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
         {
             var text = msg.Content;
-            if (!text.StartsWith(str, comparisonType)) return false;
+            if (!CommandUtilities.HasPrefix(text, str, StringComparison.OrdinalIgnoreCase, out _)) return false;
             argPos = str.Length;
             return true;
         }

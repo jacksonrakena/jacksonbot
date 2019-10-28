@@ -1,6 +1,6 @@
 using Abyssal.Common;
 using AbyssalSpotify;
-using Discord;
+using Disqord;
 using Humanizer;
 using Qmmands;
 using System;
@@ -40,7 +40,8 @@ namespace Abyss.Commands.Default
             }
             else
             {
-                if (!(Context.Invoker.Activity is SpotifyGame spot))
+                Console.WriteLine(Context.Invoker.Activity);
+                if (!(Context.Invoker.Activity is SpotifyActivity spot))
                     return BadRequest("You didn't supply a track, and you're not currently listening to anything!");
 
                 track = await _spotify.GetTrackAsync(spot.TrackId).ConfigureAwait(false);
@@ -63,7 +64,7 @@ namespace Abyss.Commands.Default
             SpotifyAlbum album;
             if (albumQuery == null)
             {
-                if (!(Context.Invoker.Activity is SpotifyGame spot))
+                if (!(Context.Invoker.Activity is SpotifyActivity spot))
                 {
                     return BadRequest(
                        "You didn't supply an album name, and you're not currently listening to anything!");

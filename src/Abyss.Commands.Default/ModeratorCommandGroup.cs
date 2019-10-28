@@ -1,6 +1,6 @@
-﻿using Discord;
-using Discord.Net;
-using Discord.WebSocket;
+﻿using Disqord;
+using Disqord.Bot;
+using Disqord.Rest;
 using Qmmands;
 using System;
 using System.Linq;
@@ -17,11 +17,11 @@ namespace Abyss.Commands.Default
     {
         [Command("ban")]
         [Description("Bans a member from this server.")]
-        [RequireUserPermission(GuildPermission.BanMembers)]
-        [RequireBotPermission(GuildPermission.BanMembers)]
+        [RequireMemberGuildPermissions(Permission.BanMembers)]
+        [RequireBotGuildPermissions(Permission.BanMembers)]
         public async Task<ActionResult> BanUserAsync(
             [Name("Victim")] [Description("The user to ban.")] [MustNotBeBot] [MustNotBeInvoker]
-            SocketGuildUser target,
+            CachedMember target,
             [Name("Ban Reason")] [Description("The audit log reason for the ban.")] [Remainder] [Maximum(50)]
             string? reason = null)
         {
@@ -30,9 +30,9 @@ namespace Abyss.Commands.Default
 
             try
             {
-                await Context.Guild.AddBanAsync(target, 7, $"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : "")}");
+                await Context.Guild.BanMemberAsync(target.Id, $"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : "")}", 7);
             }
-            catch (HttpException e) when (e.HttpCode == HttpStatusCode.Forbidden)
+            catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.Forbidden)
             {
                 return BadRequest(
                     $"I don't have permission to ban them.");
@@ -44,39 +44,39 @@ namespace Abyss.Commands.Default
 
         [Command("kick")]
         [Description("Kicks a member.")]
-        [RequireUserPermission(GuildPermission.KickMembers)]
-        [RequireBotPermission(GuildPermission.KickMembers)]
+        [RequireMemberGuildPermissions(Permission.KickMembers)]
+        [RequireBotGuildPermissions(Permission.KickMembers)]
         public async Task<ActionResult> Command_KickUserAsync(
-            [Name("Target")] [Description("The user to kick.")] [MustNotBeBot] [MustNotBeInvoker] SocketGuildUser target,
+            [Name("Target")] [Description("The user to kick.")] [MustNotBeBot] [MustNotBeInvoker] CachedMember target,
             [Name("Reason")] [Maximum(50)] [Remainder] [Description("The kick reason.")] string? reason = null)
         {
             if (target.Hierarchy > Context.Invoker.Hierarchy) return BadRequest("That member is a higher rank than you!");
-            if (target.Hierarchy > Context.BotUser.Hierarchy) return BadRequest("That member is a higher rank than me!");
+            if (target.Hierarchy > Context.BotMember.Hierarchy) return BadRequest("That member is a higher rank than me!");
 
-            await target.KickAsync($"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : ": No reason provided")}").ConfigureAwait(false);
+            await target.KickAsync(RestRequestOptionsHelper.AuditLog($"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : ": No reason provided")}")).ConfigureAwait(false);
 
             return Ok($"Kicked {target}.");
         }
 
         [Command("hackban")]
         [Description("Bans a user who is not in this server.")]
-        [RequireUserPermission(GuildPermission.BanMembers)]
-        [RequireBotPermission(GuildPermission.BanMembers)]
+        [RequireMemberGuildPermissions(Permission.BanMembers)]
+        [RequireBotGuildPermissions(Permission.BanMembers)]
         public async Task<ActionResult> Command_HackBanUserAsync(
             [Name("Victim")] [Description("The user to ban.")] [MustNotBeBot] [MustNotBeInvoker]
-            ulong target,
+            Snowflake target,
             [Name("Ban Reason")] [Description("The audit log reason for the ban.")] [Remainder] [Maximum(50)]
             string? reason = null)
         {
-            var guildUser = Context.Guild.GetUser(target);
+            var guildUser = Context.Guild.Members[target];
             if (guildUser != null && guildUser.Hierarchy > Context.Invoker.Hierarchy)
                 return BadRequest("That member is a higher rank than you!");
 
             try
             {
-                await Context.Guild.AddBanAsync(target, 7, $"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : ": No reason provided")}");
+                await Context.Guild.BanMemberAsync(target, $"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : ": No reason provided")}", 7);
             }
-            catch (HttpException e) when (e.HttpCode == HttpStatusCode.Forbidden)
+            catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.Forbidden)
             {
                 return BadRequest(
                     $"I don't have permission to ban them.");
@@ -88,8 +88,8 @@ namespace Abyss.Commands.Default
 
         [Command("bans")]
         [Description("Shows a list of all users banned in this server.")]
-        [RequireBotPermission(GuildPermission.BanMembers)]
-        [RequireUserPermission(GuildPermission.BanMembers)]
+        [RequireBotGuildPermissions(Permission.BanMembers)]
+        [RequireMemberGuildPermissions(Permission.BanMembers)]
         public async Task<ActionResult> Command_GetBansListAsync()
         {
             var bans = await Context.Guild.GetBansAsync().ConfigureAwait(false);
@@ -105,19 +105,19 @@ namespace Abyss.Commands.Default
 
         [Command("softban")]
         [Description("Bans and then unbans a user from this server, effectively kicking them, but removes all their messages.")]
-        [RequireUserPermission(GuildPermission.KickMembers)]
-        [RequireBotPermission(GuildPermission.BanMembers)]
-        public async Task<ActionResult> Command_SoftbanAsync([Name("Target")] [Description("The user to softban.")] [MustNotBeBot, MustNotBeInvoker] SocketGuildUser user)
+        [RequireMemberGuildPermissions(Permission.KickMembers)]
+        [RequireBotGuildPermissions(Permission.BanMembers)]
+        public async Task<ActionResult> Command_SoftbanAsync([Name("Target")] [Description("The user to softban.")] [MustNotBeBot, MustNotBeInvoker] CachedMember user)
         {
             if (user.Hierarchy > Context.Invoker.Hierarchy) return BadRequest("That member is a higher rank than you!");
 
             try
             {
-                await Context.Guild.AddBanAsync(user, 7).ConfigureAwait(false);
-                await Context.Guild.RemoveBanAsync(user).ConfigureAwait(false);
+                await Context.Guild.BanMemberAsync(user.Id, deleteMessageDays: 7).ConfigureAwait(false);
+                await Context.Guild.UnbanMemberAsync(user.Id).ConfigureAwait(false);
                 return Ok($"Softbanned {user}.");
             }
-            catch (HttpException e) when (e.HttpCode == HttpStatusCode.Forbidden)
+            catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.Forbidden)
             {
                 return BadRequest(
                     $"I don't have permission to ban/unban them.");
@@ -126,8 +126,8 @@ namespace Abyss.Commands.Default
 
         [Command("purge")]
         [Description("Clears a number of messages from a source message, in a certain direction.")]
-        [RequireUserPermission(ChannelPermission.ManageMessages)]
-        [RequireBotPermission(ChannelPermission.ManageMessages)]
+        [RequireMemberGuildPermissions(Permission.ManageMessages)]
+        [RequireBotGuildPermissions(Permission.ManageMessages)]
         [OverrideArgumentParser(typeof(UnixArgumentParser))]
         public async Task<ActionResult> Command_ClearAllAsync(
             [Name("Count")] [Description("The number of messages to delete.")] [Range(1, 100, true, true)]
@@ -135,7 +135,7 @@ namespace Abyss.Commands.Default
             [Name("User")] [Description("The user to target.")]
             ulong? user = null,
             [Name("Channel")] [Description("The channel to target.")]
-            SocketTextChannel? channel = null,
+            CachedTextChannel? channel = null,
             [Name("Embeds")] [Description("Whether to only delete messages with embeds in them.")]
             bool embeds = false,
             [Name("Before")] [Description("The message ID to start at, going backward.")]
@@ -152,10 +152,10 @@ namespace Abyss.Commands.Default
             var ch = channel ?? Context.Channel;
 
             var id = afterMessageId ?? messageId ?? Context.Message.Id;
-            var direction = afterMessageId != null ? Direction.After : Direction.Before;
+            var direction = afterMessageId != null ? RetrievalDirection.After : RetrievalDirection.Before;
 
             var messages =
-                (await (channel ?? Context.Channel).GetMessagesAsync(id, direction, count).FlattenAsync().ConfigureAwait(false))
+                (await (channel ?? Context.Channel).GetMessagesAsync(count, direction, id).ConfigureAwait(false))
                 .Where(m =>
                 {
                     var pass = m is IUserMessage && (DateTimeOffset.UtcNow - m.Timestamp).TotalDays < 14;
@@ -164,9 +164,10 @@ namespace Abyss.Commands.Default
                     if (botsOnly && !m.Author.IsBot) pass = false;
 
                     return pass;
-                }).ToList();
+                })
+                .ToList();
 
-            await ch.DeleteMessagesAsync(messages).ConfigureAwait(false);
+            await ch.DeleteMessagesAsync(messages.Select(c => c.Id)).ConfigureAwait(false);
 
             if (silent) return Empty();
             var sb = new StringBuilder();
@@ -174,7 +175,7 @@ namespace Abyss.Commands.Default
             sb.AppendLine();
             foreach (var author in messages.GroupBy(b => b.Author.Id))
             {
-                sb.AppendLine($"**{author.Key}**: {author.Count()} messages");
+                sb.AppendLine($"**{Context.Guild.GetMember(author.Key).ToString() ?? author.Key.ToString()}**: {author.Count()} messages");
             }
             return Ok(sb.ToString());
         }

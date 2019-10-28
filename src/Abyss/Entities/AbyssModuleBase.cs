@@ -1,6 +1,6 @@
 ﻿using Abyssal.Common;
-using Discord;
 using Qmmands;
+using Disqord;
 using System;
 using System.Threading.Tasks;
 
@@ -9,12 +9,12 @@ namespace Abyss
     public abstract class AbyssModuleBase : ModuleBase<AbyssRequestContext>
     {
         public Task ReplyAsync(string? content = null, EmbedBuilder? embed = null,
-            RequestOptions? options = null)
+            RestRequestOptions? options = null)
         {
             return Context.ReplyAsync(content, embed, options);
         }
 
-        public static ActionResult Image(params FileAttachment[] attachments)
+        public static ActionResult Image(params LocalAttachment[] attachments)
         {
             return new OkResult((string?) null, attachments);
         }
@@ -34,14 +34,14 @@ namespace Abyss
 
         public static ReactSuccessResult OkReaction() => new ReactSuccessResult();
 
-        public ActionResult Ok(string content, params FileAttachment[] attachments)
+        public ActionResult Ok(string content, params LocalAttachment[] attachments)
         {
             return (Context.Command.GetType().HasCustomAttribute<ResponseFormatOptionsAttribute>(out var at) && at!.Options.HasFlag(ResponseFormatOptions.DontEmbed))
                 ? new OkResult(content, attachments)
                 : Ok(new EmbedBuilder().WithDescription(content), attachments);
         }
 
-        public static ActionResult Ok(AbyssRequestContext context, EmbedBuilder builder, params FileAttachment[] attachments)
+        public static ActionResult Ok(AbyssRequestContext context, EmbedBuilder builder, params LocalAttachment[] attachments)
         {
             bool attachFooter = false;
             if (builder.Footer == null)
@@ -64,16 +64,16 @@ namespace Abyss
             }
 
             if (attachFooter) builder.WithRequesterFooter(context);
-            if (attachTimestamp) builder.WithCurrentTimestamp();
-            return new OkResult(builder.WithColor(context.BotUser.GetHighestRoleColourOrDefault()), attachments);
+            if (attachTimestamp) builder.WithTimestamp(DateTimeOffset.Now);
+            return new OkResult(builder.WithColor(context.BotMember.GetHighestRoleColourOrDefault()), attachments);
         }
 
-        public ActionResult Ok(EmbedBuilder builder, params FileAttachment[] attachments)
+        public ActionResult Ok(EmbedBuilder builder, params LocalAttachment[] attachments)
         {
             return Ok(Context, builder, attachments);
         }
 
-        public ActionResult Ok(Action<EmbedBuilder> actor, params FileAttachment[] attachments)
+        public ActionResult Ok(Action<EmbedBuilder> actor, params LocalAttachment[] attachments)
         {
             var eb = new EmbedBuilder();
             actor(eb);

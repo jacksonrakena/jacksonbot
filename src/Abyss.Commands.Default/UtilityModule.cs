@@ -1,5 +1,7 @@
-using Discord;
-using Discord.WebSocket;
+using Disqord;
+using Disqord.Bot;
+using Disqord.Events;
+using Disqord.Rest;
 using HumanDateParser;
 using Qmmands;
 using System;
@@ -34,7 +36,7 @@ namespace Abyss.Commands.Default
             try {
                 var res = HumanDateParser.HumanDateParser.ParseDetailed(text);
                 return Ok($"`{text}` => {res.Result.ToString()}\n" +
-                $"**Tokens:** {string.Join(", ", res.Tokens.Select(c => Format.Code(c.GetType().Name)))}");
+                $"**Tokens:** {string.Join(", ", res.Tokens.Select(c => FormatHelper.Code(c.GetType().Name)))}");
             }
             catch (ParseException pe)
             {
@@ -47,29 +49,30 @@ namespace Abyss.Commands.Default
         [AbyssCooldown(1, 3, CooldownMeasure.Seconds, CooldownType.User)]
         public async Task<ActionResult> Command_PingAsync()
         {
-            if (!Context.BotUser.GetPermissions(Context.Channel).SendMessages) return Empty();
+            if (!Context.BotMember.GetPermissionsFor(Context.Channel).SendMessages) return Empty();
             var sw = Stopwatch.StartNew();
             var initial = await Context.Channel.SendMessageAsync("Pinging...").ConfigureAwait(false);
             var restTime = sw.ElapsedMilliseconds.ToString();
 
-            Task Handler(SocketMessage msg)
+            Task Handler(MessageReceivedEventArgs emsg)
             {
+                var msg = emsg.Message;
                 if (msg.Id != initial.Id) return Task.CompletedTask;
 
                 var _ = initial.ModifyAsync(m =>
                 {
                     var rtt = sw.ElapsedMilliseconds.ToString();
-                    Context.Client.MessageReceived -= Handler;
+                    Context.Bot.MessageReceived -= Handler;
                     m.Content = null;
                     m.Embed = new EmbedBuilder()
-                        .WithAuthor("Results", Context.Bot.GetEffectiveAvatarUrl())
+                        .WithAuthor("Results", Context.Bot.CurrentUser.GetAvatarUrl())
                         .WithTimestamp(DateTime.Now)
                         .WithDescription(new StringBuilder()
-                            .AppendLine($"**Heartbeat** {Context.Client.Latency}ms")
+                            .AppendLine($"**Heartbeat** {Context.Bot.Latency}ms")
                             .AppendLine($"**REST** {restTime}ms")
                             .AppendLine($"**Round-trip** {rtt}ms")
                             .ToString())
-                        .WithColor(Context.BotUser.GetHighestRoleColourOrDefault())
+                        .WithColor(Context.BotMember.GetHighestRoleColourOrDefault())
                         .Build();
                 });
                 sw.Stop();
@@ -77,7 +80,7 @@ namespace Abyss.Commands.Default
                 return Task.CompletedTask;
             }
 
-            Context.Client.MessageReceived += Handler;
+            Context.Bot.MessageReceived += Handler;
 
             return Empty();
         }
@@ -88,7 +91,7 @@ namespace Abyss.Commands.Default
             | ResponseFormatOptions.DontAttachTimestamp)]
         public Task<ActionResult> Command_EchoAsync([Name("Text")] [Remainder] string echocontent)
         {
-            return Ok(Context.InvokerIsOwner
+            return Text(Context.InvokerIsOwner
                 ? echocontent
                 : $"{Context.Invoker}: {echocontent}");
         }
@@ -98,15 +101,15 @@ namespace Abyss.Commands.Default
         [ResponseFormatOptions(ResponseFormatOptions.DontEmbed)]
         public async Task<ActionResult> Command_EchoDeleteAsync([Name("Text")] [Remainder] string echocontent)
         {
-            return await Context.Message.TryDeleteAsync() ? Ok(Context.InvokerIsOwner
+            return await Context.Message.TryDeleteAsync() ? Text(Context.InvokerIsOwner
                 ? echocontent
                 : $"{Context.Invoker}: {echocontent}") : Empty();
         }
 
         [Command("delete")]
         [Description("Deletes a message by ID.")]
-        [RequireUserPermission(ChannelPermission.ManageMessages)]
-        [RequireBotPermission(ChannelPermission.ManageMessages)]
+        [RequireMemberGuildPermissions(Permission.ManageMessages)]
+        [RequireBotGuildPermissions(Permission.ManageMessages)]
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
         public async Task<ActionResult> Command_DeleteMessageAsync(
             [Name("Message")] [Description("The ID of the message to delete.")]
@@ -116,7 +119,7 @@ namespace Abyss.Commands.Default
         {
             var message = await Context.Channel.GetMessageAsync(messageId).ConfigureAwait(false);
             if (message == null) return BadRequest("Couldn't find the message.");
-            var success = await message.TryDeleteAsync(RequestOptionsHelper.AuditLog($"Requested by {Context.Invoker} at {DateTime.UtcNow.ToUniversalTime():F}"));
+            var success = await message.TryDeleteAsync(RestRequestOptionsHelper.AuditLog($"Requested by {Context.Invoker} at {DateTime.UtcNow.ToUniversalTime():F}"));
             if (success && !silent) return Ok();
             else if (success) return Empty();
             else return BadRequest("Failed to delete message.");
@@ -128,21 +131,22 @@ namespace Abyss.Commands.Default
         public async Task<ActionResult> Command_QuoteMessageAsync([Name("ID")] [Description("The ID of the message.")]
             ulong messageId)
         {
-            var message = await Context.Channel.GetMessageAsync(messageId).ConfigureAwait(false);
+            var message = Context.Channel.GetMessage(messageId) as IUserMessage ?? await Context.Channel.GetMessageAsync(messageId).ConfigureAwait(false) as IUserMessage;
 
-            if (message == null) return BadRequest("Cannot find message.");
+            if (message == null) return BadRequest("Can't find message.");
 
-            var rawjumpurl = message.GetJumpUrl();
+            var rawjumpurl = $"https://discordapp.com/channels/{Context.Guild.Id}/{message.ChannelId}/{message.Id}";
             var jumpurl = $"[Click to jump!]({rawjumpurl})";
 
             var embed = new EmbedBuilder();
             embed.WithAuthor(new EmbedAuthorBuilder
             {
                 Name = message.Author.ToString(),
-                IconUrl = message.Author.GetEffectiveAvatarUrl(),
+                IconUrl = message.Author.GetAvatarUrl(),
                 Url = rawjumpurl
             });
-            embed.WithTimestamp(message.Timestamp);
+
+            embed.WithTimestamp(message.Id.CreatedAt);
             embed.WithColor(message.Author.GetHighestRoleColourOrDefault());
             embed.WithDescription((string.IsNullOrWhiteSpace(message.Content) ? "<< No content >>" : message.Content) +
                                   "\n\n" + jumpurl);

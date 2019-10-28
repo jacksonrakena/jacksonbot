@@ -1,61 +1,62 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
-using Discord.WebSocket;
-using Discord;
 using Qmmands;
 using Microsoft.Extensions.Hosting;
+using Disqord;
+using Disqord.Bot.Parsers;
+using Microsoft.Extensions.Options;
+using System.Collections.Generic;
+using Disqord.Bot;
+using System.Linq;
 
 namespace Abyss
 {
-    public class AbyssConfigOptions
-    {
-        /// <summary>
-        ///     The data root for this Abyss instance. Should contain the abyss configuration file, and any plugins.
-        /// </summary>
-        #pragma warning disable CS8618
-        public string DataRoot { get; set; }
-    }
-
     public static class ServiceCollectionExtensions
     {
-        public static void ConfigureAbyss(this IServiceCollection serviceCollection, Action<AbyssConfigOptions> acoAction)
+        public static void AddAbyssFramework(this IServiceCollection serviceCollection, Action<IServiceProvider, AbyssHostOptions> acoAction)
         {
-            var aco = new AbyssConfigOptions();
-            acoAction(aco);
-            if (string.IsNullOrWhiteSpace(aco.DataRoot)) throw new InvalidOperationException($"A data root must be set.");
-            serviceCollection.AddSingleton(prov =>
+            serviceCollection.AddSingleton(provider =>
             {
-                return new DataService(aco.DataRoot, prov.GetRequiredService<IHostEnvironment>(), prov.GetRequiredService<DiscordSocketClient>(),
-                    prov.GetRequiredService<MessageService>(), prov.GetRequiredService<ICommandService>(), prov.GetRequiredService<IServiceCollection>());
+                var abo = new AbyssHostOptions();
+                acoAction(provider, abo);
+                return abo;
             });
+
+            serviceCollection.AddSingleton(provider =>
+            {
+                var cfg = provider.GetRequiredService<AbyssConfig>();
+                var act = cfg.Startup.Activity.First();
+                return new DiscordBotConfiguration
+                {
+                    Activity = new LocalActivity(act.Message, act.Type),
+                    Status = UserStatus.Online,
+                    HasMentionPrefix = true,
+                    CommandService = new CommandService(new CommandServiceConfiguration
+                    {
+                        StringComparison = StringComparison.OrdinalIgnoreCase,
+                        DefaultRunMode = RunMode.Sequential,
+                        IgnoresExtraArguments = true,
+                        CooldownBucketKeyGenerator = AbyssCooldownBucketKeyGenerators.Default,
+                        DefaultArgumentParser = DefaultArgumentParser.Instance
+                    }),
+                    Prefixes = new List<string> { cfg.CommandPrefix },
+                    MessageCacheSize = 100,
+                    ProviderFactory = bot => 
+                    {
+                        Console.WriteLine("ProviderFactory being accessed");
+                        return ((AbyssBot)bot).Services;
+                    }
+                };
+            });
+
+            serviceCollection.AddSingleton<AbyssBot>();
+            serviceCollection.AddSingleton<DataService>();
             serviceCollection.AddHostedService<AbyssHostedService>();
             serviceCollection.AddSingleton<HelpService>();
-            serviceCollection.AddSingleton<MessageService>();
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<NotificationsService>();
             serviceCollection.AddSingleton<MarketingService>();
-
-            serviceCollection.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
-            {
-                MessageCacheSize = 100,
-                LogLevel = LogSeverity.Debug,
-                DefaultRetryMode = RetryMode.RetryTimeouts,
-                AlwaysDownloadUsers = true,
-                ExclusiveBulkDelete = false
-            }));
-
-            var commandService = new CommandService(new CommandServiceConfiguration
-            {
-                StringComparison = StringComparison.OrdinalIgnoreCase,
-                DefaultRunMode = RunMode.Sequential,
-                IgnoresExtraArguments = true,
-                CooldownBucketKeyGenerator = AbyssCooldownBucketKeyGenerators.Default,
-                DefaultArgumentParser = DefaultArgumentParser.Instance
-            });
-            commandService.AddArgumentParser(UnixArgumentParser.Instance);
-            serviceCollection.AddSingleton<ICommandService>(commandService);
-            serviceCollection.AddSingleton(serviceCollection);
         }
     }
 }

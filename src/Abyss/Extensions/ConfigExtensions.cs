@@ -1,4 +1,4 @@
-﻿using Discord;
+﻿using Disqord;
 
 namespace Abyss
 {
@@ -11,7 +11,6 @@ namespace Abyss
                 UserStatus.Offline => emoteSection.OfflineEmote,
                 UserStatus.Online => emoteSection.OnlineEmote,
                 UserStatus.Idle => emoteSection.AfkEmote,
-                UserStatus.AFK => emoteSection.AfkEmote,
                 UserStatus.DoNotDisturb => emoteSection.DndEmote,
                 UserStatus.Invisible => emoteSection.OfflineEmote,
                 _ => emoteSection.OfflineEmote,

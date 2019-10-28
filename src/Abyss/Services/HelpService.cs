@@ -1,5 +1,6 @@
 using Abyssal.Common;
-using Discord;
+using Disqord;
+using Disqord.Bot;
 using Humanizer;
 using Qmmands;
 using System;
@@ -29,7 +30,12 @@ namespace Abyss
                     [typeof(string)] = ("Any text (surround with quotes if more than one word long).", "A list of words.",
                         "Any text."),
                     [typeof(int)] = ("A number.", "A list of numbers.", null),
+                    [typeof(Snowflake)] = ("A Discord ID.", "A list of Discord IDs.", null),
                     [typeof(ulong)] = ("A Discord ID.", "A list of Discord IDs.", null),
+                    [typeof(CachedRole)] = ("A server role.", "A list of server roles.", null),
+                    [typeof(CachedMember)] = ("A server member.", "A list of server members.", null),
+                    [typeof(CachedTextChannel)] = ("A server channel.", "A list of server channels.", null),
+                    [typeof(CachedUser)] = ("A Discord user.", "A list of Discord users.", null),
                     [typeof(string[])] = ("A list of words. Surround options with quotes.", "", null)
                 }.ToImmutableDictionary();
 
@@ -50,7 +56,7 @@ namespace Abyss
         public static string? FormatCommandShort(Command command)
         {
             var firstAlias = command.FullAliases.FirstOrDefault();
-            return firstAlias != null ? Format.Bold(Format.Code(firstAlias)) : null;
+            return firstAlias != null ? FormatHelper.Bold(FormatHelper.Code(firstAlias)) : null;
         }
 
         public static async Task<EmbedBuilder> CreateGroupEmbedAsync(AbyssRequestContext context, Qmmands.Module group)
@@ -60,9 +66,9 @@ namespace Abyss
                 Title = "Group information"
             };
 
-            embed0.Description = $"{Format.Code(group.FullAliases.First())}: {group.Description ?? "No description provided."}";
+            embed0.Description = $"{FormatHelper.Code(group.FullAliases.First())}: {group.Description ?? "No description provided."}";
 
-            if (group.FullAliases.Count > 1) embed0.AddField("Aliases", string.Join(", ", group.FullAliases.Select(c => Format.Code(c))));
+            if (group.FullAliases.Count > 1) embed0.AddField("Aliases", string.Join(", ", group.FullAliases.Select(FormatHelper.Code)));
 
             var commands = new List<string>();
             foreach (var command in group.Commands)
@@ -74,7 +80,7 @@ namespace Abyss
                 }
             }
             if (commands.Count != 0)
-                embed0.AddField(new EmbedFieldBuilder().WithName("Subcommands").WithValue(string.Join(", ", commands)));
+                embed0.AddField("Subcommands", string.Join(", ", commands));
 
             return embed0;
         }
@@ -122,12 +128,12 @@ namespace Abyss
 
         public async Task<EmbedBuilder> CreateCommandEmbedAsync(Command command, AbyssRequestContext context)
         {
-            var prefix = context.GetPrefix();
+            var prefix = context.Prefix;
 
             var embed = new EmbedBuilder
             {
                 Title = $"Command information",
-                Description = $"{Format.Code(command.FullAliases.First())}: {command.Description ?? "No description provided."}"
+                Description = $"{FormatHelper.Code(command.FullAliases.First())}: {command.Description ?? "No description provided."}"
             };
             if (command.Remarks != null) embed.Description += " " + command.Remarks;
 
@@ -142,7 +148,7 @@ namespace Abyss
 
             if (command.CustomArgumentParserType == null)
             {
-                var cExecString = $"{context.GetPrefix()}{command.FullAliases.First()} {string.Join(" ", command.Parameters.Select(a => $"{(a.IsOptional ? "[" : "{")}{a.Name}{(a.IsOptional ? "]" : "}")}"))}";
+                var cExecString = $"{context.Prefix}{command.FullAliases.First()} {string.Join(" ", command.Parameters.Select(a => $"{(a.IsOptional ? "[" : "{")}{a.Name}{(a.IsOptional ? "]" : "}")}"))}";
                 embed.AddField("Usage", cExecString);
             }
 
@@ -163,7 +169,7 @@ namespace Abyss
             }
 
             if (command.Parameters.Count != 0) embed.WithFooter("You can use quotes to encapsulate inputs that are more than one word long.",
-                context.Bot.GetEffectiveAvatarUrl());
+                context.Bot.CurrentUser.GetAvatarUrl());
 
             return embed;
         }
@@ -176,7 +182,55 @@ namespace Abyss
 
         public static string GetCheckFriendlyMessage(AbyssRequestContext context, CheckAttribute cba)
         {
-            return (cba as IAbyssCheck ?? throw new InvalidOperationException($"The provided check is not of the Abyss check type, {typeof(IAbyssCheck).Name}.")).GetDescription(context);
+            if (cba is IAbyssCheck iac) return iac.GetDescription(context);
+
+            string? message = null;
+
+            switch (cba)
+            {
+                case RequireBotGuildPermissions rbgp:
+                    message = $"I require the guild permission {rbgp.Permissions.Humanize()}.";
+                    break;
+                case RequireBotChannelPermissions rbcp:
+                    message = $"I require the channel permission {rbcp.Permissions.Humanize()}.";
+                    break;
+                case RequireMemberGuildPermissions rmgp:
+                    message = $"You need the guild permission {rmgp.Permissions.Humanize()}.";
+                    break;
+                case RequireMemberChannelPermissions rmcp:
+                    message = $"You need the channel permission {rmcp.Permissions.Humanize()}.";
+                    break;
+                case RequireBotRoleAttribute rbra:
+                    message = $"I need the role with ID {rbra.Id}.";
+                    break;
+                case RequireGuildAttribute rga:
+                    message = $"We must be in the server with ID {rga.Id}.";
+                    break;
+                case RequireRoleAttribute rra:
+                    message = $"You must have the role with ID {rra.Id}.";
+                    break;
+                case GuildOwnerOnlyAttribute goo:
+                    message = $"You have to be the server owner.";
+                    break;
+                case BotOwnerOnlyAttribute boo:
+                    message = $"Abyss staff only.";
+                    break;
+                case RequireMemberAttribute rma:
+                    message = $"Your ID must be {rma.Id}.";
+                    break;
+                case RequireNsfwAttribute rna:
+                    message = $"The current channel must be marked as not safe for work.";
+                    break;
+                case RequireUserAttribute rua:
+                     message = $"Your ID must be {rua.Id}.";
+                     break;
+                case GuildOnlyAttribute goa:
+                    message = $"We must be in a Discord server, not a DM.";
+                    break;
+            }
+
+            if (message != null) return message;
+            return cba.GetType().Name;
         }
 
         private static string FormatParameter(AbyssRequestContext ctx, Parameter parameterInfo)

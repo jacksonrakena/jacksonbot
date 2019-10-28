@@ -1,5 +1,5 @@
 ﻿using Abyssal.Common;
-using Discord.WebSocket;
+using Disqord;
 using Qmmands;
 using System;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace Abyss.Commands.Default
         {
             try
             {
-                var guildUsers = Context.Guild.Users.Where(c => !c.IsBot).ToArray();
+                var guildUsers = Context.Guild.Members.Values.Where(c => !c.IsBot).ToArray();
 
                 if (guildUsers.Length < 2) return Ok("This guild is too small!");
 
@@ -43,7 +43,7 @@ namespace Abyss.Commands.Default
                 while (member1 == member2) member1 = guildUsers.Random(_random);
 
                 return Ok(
-                    $":heart: I ship **{member1.Nickname ?? member1.Username}** x **{member2.Nickname ?? member2.Username}**! :heart:");
+                    $":heart: I ship **{member1.DisplayName}** x **{member2.DisplayName}**! :heart:");
 
             } catch (Exception)
             {
@@ -89,11 +89,11 @@ namespace Abyss.Commands.Default
         [Command("is")]
         [Description("Determines if a user has a specific attribute.")]
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachTimestamp | ResponseFormatOptions.DontAttachFooter)]
-        public Task<ActionResult> IsUserAsync(SocketGuildUser target, [Remainder] string attribute)
+        public Task<ActionResult> IsUserAsync(CachedMember target, [Remainder] string attribute)
         {
             var @is = _random.Next(0, 2) == 1;
             attribute = attribute.Replace("?", ".");
-            var username = target is SocketGuildUser u ? u.Nickname ?? u.Username : target.Username;
+            var username = target is CachedMember u ? u.DisplayName : target.Name;
 
             var response =
                 $"{(@is ? "Yes" : "No")}, {username} is {(@is ? "" : "not ")}{attribute}{(attribute.EndsWith(".") ? "" : ".")}";
@@ -103,11 +103,11 @@ namespace Abyss.Commands.Default
         [Command("does")]
         [Description("Determines if a user does something, or has an attribute.")]
         [ResponseFormatOptions(ResponseFormatOptions.DontAttachTimestamp | ResponseFormatOptions.DontAttachFooter)]
-        public Task<ActionResult> DoesUserAsync(SocketGuildUser target, [Remainder] string attribute)
+        public Task<ActionResult> DoesUserAsync(CachedMember target, [Remainder] string attribute)
         {
             var does = _random.Next(0, 2) == 1;
             attribute = attribute.Replace("?", ".");
-            var username = target is SocketGuildUser u ? u.Nickname ?? u.Username : target.Username;
+            var username = target is CachedMember u ? u.DisplayName: target.Name;
 
             var response =
                 $"{(does ? "Yes" : "No")}, {username} does {(does ? "" : "not ")}{attribute}{(attribute.EndsWith(".") ? "" : ".")}";

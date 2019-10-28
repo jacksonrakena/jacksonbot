@@ -1,16 +1,15 @@
-using Discord;
+/*using Disqord;
 using Qmmands;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Abyss
 {
-    [DiscoverableTypeParser]
-    public class EmoteTypeParser : AbyssTypeParser<IEmote>
+    public class EmoteTypeParser : AbyssTypeParser<IEmoji>
     {
-        public override ValueTask<TypeParserResult<IEmote>> ParseAsync(Parameter parameter, string value, CommandContext context)
+        public override ValueTask<TypeParserResult<IEmoji>> ParseAsync(Parameter parameter, string value, CommandContext context)
         {
-            return Emote.TryParse(value, out var emote)
+            return CustomEmoji.TryParse(value, out var emote)
                 ? new TypeParserResult<IEmote>(emote)
                 : Regex.Match(value, @"[^\u0000-\u007F]+", RegexOptions.IgnoreCase).Success
                     ? new TypeParserResult<IEmote>(new Emoji(value))
@@ -19,4 +18,4 @@ namespace Abyss
 
         public (string, string, string?) FriendlyName => ("An emote.", "A list of emotes.", null);
     }
-}
+}*/

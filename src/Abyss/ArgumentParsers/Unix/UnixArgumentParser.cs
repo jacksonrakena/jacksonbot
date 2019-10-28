@@ -32,7 +32,7 @@ namespace Abyss
             return null;
         }
 
-        public ValueTask<ArgumentParserResult> ParseAsync(CommandContext context)
+        public ArgumentParserResult Parse(CommandContext context)
         {
             var state = UnixParserState.Neutral;
             var parameters = new Dictionary<Parameter, object>();

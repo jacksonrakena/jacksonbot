@@ -26,11 +26,10 @@ namespace Abyss
         public string ContentRootPath { get; set; }
         public string? AvatarUrl { get; set; }
         public string? UsernameDiscriminator { get; set; }
-        public int ServicesRegistered { get; set; }
 
         public ServiceInfo(string serviceName, string environmentName, Process currentProcess, int commandSuccesses,
             int commandFailures, int guildCount, int guildMemberCount, int channels, int moduleCount, int commandCount, string contentRootPath,
-                string? avatarUrl2048, string? usernameDiscriminator, int servicesRegistered)
+                string? avatarUrl2048, string? usernameDiscriminator)
         {
             ServiceName = serviceName;
             Environment = environmentName;
@@ -52,7 +51,6 @@ namespace Abyss
             ContentRootPath = contentRootPath;
             AvatarUrl = avatarUrl2048;
             UsernameDiscriminator = usernameDiscriminator;
-            ServicesRegistered = servicesRegistered;
         }
     }
 }

@@ -83,8 +83,7 @@ namespace Abyss
         /// </summary>
         public int? Position { get; }
 
-        /// <inheritdoc />
-        public override string Reason => _reason!;
+        public override string GetFailureReason() => _reason!;
     }
 
     public enum UnixArgumentParseFailure

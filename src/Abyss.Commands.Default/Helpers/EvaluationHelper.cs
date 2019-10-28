@@ -1,6 +1,5 @@
-using Discord;
-using Discord.Rest;
-using Discord.WebSocket;
+using Disqord;
+using Disqord.Rest;
 using Qmmands;
 using System;
 using System.Collections;
@@ -46,7 +45,7 @@ namespace Abyss
                 sb.AppendLine();
             }
 
-            return Format.Code(sb.ToString(), "ini");
+            return FormatHelper.Codeblock(sb.ToString(), "ini");
         }
 
         public static object ReadValue(FieldInfo prop, object obj)
@@ -124,7 +123,7 @@ namespace Abyss
                 sb.AppendLine();
             }
 
-            return Format.Code(sb.ToString(), "ini");
+            return FormatHelper.Codeblock(sb.ToString(), "ini");
         }
 
         private static string FormatType(Type atype)
@@ -208,34 +207,34 @@ namespace Abyss
                 foreach (var prop in objEnumerable) inspection.Append(" - ").Append(prop).AppendLine();
             }
 
-            return Format.Code(inspection.ToString(), "ini");
+            return FormatHelper.Codeblock(inspection.ToString(), "ini");
         }
 
-        public SocketGuildUser User(ulong id)
+        public CachedMember User(ulong id)
         {
-            return Context.Guild.GetUser(id);
+            return Context.Guild.Members[id];
         }
 
-        public SocketGuildUser User(string username)
+        public CachedMember User(string username)
         {
-            return Context.Guild.Users.FirstOrDefault(a => a.Username.Equals(username, StringComparison.OrdinalIgnoreCase) || (a.Nickname != null && a.Nickname.Equals(username, StringComparison.OrdinalIgnoreCase)));
+            return Context.Guild.Members.Values.FirstOrDefault(a => a.Name.Equals(username, StringComparison.OrdinalIgnoreCase) || (a.Nick != null && a.Nick.Equals(username, StringComparison.OrdinalIgnoreCase)));
         }
 
-        public SocketTextChannel TextChannel(ulong id)
+        public CachedTextChannel TextChannel(ulong id)
         {
             return Context.Guild.GetTextChannel(id);
         }
 
-        public SocketTextChannel TextChannel(string name)
+        public CachedTextChannel TextChannel(string name)
         {
-            return Context.Guild.TextChannels.FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            return Context.Guild.TextChannels.Values.FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 
-        public SocketUserMessage? Message(ulong id)
+        public CachedUserMessage? Message(ulong id)
         {
-            return Context.Channel.GetCachedMessage(id) as SocketUserMessage;
+            return Context.Channel.GetMessage(id);
         }
 
-        public SocketUserMessage? Message(string id) => Message(ulong.Parse(id));
+        public CachedUserMessage? Message(string id) => Message(ulong.Parse(id));
     }
 }

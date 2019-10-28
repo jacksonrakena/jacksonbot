@@ -1,5 +1,4 @@
-using Discord;
-using Discord.WebSocket;
+using Disqord;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
@@ -16,8 +15,8 @@ namespace Abyss.Commands.Default
     {
         public static readonly IReadOnlyList<string> Imports = new ReadOnlyCollection<string>(new List<string>
         {
-            "System", "System.Math", "System.Linq", "Discord", "System.Diagnostics", "System.Collections.Generic",
-            "Discord.WebSocket", "Abyss", 
+            "System", "System.Math", "System.Linq", "System.Diagnostics", "System.Collections.Generic",
+            "Disqord", "Abyss", 
             "Qmmands", "System.IO",
             "Microsoft.Extensions.DependencyInjection", "System.Text", 
             "System.Globalization", "System.Reflection"
@@ -33,7 +32,7 @@ namespace Abyss.Commands.Default
             }
 
             var options = ScriptOptions.Default
-                .WithReferences(typeof(IDiscordClient).Assembly, typeof(DiscordSocketClient).Assembly, typeof(AbyssHostedService).Assembly)
+                .WithReferences(typeof(DiscordClient).Assembly, typeof(AbyssHostedService).Assembly)
                 .WithImports(Imports);
 
             var script = CSharpScript.Create(code, options, typeof(T));

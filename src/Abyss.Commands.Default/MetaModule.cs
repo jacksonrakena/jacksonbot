@@ -1,7 +1,6 @@
 ﻿using Abyssal.Common;
 using AbyssalSpotify;
-using Discord;
-using Discord.WebSocket;
+using Disqord;
 using Humanizer;
 using Qmmands;
 using System;
@@ -20,13 +19,13 @@ namespace Abyss.Commands.Default
     {
         private readonly ICommandService _commandService;
         private readonly AbyssConfig _config;
-        private readonly DiscordSocketClient _client;
+        private readonly AbyssBot _bot;
 
-        public MetaModule(DiscordSocketClient client, ICommandService commandService, AbyssConfig config)
+        public MetaModule(AbyssBot bot, ICommandService commandService, AbyssConfig config)
         {
             _commandService = commandService;
             _config = config;
-            _client = client;
+            _bot = bot;
         }
 
         [Command("uptime")]
@@ -53,7 +52,7 @@ namespace Abyss.Commands.Default
             stringBuilder.AppendLine($"                 Runtime: {dotnetVersion}");
             stringBuilder.AppendLine($"         Abyss framework: {fwAssembly.GetName().Version!}");
             stringBuilder.AppendLine($"             Command set: {Assembly.GetExecutingAssembly()!.GetName().Version!}");
-            stringBuilder.AppendLine($"             Discord.Net: {DiscordConfig.Version}");
+            stringBuilder.AppendLine($"                 Disqord: {Assembly.GetAssembly(typeof(DiscordClient))!.GetName().Version}");
             stringBuilder.AppendLine($"                 Qmmands: {Assembly.GetAssembly(typeof(CommandService))!.GetName().Version}");
             stringBuilder.AppendLine($"          AbyssalSpotify: {Assembly.GetAssembly(typeof(SpotifyClient))!.GetName().Version}");
             stringBuilder.AppendLine($"Abyssal Common Libraries: {Assembly.GetAssembly(typeof(HiddenAttribute))!.GetName().Version}");
@@ -70,21 +69,21 @@ namespace Abyss.Commands.Default
         [Description("Shows some information about me.")]
         public async Task<ActionResult> Command_GetAbyssInfoAsync()
         {
-            var app = await Context.Client.GetApplicationInfoAsync().ConfigureAwait(false);
+            var app = await Context.Bot.GetCurrentApplicationAsync().ConfigureAwait(false);
             var response = new EmbedBuilder
             {
-                ThumbnailUrl = Context.Client.CurrentUser.GetEffectiveAvatarUrl(),
+                ThumbnailUrl = Context.Bot.CurrentUser.GetAvatarUrl(),
                 Description = string.IsNullOrEmpty(app.Description) ? "None" : app.Description,
                 Author = new EmbedAuthorBuilder
                 {
                     Name = $"Information about Abyss",
-                    IconUrl = Context.Bot.GetEffectiveAvatarUrl()
+                    IconUrl = Context.Bot.CurrentUser.GetAvatarUrl()
                 }
             };
 
             response
                 .AddField("Uptime", DateTime.Now - Process.GetCurrentProcess().StartTime)
-                .AddField("Heartbeat", Context.Client.Latency + "ms", true)
+                .AddField("Heartbeat", Context.Bot.Latency + "ms", true)
                 .AddField("Commands", _commandService.GetAllCommands().Count(), true)
                 .AddField("Modules", _commandService.GetAllModules().Count(), true)
                 .AddField("Source", $"https://github.com/abyssal/Abyss");
@@ -97,7 +96,7 @@ namespace Abyss.Commands.Default
         [AbyssCooldown(1, 24, CooldownMeasure.Hours, CooldownType.User)]
         public Task<ActionResult> Command_SendFeedbackAsync([Remainder] [Range(1, 500)] string feedback)
         {
-            if (_config.Notifications.Feedback == null || !(_client.GetChannel(_config.Notifications.Feedback.Value) is SocketTextChannel stc))
+            if (_config.Notifications.Feedback == null || !(_bot.GetChannel(_config.Notifications.Feedback.Value) is CachedTextChannel stc))
                 return BadRequest("Feedback has been disabled for this bot.");
 
             var _ = stc.SendMessageAsync(
@@ -110,7 +109,7 @@ namespace Abyss.Commands.Default
         [Description("Shows the prefix.")]
         public Task<ActionResult> ViewPrefixesAsync()
         {
-            return Text($"The prefix is `{Context.GetPrefix()}`, but you can invoke commands by mention as well, such as: \"{Context.BotUser.Mention} help\".");
+            return Text($"The prefix is `{Context.Prefix}`, but you can invoke commands by mention as well, such as: \"{Context.BotMember.Mention} help\".");
         }
 
         [Command("hasperm")]
@@ -119,7 +118,7 @@ namespace Abyss.Commands.Default
             [Name("Permission")] [Remainder] [Description("The permission to check for.")]
             string permission)
         {
-            var guildPerms = Context.Guild.CurrentUser.GuildPermissions;
+            var guildPerms = Context.Guild.CurrentMember.Permissions;
             var props = guildPerms.GetType().GetProperties();
 
             var boolProps = props.Where(a =>
@@ -141,7 +140,7 @@ namespace Abyss.Commands.Default
         [Description("Creates an invite to add me to another server.")]
         public Task<ActionResult> Command_GetInviteAsync()
         {
-            return Ok("You can add me using " + UrlHelper.CreateMarkdownUrl("this link.", $"https://discordapp.com/api/oauth2/authorize?client_id={Context.Client.CurrentUser.Id}&permissions=0&scope=bot"));
+            return Ok("You can add me using " + UrlHelper.CreateMarkdownUrl("this link.", $"https://discordapp.com/api/oauth2/authorize?client_id={Context.Bot.CurrentUser.Id}&permissions=0&scope=bot"));
         }
     }
 }
