@@ -5,9 +5,9 @@
 
 A **fully modular, expandable, open-source (for life)** Discord bot, written in C# using .NET Core.
   
-| Prefix     | Developer | Language/Runtime   | Library           | Add To Server
-|------------|-----------|--------------------|-------------------|----------------|
-| a.         | Abyssal   | C# 8/.NET Core 3.0 | Discord.Net       | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot)
+| Prefix     | Developer | Language/Runtime   | Library           | Add To Server  | List links |
+|------------|-----------|--------------------|-------------------|----------------| ---------- |
+| a.         | Abyssal   | C# 8/.NET Core 3.0 | Discord.Net       | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot) | [dbots](https://discord.bots.gg/bots/532099058941034498), [top.gg](https://top.gg/bot/532099058941034498), [DBL](https://discordbotlist.com/bots/532099058941034498), [dboats](https://discord.boats/bot/532099058941034498)
   
 ### 🎉 Features
 - Powerful commands system, with custom results and expandable command packs.
