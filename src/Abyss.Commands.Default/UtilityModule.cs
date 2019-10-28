@@ -1,7 +1,6 @@
 using Disqord;
 using Disqord.Bot;
 using Disqord.Events;
-using Disqord.Rest;
 using HumanDateParser;
 using Qmmands;
 using System;

@@ -8,9 +8,7 @@ using Abyssal.Common;
 using Disqord;
 using Disqord.Bot;
 using Humanizer;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Qmmands;
 
 namespace Abyss
@@ -35,8 +33,8 @@ namespace Abyss
             _failedCommandsTracking = factory.CreateLogger("Failed Commands Tracking");
             _logger = factory.CreateLogger<AbyssBot>();
             _successfulCommandsTracking = factory.CreateLogger("Successful Commands Tracking");
-            this.CommandExecuted += HandleCommandExecutedAsync;
-            this.CommandExecutionFailed += HandleCommandExecutionFailedAsync;
+            CommandExecuted += HandleCommandExecutedAsync;
+            CommandExecutionFailed += HandleCommandExecutionFailedAsync;
 
             AddArgumentParser(UnixArgumentParser.Instance);
         }
@@ -239,7 +237,7 @@ namespace Abyss
         {
             var discoverableAttributeType = typeof(DiscoverableTypeParserAttribute);
             var typeParserType = typeof(TypeParser<>);
-            var addTypeParserMethod = this.GetType().GetMethod("AddTypeParser") ?? throw new Exception("Cannot find method AddTypeParser.");
+            var addTypeParserMethod = GetType().GetMethod("AddTypeParser") ?? throw new Exception("Cannot find method AddTypeParser.");
 
             var loadedTypes = new List<Type>();
 

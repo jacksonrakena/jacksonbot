@@ -158,7 +158,7 @@ namespace Abyss.Commands.Default
                 (await (channel ?? Context.Channel).GetMessagesAsync(count, direction, id).ConfigureAwait(false))
                 .Where(m =>
                 {
-                    var pass = m is IUserMessage && (DateTimeOffset.UtcNow - m.Timestamp).TotalDays < 14;
+                    var pass = m is IUserMessage && (DateTimeOffset.UtcNow - m.Id.CreatedAt).TotalDays < 14;
                     if (user != null && m.Author.Id != user) pass = false;
                     if (embeds && !string.IsNullOrWhiteSpace(m.Content)) pass = false;
                     if (botsOnly && !m.Author.IsBot) pass = false;

@@ -2,10 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
 using Qmmands;
-using Microsoft.Extensions.Hosting;
 using Disqord;
-using Disqord.Bot.Parsers;
-using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using Disqord.Bot;
 using System.Linq;
@@ -42,11 +39,7 @@ namespace Abyss
                     }),
                     Prefixes = new List<string> { cfg.CommandPrefix },
                     MessageCacheSize = 100,
-                    ProviderFactory = bot => 
-                    {
-                        Console.WriteLine("ProviderFactory being accessed");
-                        return ((AbyssBot)bot).Services;
-                    }
+                    ProviderFactory = bot => ((AbyssBot)bot).Services
                 };
             });
 

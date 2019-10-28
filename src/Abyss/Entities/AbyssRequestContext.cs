@@ -14,7 +14,6 @@ namespace Abyss
         {
             Bot = bot;
 
-            Bot.Services.GetRequiredService<HelpService>();
             if (!Guild.Members.TryGetValue(Bot.CurrentUser.Id, out var botu)) throw new InvalidOperationException("Guild members doesn't contain current user.");
             BotMember = botu;
             Channel = (CachedTextChannel) message.Channel;
@@ -22,7 +21,7 @@ namespace Abyss
 
         public new CachedTextChannel Channel { get; }
         public new AbyssBot Bot { get; }
-        public CachedMember Invoker => this.Member;
+        public CachedMember Invoker => Member;
         public CachedMember BotMember { get; }
         public bool InvokerIsOwner => Invoker.Id == Bot.CurrentApplication.GetOrDownloadAsync().GetAwaiter().GetResult().Owner.Id;
 

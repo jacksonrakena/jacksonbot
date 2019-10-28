@@ -1,8 +1,4 @@
-﻿using Disqord;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using Qmmands;
+﻿using Microsoft.Extensions.Hosting;
 using System;
 using System.Diagnostics;
 using System.IO;

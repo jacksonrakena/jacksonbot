@@ -209,22 +209,22 @@ namespace Abyss
                 case RequireRoleAttribute rra:
                     message = $"You must have the role with ID {rra.Id}.";
                     break;
-                case GuildOwnerOnlyAttribute goo:
+                case GuildOwnerOnlyAttribute _:
                     message = $"You have to be the server owner.";
                     break;
-                case BotOwnerOnlyAttribute boo:
+                case BotOwnerOnlyAttribute _:
                     message = $"Abyss staff only.";
                     break;
                 case RequireMemberAttribute rma:
                     message = $"Your ID must be {rma.Id}.";
                     break;
-                case RequireNsfwAttribute rna:
+                case RequireNsfwAttribute _:
                     message = $"The current channel must be marked as not safe for work.";
                     break;
                 case RequireUserAttribute rua:
                      message = $"Your ID must be {rua.Id}.";
                      break;
-                case GuildOnlyAttribute goa:
+                case GuildOnlyAttribute _:
                     message = $"We must be in a Discord server, not a DM.";
                     break;
             }
