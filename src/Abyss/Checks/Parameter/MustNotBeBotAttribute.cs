@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Abyss
 {
+    /// <summary>
+    ///     A check which requires that the current argument must not be the bot.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
     public sealed class MustNotBeBotAttribute : ParameterCheckAttribute, IAbyssCheck
     {
@@ -20,6 +23,9 @@ namespace Abyss
 
         public string GetDescription(AbyssRequestContext requestContext) => "The provided user can't be me.";
 
+        /// <summary>
+        ///     Initialises a new <see cref="MustNotBeBotAttribute"/>.
+        /// </summary>
         public MustNotBeBotAttribute() : base(CheckResources.UserTypes)
         {
         }

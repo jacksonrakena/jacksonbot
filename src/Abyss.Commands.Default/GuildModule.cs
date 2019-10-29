@@ -32,7 +32,7 @@ namespace Abyss.Commands.Default
 
             try
             {
-                await target.ModifyAsync(a => a.Nick = nickname == "clear" ? null : nickname, RestRequestOptionsHelper.AuditLog($"Action performed by {Context.Invoker}")).ConfigureAwait(false);
+                await target.ModifyAsync(a => a.Nick = nickname == "clear" ? null : nickname, RestRequestOptions.FromReason($"Action performed by {Context.Invoker}")).ConfigureAwait(false);
                 return OkReaction();
             }
             catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.Forbidden)

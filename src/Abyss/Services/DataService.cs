@@ -16,7 +16,7 @@ namespace Abyss
         {
             _hostingEnvironment = hostingEnvironment;
             _abyss = abyss;
-            _dataRoot = options.DataRoot;
+            _dataRoot = options.DataRoot ?? throw new InvalidOperationException("No data root specified.");
         }
 
         public string GetBasePath() => _dataRoot;

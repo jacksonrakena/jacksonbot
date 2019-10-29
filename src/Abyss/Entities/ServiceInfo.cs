@@ -4,6 +4,9 @@ using System.Globalization;
 
 namespace Abyss
 {
+    /// <summary>
+    ///     A data class which contains service information.
+    /// </summary>
     public class ServiceInfo
     {
         public string ServiceName { get; set; }

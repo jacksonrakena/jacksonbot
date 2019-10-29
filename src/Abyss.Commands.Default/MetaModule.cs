@@ -83,7 +83,6 @@ namespace Abyss.Commands.Default
 
             response
                 .AddField("Uptime", DateTime.Now - Process.GetCurrentProcess().StartTime)
-                .AddField("Heartbeat", Context.Bot.Latency + "ms", true)
                 .AddField("Commands", _commandService.GetAllCommands().Count(), true)
                 .AddField("Modules", _commandService.GetAllModules().Count(), true)
                 .AddField("Source", $"https://github.com/abyssal/Abyss");

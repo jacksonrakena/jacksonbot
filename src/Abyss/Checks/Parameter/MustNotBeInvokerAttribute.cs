@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Abyss
 {
+    /// <summary>
+    ///     A check which requires that the current parameter must not be the invoker of the command.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
     public sealed class MustNotBeInvokerAttribute : ParameterCheckAttribute, IAbyssCheck
     {
@@ -20,6 +23,9 @@ namespace Abyss
 
         public string GetDescription(AbyssRequestContext requestContext) => "The provided user can't be you.";
 
+        /// <summary>
+        ///     Initialises a new <see cref="MustNotBeInvokerAttribute"/>.
+        /// </summary>
         public MustNotBeInvokerAttribute() : base(CheckResources.UserTypes)
         {
         }

@@ -53,7 +53,7 @@ namespace Abyss.Commands.Default
             if (target.Hierarchy > Context.Invoker.Hierarchy) return BadRequest("That member is a higher rank than you!");
             if (target.Hierarchy > Context.BotMember.Hierarchy) return BadRequest("That member is a higher rank than me!");
 
-            await target.KickAsync(RestRequestOptionsHelper.AuditLog($"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : ": No reason provided")}")).ConfigureAwait(false);
+            await target.KickAsync(RestRequestOptions.FromReason($"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : ": No reason provided")}")).ConfigureAwait(false);
 
             return Ok($"Kicked {target}.");
         }

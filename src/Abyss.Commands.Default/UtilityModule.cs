@@ -67,7 +67,6 @@ namespace Abyss.Commands.Default
                         .WithAuthor("Results", Context.Bot.CurrentUser.GetAvatarUrl())
                         .WithTimestamp(DateTime.Now)
                         .WithDescription(new StringBuilder()
-                            .AppendLine($"**Heartbeat** {Context.Bot.Latency}ms")
                             .AppendLine($"**REST** {restTime}ms")
                             .AppendLine($"**Round-trip** {rtt}ms")
                             .ToString())
@@ -118,7 +117,7 @@ namespace Abyss.Commands.Default
         {
             var message = await Context.Channel.GetMessageAsync(messageId).ConfigureAwait(false);
             if (message == null) return BadRequest("Couldn't find the message.");
-            var success = await message.TryDeleteAsync(RestRequestOptionsHelper.AuditLog($"Requested by {Context.Invoker} at {DateTime.UtcNow.ToUniversalTime():F}"));
+            var success = await message.TryDeleteAsync(RestRequestOptions.FromReason($"Requested by {Context.Invoker} at {DateTime.UtcNow.ToUniversalTime():F}"));
             if (success && !silent) return Ok();
             else if (success) return Empty();
             else return BadRequest("Failed to delete message.");

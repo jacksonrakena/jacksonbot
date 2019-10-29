@@ -9,8 +9,19 @@ using System.Linq;
 
 namespace Abyss
 {
+    /// <summary>
+    ///     Extensions for dealing with service collections and providers.
+    /// </summary>
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        ///     Configures the Abyss framework.
+        /// </summary>
+        /// <param name="serviceCollection">The service collection to add Abyss to.</param>
+        /// <param name="acoAction">The configuration action for the host options.</param>
+        /// <remarks>
+        ///     An instance of <see cref="AbyssConfig"/> is expected to be added to <paramref name="serviceCollection"/> before this method is called.
+        /// </remarks>
         public static void AddAbyssFramework(this IServiceCollection serviceCollection, Action<IServiceProvider, AbyssHostOptions> acoAction)
         {
             serviceCollection.AddSingleton(provider =>

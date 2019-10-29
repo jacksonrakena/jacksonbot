@@ -13,8 +13,14 @@ namespace Abyss
         DashSequence
     }
 
+    /// <summary>
+    ///     A Qmmands parser that can handle UNIX-style arguments.
+    /// </summary>
     public class UnixArgumentParser : IArgumentParser
     {
+        /// <summary>
+        ///     The singleton instance of <see cref="UnixArgumentParser"/>.
+        /// </summary>
         public static readonly UnixArgumentParser Instance = new UnixArgumentParser();
 
         private UnixArgumentParser() { }
