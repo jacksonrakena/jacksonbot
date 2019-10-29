@@ -85,7 +85,8 @@ namespace Abyss.Commands.Default
                 .AddField("Uptime", DateTime.Now - Process.GetCurrentProcess().StartTime)
                 .AddField("Commands", _commandService.GetAllCommands().Count(), true)
                 .AddField("Modules", _commandService.GetAllModules().Count(), true)
-                .AddField("Source", $"https://github.com/abyssal/Abyss");
+                .AddField("Source", $"https://github.com/abyssal/Abyss")
+                .AddField("Packs", string.Join(", ", _bot.LoadedPacks.Select(c => $"{c.FriendlyName} ({c.Assembly.GetName().Version!})")));
 
             return Ok(response);
         }

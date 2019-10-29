@@ -30,7 +30,7 @@ namespace Abyss
                 .WithCurrentTimestamp()
                 .AddField("Core version", Assembly.GetExecutingAssembly().GetName().Version!.ToString(), true)
                 .AddField("Guilds", _abyss.Guilds.Count, true)
-                .AddField("Loaded assemblies", string.Join(", ", _abyss.LoadedAssemblies.Select(c => $"{c.GetName().Name} (v{c.GetName().Version})")))
+                .AddField("Loaded packs", string.Join(", ", _abyss.LoadedPacks.Select(c => $"{c.FriendlyName} (v{c.Assembly.GetName().Version})")))
                 .WithThumbnailUrl(_abyss.CurrentUser.GetAvatarUrl());
 
             await stc.SendMessageAsync(null, false, embed

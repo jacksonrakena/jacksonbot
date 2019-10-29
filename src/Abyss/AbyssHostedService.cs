@@ -43,6 +43,8 @@ namespace Abyss
             _discordLogger = factory.CreateLogger("Discord");
             _marketing = marketing;
             _dataService = dataService;
+
+            _bot.ImportPack<AbyssCorePack>();
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)

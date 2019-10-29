@@ -17,11 +17,11 @@ namespace Abyss
     {
         public int CommandSuccesses { get; private set; }
         public int CommandFailures { get; private set; }
+        public List<AbyssPack> LoadedPacks { get; private set; } = new List<AbyssPack>();
 
         private readonly ILogger _failedCommandsTracking;
         private readonly ILogger _successfulCommandsTracking;
         private readonly ILogger<AbyssBot> _logger;
-        public readonly List<Assembly> LoadedAssemblies = new List<Assembly>();
 
         internal readonly IServiceProvider Services;
 
@@ -35,8 +35,6 @@ namespace Abyss
             _successfulCommandsTracking = factory.CreateLogger("Successful Commands Tracking");
             CommandExecuted += HandleCommandExecutedAsync;
             CommandExecutionFailed += HandleCommandExecutionFailedAsync;
-
-            AddArgumentParser(UnixArgumentParser.Instance);
         }
 
         public async Task HandleRuntimeExceptionAsync(AbyssRequestContext context, Exception exception, CommandExecutionStep step, string reason)
@@ -233,7 +231,15 @@ namespace Abyss
             await base.AfterExecutedAsync(result, context);
         }
 
-        public void ImportAssembly(Assembly assembly)
+        public void ImportPack<TPack>() where TPack : AbyssPack
+        {
+            var pack = this.Create<TPack>();
+            ImportAssembly(pack.Assembly);
+            _logger.LogInformation($"Finished loading pack {pack.FriendlyName}.");
+            LoadedPacks.Add(pack);
+        }
+
+        private void ImportAssembly(Assembly assembly)
         {
             var discoverableAttributeType = typeof(DiscoverableTypeParserAttribute);
             var typeParserType = typeof(TypeParser<>);
@@ -243,7 +249,7 @@ namespace Abyss
 
             foreach (var type in assembly.ExportedTypes)
             {
-                if (!(type.GetCustomAttributes().FirstOrDefault(a => a is DiscoverableTypeParserAttribute) is DiscoverableTypeParserAttribute attr)) continue;
+                if (!type.HasCustomAttribute<DiscoverableTypeParserAttribute>(out var attr)) continue;
                 if (typeParserType.IsAssignableFrom(type)) continue;
 
                 var parser = type.GetConstructor(Type.EmptyTypes)!.Invoke(Array.Empty<object>());
@@ -253,7 +259,6 @@ namespace Abyss
             }
             var rootModulesLoaded = AddModules(assembly, action: ProcessModule);
 
-            LoadedAssemblies.Add(assembly);
             _logger.LogInformation($"Loaded {rootModulesLoaded.Count} modules, {rootModulesLoaded.Sum(a => a.Commands.Count)} commands, and {loadedTypes.Count} type parsers from {assembly.GetName().Name}.");
         }
 

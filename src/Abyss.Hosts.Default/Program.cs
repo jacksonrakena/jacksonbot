@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using Abyss.Commands.Default;
 using AbyssalSpotify;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -108,8 +109,8 @@ namespace Abyss.Hosts.Default
                 endpoints.MapFallbackToPage("/_Host");
             });
 
-            var receiver = app.ApplicationServices.GetRequiredService<AbyssBot>();
-            receiver.ImportAssembly(Assembly.Load("Abyss.Commands.Default"));
+            var bot = app.ApplicationServices.GetRequiredService<AbyssBot>();
+            bot.ImportPack<DefaultAbyssPack>();
         }
     }
 }
