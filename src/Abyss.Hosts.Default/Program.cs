@@ -1,6 +1,8 @@
 using System;
 using System.IO;
+using System.Reflection;
 using AbyssalSpotify;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,22 +30,7 @@ namespace Abyss.Hosts.Default
                     config.AddJsonFile("abyss.json", false, true);
                     config.AddJsonFile($"abyss.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true);
                 })
-                .ConfigureServices(serviceColl =>
-                {
-                    // add Abyss framework
-                    serviceColl.AddAbyssFramework((provider, botOptions) =>
-                    {
-                        botOptions.DataRoot = dataRoot;
-                    });
-
-                    // add services required by Abyss.Commands.Default
-                    serviceColl.AddSingleton(provider =>
-                    {
-                        var configurationModel = provider.GetRequiredService<AbyssConfig>();
-                        return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret);
-                    });
-                    serviceColl.AddTransient<Random>();
-                })
+                .ConfigureServices(serviceColl => ConfigureServices(dataRoot, serviceColl))
                 .UseDefaultServiceProvider(c =>
                 {
                     c.ValidateOnBuild = true;
@@ -56,6 +43,7 @@ namespace Abyss.Hosts.Default
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.Configure(Configure);
                     webBuilder.SuppressStatusMessages(false);
                     webBuilder.CaptureStartupErrors(true);
                     webBuilder.UseSetting(WebHostDefaults.ApplicationKey, "Abyss");
@@ -63,8 +51,65 @@ namespace Abyss.Hosts.Default
                     {
                         kestrel.ListenAnyIP(2110);
                     });
-                    webBuilder.UseStartup<Startup>();
                 });
+        }
+
+        public static void ConfigureServices(string dataRoot, IServiceCollection services)
+        {
+            // ASP.NET
+            services.AddRazorPages();
+            services.AddServerSideBlazor();
+
+            // Configuration
+            services.AddSingleton(p =>
+            {
+                var ob = new AbyssConfig();
+                p.GetRequiredService<IConfiguration>().Bind(ob);
+                return ob;
+            });
+
+            // Abyss framework
+            services.AddAbyssFramework((provider, botOptions) =>
+            {
+                botOptions.DataRoot = dataRoot;
+            });
+
+            // Abyss.Commands.Default
+            services.AddSingleton(provider =>
+            {
+                var configurationModel = provider.GetRequiredService<AbyssConfig>();
+                return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret);
+            });
+            services.AddTransient<Random>();
+        }
+
+        public static void Configure(IApplicationBuilder app)
+        {
+            var env = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
+
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapBlazorHub();
+                endpoints.MapFallbackToPage("/_Host");
+            });
+
+            var receiver = app.ApplicationServices.GetRequiredService<AbyssBot>();
+            receiver.ImportAssembly(Assembly.Load("Abyss.Commands.Default"));
         }
     }
 }
