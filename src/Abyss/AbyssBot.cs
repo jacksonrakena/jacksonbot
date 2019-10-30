@@ -231,13 +231,17 @@ namespace Abyss
             await base.AfterExecutedAsync(result, context);
         }
 
-        public void ImportPack<TPack>() where TPack : AbyssPack
+        public void ImportPack(Type type)
         {
-            var pack = this.Create<TPack>();
+            if (!typeof(AbyssPack).IsAssignableFrom(type)) throw new InvalidOperationException("Abyss packs must be of the AbyssPack type.");
+            var pack = (AbyssPack) this.Create(type);
             ImportAssembly(pack.Assembly);
             _logger.LogInformation($"Finished loading pack {pack.FriendlyName}.");
             LoadedPacks.Add(pack);
         }
+
+        public void ImportPack<TPack>() where TPack : AbyssPack
+            => ImportPack(typeof(TPack));
 
         private void ImportAssembly(Assembly assembly)
         {

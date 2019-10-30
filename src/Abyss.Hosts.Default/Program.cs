@@ -109,7 +109,32 @@ namespace Abyss.Hosts.Default
                 endpoints.MapFallbackToPage("/_Host");
             });
 
+            var logger = app.ApplicationServices.GetRequiredService<ILoggerFactory>().CreateLogger("Abyss Host");
+            var dataService = app.ApplicationServices.GetRequiredService<DataService>();
+            var packBasePath = dataService.GetCustomAssemblyBasePath();
             var bot = app.ApplicationServices.GetRequiredService<AbyssBot>();
+
+            if (Directory.Exists(packBasePath))
+            {
+                foreach (var file in Directory.GetFiles(packBasePath, "*.dll"))
+                {
+                    try
+                    {
+                        var assembly = Assembly.LoadFrom(file);
+                        foreach (var type in assembly.GetExportedTypes())
+                        {
+                            if (typeof(AbyssPack).IsAssignableFrom(type))
+                                bot.ImportPack(type);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        logger.LogWarning($"Failed to load assembly from {file}.");
+                    }
+                }
+            }
+            else logger.LogWarning("Pack directory does not exist, skipping..");
+
             bot.ImportPack<DefaultAbyssPack>();
         }
     }

@@ -28,7 +28,7 @@ namespace Abyss
         }
 
         public string GetConfigurationBasePath() => GetBasePath();
-        public string GetCustomAssemblyBasePath() => Path.Combine(GetBasePath(), "Addons");
+        public string GetCustomAssemblyBasePath() => Path.Combine(GetBasePath(), "Packs");
 
         public ServiceInfo GetServiceInfo()
         {
