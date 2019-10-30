@@ -1,67 +1,74 @@
-using Discord;
-using Discord.WebSocket;
 using System;
 using System.Linq;
+using Disqord;
 
 namespace Abyss
 {
+    /// <summary>
+    ///     Extensions for dealing with Discord users.
+    /// </summary>
     public static class UserExtensions
     {
-        public static EmbedAuthorBuilder ToEmbedAuthorBuilder(this SocketUser user)
+        /// <summary>
+        ///     Converts a cached user to an <see cref="EmbedAuthorBuilder"/>.
+        /// </summary>
+        /// <param name="user">The user to convert.</param>
+        /// <returns>The equivalent of the user.</returns>
+        public static EmbedAuthorBuilder ToEmbedAuthorBuilder(this CachedUser user)
         {
             var builder = new EmbedAuthorBuilder
             {
-                IconUrl = user.GetEffectiveAvatarUrl(),
+                IconUrl = user.GetAvatarUrl(),
                 Name = user.Format()
             };
 
             return builder;
         }
 
-        public static string GetEffectiveAvatarUrl(this IUser user, ushort size = 128)
-        {
-            var avatarUrl = user.GetAvatarUrl(size: size);
-            return !string.IsNullOrWhiteSpace(avatarUrl)
-                ? avatarUrl
-                : (CDN.GetDefaultUserAvatarUrl(user.DiscriminatorValue) + "?size=" + size);
-        }
-
+        /// <summary>
+        ///     Returns the highest role colour of the specified user, or the default embed colour.
+        /// </summary>
+        /// <param name="normalUser">The user to retrieve role colours from.</param>
+        /// <returns>The highest role colour of the specified user, or the default embed colour.</returns>
         public static Color GetHighestRoleColourOrDefault(this IUser normalUser)
         {
-            if (!(normalUser is SocketGuildUser user)) return AbyssHostedService.DefaultEmbedColour;
+            if (!(normalUser is CachedMember user)) return AbyssHostedService.DefaultEmbedColour;
             var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color.RawValue != 0);
             return orderedRoles?.Color ?? AbyssHostedService.DefaultEmbedColour;
         }
 
+        /// <summary>
+        ///     Returns the highest role colour of the specified user, or null if the user has no colour.
+        /// </summary>
+        /// <param name="normalUser"></param>
+        /// <returns>The colour of the user, or null.</returns>
         public static Color? GetHighestRoleColour(this IUser normalUser)
         {
-            if (!(normalUser is SocketGuildUser user)) return null;
+            if (!(normalUser is CachedMember user)) return null;
             var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color.RawValue != 0);
             return orderedRoles?.Color;
         }
 
-        public static IRole GetHighestRoleOrDefault(this SocketGuildUser user, Func<IRole, bool>? predicate = null)
+        /// <summary>
+        ///     Gets the highest role of the user that matches a predicate.
+        /// </summary>
+        /// <param name="user">The user to check.</param>
+        /// <param name="predicate">The predicate of which to use to filter the roles of the user.</param>
+        /// <returns>The highest role of the user that matches a predicate.</returns>
+        public static CachedRole GetHighestRoleOrDefault(this CachedMember user, Func<CachedRole, bool>? predicate = null)
         {
-            return predicate == null ? user.Roles.OrderByDescending(r => r.Position).FirstOrDefault()
-                                     : user.Roles.OrderByDescending(r => r.Position).FirstOrDefault(predicate);
+            return user.Roles.Values.OrderByDescending(r => r.Position).FirstOrDefault(predicate ?? (d => true));
         }
 
-        public static string GetActualName(this SocketUser user)
+        /// <summary>
+        ///     Formats a user.
+        /// </summary>
+        /// <param name="su">The user to format.</param>
+        /// <returns>The nickname (with username#discrim in brackets), or username#discriminator if the user does not have a nickname.</returns>
+        public static string Format(this CachedUser su)
         {
-            if (!(user is SocketGuildUser guildUser)) return user.Username;
-            return guildUser.Nickname ?? user.Username;
-        }
-
-        public static string Format(this SocketUser su)
-        {
-            if (!(su is SocketGuildUser sgu) || sgu.Nickname == null) return $"{su.Username}#{su.Discriminator}";
-            return $"{sgu.Nickname} ({sgu.Username}#{sgu.Discriminator})";
-        }
-
-        public static string FormatWithId(this SocketUser su)
-        {
-            if (!(su is SocketGuildUser sgu) || sgu.Nickname == null) return $"{su.Username}#{su.Discriminator} ({su.Id})";
-            return $"{sgu.Nickname} ({sgu.Username}#{sgu.Discriminator}, {su.Id})";
+            if (!(su is CachedMember sgu) || sgu.Nick == null) return $"{su.Name}#{su.Discriminator}";
+            return $"{sgu.Nick} ({sgu.Name}#{sgu.Discriminator})";
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Discord;
+using Disqord;
 
 namespace Abyss
 {
@@ -9,7 +9,7 @@ namespace Abyss
 
         public override Task ExecuteResultAsync(AbyssRequestContext context)
         {
-            return context.Message.AddReactionAsync(new Emoji("👌"));
+            return context.Message.AddReactionAsync(new LocalEmoji("👌"));
         }
     }
 }

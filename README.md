@@ -1,16 +1,18 @@
 [![DBL Big](https://discordbots.org/api/widget/532099058941034498.svg)](https://discordbots.org/bot/532099058941034498)   
  
-[![DBL Small](https://discordbots.org/api/widget/owner/532099058941034498.svg)](https://discordbots.org/bot/532099058941034498)
 # 🎀 Abyss
-
 A **fully modular, expandable, open-source (for life)** Discord bot, written in C# using .NET Core.
   
-| Prefix     | Developer | Language/Runtime   | Library           | Add To Server  | List links |
-|------------|-----------|--------------------|-------------------|----------------| ---------- |
-| a.         | Abyssal   | C# 8/.NET Core 3.0 | Discord.Net       | [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot) | [dbots](https://discord.bots.gg/bots/532099058941034498), [top.gg](https://top.gg/bot/532099058941034498), [DBL](https://discordbotlist.com/bots/532099058941034498), [dboats](https://discord.boats/bot/532099058941034498)
+| Prefix     | Developer | Language/Runtime   | Library                                    | Add To Server  | List links |
+|------------|-----------|--------------------|--------------------------------------------|----------------| ---------- |
+| a.         | 🎀 Abyssal | .NET Core 3.0 | [Disqord](https://github.com/Quahu/Disqord)| [Authorize](https://discordapp.com/api/oauth2/authorize?client_id=532099058941034498&permissions=0&scope=bot) | [dbots](https://discord.bots.gg/bots/532099058941034498), [top.gg](https://top.gg/bot/532099058941034498), [DBL](https://discordbotlist.com/bots/532099058941034498), [dboats](https://discord.boats/bot/532099058941034498), [bod](https://bots.ondiscord.xyz/bots/532099058941034498)
   
 ### 🎉 Features
-- Powerful commands system, with custom results and expandable command packs.
+**Framework**
+- Integrated framework, making it super simple to create your own hosts and command sets.
+- Super powerful commands system, with custom results and expandable command packs.
+
+**Default command set**
 - Spotify track and album lookup, via [AbyssalSpotify](http://github.com/abyssal/AbyssalSpotify).
 - Bicubic resizing of emojis and custom images, both animated and not-animated.
 - Live C# and Handlebars script evaluation. (owner-only)

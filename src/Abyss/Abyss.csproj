@@ -12,17 +12,16 @@
         <RepositoryUrl>http://github.com/abyssal/Abyss</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <Nullable>enable</Nullable>
-        <Version>7.2.1</Version>
+        <Version>8.0.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Abyssal.Common" Version="1.0.0-20191019.1" />
-        <PackageReference Include="Discord.Net.WebSocket" Version="2.2.0-dev-20191025.3" />
         <PackageReference Include="Humanizer.Core" Version="2.7.9" />
+        <ProjectReference Include="../../Disqord/src/Disqord.Bot/Disqord.Bot.csproj" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
-        <PackageReference Include="Qmmands" Version="3.0.0-nightly-00221" />
     </ItemGroup>
 </Project>

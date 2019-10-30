@@ -1,7 +1,15 @@
 namespace Abyss
 {
+    /// <summary>
+    ///     Extensions for primitive types.
+    /// </summary>
     public static class PrimitiveExtensions
     {
+        /// <summary>
+        ///     Retrives the Unicode code points of an emoji.
+        /// </summary>
+        /// <param name="emojiString">The emoji.</param>
+        /// <returns>The integer code points, in Unicode.</returns>
         public static int[] GetUnicodeCodePoints(this string emojiString)
         {
             var codePoints = new int[emojiString.Length];

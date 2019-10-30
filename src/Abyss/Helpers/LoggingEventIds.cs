@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Abyss
 {
-    public static class LoggingEventIds
+    internal static class LoggingEventIds
     {
         // Success.
         public static readonly EventId CommandExecutedSuccess = new EventId(1, "Command executed");

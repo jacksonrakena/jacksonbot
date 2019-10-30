@@ -1,7 +1,4 @@
-﻿using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Qmmands;
+﻿using Microsoft.Extensions.Hosting;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -12,20 +9,14 @@ namespace Abyss
     public class DataService
     {
         private readonly IHostEnvironment _hostingEnvironment;
-        private readonly MessageService _messageReceiver;
-        private readonly ICommandService _commandService;
-        private readonly DiscordSocketClient _discord;
+        private readonly AbyssBot _abyss;
         private readonly string _dataRoot;
-        private readonly IServiceCollection _serviceCollection;
 
-        public DataService(string dataRoot, IHostEnvironment hostingEnvironment, DiscordSocketClient client, MessageService receiver, ICommandService commandService, IServiceCollection sColl)
+        public DataService(AbyssHostOptions options, IHostEnvironment hostingEnvironment, AbyssBot abyss)
         {
             _hostingEnvironment = hostingEnvironment;
-            _messageReceiver = receiver;
-            _commandService = commandService;
-            _discord = client;
-            _serviceCollection = sColl;
-            _dataRoot = dataRoot;
+            _abyss = abyss;
+            _dataRoot = options.DataRoot ?? throw new InvalidOperationException("No data root specified.");
         }
 
         public string GetBasePath() => _dataRoot;
@@ -37,15 +28,15 @@ namespace Abyss
         }
 
         public string GetConfigurationBasePath() => GetBasePath();
-        public string GetCustomAssemblyBasePath() => Path.Combine(GetBasePath(), "Addons");
+        public string GetCustomAssemblyBasePath() => Path.Combine(GetBasePath(), "Packs");
 
         public ServiceInfo GetServiceInfo()
         {
             var proc = Process.GetCurrentProcess();
             return new ServiceInfo("Abyss", _hostingEnvironment.EnvironmentName, Process.GetCurrentProcess(),
-                _messageReceiver.CommandSuccesses, _messageReceiver.CommandFailures, _discord.Guilds.Count, _discord.Guilds.Select(a => a.MemberCount).Sum(),
-                _discord.Guilds.Select(a => a.TextChannels.Count + a.VoiceChannels.Count).Sum(), _commandService.GetAllModules().Count, _commandService.GetAllCommands().Count,
-                _hostingEnvironment.ContentRootPath, _discord.CurrentUser?.GetAvatarUrl(size: 2048), _discord.CurrentUser?.ToString(), _serviceCollection.Count);
+                _abyss.CommandSuccesses, _abyss.CommandFailures, _abyss.Guilds.Count, _abyss.Guilds.Select(a => a.Value.MemberCount).Sum(),
+                _abyss.Guilds.Select(a => a.Value.TextChannels.Count + a.Value.VoiceChannels.Count).Sum(), _abyss.GetAllModules().Count, _abyss.GetAllCommands().Count,
+                _hostingEnvironment.ContentRootPath, _abyss.CurrentUser?.GetAvatarUrl(size: 2048), _abyss.CurrentUser?.ToString());
         }
     }
 }

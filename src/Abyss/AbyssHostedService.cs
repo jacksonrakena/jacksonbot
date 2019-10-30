@@ -1,12 +1,13 @@
-using Discord;
 using Abyssal.Common;
-using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Disqord;
+using Disqord.Logging;
+using Disqord.Events;
 
 namespace Abyss
 {
@@ -15,10 +16,10 @@ namespace Abyss
         public const string ZeroWidthSpace = "​";
         public static readonly Color DefaultEmbedColour = new Color(0xB2F7EF);
         private readonly AbyssConfig _config;
-        private readonly DiscordSocketClient _discordClient;
+        private readonly AbyssBot _bot;
 
         private readonly ILogger<AbyssHostedService> _logger;
-        private readonly ILogger _discordLogger;
+        private readonly Microsoft.Extensions.Logging.ILogger _discordLogger;
 
         private readonly NotificationsService _notifications;
         private readonly MarketingService _marketing;
@@ -27,21 +28,23 @@ namespace Abyss
 
         private bool _hasBeenReady = false;
 
-        public AbyssHostedService(ILogger<AbyssHostedService> logger, AbyssConfig config, DiscordSocketClient socketClient,
+        public AbyssHostedService(ILogger<AbyssHostedService> logger, AbyssConfig config, AbyssBot bot,
             NotificationsService notifications, ILoggerFactory factory,
             MarketingService marketing, DataService dataService)
         {
             _logger = logger;
-            _discordClient = socketClient;
+            _bot = bot;
             _config = config;
-            _discordClient.Log += DiscordClient_Log;
-            _discordClient.Ready += DiscordClient_Ready;
-            _discordClient.JoinedGuild += DiscordClient_JoinedGuild;
-            _discordClient.LeftGuild += DiscordClient_LeftGuild;
+            _bot.Logger.MessageLogged += DiscordClient_Log;
+            _bot.Ready += DiscordClient_Ready;
+            _bot.JoinedGuild += DiscordClient_JoinedGuild;
+            _bot.LeftGuild += DiscordClient_LeftGuild;
             _notifications = notifications;
             _discordLogger = factory.CreateLogger("Discord");
             _marketing = marketing;
             _dataService = dataService;
+
+            _bot.ImportPack<AbyssCorePack>();
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -52,32 +55,22 @@ namespace Abyss
             _logger.LogInformation($"Directory.GetCurrentDirectory: {System.IO.Directory.GetCurrentDirectory()}");
             _logger.LogInformation($"Data root: {_dataService.GetBasePath()}");
 
-            var discordConfiguration = _config.Connections.Discord;
-
-            await _discordClient.LoginAsync(TokenType.Bot, discordConfiguration.Token).ConfigureAwait(false);
-            await _discordClient.StartAsync().ConfigureAwait(false);
+            await _bot.ConnectAsync().ConfigureAwait(false);
         }
 
-        private Task DiscordClient_LeftGuild(SocketGuild arg)
-        {
-            return _notifications.NotifyServerMembershipChangeAsync(arg, false);
-        }
+        private Task DiscordClient_LeftGuild(LeftGuildEventArgs args) => _notifications.NotifyServerMembershipChangeAsync(args.Guild, false);
+        private Task DiscordClient_JoinedGuild(JoinedGuildEventArgs args) => _notifications.NotifyServerMembershipChangeAsync(args.Guild, true);
 
-        private Task DiscordClient_JoinedGuild(SocketGuild arg)
-        {
-            return _notifications.NotifyServerMembershipChangeAsync(arg, true);
-        }
-
-        private async Task DiscordClient_Ready()
+        private Task DiscordClient_Ready(ReadyEventArgs args)
         {
             if (!_hasBeenReady)
             {
-                await _notifications.NotifyReadyAsync(true);
+                _ =_notifications.NotifyReadyAsync(true);
                 _hasBeenReady = true;
             }
-            else await _notifications.NotifyReadyAsync().ConfigureAwait(false);
+            else _ = _notifications.NotifyReadyAsync().ConfigureAwait(false);
 
-            _logger.LogInformation($"Ready. Logged in as {_discordClient.CurrentUser} with command prefix \"{_config.CommandPrefix}\".");
+            _logger.LogInformation($"Ready. Logged in as {_bot.CurrentUser} with command prefix \"{_config.CommandPrefix}\".");
 
             var startupConfiguration = _config.Startup;
             var activities = startupConfiguration.Activity.Select(a =>
@@ -97,25 +90,22 @@ namespace Abyss
                 while (true)
                 {
                     var (activityType, message) = activities.Random();
-                    await _discordClient.SetGameAsync(message, null, activityType).ConfigureAwait(false);
+                    await _bot.SetPresenceAsync(UserStatus.Online, new LocalActivity(message, activityType, null));
                     await Task.Delay(TimeSpan.FromMinutes(1));
                 }
             });
 
             _ = _marketing.UpdateAllBotListsAsync().ConfigureAwait(false);
-        }
-
-        private Task DiscordClient_Log(LogMessage arg)
-        {
-            _discordLogger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception, "[" + arg.Source + "] " + arg.Message);
 
             return Task.CompletedTask;
         }
 
+        private void DiscordClient_Log(object? sender, MessageLoggedEventArgs arg) => _discordLogger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception, "[" + arg.Source + "] " + arg.Message);
+
         public async Task StopAsync(CancellationToken cancellationToken)
         {
             await _notifications.NotifyStoppingAsync().ConfigureAwait(false);
-            await _discordClient.StopAsync().ConfigureAwait(false);
+            await _bot.DisconnectAsync().ConfigureAwait(false);
         }
     }
 }

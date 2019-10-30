@@ -1,4 +1,4 @@
-using Discord;
+using Disqord;
 using System;
 using System.Threading.Tasks;
 
@@ -24,7 +24,7 @@ namespace Abyss
                 .WithDescription(Reason)
                 .WithColor(ErrorColor)
                 .WithTimestamp(DateTimeOffset.Now)
-                .WithFooter($"Requested by: {context.Invoker.Format()}", context.Invoker.GetEffectiveAvatarUrl())
+                .WithFooter($"Requested by: {context.Invoker.Format()}", context.Invoker.GetAvatarUrl())
                 .Build());
         }
     }
