@@ -8,10 +8,10 @@ namespace Abyss
     public static class ReflectionExtensions
     {
         /// <summary>
-        ///     Retrieves best-format version of an assembly.
+        ///     Attempts to find the informational version of an assembly, otherwise defaults to the registered version.
         /// </summary>
-        /// <param name="assembly">Assembly to query version for.</param>
-        /// <returns>Best available format of an assembly version.</returns>
+        /// <param name="assembly">The assembly to query version for.</param>
+        /// <returns>The best available format the version of the provided assembly.</returns>
         public static string GetVersion(this Assembly assembly)
             => assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? assembly.GetName().Version!.ToString();
     }
