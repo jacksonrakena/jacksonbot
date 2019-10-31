@@ -3,7 +3,7 @@ Abyss is an open-source project. If you are planning on contributing, please tak
 
 ### Coding style
 This project conforms to the coding style guidelines set out by the .NET Foundation in [codefx/coding-style.md](https://github.com/dotnet/corefx/blob/master/Documentation/coding-guidelines/coding-style.md).
-In general, you should try to follow the coding style of the file you're editing, or the guidelines set out by a member in a Pull Request.
+However, this is generally overriden - you should try to follow the coding style of the file you're editing, or the guidelines set out by a member in a Pull Request.
 
 ### Development
 Before submitting a PR, please either open an issue to initiate discussion, or join the [Discord server](https://discord.gg/RsRps9M) and open a discussion.  
