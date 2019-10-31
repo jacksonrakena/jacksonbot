@@ -50,12 +50,12 @@ namespace Abyss.Commands.Default
             stringBuilder.AppendLine("```");
 
             stringBuilder.AppendLine($"                 Runtime: {dotnetVersion}");
-            stringBuilder.AppendLine($"         Abyss framework: {fwAssembly.GetName().Version!}");
-            stringBuilder.AppendLine($"             Command set: {Assembly.GetExecutingAssembly()!.GetName().Version!}");
-            stringBuilder.AppendLine($"                 Disqord: {Assembly.GetAssembly(typeof(DiscordClient))!.GetName().Version}");
-            stringBuilder.AppendLine($"                 Qmmands: {Assembly.GetAssembly(typeof(CommandService))!.GetName().Version}");
-            stringBuilder.AppendLine($"          AbyssalSpotify: {Assembly.GetAssembly(typeof(SpotifyClient))!.GetName().Version}");
-            stringBuilder.AppendLine($"Abyssal Common Libraries: {Assembly.GetAssembly(typeof(HiddenAttribute))!.GetName().Version}");
+            stringBuilder.AppendLine($"         Abyss framework: {fwAssembly.GetVersion()}");
+            stringBuilder.AppendLine($"             Command set: {Assembly.GetExecutingAssembly()!.GetVersion()}");
+            stringBuilder.AppendLine($"                 Disqord: {Assembly.GetAssembly(typeof(DiscordClient))!.GetVersion()}");
+            stringBuilder.AppendLine($"                 Qmmands: {Assembly.GetAssembly(typeof(CommandService))!.GetVersion()}");
+            stringBuilder.AppendLine($"          AbyssalSpotify: {Assembly.GetAssembly(typeof(SpotifyClient))!.GetVersion()}");
+            stringBuilder.AppendLine($"Abyssal Common Libraries: {Assembly.GetAssembly(typeof(HiddenAttribute))!.GetVersion()}");
             stringBuilder.AppendLine($"   Release configuration: {fwAssembly.GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration}");
             stringBuilder.AppendLine($"           Total modules: {_commandService.GetAllModules().Count}");
             stringBuilder.AppendLine($"          Total commands: {_commandService.GetAllCommands().Count}");
@@ -86,7 +86,7 @@ namespace Abyss.Commands.Default
                 .AddField("Commands", _commandService.GetAllCommands().Count(), true)
                 .AddField("Modules", _commandService.GetAllModules().Count(), true)
                 .AddField("Source", $"https://github.com/abyssal/Abyss")
-                .AddField("Packs", string.Join(", ", _bot.LoadedPacks.Select(c => $"{c.FriendlyName} ({c.Assembly.GetName().Version!})")));
+                .AddField("Packs", string.Join(", ", _bot.LoadedPacks.Select(c => $"{c.FriendlyName} ({c.Assembly.GetVersion()})")));
 
             return Ok(response);
         }
