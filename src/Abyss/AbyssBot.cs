@@ -42,13 +42,13 @@ namespace Abyss
             var command = context.Command;
             CommandFailures++;
 
-            var embed = new EmbedBuilder
+            var embed = new LocalEmbedBuilder
             {
                 Color = Color.Red,
                 Title = "Internal error",
                 Description = reason,
                 ThumbnailUrl = context.Bot.CurrentUser.GetAvatarUrl(),
-                Footer = new EmbedFooterBuilder
+                Footer = new LocalEmbedFooterBuilder
                 {
                     Text =
                         $"This (probably) shouldn't happen."
@@ -138,7 +138,7 @@ namespace Abyss
 
                     if (checks.Count == 0) break;
 
-                    await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
+                    await context.Channel.SendMessageAsync(embed: new LocalEmbedBuilder()
                         .WithTitle(
                             $"No can do.")
                         .WithDescription("Can't do that, because: \n" + string.Join("\n",
@@ -160,7 +160,7 @@ namespace Abyss
 
                     if (pchecks.Count == 0) break;
 
-                    await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
+                    await context.Channel.SendMessageAsync(embed: new LocalEmbedBuilder()
                         .WithTitle(
                             $"No can do.")
                         .WithDescription(string.Join("\n",
@@ -209,7 +209,7 @@ namespace Abyss
                 case OverloadsFailedResult ofr:
                     _failedCommandsTracking.LogInformation("Failed to find a matching command from input " + context.Message.Content + ".");
 
-                    await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
+                    await context.Channel.SendMessageAsync(embed: new LocalEmbedBuilder()
                         .WithTitle("Failed to find a matching command")
                         .WithDescription(
                             $"Multiple versions of the command you requested exist, and your supplied information doesn't match any of them. Try using {context.Prefix}help <your command> for more information on the different versions.")
@@ -217,7 +217,7 @@ namespace Abyss
                         .WithColor(Color.Red)
                         .WithFields(ofr.FailedOverloads.Select(ov =>
                         {
-                            return new EmbedFieldBuilder().WithName(ov.Key.CreateCommandString()).WithValue(ov.Value.Reason).WithIsInline(false);
+                            return new LocalEmbedFieldBuilder().WithName(ov.Key.CreateCommandString()).WithValue(ov.Value.Reason).WithIsInline(false);
                         }))
                         .WithRequesterFooter(context)
                         .Build()).ConfigureAwait(false);

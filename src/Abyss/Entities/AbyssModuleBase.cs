@@ -18,7 +18,7 @@ namespace Abyss
         /// <param name="embed">The embed of the message.</param>
         /// <param name="options">Request options.</param>
         /// <returns>A Task representing the asynchronous message create call.</returns>
-        public Task ReplyAsync(string? content = null, EmbedBuilder? embed = null,
+        public Task ReplyAsync(string? content = null, LocalEmbedBuilder? embed = null,
             RestRequestOptions? options = null)
         {
             return Context.ReplyAsync(content, embed, options);
@@ -81,7 +81,7 @@ namespace Abyss
         {
             return (Context.Command.GetType().HasCustomAttribute<ResponseFormatOptionsAttribute>(out var at) && at!.Options.HasFlag(ResponseFormatOptions.DontEmbed))
                 ? new OkResult(content, attachments)
-                : Ok(new EmbedBuilder().WithDescription(content), attachments);
+                : Ok(new LocalEmbedBuilder().WithDescription(content), attachments);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Abyss
         /// <param name="builder">The embed builder to send.</param>
         /// <param name="attachments">The attachments to send.</param>
         /// <returns>An <see cref="ActionResult"/> that represents replying to the specified context with the specified embed and attachments.</returns>
-        public static ActionResult Ok(AbyssRequestContext context, EmbedBuilder builder, params LocalAttachment[] attachments)
+        public static ActionResult Ok(AbyssRequestContext context, LocalEmbedBuilder builder, params LocalAttachment[] attachments)
         {
             bool attachFooter = false;
             if (builder.Footer == null)
@@ -124,7 +124,7 @@ namespace Abyss
         /// <param name="builder">The embed builder to send.</param>
         /// <param name="attachments">The attachments to send.</param>
         /// <returns>An <see cref="ActionResult"/> that represents replying to the specified context with the specified embed and attachments.</returns>
-        public ActionResult Ok(EmbedBuilder builder, params LocalAttachment[] attachments)
+        public ActionResult Ok(LocalEmbedBuilder builder, params LocalAttachment[] attachments)
         {
             return Ok(Context, builder, attachments);
         }
@@ -135,9 +135,9 @@ namespace Abyss
         /// <param name="actor">An actor which mutates the embed to send.</param>
         /// <param name="attachments">The attachments to send.</param>
         /// <returns>An <see cref="ActionResult"/> that represents replying to the specified context with the specified embed and attachments.</returns>
-        public ActionResult Ok(Action<EmbedBuilder> actor, params LocalAttachment[] attachments)
+        public ActionResult Ok(Action<LocalEmbedBuilder> actor, params LocalAttachment[] attachments)
         {
-            var eb = new EmbedBuilder();
+            var eb = new LocalEmbedBuilder();
             actor(eb);
             return Ok(eb, attachments);
         }

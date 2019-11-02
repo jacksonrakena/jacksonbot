@@ -21,7 +21,7 @@ namespace Abyss
         /// <param name="embed">The embed to send.</param>
         /// <param name="options">Options for this REST request.</param>
         /// <returns>A Task representing whether the asynchronous message create call succeeded.</returns>
-        public static async Task<bool> TrySendMessageAsync(this IMessageChannel messageChannel, string? message = null, bool isTts = false, Embed? embed = null, RestRequestOptions? options = null)
+        public static async Task<bool> TrySendMessageAsync(this IMessageChannel messageChannel, string? message = null, bool isTts = false, LocalEmbed? embed = null, RestRequestOptions? options = null)
         {
             try
             {

@@ -49,10 +49,10 @@ namespace Abyss.Commands.Default
         [Description("Grabs information around this server.")]
         public Task<ActionResult> Command_GuildInfoAsync()
         {
-            var embed = new EmbedBuilder
+            var embed = new LocalEmbedBuilder
             {
                 Color = AbyssHostedService.DefaultEmbedColour,
-                Author = new EmbedAuthorBuilder
+                Author = new LocalEmbedAuthorBuilder
                 {
                     Name = "Server " + Context.Guild.Name,
                     IconUrl = Context.Guild.GetIconUrl()
@@ -76,14 +76,14 @@ namespace Abyss.Commands.Default
             [Name("Role")] [Description("The role you wish to view the colour of.")] [Remainder]
             CachedRole role)
         {
-            if (role.Color.RawValue == 0) return BadRequest("That role does not have a colour!");
+            if (role.Color != null && role.Color.Value.RawValue == 0) return BadRequest("That role does not have a colour!");
 
-            var outStream = ImageHelper.CreateColourImage(new Rgba32(role.Color.R, role.Color.G, role.Color.B), 200, 200);
-            await Context.Channel.SendMessageAsync(new LocalAttachment(outStream, "role.png"), null, embed: new EmbedBuilder()
+            var outStream = ImageHelper.CreateColourImage(new Rgba32(role.Color!.Value.R, role.Color.Value.G, role.Color.Value.B), 200, 200);
+            await Context.Channel.SendMessageAsync(new LocalAttachment(outStream, "role.png"), null, embed: new LocalEmbedBuilder()
                 .WithColor(role.Color)
                 .WithTitle("Role Color")
                 .WithDescription(
-                    $"**Hex:** {role.Color}\n\n**Red:** {role.Color.R}\n**Green:** {role.Color.G}\n**Blue:** {role.Color.B}")
+                    $"**Hex:** {role.Color}\n\n**Red:** {role.Color.Value.R}\n**Green:** {role.Color.Value.G}\n**Blue:** {role.Color.Value.B}")
                 .WithImageUrl("attachment://role.png")
                 .WithRequesterFooter(Context)
                 .WithCurrentTimestamp()
@@ -99,7 +99,7 @@ namespace Abyss.Commands.Default
             [Name("User")] [Description("The user you wish to view the colour of.")] [Remainder]
             CachedMember user)
         {
-            var r = user.GetHighestRoleOrDefault(a => a.Color.RawValue != 0);
+            var r = user.GetHighestRoleOrDefault(a => a.Color != null && a.Color.Value.RawValue != 0);
             return r == null
                 ? BadRequest("That user does not have a coloured role!")
                 : Command_GetColourFromRoleAsync((CachedRole)r);
@@ -115,7 +115,7 @@ namespace Abyss.Commands.Default
         {
             user ??= Context.Invoker; // Get the user (or the invoker, if none specified)
 
-            var embed = new EmbedBuilder();
+            var embed = new LocalEmbedBuilder();
             embed.WithAuthor(user);
 
             if (user.Id == Context.Guild.OwnerId)
@@ -197,7 +197,7 @@ namespace Abyss.Commands.Default
                  || a.Name.Humanize().Equals(permission, StringComparison.OrdinalIgnoreCase)));
             if (perm == null) return BadRequest($"Unknown permission `{permission}`. :(");
 
-            var embed = new EmbedBuilder
+            var embed = new LocalEmbedBuilder
             {
                 Author = user.ToEmbedAuthorBuilder(),
                 Title = "Permission: " + perm.Name.Humanize()

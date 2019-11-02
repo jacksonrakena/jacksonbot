@@ -69,7 +69,7 @@ namespace Abyss
         /// <param name="embed">The embed to send.</param>
         /// <param name="options">Options for this request.</param>
         /// <returns>The message, if sent, otherwise null.</returns>
-        public Task<RestUserMessage?> ReplyAsync(string? content = null, EmbedBuilder? embed = null,
+        public Task<RestUserMessage?> ReplyAsync(string? content = null, LocalEmbedBuilder? embed = null,
             RestRequestOptions? options = null)
         {
             if (!BotMember.GetPermissionsFor(Channel).SendMessages) return Task.FromResult((RestUserMessage?) null);

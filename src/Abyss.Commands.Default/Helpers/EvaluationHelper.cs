@@ -21,7 +21,7 @@ namespace Abyss
 
         public new AbyssRequestContext Context { get; }
 
-        public Task<RestUserMessage> ReplyAsync(string content, Embed? embed = null)
+        public Task<RestUserMessage> ReplyAsync(string content, LocalEmbed? embed = null)
         {
             return Context.Channel.SendMessageAsync(content, embed: embed);
         }

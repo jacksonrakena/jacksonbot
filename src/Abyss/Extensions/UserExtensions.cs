@@ -14,9 +14,9 @@ namespace Abyss
         /// </summary>
         /// <param name="user">The user to convert.</param>
         /// <returns>The equivalent of the user.</returns>
-        public static EmbedAuthorBuilder ToEmbedAuthorBuilder(this CachedUser user)
+        public static LocalEmbedAuthorBuilder ToEmbedAuthorBuilder(this CachedUser user)
         {
-            var builder = new EmbedAuthorBuilder
+            var builder = new LocalEmbedAuthorBuilder
             {
                 IconUrl = user.GetAvatarUrl(),
                 Name = user.Format()
@@ -33,7 +33,7 @@ namespace Abyss
         public static Color GetHighestRoleColourOrDefault(this IUser normalUser)
         {
             if (!(normalUser is CachedMember user)) return AbyssHostedService.DefaultEmbedColour;
-            var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color.RawValue != 0);
+            var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color != null && r.Color.Value.RawValue != 0);
             return orderedRoles?.Color ?? AbyssHostedService.DefaultEmbedColour;
         }
 
@@ -45,7 +45,7 @@ namespace Abyss
         public static Color? GetHighestRoleColour(this IUser normalUser)
         {
             if (!(normalUser is CachedMember user)) return null;
-            var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color.RawValue != 0);
+            var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color != null && r.Color.Value.RawValue != 0);
             return orderedRoles?.Color;
         }
 

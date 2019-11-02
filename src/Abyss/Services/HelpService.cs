@@ -59,9 +59,9 @@ namespace Abyss
             return firstAlias != null ? FormatHelper.Bold(FormatHelper.Code(firstAlias)) : null;
         }
 
-        public static async Task<EmbedBuilder> CreateGroupEmbedAsync(AbyssRequestContext context, Qmmands.Module group)
+        public static async Task<LocalEmbedBuilder> CreateGroupEmbedAsync(AbyssRequestContext context, Qmmands.Module group)
         {
-            var embed0 = new EmbedBuilder
+            var embed0 = new LocalEmbedBuilder
             {
                 Title = "Group information"
             };
@@ -126,11 +126,11 @@ namespace Abyss
             return type.Name;
         }
 
-        public async Task<EmbedBuilder> CreateCommandEmbedAsync(Command command, AbyssRequestContext context)
+        public async Task<LocalEmbedBuilder> CreateCommandEmbedAsync(Command command, AbyssRequestContext context)
         {
             var prefix = context.Prefix;
 
-            var embed = new EmbedBuilder
+            var embed = new LocalEmbedBuilder
             {
                 Title = $"Command information",
                 Description = $"{FormatHelper.Code(command.FullAliases.First())}: {command.Description ?? "No description provided."}"
@@ -188,16 +188,16 @@ namespace Abyss
 
             switch (cba)
             {
-                case RequireBotGuildPermissions rbgp:
+                case RequireBotGuildPermissionsAttribute rbgp:
                     message = $"I require the guild permission {rbgp.Permissions.Humanize()}.";
                     break;
-                case RequireBotChannelPermissions rbcp:
+                case RequireBotChannelPermissionsAttribute rbcp:
                     message = $"I require the channel permission {rbcp.Permissions.Humanize()}.";
                     break;
-                case RequireMemberGuildPermissions rmgp:
+                case RequireMemberGuildPermissionsAttribute rmgp:
                     message = $"You need the guild permission {rmgp.Permissions.Humanize()}.";
                     break;
-                case RequireMemberChannelPermissions rmcp:
+                case RequireMemberChannelPermissionsAttribute rmcp:
                     message = $"You need the channel permission {rmcp.Permissions.Humanize()}.";
                     break;
                 case RequireBotRoleAttribute rbra:

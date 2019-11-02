@@ -70,11 +70,11 @@ namespace Abyss.Commands.Default
         public async Task<ActionResult> Command_GetAbyssInfoAsync()
         {
             var app = await Context.Bot.GetCurrentApplicationAsync().ConfigureAwait(false);
-            var response = new EmbedBuilder
+            var response = new LocalEmbedBuilder
             {
                 ThumbnailUrl = Context.Bot.CurrentUser.GetAvatarUrl(),
                 Description = string.IsNullOrEmpty(app.Description) ? "None" : app.Description,
-                Author = new EmbedAuthorBuilder
+                Author = new LocalEmbedAuthorBuilder
                 {
                     Name = $"Information about Abyss",
                     IconUrl = Context.Bot.CurrentUser.GetAvatarUrl()

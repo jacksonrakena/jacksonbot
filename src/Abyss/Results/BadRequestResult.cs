@@ -19,7 +19,7 @@ namespace Abyss
 
         public override async Task ExecuteResultAsync(AbyssRequestContext context)
         {
-            await context.Channel.SendMessageAsync(null, false, new EmbedBuilder()
+            await context.Channel.SendMessageAsync(null, false, new LocalEmbedBuilder()
                 .WithTitle("You've been telling me lies, hun.")
                 .WithDescription(Reason)
                 .WithColor(ErrorColor)

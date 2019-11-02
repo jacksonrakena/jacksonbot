@@ -49,7 +49,7 @@ namespace Abyss
                         DefaultArgumentParser = DefaultArgumentParser.Instance
                     }),
                     Prefixes = new List<string> { cfg.CommandPrefix },
-                    MessageCacheSize = 100,
+                    // message cache default 100
                     ProviderFactory = bot => ((AbyssBot)bot).Services
                 };
             });

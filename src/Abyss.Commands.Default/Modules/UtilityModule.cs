@@ -63,7 +63,7 @@ namespace Abyss.Commands.Default
                     var rtt = sw.ElapsedMilliseconds.ToString();
                     Context.Bot.MessageReceived -= Handler;
                     m.Content = null;
-                    m.Embed = new EmbedBuilder()
+                    m.Embed = new LocalEmbedBuilder()
                         .WithAuthor("Results", Context.Bot.CurrentUser.GetAvatarUrl())
                         .WithTimestamp(DateTime.Now)
                         .WithDescription(new StringBuilder()
@@ -136,8 +136,8 @@ namespace Abyss.Commands.Default
             var rawjumpurl = $"https://discordapp.com/channels/{Context.Guild.Id}/{message.ChannelId}/{message.Id}";
             var jumpurl = $"[Click to jump!]({rawjumpurl})";
 
-            var embed = new EmbedBuilder();
-            embed.WithAuthor(new EmbedAuthorBuilder
+            var embed = new LocalEmbedBuilder();
+            embed.WithAuthor(new LocalEmbedAuthorBuilder
             {
                 Name = message.Author.ToString(),
                 IconUrl = message.Author.GetAvatarUrl(),

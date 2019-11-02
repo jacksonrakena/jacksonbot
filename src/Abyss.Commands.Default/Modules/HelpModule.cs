@@ -49,7 +49,7 @@ namespace Abyss.Commands.Default
 
             var prefix = Context.Prefix;;
 
-            var embed = new EmbedBuilder();
+            var embed = new LocalEmbedBuilder();
 
             embed.WithTitle("Help listing for " + Context.BotMember.Format());
 

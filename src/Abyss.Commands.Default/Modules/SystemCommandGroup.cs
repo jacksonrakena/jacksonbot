@@ -153,7 +153,7 @@ namespace Abyss.Commands.Default
                 return Ok(stringRep);
             }
 
-            var embed = new EmbedBuilder
+            var embed = new LocalEmbedBuilder
             {
                 Title = "Scripting Result",
                 Description = $"Scripting failed during stage **{FormatEnumMember(result.FailedStage)}**"

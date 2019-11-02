@@ -90,10 +90,10 @@ namespace Abyss.Commands.Default
                 }
             }
 
-            var embed = new EmbedBuilder
+            var embed = new LocalEmbedBuilder
             {
                 Color = AbyssHostedService.DefaultEmbedColour,
-                Author = new EmbedAuthorBuilder
+                Author = new LocalEmbedAuthorBuilder
                 {
                     Name = album.Artists.Select(a => a.Name).Humanize(),
                     IconUrl = album.Images.FirstOrDefault()?.Url,
@@ -101,7 +101,7 @@ namespace Abyss.Commands.Default
                 },
                 Title = album.Name,
                 ThumbnailUrl = album.Images.FirstOrDefault()?.Url,
-                Footer = new EmbedFooterBuilder
+                Footer = new LocalEmbedFooterBuilder
                 {
                     Text = string.Join("\n",
                         album.Copyrights.Distinct().Select(a =>
@@ -136,12 +136,12 @@ namespace Abyss.Commands.Default
             return Ok(embed);
         }
 
-        private static EmbedBuilder CreateTrackEmbed(SpotifyTrack track)
+        private static LocalEmbedBuilder CreateTrackEmbed(SpotifyTrack track)
         {
-            var embed = new EmbedBuilder
+            var embed = new LocalEmbedBuilder
             {
                 Color = AbyssHostedService.DefaultEmbedColour,
-                Author = new EmbedAuthorBuilder
+                Author = new LocalEmbedAuthorBuilder
                 {
                     Name = track.Artists.Select(a => a.Name).Humanize(),
                     IconUrl = track.Album.Images.FirstOrDefault()?.Url,

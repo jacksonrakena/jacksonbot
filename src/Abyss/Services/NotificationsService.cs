@@ -24,7 +24,7 @@ namespace Abyss
             if (!(ch != null && ch is CachedTextChannel stc)) return;
 
 
-            var embed = new EmbedBuilder()
+            var embed = new LocalEmbedBuilder()
                 .WithAuthor(_abyss.CurrentUser.ToEmbedAuthorBuilder())
                 .WithColor(AbyssHostedService.DefaultEmbedColour)
                 .WithCurrentTimestamp()
@@ -45,7 +45,7 @@ namespace Abyss
             var ch = _abyss.GetChannel(_notifyConfig.Stopping.Value);
             if (!(ch != null && ch is CachedTextChannel stc)) return;
 
-            await stc.SendMessageAsync(null, false, new EmbedBuilder()
+            await stc.SendMessageAsync(null, false, new LocalEmbedBuilder()
                     .WithAuthor(_abyss.CurrentUser.ToEmbedAuthorBuilder())
                     .WithDescription($"Abyss instance stopping at " + DateTime.Now.ToString("F"))
                     .WithColor(AbyssHostedService.DefaultEmbedColour)
@@ -60,7 +60,7 @@ namespace Abyss
             if (_notifyConfig?.ServerMembershipChange == null) return;
             var updateChannel = _abyss.GetChannel(_notifyConfig.ServerMembershipChange.Value);
             if (!(updateChannel is CachedTextChannel stc)) return;
-            await stc.SendMessageAsync(null, false, new EmbedBuilder()
+            await stc.SendMessageAsync(null, false, new LocalEmbedBuilder()
                  .WithAuthor(_abyss.CurrentUser.ToEmbedAuthorBuilder())
                  .WithDescription($"{(botIsJoining ? "Joined" : "Left")} {arg.Name} at {DateTime.Now:F}")
                  .AddField("Member count", arg.MemberCount, true)

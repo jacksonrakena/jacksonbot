@@ -53,7 +53,7 @@ namespace Abyss.Commands.Default
         {
             member ??= Context.Invoker;
 
-            var embed = new EmbedBuilder
+            var embed = new LocalEmbedBuilder
             {
                 ThumbnailUrl = member.GetAvatarUrl(),
                 Color = member.GetHighestRoleColourOrDefault(),
@@ -85,11 +85,10 @@ namespace Abyss.Commands.Default
             if (member.Activity != null)
                 desc.AppendLine($"**- Activity:** {FormatActivity(member.Activity)}");
             desc.AppendLine($"**- Status:** {_config.Emotes.GetEmoteFromActivity(member.Status)} {member.Status.Humanize()}");
-            desc.AppendLine($"**- Mutual servers:** {Context.Bot.Guilds.Values.Count(c => c.Members.ContainsKey(Context.Invoker.Id))}");
+            desc.AppendLine($"**- Mutual servers:** {Context.Invoker.MutualGuilds.Count}");
             //if (member. != null) desc.AppendLine($"**- Nitro membership since: {FormatOffset(member.PremiumSince.Value)}");
             //if (member.ActiveClients != null) desc.AppendLine($"**- Active on:** {string.Join(", ", member.ActiveClients)}");
             if (effectiveColor != null) desc.AppendLine($"**- Colour:** {effectiveColor.Value.ToString()} (R {effectiveColor.Value.R}, G {effectiveColor.Value.G}, B {effectiveColor.Value.B})");
-
             embed.Description = desc.ToString();
 
             var roles = member.Roles.Values.Where(r => !(r.Id == member.Guild.Id));

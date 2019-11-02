@@ -15,7 +15,7 @@ namespace Abyss
             Attachments = attachments;
         }
 
-        public OkResult(EmbedBuilder? embed, params LocalAttachment[] attachments)
+        public OkResult(LocalEmbedBuilder? embed, params LocalAttachment[] attachments)
         {
             Message = null;
             Embed = embed;
@@ -25,7 +25,7 @@ namespace Abyss
         public override bool IsSuccessful => true;
 
         private string? Message { get; }
-        private EmbedBuilder? Embed { get; }
+        private LocalEmbedBuilder? Embed { get; }
         private LocalAttachment[] Attachments { get; }
 
         public override async Task ExecuteResultAsync(AbyssRequestContext context)
