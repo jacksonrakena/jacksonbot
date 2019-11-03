@@ -14,7 +14,7 @@ namespace Abyss
         public override ValueTask<CheckResult> CheckAsync(object argument, CommandContext context)
         {
             if (argument == null) return CheckResult.Successful;
-            var id = argument is CachedUser user ? (ulong) user.Id : argument is ulong dur ? dur : throw new InvalidOperationException($"{nameof(MustNotBeBotAttribute)} is being executed on an invalid object type. Expected a SocketUser or DiscordUserReference variant, got {argument.GetType().Name}."); ;
+            var id = argument is CachedUser user ? user.Id : argument is Snowflake dur ? dur : throw new InvalidOperationException($"{nameof(MustNotBeBotAttribute)} is being executed on an invalid object type.");
 
             return id == context.ToRequestContext().Bot.CurrentUser.Id
                 ? new CheckResult("The provided user can't be me.")
