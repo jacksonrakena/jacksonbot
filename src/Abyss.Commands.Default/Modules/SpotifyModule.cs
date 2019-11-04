@@ -12,12 +12,11 @@ namespace Abyss.Commands.Default
     [Name("Spotify")]
     [Description(
         "Commands that relate to Spotify, a digital music service that gives you access to millions of songs.")]
-    [Group("spotify", "spot", "sp")]
-    public class SpotifyCommandGroup : AbyssModuleBase
+    public class SpotifyModule : AbyssModuleBase
     {
         private readonly SpotifyClient _spotify;
 
-        public SpotifyCommandGroup(SpotifyClient spotify)
+        public SpotifyModule(SpotifyClient spotify)
         {
             _spotify = spotify;
         }

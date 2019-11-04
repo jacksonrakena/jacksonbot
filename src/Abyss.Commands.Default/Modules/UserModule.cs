@@ -75,7 +75,7 @@ namespace Abyss.Commands.Default
 
             desc.AppendLine($"**- ID:** {member.Id}");
             //desc.AppendLine($"**- Created:** {FormatOffset(member.)}");
-            if (member.JoinedAt != null) desc.AppendLine($"**- Joined:** {FormatOffset(member.JoinedAt)}");
+            if (member.JoinedAt != null) desc.AppendLine($"**- Joined:** {FormatHelper.FormatTime(member.JoinedAt)}");
             desc.AppendLine(
                 $"**- Position:** {(member.Hierarchy == int.MaxValue ? "Server Owner" : member.Hierarchy.Ordinalize())}");
             desc.AppendLine($"**- Deafened:** {(member.IsDeafened ? "Yes" : "No")}");
@@ -111,11 +111,6 @@ namespace Abyss.Commands.Default
             {
                 e.Description = $"**{Context.Invoker.DisplayName}** hugs **{hugee.DisplayName}**!";
             });
-        }
-
-        public static string FormatOffset(DateTimeOffset offset)
-        {
-            return offset.DateTime.ToUniversalTime().ToString("s", CultureInfo.InvariantCulture);
         }
 
         private static string GetVoiceChannelStatus(CachedMember user)

@@ -17,34 +17,6 @@ namespace Abyss.Commands.Default
     [Description("Commands that help you interact with your server in useful and efficient ways.")]
     public class GuildModule : AbyssModuleBase
     {
-        [Command("nickname", "nick")]
-        [Description("Sets the current nickname for a user.")]
-        [Remarks("You can provide `clear` to remove their current nickname (if any).")]
-        [RequireBotGuildPermissions(Permission.ChangeNickname)]
-        [RequireMemberChannelPermissions(Permission.ChangeNickname)]
-        public async Task<ActionResult> Command_SetNicknameAsync(
-            [Name("Target")] [Description("The user you would like me to change username of.")] CachedMember target,
-            [Description("The nickname to set to. `clear` to remove one (if set).")] [Name("New Nickname")] [Remainder]
-            string nickname)
-        {
-            if (nickname.Equals("clear", StringComparison.OrdinalIgnoreCase) && string.IsNullOrEmpty(target.Nick))
-                return BadRequest($"{target.Format()} doesn't have a nickname.");
-
-            try
-            {
-                await target.ModifyAsync(a => a.Nick = nickname == "clear" ? null : nickname, RestRequestOptions.FromReason($"Action performed by {Context.Invoker}")).ConfigureAwait(false);
-                return OkReaction();
-            }
-            catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.Forbidden)
-            {
-                return BadRequest("Not allowed to.");
-            }
-            catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.BadRequest)
-            {
-                return BadRequest("Bad format.");
-            }
-        }
-
         [Command("server", "serverinfo")]
         [Description("Grabs information around this server.")]
         public Task<ActionResult> Command_GuildInfoAsync()
@@ -60,11 +32,9 @@ namespace Abyss.Commands.Default
                 ThumbnailUrl = Context.Guild.GetIconUrl()
             };
             embed.AddField("Owner", Context.Guild.Owner.ToString(), true);
-            // missing in disqord - embed.AddField("Created At", UserModule.FormatOffset(Context.Guild.))
-            embed.AddField("Text Channels", string.Join(", ", Context.Guild.TextChannels.Select(c => c.Value.Name)) + " (" +
-                                Context.Guild.TextChannels.Count + ")", true);
-            embed.AddField("Voice Channels", string.Join(", ", Context.Guild.VoiceChannels.Select(c => c.Value.Name)) + " (" +
-                                Context.Guild.VoiceChannels.Count + ")", true);
+            embed.AddField("Created", FormatHelper.FormatTime(Context.Guild.Id.CreatedAt));
+            embed.AddField("Text Channels", Context.Guild.TextChannels.Count, true);
+            embed.AddField("Voice Channels", Context.Guild.VoiceChannels.Count, true);
 
             return Ok(embed);
         }
