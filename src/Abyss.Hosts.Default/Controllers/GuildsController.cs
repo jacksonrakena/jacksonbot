@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Abyss.Hosts.Default.Controllers
 {
-    [Controller]
-    [Route("api/guilds")]
+    [ApiController]
+    [Route("[controller]")]
     public class GuildsController : Controller
     {
         private readonly AbyssBot _bot;
@@ -17,10 +17,18 @@ namespace Abyss.Hosts.Default.Controllers
             _bot = bot;
         }
 
-        [HttpGet("{guild}/membercount")]
-        public IActionResult GetMemberCountAsync(ulong guild)
+        [HttpGet]
+        public IActionResult Default()
         {
-            return Ok(new { member_count = _bot.Guilds[guild].MemberCount });
+            return Ok("pong!");
+        }
+
+        [HttpGet("{guild}")]
+        public IActionResult MemberCount(string guild)
+        {
+            if (!ulong.TryParse(guild, out var id)) return BadRequest(new { error = "bad ID"} );
+            Console.WriteLine("guild " + guild);
+            return Ok(new { member_count = _bot.Guilds[id].MemberCount });
         }
     }
 }
