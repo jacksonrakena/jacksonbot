@@ -48,10 +48,6 @@ namespace Abyss.Hosts.Default
                     webBuilder.SuppressStatusMessages(false);
                     webBuilder.CaptureStartupErrors(true);
                     webBuilder.UseSetting(WebHostDefaults.ApplicationKey, "Abyss");
-                    webBuilder.ConfigureKestrel(kestrel =>
-                    {
-                        kestrel.ListenAnyIP(2110);
-                    });
                 });
         }
 
