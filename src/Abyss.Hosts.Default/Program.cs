@@ -94,7 +94,6 @@ namespace Abyss.Hosts.Default
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
