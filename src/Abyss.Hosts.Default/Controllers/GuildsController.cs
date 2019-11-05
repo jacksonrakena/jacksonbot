@@ -17,7 +17,7 @@ namespace Abyss.Hosts.Default.Controllers
             _bot = bot;
         }
 
-        [HttpGet("{id}/membercount")]
+        [HttpGet("{guild}/membercount")]
         public IActionResult GetMemberCountAsync(ulong guild)
         {
             return Ok(new { member_count = _bot.Guilds[guild].MemberCount });
