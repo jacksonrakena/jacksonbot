@@ -39,8 +39,7 @@ namespace Abyss.Commands.Default
             }
             else
             {
-                Console.WriteLine(Context.Invoker.Activity);
-                if (!(Context.Invoker.Activity is SpotifyActivity spot))
+                if (!(Context.Invoker.Presence.Activity is SpotifyActivity spot))
                     return BadRequest("You didn't supply a track, and you're not currently listening to anything!");
 
                 track = await _spotify.GetTrackAsync(spot.TrackId).ConfigureAwait(false);
@@ -63,7 +62,7 @@ namespace Abyss.Commands.Default
             SpotifyAlbum album;
             if (albumQuery == null)
             {
-                if (!(Context.Invoker.Activity is SpotifyActivity spot))
+                if (!(Context.Invoker.Presence.Activity is SpotifyActivity spot))
                 {
                     return BadRequest(
                        "You didn't supply an album name, and you're not currently listening to anything!");

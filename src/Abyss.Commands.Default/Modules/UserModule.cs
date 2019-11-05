@@ -82,9 +82,9 @@ namespace Abyss.Commands.Default
             desc.AppendLine($"**- Muted:** {(member.IsMuted ? "Yes" : "No")}");
             desc.AppendLine($"**- Nickname:** {member.Nick ?? "None"}");
             desc.AppendLine($"**- Voice Status:** {GetVoiceChannelStatus(member)}");
-            if (member.Activity != null)
-                desc.AppendLine($"**- Activity:** {FormatActivity(member.Activity)}");
-            desc.AppendLine($"**- Status:** {_config.Emotes.GetEmoteFromActivity(member.Status)} {member.Status.Humanize()}");
+            if (member.Presence.Activity != null)
+                desc.AppendLine($"**- Activity:** {FormatActivity(member.Presence.Activity)}");
+            desc.AppendLine($"**- Status:** {_config.Emotes.GetEmoteFromActivity(member.Presence.Status)} {member.Presence.Status.Humanize()}");
             desc.AppendLine($"**- Mutual servers:** {Context.Invoker.MutualGuilds.Count}");
             //if (member. != null) desc.AppendLine($"**- Nitro membership since: {FormatOffset(member.PremiumSince.Value)}");
             //if (member.ActiveClients != null) desc.AppendLine($"**- Active on:** {string.Join(", ", member.ActiveClients)}");
