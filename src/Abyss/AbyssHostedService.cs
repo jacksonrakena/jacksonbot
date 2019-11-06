@@ -26,11 +26,13 @@ namespace Abyss
 
         private readonly DataService _dataService;
 
+        private readonly IPackLoader? _packLoader;
+
         private bool _hasBeenReady = false;
 
         public AbyssHostedService(ILogger<AbyssHostedService> logger, AbyssConfig config, AbyssBot bot,
             NotificationsService notifications, ILoggerFactory factory,
-            MarketingService marketing, DataService dataService)
+            MarketingService marketing, DataService dataService, IServiceProvider provider)
         {
             _logger = logger;
             _bot = bot;
@@ -44,11 +46,18 @@ namespace Abyss
             _marketing = marketing;
             _dataService = dataService;
 
+            _packLoader = provider.GetService(typeof(IPackLoader)) as IPackLoader;
+
             _bot.ImportPack<AbyssCorePack>();
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            if (_packLoader != null)
+            {
+                await _packLoader.LoadPacksAsync(_bot).ConfigureAwait(false);
+            }
+
             _logger.LogInformation(
                 $"Abyss hosted service starting on {Environment.OSVersion.VersionString}/CLR {Environment.Version} (args {string.Join(" ", Environment.GetCommandLineArgs())})");
             _logger.LogInformation($"Environment.CurrentDirectory: {Environment.CurrentDirectory}");

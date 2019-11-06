@@ -3,8 +3,6 @@ using System.IO;
 using System.Reflection;
 using Abyss.Commands.Default;
 using AbyssalSpotify;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,7 +22,7 @@ namespace Abyss.Hosts.Default
             var dataRoot = args.Length > 0 ? args[0] : AppDomain.CurrentDomain.BaseDirectory;
             if (!Directory.Exists(dataRoot)) dataRoot = AppDomain.CurrentDomain.BaseDirectory; // IIS tomfoolery
 
-            return Host.CreateDefaultBuilder(args)
+            return new HostBuilder()
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config.SetBasePath(dataRoot);
@@ -41,13 +39,6 @@ namespace Abyss.Hosts.Default
                 {
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     logging.AddConsole();
-                })
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.Configure(Configure);
-                    webBuilder.SuppressStatusMessages(false);
-                    webBuilder.CaptureStartupErrors(true);
-                    webBuilder.UseSetting(WebHostDefaults.ApplicationKey, "Abyss");
                 });
         }
 
@@ -61,13 +52,12 @@ namespace Abyss.Hosts.Default
                 return ob;
             });
 
-            services.AddControllers();
-
             // Abyss framework
             services.AddAbyssFramework((provider, botOptions) =>
             {
                 botOptions.DataRoot = dataRoot;
             });
+            services.AddSingleton<IPackLoader, DefaultPackLoader>();
 
             // Abyss.Commands.Default
             services.AddSingleton(provider =>
@@ -75,51 +65,8 @@ namespace Abyss.Hosts.Default
                 var configurationModel = provider.GetRequiredService<AbyssConfig>();
                 return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret);
             });
+
             services.AddTransient<Random>();
-        }
-
-        public static void Configure(IApplicationBuilder app)
-        {
-            var env = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseHttpsRedirection();
-            app.UseRouting();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-
-            var logger = app.ApplicationServices.GetRequiredService<ILoggerFactory>().CreateLogger("Abyss Host");
-            var dataService = app.ApplicationServices.GetRequiredService<DataService>();
-            var packBasePath = dataService.GetCustomAssemblyBasePath();
-            var bot = app.ApplicationServices.GetRequiredService<AbyssBot>();
-
-            if (Directory.Exists(packBasePath))
-            {
-                foreach (var file in Directory.GetFiles(packBasePath, "*.dll"))
-                {
-                    try
-                    {
-                        var assembly = Assembly.LoadFrom(file);
-                        foreach (var type in assembly.GetExportedTypes())
-                        {
-                            if (typeof(AbyssPack).IsAssignableFrom(type))
-                                bot.ImportPack(type);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        logger.LogWarning($"Failed to load assembly from {file}.");
-                    }
-                }
-            }
-            else logger.LogWarning("Pack directory does not exist, skipping..");
-
-            bot.ImportPack<DefaultAbyssPack>();
         }
     }
 }
