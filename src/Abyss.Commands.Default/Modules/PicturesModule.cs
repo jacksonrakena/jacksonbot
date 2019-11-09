@@ -46,7 +46,6 @@ namespace Abyss.Commands.Default
             LocalCustomEmoji emote)
         {
             var url = emote.GetUrl();
-            Console.WriteLine(url);
             using var inStream = await _httpApi.GetStreamAsync(url).ConfigureAwait(false);
             var outStream = new MemoryStream();
             using var img = SixLabors.ImageSharp.Image.Load(inStream);
