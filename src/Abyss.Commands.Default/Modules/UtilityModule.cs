@@ -35,7 +35,7 @@ namespace Abyss.Commands.Default
             try {
                 var res = HumanDateParser.HumanDateParser.ParseDetailed(text);
                 return Ok($"`{text}` => {res.Result.ToString()}\n" +
-                $"**Tokens:** {string.Join(", ", res.Tokens.Select(c => FormatHelper.Code(c.GetType().Name)))}");
+                $"**Tokens:** {string.Join(", ", res.Tokens.Select(c => Markdown.Code(c.GetType().Name)))}");
             }
             catch (ParseException pe)
             {

@@ -45,7 +45,7 @@ namespace Abyss.Commands.Default
                 sb.AppendLine();
             }
 
-            return FormatHelper.Codeblock(sb.ToString(), "ini");
+            return Markdown.CodeBlock(sb.ToString(), "ini");
         }
 
         public static object ReadValue(FieldInfo prop, object obj)
@@ -123,7 +123,7 @@ namespace Abyss.Commands.Default
                 sb.AppendLine();
             }
 
-            return FormatHelper.Codeblock(sb.ToString(), "ini");
+            return Markdown.CodeBlock(sb.ToString(), "ini");
         }
 
         private static string FormatType(Type atype)
@@ -207,7 +207,7 @@ namespace Abyss.Commands.Default
                 foreach (var prop in objEnumerable) inspection.Append(" - ").Append(prop).AppendLine();
             }
 
-            return FormatHelper.Codeblock(inspection.ToString(), "ini");
+            return Markdown.CodeBlock(inspection.ToString(), "ini");
         }
 
         public CachedMember User(ulong id)

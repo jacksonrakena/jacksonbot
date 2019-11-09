@@ -73,7 +73,7 @@ namespace Abyss.Commands.Default
             {
                 if (await HelpService.CanShowModuleAsync(Context, module))
                 {
-                    groups.Add(FormatHelper.Bold(FormatHelper.Code(module.FullAliases.First())));
+                    groups.Add(Markdown.Bold(Markdown.Code(module.FullAliases.First())));
                 }
             }
             if (groups.Count != 0)

@@ -56,7 +56,7 @@ namespace Abyss
         public static string? FormatCommandShort(Command command)
         {
             var firstAlias = command.FullAliases.FirstOrDefault();
-            return firstAlias != null ? FormatHelper.Bold(FormatHelper.Code(firstAlias)) : null;
+            return firstAlias != null ? Markdown.Bold(Markdown.Code(firstAlias)) : null;
         }
 
         public static async Task<LocalEmbedBuilder> CreateGroupEmbedAsync(AbyssRequestContext context, Qmmands.Module group)
@@ -66,9 +66,9 @@ namespace Abyss
                 Title = "Group information"
             };
 
-            embed0.Description = $"{FormatHelper.Code(group.FullAliases.First())}: {group.Description ?? "No description provided."}";
+            embed0.Description = $"{Markdown.Code(group.FullAliases.First())}: {group.Description ?? "No description provided."}";
 
-            if (group.FullAliases.Count > 1) embed0.AddField("Aliases", string.Join(", ", group.FullAliases.Select(FormatHelper.Code)));
+            if (group.FullAliases.Count > 1) embed0.AddField("Aliases", string.Join(", ", group.FullAliases.Select(Markdown.Code)));
 
             var commands = new List<string>();
             foreach (var command in group.Commands)
@@ -133,7 +133,7 @@ namespace Abyss
             var embed = new LocalEmbedBuilder
             {
                 Title = $"Command information",
-                Description = $"{FormatHelper.Code(command.FullAliases.First())}: {command.Description ?? "No description provided."}"
+                Description = $"{Markdown.Code(command.FullAliases.First())}: {command.Description ?? "No description provided."}"
             };
             if (command.Remarks != null) embed.Description += " " + command.Remarks;
 
