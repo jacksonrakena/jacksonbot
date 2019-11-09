@@ -9,17 +9,17 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss
+namespace Abyss.Commands.Default
 {
     [DoNotAdd]
-    public class EvaluationHelper : AbyssModuleBase
+    public class EvaluationHelper
     {
+        public AbyssRequestContext Context { get; }
+
         public EvaluationHelper(AbyssRequestContext context)
         {
             Context = context;
         }
-
-        public new AbyssRequestContext Context { get; }
 
         public Task<RestUserMessage> ReplyAsync(string content, LocalEmbed? embed = null)
         {
