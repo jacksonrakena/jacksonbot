@@ -62,7 +62,7 @@ namespace Abyss.Commands.Default
                 if (!command.Module.IsGroup() && await HelpService.CanShowCommandAsync(Context, command))
                 {
                     var format = HelpService.FormatCommandShort(command);
-                    if (format != null) commands.Add(format);
+                    if (format != null  && !commands.Contains(format)) commands.Add(format);
                 }
             }
             if (commands.Count != 0)

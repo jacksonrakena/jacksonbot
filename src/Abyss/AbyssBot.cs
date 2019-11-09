@@ -22,12 +22,14 @@ namespace Abyss
         private readonly ILogger _failedCommandsTracking;
         private readonly ILogger _successfulCommandsTracking;
         private readonly ILogger<AbyssBot> _logger;
+        private readonly HelpService _help;
 
         internal readonly IServiceProvider Services;
 
         public override object GetService(Type serviceType) => Services.GetService(serviceType);
 
-        public AbyssBot(AbyssConfig config, DiscordBotConfiguration botConfiguration, ILoggerFactory factory, IServiceProvider provider) : base(TokenType.Bot, config.Connections.Discord.Token, botConfiguration)
+        public AbyssBot(AbyssConfig config, DiscordBotConfiguration botConfiguration, ILoggerFactory factory, IServiceProvider provider,
+            HelpService help) : base(TokenType.Bot, config.Connections.Discord.Token, botConfiguration)
         {
             Services = provider;
             _failedCommandsTracking = factory.CreateLogger("Failed Commands Tracking");
@@ -35,6 +37,7 @@ namespace Abyss
             _successfulCommandsTracking = factory.CreateLogger("Successful Commands Tracking");
             CommandExecuted += HandleCommandExecutedAsync;
             CommandExecutionFailed += HandleCommandExecutionFailedAsync;
+            _help = help;
         }
 
         public async Task HandleRuntimeExceptionAsync(AbyssRequestContext context, Exception exception, CommandExecutionStep step, string reason)
@@ -175,6 +178,14 @@ namespace Abyss
                 case ArgumentParseFailedResult apfr0 when apfr0.ParserResult is DefaultArgumentParserResult apfr:
                     _failedCommandsTracking.LogInformation(LoggingEventIds.ArgumentParseFailed,
                         $"Parse failed for {apfr.Command.Name}. Reason: {apfr.Failure?.Humanize()}.");
+
+                    if (apfr.Failure != null && apfr.Failure == DefaultArgumentParserFailure.TooFewArguments)
+                    {
+                        await context.Channel.SendMessageAsync(string.Empty, false, (await _help.CreateCommandEmbedAsync(apfr.Command, context))
+                            .WithCurrentTimestamp()
+                            .WithColor(context.BotMember.GetHighestRoleColourOrDefault()).Build());
+                        break;
+                    }
 
                     await context.Channel.SendMessageAsync(
                         $"I couldn't read whatever you just said: {apfr.Failure?.Humanize() ?? "A parsing error occurred."}.").ConfigureAwait(false);
