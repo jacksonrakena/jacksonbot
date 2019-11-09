@@ -12,7 +12,7 @@
         <RepositoryUrl>http://github.com/abyssal/Abyss</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <Nullable>enable</Nullable>
-        <Version>8.0.1</Version>
+        <Version>8.1.0</Version>
     </PropertyGroup>
 
     <ItemGroup>

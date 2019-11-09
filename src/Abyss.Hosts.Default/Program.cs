@@ -55,11 +55,10 @@ namespace Abyss.Hosts.Default
             });
 
             // Abyss framework
-            services.AddAbyssFramework((provider, botOptions) =>
+            services.AddAbyssFramework<DefaultPackLoader>((provider, botOptions) =>
             {
                 botOptions.DataRoot = dataRoot;
             });
-            services.AddSingleton<IPackLoader, DefaultPackLoader>();
 
             // Abyss.Commands.Default
             services.AddSingleton(provider =>

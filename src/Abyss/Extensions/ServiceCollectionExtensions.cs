@@ -19,10 +19,11 @@ namespace Abyss
         /// </summary>
         /// <param name="serviceCollection">The service collection to add Abyss to.</param>
         /// <param name="acoAction">The configuration action for the host options.</param>
+        /// <typeparam name="TPackLoader">The pack loader to use for this framework instance.</typeparam>
         /// <remarks>
         ///     An instance of <see cref="AbyssConfig"/> is expected to be added to <paramref name="serviceCollection"/> before this method is called.
         /// </remarks>
-        public static void AddAbyssFramework(this IServiceCollection serviceCollection, Action<IServiceProvider, AbyssHostOptions> acoAction)
+        public static void AddAbyssFramework<TPackLoader>(this IServiceCollection serviceCollection, Action<IServiceProvider, AbyssHostOptions> acoAction) where TPackLoader : class, IPackLoader
         {
             serviceCollection.AddSingleton(provider =>
             {
@@ -61,6 +62,7 @@ namespace Abyss
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<NotificationsService>();
             serviceCollection.AddSingleton<MarketingService>();
+            serviceCollection.AddSingleton<IPackLoader, TPackLoader>();
         }
     }
 }

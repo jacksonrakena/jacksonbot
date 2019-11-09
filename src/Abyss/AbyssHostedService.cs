@@ -60,9 +60,6 @@ namespace Abyss
 
             _logger.LogInformation(
                 $"Abyss hosted service starting on {Environment.OSVersion.VersionString}/CLR {Environment.Version} (args {string.Join(" ", Environment.GetCommandLineArgs())})");
-            _logger.LogInformation($"Environment.CurrentDirectory: {Environment.CurrentDirectory}");
-            _logger.LogInformation($"Directory.GetCurrentDirectory: {System.IO.Directory.GetCurrentDirectory()}");
-            _logger.LogInformation($"Data root: {_dataService.GetBasePath()}");
 
             await _bot.ConnectAsync().ConfigureAwait(false);
         }

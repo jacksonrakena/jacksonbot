@@ -23,7 +23,7 @@ namespace Abyss.Hosts.Default
         public Task LoadPacksAsync(AbyssBot bot)
         {
             var logger = _factory.CreateLogger("Abyss Host");
-            var packBasePath = _data.GetCustomAssemblyBasePath();
+            var packBasePath = _data.GetPackBasePath();
 
             if (Directory.Exists(packBasePath))
             {

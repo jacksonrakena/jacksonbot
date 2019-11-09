@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -12,11 +13,12 @@ namespace Abyss
         private readonly AbyssBot _abyss;
         private readonly string _dataRoot;
 
-        public DataService(AbyssHostOptions options, IHostEnvironment hostingEnvironment, AbyssBot abyss)
+        public DataService(ILogger<DataService> logger, AbyssHostOptions options, IHostEnvironment hostingEnvironment, AbyssBot abyss)
         {
             _hostingEnvironment = hostingEnvironment;
             _abyss = abyss;
             _dataRoot = options.DataRoot ?? throw new InvalidOperationException("No data root specified.");
+            logger.LogInformation("Abyss data root path: " + _dataRoot);
         }
 
         public string GetBasePath() => _dataRoot;
@@ -28,7 +30,7 @@ namespace Abyss
         }
 
         public string GetConfigurationBasePath() => GetBasePath();
-        public string GetCustomAssemblyBasePath() => Path.Combine(GetBasePath(), "Packs");
+        public string GetPackBasePath() => Path.Combine(GetBasePath(), "Packs");
 
         public ServiceInfo GetServiceInfo()
         {
