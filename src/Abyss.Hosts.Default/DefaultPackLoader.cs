@@ -47,6 +47,7 @@ namespace Abyss.Hosts.Default
             else logger.LogWarning("Pack directory does not exist, skipping..");
 
             bot.ImportPack<DefaultAbyssPack>();
+            _ = ScriptingHelper.EvaluateScriptAsync("2+2", new {}); // preload Roslyn
             return Task.CompletedTask;
         }
     }
