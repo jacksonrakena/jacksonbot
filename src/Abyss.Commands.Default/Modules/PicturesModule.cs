@@ -1,4 +1,4 @@
-/*using Disqord;
+using Disqord;
 using Newtonsoft.Json.Linq;
 using Qmmands;
 using SixLabors.ImageSharp.Formats;
@@ -43,30 +43,18 @@ namespace Abyss.Commands.Default
         [Description("Shows an enlarged form of an emoji.")]
         [AbyssCooldown(1, 5, CooldownMeasure.Seconds, CooldownType.User)]
         public async Task<ActionResult> Command_GetBigEmojiAsync([Name("Emoji")] [Description("The emoji to enlarge.")]
-            IEmoji emote0)
+            LocalCustomEmoji emote)
         {
-            switch (emote0)
-            {
-                case Emote emote:
-                    {
-                        var url = emote.Url;
-
-                        using var inStream = await _httpApi.GetStreamAsync(url).ConfigureAwait(false);
-                        var outStream = new MemoryStream();
-                        using var img = SixLabors.ImageSharp.Image.Load(inStream);
-                        img.Mutate(a => a.Resize(a.GetCurrentSize() * 2, new BicubicResampler(), false));
-                        img.Save(outStream,
-                            emote.Animated ? (IImageEncoder)new GifEncoder() : new PngEncoder());
-                        outStream.Position = 0;
-                        return Image(FileAttachment.FromStream(outStream, $"emoji.{(emote.Animated ? "gif" : "png")}"));
-                    }
-                case Emoji emoji:
-                    return Image(null, "https://i.kuro.mu/emoji/512x512/" + string.Join("-",
-                                           emoji.ToString().GetUnicodeCodePoints().Select(x => x.ToString("x2"))) +
-                                       ".png");
-            }
-
-            return Empty();
+            var url = emote.GetUrl();
+            Console.WriteLine(url);
+            using var inStream = await _httpApi.GetStreamAsync(url).ConfigureAwait(false);
+            var outStream = new MemoryStream();
+            using var img = SixLabors.ImageSharp.Image.Load(inStream);
+            img.Mutate(a => a.Resize(a.GetCurrentSize() * 2, new BicubicResampler(), false));
+            img.Save(outStream,
+                emote.IsAnimated ? (IImageEncoder)new GifEncoder() : new PngEncoder());
+            outStream.Position = 0;
+            return Attachment(new LocalAttachment(outStream, $"emoji.{(emote.IsAnimated ? "gif" : "png")}"));
         }
 
         [Command("resize")]
@@ -90,7 +78,7 @@ namespace Abyss.Commands.Default
                 img.Mutate(a => a.Resize(new Size(width, height), new BicubicResampler(), false));
                 img.Save(outStream, isGif ? (IImageEncoder)new GifEncoder() : new PngEncoder());
                 outStream.Position = 0;
-                return Image(FileAttachment.FromStream(outStream, $"resized.{(isGif ? "gif" : "png")}"));
+                return Attachment(new LocalAttachment(outStream, $"resized.{(isGif ? "gif" : "png")}"));
             }
             catch (NotSupportedException)
             {
@@ -99,4 +87,4 @@ namespace Abyss.Commands.Default
             }
         }
     }
-}*/
+}

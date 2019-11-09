@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Reflection;
 using Abyss.Commands.Default;
 using AbyssalSpotify;
@@ -67,6 +68,7 @@ namespace Abyss.Hosts.Default
                 return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret);
             });
 
+            services.AddSingleton<HttpClient>();
             services.AddTransient<Random>();
         }
     }
