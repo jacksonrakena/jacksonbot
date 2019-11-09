@@ -9,3 +9,5 @@ services:
     - type: bind
       source: ~/abyss-data
       target: /data
+    environment:
+      - ABYSS_ENVIRONMENT=Production

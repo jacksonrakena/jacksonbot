@@ -29,6 +29,7 @@ namespace Abyss.Hosts.Default
                     config.AddJsonFile("abyss.json", false, true);
                     config.AddJsonFile($"abyss.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true);
                 })
+                .UseEnvironment(Environment.GetEnvironmentVariable("ABYSS_ENVIRONMENT", EnvironmentVariableTarget.Process) ?? "Production")
                 .ConfigureServices(serviceColl => ConfigureServices(dataRoot, serviceColl))
                 .UseDefaultServiceProvider(c =>
                 {

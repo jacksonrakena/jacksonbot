@@ -202,7 +202,7 @@ namespace Abyss.Commands.Default
             sb.AppendLine();
             foreach (var author in messages.GroupBy(b => b.Author.Id))
             {
-                sb.AppendLine($"**{Context.Guild.GetMember(author.Key).ToString() ?? author.Key.ToString()}**: {author.Count()} messages");
+                sb.AppendLine($"**{Context.Guild.GetMember(author.Key)?.ToString() ?? author.Key.ToString()}**: {author.Count()} messages");
             }
             return Ok(sb.ToString());
         }
