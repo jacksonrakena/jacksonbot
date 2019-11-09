@@ -3,6 +3,7 @@ using Qmmands;
 using Disqord;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Abyss
 {
@@ -11,6 +12,13 @@ namespace Abyss
     /// </summary>
     public abstract class AbyssModuleBase : ModuleBase<AbyssRequestContext>
     {
+        #pragma warning disable 8618
+        public ILoggerFactory LoggerFactory { get; set; }
+        #pragma warning restore
+        
+        public ILogger Logger => LoggerFactory.CreateLogger(this.GetType().Name);
+
+
         /// <summary>
         ///     Sends a message to the context channel.
         /// </summary>
