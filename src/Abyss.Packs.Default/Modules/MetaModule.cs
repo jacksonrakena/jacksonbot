@@ -140,7 +140,7 @@ namespace Abyss.Packs.Default
         [Description("Creates an invite to add me to another server.")]
         public Task<ActionResult> Command_GetInviteAsync()
         {
-            return Ok($"You can add me using this link: https://discordapp.com/api/oauth2/authorize?client_id={Context.Bot.CurrentUser.Id}&permissions=0&scope=bot");
+            return Ok($"You can add me using this link: <https://discordapp.com/api/oauth2/authorize?client_id={Context.Bot.CurrentUser.Id}&permissions=0&scope=bot>");
         }
     }
 }
