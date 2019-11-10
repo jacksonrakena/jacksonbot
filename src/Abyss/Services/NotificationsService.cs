@@ -12,7 +12,7 @@ namespace Abyss
         private readonly AbyssConfigNotificationsSection? _notifyConfig;
         private readonly AbyssConfigEmoteSection _emotes;
         private readonly AbyssBot _abyss;
-        private string CurrentDateTime => Markdown.Code("[" + DateTime.Now.ToString("HH:mm:ss yyyy-MM-dd") + "]");
+        private string CurrentDateTime => Markdown.Code("[" + DateTime.Now.ToUniversalTime().ToString("HH:mm:ss yyyy-MM-dd") + "]");
 
         public NotificationsService(AbyssBot abyss, AbyssConfig config)
         {
