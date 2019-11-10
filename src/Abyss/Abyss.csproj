@@ -6,7 +6,7 @@
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
         <Authors>Abyssal</Authors>
         <Company>Abyssal</Company>
-        <Description>A friendly Discord bot</Description>
+        <Description>A Discord bot framework.</Description>
         <Copyright>Copyright (c) 2019 Abyssal</Copyright>
         <PackageProjectUrl>http://github.com/abyssal/Abyss</PackageProjectUrl>
         <RepositoryUrl>http://github.com/abyssal/Abyss</RepositoryUrl>

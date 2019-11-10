@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Version>2.0.3</Version>
+    <Author>Abyssal</Author>
+    <Description>The default commands pack for the Abyss bot framework.</Description>
   </PropertyGroup>
 
   
