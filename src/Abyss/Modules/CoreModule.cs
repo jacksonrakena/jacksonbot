@@ -27,7 +27,7 @@ namespace Abyss
             {
                 message.AppendLine(Markdown.Code($"[{pack.FriendlyName} {pack.Assembly.GetVersion()}]") + $" - {pack.Description}");
             }
-            return Text(message.ToString());
+            return Ok(message.ToString());
         }
     }
 }

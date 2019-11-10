@@ -85,21 +85,18 @@ namespace Abyss.Packs.Default
 
         [Command("echo")]
         [Description("Echoes the input text.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontEmbed | ResponseFormatOptions.DontAttachFooter
-            | ResponseFormatOptions.DontAttachTimestamp)]
         public Task<ActionResult> Command_EchoAsync([Name("Text")] [Remainder] string echocontent)
         {
-            return Text(Context.InvokerIsOwner
+            return Ok(Context.InvokerIsOwner
                 ? echocontent
                 : $"{Context.Invoker}: {echocontent}");
         }
 
         [Command("echod")]
         [Description("Attempts to delete the source message, and then echoes the input text.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontEmbed)]
         public async Task<ActionResult> Command_EchoDeleteAsync([Name("Text")] [Remainder] string echocontent)
         {
-            return await Context.Message.TryDeleteAsync() ? Text(Context.InvokerIsOwner
+            return await Context.Message.TryDeleteAsync() ? Ok(Context.InvokerIsOwner
                 ? echocontent
                 : $"{Context.Invoker}: {echocontent}") : Empty();
         }

@@ -58,13 +58,6 @@ namespace Abyss
         }
 
         /// <summary>
-        ///     Returns an <see cref="ActionResult"/> that represents sending raw text to a channel.
-        /// </summary>
-        /// <param name="raw">The raw text to send.</param>
-        /// <returns>An <see cref="OkResult"/> that represents sending the specified text to the context channel.</returns>
-        public static OkResult Text(string raw) => new OkResult(raw);
-
-        /// <summary>
         ///     Returns an <see cref="ActionResult"/> that represents replying with the OK Hand emoji.
         /// </summary>
         /// <returns>A <see cref="ReplySuccessResult"/> that represents sending the "OK Hand" emoji to the context channel.</returns>
@@ -79,17 +72,12 @@ namespace Abyss
         /// <summary>
         ///     Represents an <see cref="ActionResult"/> that represents replying to the invocation message with the specified text and attachments.
         /// </summary>
-        /// <remarks>
-        ///     This method uses an embed, unless otherwise specified by <see cref="ResponseFormatOptionsAttribute"/> on the command.
-        /// </remarks>
         /// <param name="content">The string message to send.</param>
         /// <param name="attachments">The attachments to send.</param>
         /// <returns>An <see cref="OkResult"/> that represents replying to the invocation message with the specified text and attachments.</returns>
         public ActionResult Ok(string content, params LocalAttachment[] attachments)
         {
-            return (Context.Command.GetType().HasCustomAttribute<ResponseFormatOptionsAttribute>(out var at) && at!.Options.HasFlag(ResponseFormatOptions.DontEmbed))
-                ? new OkResult(content, attachments)
-                : Ok(new LocalEmbedBuilder().WithDescription(content), attachments);
+            return new OkResult(content, attachments);
         }
 
         /// <summary>

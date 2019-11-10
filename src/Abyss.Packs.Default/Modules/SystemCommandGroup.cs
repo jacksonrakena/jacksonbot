@@ -90,7 +90,6 @@ namespace Abyss.Packs.Default
         [Command("eval")]
         [RunMode(RunMode.Parallel)]
         [Description("Evaluates a piece of C# code.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontEmbed)]
         public async Task<ActionResult> Command_EvaluateAsync(
             [Name("Code")] [Description("The code to execute.")] [Remainder]
             string script)

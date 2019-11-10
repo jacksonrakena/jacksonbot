@@ -61,7 +61,7 @@ namespace Abyss.Packs.Default
             stringBuilder.AppendLine($"          Total commands: {_commandService.GetAllCommands().Count}");
 
             stringBuilder.AppendLine("```");
-            return Text(stringBuilder.ToString());
+            return Ok(stringBuilder.ToString());
         }
 
         [Command("info", "about")]
@@ -109,7 +109,7 @@ namespace Abyss.Packs.Default
         [Description("Shows the prefix.")]
         public Task<ActionResult> ViewPrefixesAsync()
         {
-            return Text($"The prefix is `{Context.Prefix}`, but you can invoke commands by mention as well, such as: \"{Context.BotMember.Mention} help\".");
+            return Ok($"The prefix is `{Context.Prefix}`, but you can invoke commands by mention as well, such as: \"{Context.BotMember.Mention} help\".");
         }
 
         [Command("hasperm")]
@@ -133,14 +133,14 @@ namespace Abyss.Packs.Default
             var name = perm.Name.Humanize();
             var value = (bool)perm.GetValue(guildPerms)!;
 
-            return Ok(a => a.WithDescription($"I **{(value ? "do" : "do not")}** have permission `{name}`!"));
+            return Ok($"I **{(value ? "do" : "do not")}** have permission `{name}`!");
         }
 
         [Command("invite")]
         [Description("Creates an invite to add me to another server.")]
         public Task<ActionResult> Command_GetInviteAsync()
         {
-            return Ok("You can add me using " + UrlHelper.CreateMarkdownUrl("this link.", $"https://discordapp.com/api/oauth2/authorize?client_id={Context.Bot.CurrentUser.Id}&permissions=0&scope=bot"));
+            return Ok($"You can add me using this link: https://discordapp.com/api/oauth2/authorize?client_id={Context.Bot.CurrentUser.Id}&permissions=0&scope=bot");
         }
     }
 }

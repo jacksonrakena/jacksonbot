@@ -9,19 +9,14 @@ namespace Abyss
     public enum ResponseFormatOptions
     {
         /// <summary>
-        ///     Do not embed the content of this request.
-        /// </summary>
-        DontEmbed = 1,
-
-        /// <summary>
         ///     Do not attach the current timestamp to the request embed. Does not apply if no embed is being sent.
         /// </summary>
-        DontAttachTimestamp = 2,
+        DontAttachTimestamp = 1,
 
         /// <summary>
         ///     Do not attach the "Requested by" footer to the request embed. Does not apply if no embed is being sent.
         /// </summary>
-        DontAttachFooter = 4
+        DontAttachFooter = 2
     }
 
     /// <summary>
