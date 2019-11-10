@@ -1,4 +1,5 @@
 ﻿using Disqord;
+using Humanizer;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -9,11 +10,14 @@ namespace Abyss
     public class NotificationsService
     {
         private readonly AbyssConfigNotificationsSection? _notifyConfig;
+        private readonly AbyssConfigEmoteSection _emotes;
         private readonly AbyssBot _abyss;
+        private string CurrentDateTime => Markdown.Code("[" + DateTime.Now.ToString("HH:mm:ss yyyy-MM-dd") + "]");
 
         public NotificationsService(AbyssBot abyss, AbyssConfig config)
         {
             _notifyConfig = config.Notifications;
+            _emotes = config.Emotes;
             _abyss = abyss;
         }
 
@@ -23,19 +27,10 @@ namespace Abyss
             var ch = _abyss.GetChannel(_notifyConfig.Ready.Value);
             if (!(ch != null && ch is CachedTextChannel stc)) return;
 
+            var message = $"{CurrentDateTime} {_emotes.OnlineEmote} **{_abyss.CurrentUser.Name}** is now online. " +
+            $"Connected to {_abyss.Guilds.Count} servers. {_abyss.LoadedPacks.Count} packs loaded: {_abyss.LoadedPacks.Select(c => $"{c.FriendlyName} (v{c.Assembly.GetVersion()})").Humanize()}";
 
-            var embed = new LocalEmbedBuilder()
-                .WithAuthor(_abyss.CurrentUser.ToEmbedAuthorBuilder())
-                .WithColor(AbyssHostedService.DefaultEmbedColour)
-                .WithCurrentTimestamp()
-                .AddField("Core version", Assembly.GetExecutingAssembly().GetVersion(), true)
-                .AddField("Guilds", _abyss.Guilds.Count, true)
-                .AddField("Loaded packs", string.Join(", ", _abyss.LoadedPacks.Select(c => $"{c.FriendlyName} (v{c.Assembly.GetVersion()})")))
-                .WithThumbnailUrl(_abyss.CurrentUser.GetAvatarUrl());
-
-            await stc.SendMessageAsync(null, false, embed
-                .WithDescription($"Abyss instance {(firstTime ? "started and" : "")} ready at {DateTime.Now:F}.")
-                .Build());
+            await stc.SendMessageAsync(message);
         }
 
         public async Task NotifyStoppingAsync()
@@ -45,13 +40,9 @@ namespace Abyss
             var ch = _abyss.GetChannel(_notifyConfig.Stopping.Value);
             if (!(ch != null && ch is CachedTextChannel stc)) return;
 
-            await stc.SendMessageAsync(null, false, new LocalEmbedBuilder()
-                    .WithAuthor(_abyss.CurrentUser.ToEmbedAuthorBuilder())
-                    .WithDescription($"Abyss instance stopping at " + DateTime.Now.ToString("F"))
-                    .WithColor(AbyssHostedService.DefaultEmbedColour)
-                    .WithCurrentTimestamp()
-                    .WithThumbnailUrl(_abyss.CurrentUser.GetAvatarUrl())
-                    .Build());
+            var message = $"{CurrentDateTime} {_emotes.OfflineEmote} **{_abyss.CurrentUser.Name}** is stopping.";
+
+            await stc.SendMessageAsync(message);
             return;
         }
 
@@ -60,17 +51,11 @@ namespace Abyss
             if (_notifyConfig?.ServerMembershipChange == null) return;
             var updateChannel = _abyss.GetChannel(_notifyConfig.ServerMembershipChange.Value);
             if (!(updateChannel is CachedTextChannel stc)) return;
-            await stc.SendMessageAsync(null, false, new LocalEmbedBuilder()
-                 .WithAuthor(_abyss.CurrentUser.ToEmbedAuthorBuilder())
-                 .WithDescription($"{(botIsJoining ? "Joined" : "Left")} {arg.Name} at {DateTime.Now:F}")
-                 .AddField("Member count", arg.MemberCount, true)
-                 .AddField("Channel count", arg.TextChannels.Count + " text / " + arg.VoiceChannels.Count + " voice", true)
-                 .AddField("Owner", $"{arg.Owner} ({arg.OwnerId})", true)
-                 .AddField("Total bot guilds", _abyss.Guilds.Count, true)
-                 .WithColor(AbyssHostedService.DefaultEmbedColour)
-                 .WithThumbnailUrl(arg.GetIconUrl())
-                 .WithCurrentTimestamp()
-                 .Build());
+
+            var message = $"{CurrentDateTime} {_emotes.GuildOwnerEmote} **{_abyss.CurrentUser.Name}** has {(botIsJoining ? "joined" : "left")} {Markdown.Code(arg.Name)}, with " +
+            $"{arg.MemberCount} members and owned by {arg.Owner?.ToString() ?? arg.OwnerId.ToString()}. Connected to {_abyss.Guilds.Count} servers total.";
+
+            await stc.SendMessageAsync(message);
         }
     }
 }

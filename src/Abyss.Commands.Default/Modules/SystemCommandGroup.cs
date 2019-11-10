@@ -2,6 +2,7 @@ using Disqord;
 using Disqord.Bot;
 using HandlebarsDotNet;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Qmmands;
 using System;
@@ -22,9 +23,12 @@ namespace Abyss.Commands.Default
     {
         private readonly ILogger<SystemCommandGroup> _logger;
         private readonly DataService _dataService;
+        private readonly IHostApplicationLifetime _lifetime;
 
-        public SystemCommandGroup(ILogger<SystemCommandGroup> logger, DataService dataService)
+        public SystemCommandGroup(ILogger<SystemCommandGroup> logger, DataService dataService,
+            IHostApplicationLifetime lifetime)
         {
+            _lifetime = lifetime;
             _logger = logger;
             _dataService = dataService;
         }
@@ -230,8 +234,7 @@ namespace Abyss.Commands.Default
         {
             await ReplyAsync($"Later.").ConfigureAwait(false);
             _logger.LogInformation($"Application terminated by user {Context.Invoker} (ID {Context.Invoker.Id})");
-            await Context.Bot.DisconnectAsync().ConfigureAwait(false);
-            Context.Bot.Dispose();
+            _lifetime.StopApplication();
 
             Environment.Exit(0);
             return Empty();
