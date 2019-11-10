@@ -9,6 +9,7 @@ namespace Abyss
     public abstract class AbyssPack
     {
         public abstract string FriendlyName { get; }
+        public abstract string Description { get; }
         public abstract Assembly Assembly { get; }
 
         public virtual Task OnLoadAsync()

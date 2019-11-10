@@ -11,6 +11,8 @@ namespace Abyss
 
         public override Assembly Assembly => typeof(AbyssCorePack).Assembly;
 
+        public override string Description => "The framework pack.";
+
         public AbyssCorePack(AbyssBot bot)
         {
             bot.AddArgumentParser(UnixArgumentParser.Instance);

@@ -10,6 +10,8 @@ namespace Abyss.Packs.Default
     {
         public override string FriendlyName => "Default Abyss Pack";
 
+        public override string Description => "The default pack for Abyss.";
+
         public override Assembly Assembly => typeof(DefaultAbyssPack).Assembly;
     }
 }
