@@ -47,12 +47,11 @@ namespace Abyss
             _dataService = dataService;
 
             _packLoader = provider.GetService(typeof(IPackLoader)) as IPackLoader;
-
-            _bot.ImportPack<AbyssCorePack>();
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            await _bot.ImportPackAsync<AbyssCorePack>();
             if (_packLoader != null)
             {
                 await _packLoader.LoadPacksAsync(_bot).ConfigureAwait(false);

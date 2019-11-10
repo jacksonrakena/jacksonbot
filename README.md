@@ -41,10 +41,10 @@ The project is broken down into the following projects:
 - 🎀 `Abyss` (library) The core of Abyss. This project contains the message receiver, bot host, argument parsers, checks, contexts, results, and type parsers required to make Abyss command packs.
    
 **Command packs**
-- 🎫 `Abyss.Commands.Default` (library) The default command pack for Abyss. This contains all of the default commands, as well as the Spotify integration support.
+- 🎫 `Abyss.Packs.Default` (library) The default command pack for Abyss. This contains all of the default commands, as well as the Spotify integration support.
   
 **Hosts**  
-- 🪐 `Abyss.Hosts.Default` (app) This is the default Abyss host, which wraps `Abyss` and `Abyss.Commands.Default` and runs the bot. The host injects services required by the `Abyss.Commands.Default` pack, and imports it through `DefaultPackLoader`.  
+- 🪐 `Abyss.Hosts.Default` (app) This is the default Abyss host, which wraps `Abyss` and `Abyss.Packs.Default` and runs the bot. The host injects services required by the `Abyss.Packs.Default` pack, and imports it through `DefaultPackLoader`.  
   
 ### 🖋 Copyright
 Copyright (c) 2019 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  

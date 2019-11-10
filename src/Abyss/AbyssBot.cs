@@ -159,7 +159,7 @@ namespace Abyss
                         $"{pcfr.FailedChecks.Count} parameter checks on {pcfr.Parameter.Name} ({string.Join(", ", pcfr.FailedChecks.Select(c => c.Check.GetType().Name))}) failed for command {pcfr.Parameter.Command.Name}.");
 
                     var silentCheckType0 = typeof(SilentAttribute);
-                    var pchecks = pcfr.FailedChecks.Where(check => check.Check.GetType().CustomAttributes.Any(a => a.AttributeType != typeof(SilentAttribute))).ToList();
+                    var pchecks = pcfr.FailedChecks.Where(check => check.Check.GetType().CustomAttributes.All(a => a.AttributeType != typeof(SilentAttribute))).ToList();
 
                     if (pchecks.Count == 0) break;
 
@@ -242,40 +242,37 @@ namespace Abyss
             await base.AfterExecutedAsync(result, context);
         }
 
-        public void ImportPack(Type type)
+        public async Task ImportPackAsync(Type type)
         {
             if (!typeof(AbyssPack).IsAssignableFrom(type)) throw new InvalidOperationException("Abyss packs must be of the AbyssPack type.");
             var pack = (AbyssPack) this.Create(type);
-            ImportAssembly(pack.Assembly);
-            _logger.LogInformation($"Finished loading pack {pack.FriendlyName}.");
-            LoadedPacks.Add(pack);
-        }
 
-        public void ImportPack<TPack>() where TPack : AbyssPack
-            => ImportPack(typeof(TPack));
-
-        private void ImportAssembly(Assembly assembly)
-        {
             var discoverableAttributeType = typeof(DiscoverableTypeParserAttribute);
             var typeParserType = typeof(TypeParser<>);
             var addTypeParserMethod = GetType().GetMethod("AddTypeParser") ?? throw new Exception("Cannot find method AddTypeParser.");
 
             var loadedTypes = new List<Type>();
 
-            foreach (var type in assembly.ExportedTypes)
+            foreach (var exportedType in pack.Assembly.ExportedTypes)
             {
-                if (!type.HasCustomAttribute<DiscoverableTypeParserAttribute>(out var attr)) continue;
-                if (typeParserType.IsAssignableFrom(type)) continue;
+                if (!exportedType.HasCustomAttribute<DiscoverableTypeParserAttribute>(out var attr)) continue;
+                if (typeParserType.IsAssignableFrom(exportedType)) continue;
 
-                var parser = type.GetConstructor(Type.EmptyTypes)!.Invoke(Array.Empty<object>());
-                var method = addTypeParserMethod.MakeGenericMethod(type.BaseType!.GenericTypeArguments[0]);
+                var parser = exportedType.GetConstructor(Type.EmptyTypes)!.Invoke(Array.Empty<object>());
+                var method = addTypeParserMethod.MakeGenericMethod(exportedType.BaseType!.GenericTypeArguments[0]);
                 method.Invoke(this, new object[] { parser, attr.ReplacingPrimitive });
-                loadedTypes.Add(type);
+                loadedTypes.Add(exportedType);
             }
-            var rootModulesLoaded = AddModules(assembly, action: ProcessModule);
 
-            _logger.LogInformation($"Loaded {rootModulesLoaded.Count} modules, {rootModulesLoaded.Sum(a => a.Commands.Count)} commands, and {loadedTypes.Count} type parsers from {assembly.GetName().Name}.");
+            var rootModulesLoaded = AddModules(pack.Assembly, action: ProcessModule);
+            
+            await pack.OnLoadAsync().ConfigureAwait(false);
+            _logger.LogInformation($"Loaded {rootModulesLoaded.Count} modules, {rootModulesLoaded.Sum(a => a.Commands.Count)} commands, and {loadedTypes.Count} type parsers from {pack.FriendlyName}.");
+            LoadedPacks.Add(pack);
         }
+
+        public Task ImportPackAsync<TPack>() where TPack : AbyssPack
+            => ImportPackAsync(typeof(TPack));
 
         private void ProcessModule(ModuleBuilder moduleBuilder)
         {

@@ -1,8 +1,6 @@
 using System;
 using System.IO;
 using System.Net.Http;
-using System.Reflection;
-using Abyss.Commands.Default;
 using AbyssalSpotify;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

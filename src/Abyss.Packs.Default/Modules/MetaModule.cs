@@ -11,7 +11,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Commands.Default
+namespace Abyss.Packs.Default
 {
     [Name("Meta")]
     [Description("Provides commands related to me.")]

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Commands.Default
+namespace Abyss.Packs.Default
 {
     [Name("User Information")]
     [Description("Commands that help you interact with other Discord users.")]

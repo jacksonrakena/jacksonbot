@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Commands.Default
+namespace Abyss.Packs.Default
 {
     [DoNotAdd]
     public class EvaluationHelper

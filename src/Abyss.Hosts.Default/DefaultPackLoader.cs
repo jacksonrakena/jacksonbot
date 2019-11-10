@@ -1,4 +1,4 @@
-﻿using Abyss.Commands.Default;
+﻿using Abyss.Packs.Default;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace Abyss.Hosts.Default
             _data = data;
         }
 
-        public Task LoadPacksAsync(AbyssBot bot)
+        public async Task LoadPacksAsync(AbyssBot bot)
         {
             var logger = _factory.CreateLogger("Abyss Host");
             var packBasePath = _data.GetPackBasePath();
@@ -35,7 +35,7 @@ namespace Abyss.Hosts.Default
                         foreach (var type in assembly.GetExportedTypes())
                         {
                             if (typeof(AbyssPack).IsAssignableFrom(type))
-                                bot.ImportPack(type);
+                                await bot.ImportPackAsync(type);
                         }
                     }
                     catch (Exception)
@@ -46,9 +46,8 @@ namespace Abyss.Hosts.Default
             }
             else logger.LogWarning("Pack directory does not exist, skipping..");
 
-            bot.ImportPack<DefaultAbyssPack>();
+            await bot.ImportPackAsync<DefaultAbyssPack>();
             _ = ScriptingHelper.EvaluateScriptAsync("2+2", new {}); // preload Roslyn
-            return Task.CompletedTask;
         }
     }
 }

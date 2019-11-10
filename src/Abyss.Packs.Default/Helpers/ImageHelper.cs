@@ -3,7 +3,7 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using System.IO;
 
-namespace Abyss.Commands.Default
+namespace Abyss.Packs.Default
 {
     public static class ImageHelper
     {

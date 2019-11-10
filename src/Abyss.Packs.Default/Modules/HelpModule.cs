@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Commands.Default
+namespace Abyss.Packs.Default
 {
     [Name("Help")]
     [Description("Contains helpful commands to help you discover your way around my commands and modules.")]

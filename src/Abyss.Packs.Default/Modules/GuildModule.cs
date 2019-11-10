@@ -11,7 +11,7 @@ using Disqord.Bot;
 using Disqord;
 using Disqord.Rest;
 
-namespace Abyss.Commands.Default
+namespace Abyss.Packs.Default
 {
     [Name("Server Information")]
     [Description("Commands that help you interact with your server in useful and efficient ways.")]

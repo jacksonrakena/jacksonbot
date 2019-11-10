@@ -1,4 +1,4 @@
-namespace Abyss.Commands.Default
+namespace Abyss.Packs.Default
 {
     public enum ScriptStage
     {
