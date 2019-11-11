@@ -115,7 +115,7 @@ namespace Abyss
         private Task MessageUpdated(MessageUpdatedEventArgs e)
         {
             if (!(e.Channel is CachedTextChannel ctc)) return Task.CompletedTask;
-            var firstString = new StringBuilder($"A message ({e.NewMessage.Id}) from {e.NewMessage.Author} ({e.NewMessage.Author.Id}) was updated. ");
+            var firstString = new StringBuilder($"A message ({e.NewMessage.Id}) from {e.NewMessage.Author} ({e.NewMessage.Author.Id}) in channel {ctc.Mention} was updated. ");
             if (e.OldMessage.HasValue)
             {
                 firstString.Append($"The content was changed from \"{e.OldMessage.Value.Content}\" to \"{e.NewMessage.Content}\".");
