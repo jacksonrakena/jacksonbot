@@ -4,11 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Disqord.Bot;
 
 namespace Abyss
 {
     [Group("actionlog")]
     [Description("Commands related to the Abyss Action Log.")]
+    [RequireMemberGuildPermissions(Permission.ManageGuild)]
     public class ActionLogModule : AbyssModuleBase
     {
         private readonly DatabaseService _database;
