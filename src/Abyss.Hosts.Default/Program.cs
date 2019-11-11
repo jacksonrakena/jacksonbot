@@ -28,7 +28,10 @@ namespace Abyss.Hosts.Default
                     config.AddJsonFile($"abyss.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true);
                 })
                 .UseEnvironment(Environment.GetEnvironmentVariable("ABYSS_ENVIRONMENT", EnvironmentVariableTarget.Process) ?? "Production")
-                .ConfigureServices(serviceColl => ConfigureServices(dataRoot, serviceColl))
+                .UseAbyssBot((provider, hostOptions) =>
+                {
+                    hostOptions.DataRoot = dataRoot;
+                })
                 .UseDefaultServiceProvider(c =>
                 {
                     c.ValidateOnBuild = true;
@@ -39,15 +42,6 @@ namespace Abyss.Hosts.Default
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     logging.AddConsole();
                 });
-        }
-
-        public static void ConfigureServices(string dataRoot, IServiceCollection services)
-        {
-            // Abyss
-            services.AddAbyssBot((provider, botOptions) =>
-            {
-                botOptions.DataRoot = dataRoot;
-            });
         }
     }
 }

@@ -8,14 +8,31 @@ using Disqord.Bot;
 using System.Linq;
 using AbyssalSpotify;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace Abyss
 {
     /// <summary>
-    ///     Extensions for dealing with service collections and providers.
+    ///     Extensions for dealing with service collections, and hosting.
     /// </summary>
-    public static class ServiceCollectionExtensions
+    public static class HostingExtensions
     {
+        /// <summary>
+        ///     Configures the Abyss bot application.
+        /// </summary>
+        /// <param name="hostBuilder">The host to add Abyss to.</param>
+        /// <param name="acoAction">The configuration action for the host options.</param>
+        /// <remarks>
+        ///     An instance of <see cref="AbyssConfig"/> is expected to be added to <paramref name="serviceCollection"/> before this method is called.
+        /// </remarks>
+        public static IHostBuilder UseAbyssBot(this IHostBuilder hostBuilder, Action<IServiceProvider, AbyssHostOptions> acoAction)
+        {
+            return hostBuilder.ConfigureServices((context, collection) =>
+            {
+                collection.AddAbyssBot(acoAction);
+            });
+        }
+
         /// <summary>
         ///     Configures the Abyss bot application.
         /// </summary>

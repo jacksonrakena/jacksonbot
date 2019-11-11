@@ -21,13 +21,13 @@ namespace Abyss
             _abyss = abyss;
         }
 
-        public async Task NotifyReadyAsync(bool firstTime = false)
+        public async Task NotifyReadyAsync()
         {
             if (_notifyConfig?.Ready == null) return;
             var ch = _abyss.GetChannel(_notifyConfig.Ready.Value);
             if (!(ch != null && ch is CachedTextChannel stc)) return;
 
-            var message = $"{CurrentDateTime} {_emotes.OnlineEmote} **{_abyss.CurrentUser.Name}** is now online. " +
+            var message = $"{CurrentDateTime} {_emotes.OnlineEmote} **{_abyss.CurrentUser.Name}** is ready. " +
             $"Connected to {_abyss.Guilds.Count} servers.";
 
             await stc.SendMessageAsync(message);

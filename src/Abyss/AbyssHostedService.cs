@@ -24,13 +24,9 @@ namespace Abyss
         private readonly NotificationsService _notifications;
         private readonly MarketingService _marketing;
 
-        private readonly DataService _dataService;
-
-        private bool _hasBeenReady = false;
-
         public AbyssHostedService(ILogger<AbyssHostedService> logger, AbyssConfig config, AbyssBot bot,
             NotificationsService notifications, ILoggerFactory factory,
-            MarketingService marketing, DataService dataService, IServiceProvider provider)
+            MarketingService marketing)
         {
             _logger = logger;
             _bot = bot;
@@ -42,7 +38,6 @@ namespace Abyss
             _notifications = notifications;
             _discordLogger = factory.CreateLogger("Discord");
             _marketing = marketing;
-            _dataService = dataService;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -58,12 +53,7 @@ namespace Abyss
 
         private Task DiscordClient_Ready(ReadyEventArgs args)
         {
-            if (!_hasBeenReady)
-            {
-                _ =_notifications.NotifyReadyAsync(true);
-                _hasBeenReady = true;
-            }
-            else _ = _notifications.NotifyReadyAsync().ConfigureAwait(false);
+            _ = _notifications.NotifyReadyAsync().ConfigureAwait(false);
 
             _logger.LogInformation($"Ready. Logged in as {_bot.CurrentUser} with command prefix \"{_config.CommandPrefix}\".");
 

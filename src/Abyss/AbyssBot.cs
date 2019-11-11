@@ -20,7 +20,6 @@ namespace Abyss
 
         private readonly ILogger _failedCommandsTracking;
         private readonly ILogger _successfulCommandsTracking;
-        private readonly ILogger<AbyssBot> _logger;
         private readonly HelpService _help;
 
         internal readonly IServiceProvider Services;
@@ -32,7 +31,6 @@ namespace Abyss
         {
             Services = provider;
             _failedCommandsTracking = factory.CreateLogger("Failed Commands Tracking");
-            _logger = factory.CreateLogger<AbyssBot>();
             _successfulCommandsTracking = factory.CreateLogger("Successful Commands Tracking");
             CommandExecuted += HandleCommandExecutedAsync;
             CommandExecutionFailed += HandleCommandExecutionFailedAsync;
