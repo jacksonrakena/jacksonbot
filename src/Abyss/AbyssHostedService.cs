@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Disqord;
 using Disqord.Logging;
 using Disqord.Events;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Abyss
 {
@@ -26,7 +27,7 @@ namespace Abyss
 
         public AbyssHostedService(ILogger<AbyssHostedService> logger, AbyssConfig config, AbyssBot bot,
             NotificationsService notifications, ILoggerFactory factory,
-            MarketingService marketing)
+            MarketingService marketing, IServiceProvider services)
         {
             _logger = logger;
             _bot = bot;
@@ -38,6 +39,8 @@ namespace Abyss
             _notifications = notifications;
             _discordLogger = factory.CreateLogger("Discord");
             _marketing = marketing;
+
+            services.GetRequiredService<ActionLogService>();
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)

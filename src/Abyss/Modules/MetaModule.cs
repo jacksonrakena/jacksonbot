@@ -51,7 +51,6 @@ namespace Abyss
 
             stringBuilder.AppendLine($"                 Runtime: {dotnetVersion}");
             stringBuilder.AppendLine($"         Abyss framework: {fwAssembly.GetVersion()}");
-            stringBuilder.AppendLine($"             Command set: {Assembly.GetExecutingAssembly()!.GetVersion()}");
             stringBuilder.AppendLine($"                 Disqord: {Assembly.GetAssembly(typeof(DiscordClient))!.GetVersion()}");
             stringBuilder.AppendLine($"                 Qmmands: {Assembly.GetAssembly(typeof(CommandService))!.GetVersion()}");
             stringBuilder.AppendLine($"          AbyssalSpotify: {Assembly.GetAssembly(typeof(SpotifyClient))!.GetVersion()}");

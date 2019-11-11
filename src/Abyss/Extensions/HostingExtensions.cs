@@ -95,6 +95,10 @@ namespace Abyss
 
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddTransient<Random>();
+
+            serviceCollection.AddSingleton<DatabaseService>();
+            serviceCollection.AddSingleton<ActionLogService>();
+
             return serviceCollection;
         }
     }

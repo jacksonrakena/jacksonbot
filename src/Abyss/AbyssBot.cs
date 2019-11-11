@@ -8,6 +8,7 @@ using Abyssal.Common;
 using Disqord;
 using Disqord.Bot;
 using Humanizer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Qmmands;
 

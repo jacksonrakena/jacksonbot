@@ -30,7 +30,7 @@ namespace Abyss
         }
 
         public string GetConfigurationBasePath() => GetBasePath();
-        public string GetPackBasePath() => Path.Combine(GetBasePath(), "Packs");
+        public string GetDatabasePath() => Path.Combine(GetBasePath(), "AbyssDatabase.db");
 
         public ServiceInfo GetServiceInfo()
         {
