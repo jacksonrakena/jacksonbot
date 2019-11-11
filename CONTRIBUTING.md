@@ -6,8 +6,8 @@ This project conforms to the coding style guidelines set out by the .NET Foundat
 However, this is generally overriden - you should try to follow the coding style of the file you're editing, or the guidelines set out by a member in a Pull Request.
 
 ### Development
-Before submitting a PR, please either open an issue to initiate discussion, or join the [Discord server](https://discord.gg/RsRps9M) and open a discussion.  
+Before submitting a PR, please either open an issue to initiate discussion.  
 This ensures that other developers can note what you want to do, and also provide suggestions and constructive criticism.
 
 ### Conduct
-The Code of Conduct which should be followed in all discussions is available [here.](https://github.com/abyssal512/Abyss/blob/master/CODE_OF_CONDUCT.md)
+The Code of Conduct which should be followed in all discussions is available [here.](https://github.com/abyssal/Abyss/blob/master/CODE_OF_CONDUCT.md)

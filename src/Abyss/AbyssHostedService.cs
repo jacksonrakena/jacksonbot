@@ -26,8 +26,6 @@ namespace Abyss
 
         private readonly DataService _dataService;
 
-        private readonly IPackLoader? _packLoader;
-
         private bool _hasBeenReady = false;
 
         public AbyssHostedService(ILogger<AbyssHostedService> logger, AbyssConfig config, AbyssBot bot,
@@ -45,18 +43,10 @@ namespace Abyss
             _discordLogger = factory.CreateLogger("Discord");
             _marketing = marketing;
             _dataService = dataService;
-
-            _packLoader = provider.GetService(typeof(IPackLoader)) as IPackLoader;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _bot.ImportPackAsync<AbyssCorePack>();
-            if (_packLoader != null)
-            {
-                await _packLoader.LoadPacksAsync(_bot).ConfigureAwait(false);
-            }
-
             _logger.LogInformation(
                 $"Abyss hosted service starting on {Environment.OSVersion.VersionString}/CLR {Environment.Version} (args {string.Join(" ", Environment.GetCommandLineArgs())})");
 

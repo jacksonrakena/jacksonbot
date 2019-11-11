@@ -11,7 +11,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Packs.Default
+namespace Abyss
 {
     [Name("Meta")]
     [Description("Provides commands related to me.")]
@@ -85,8 +85,7 @@ namespace Abyss.Packs.Default
                 .AddField("Uptime", DateTime.Now - Process.GetCurrentProcess().StartTime)
                 .AddField("Commands", _commandService.GetAllCommands().Count(), true)
                 .AddField("Modules", _commandService.GetAllModules().Count(), true)
-                .AddField("Source", $"https://github.com/abyssal/Abyss")
-                .AddField("Packs", string.Join(", ", _bot.LoadedPacks.Select(c => $"{c.FriendlyName} ({c.Assembly.GetVersion()})")));
+                .AddField("Source", $"https://github.com/abyssal/Abyss");
 
             return Ok(response);
         }

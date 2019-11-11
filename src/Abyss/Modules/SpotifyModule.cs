@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Packs.Default
+namespace Abyss
 {
     [Name("Spotify")]
     [Description(

@@ -13,7 +13,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Abyss.Packs.Default
+namespace Abyss
 {
     [Name("Pictures")]
     [Description("Commands that let you access pictures from various websites.")]

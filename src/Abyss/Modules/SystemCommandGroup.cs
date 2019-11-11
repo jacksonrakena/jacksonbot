@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DescriptionAttribute = Qmmands.DescriptionAttribute;
 
-namespace Abyss.Packs.Default
+namespace Abyss
 {
     [Name("System")]
     [Group("sys")]

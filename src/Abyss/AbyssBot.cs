@@ -17,7 +17,6 @@ namespace Abyss
     {
         public int CommandSuccesses { get; private set; }
         public int CommandFailures { get; private set; }
-        public List<AbyssPack> LoadedPacks { get; private set; } = new List<AbyssPack>();
 
         private readonly ILogger _failedCommandsTracking;
         private readonly ILogger _successfulCommandsTracking;
@@ -38,6 +37,9 @@ namespace Abyss
             CommandExecuted += HandleCommandExecutedAsync;
             CommandExecutionFailed += HandleCommandExecutionFailedAsync;
             _help = help;
+
+            AddModules(Assembly.GetExecutingAssembly(), action: ProcessModule);
+            AddArgumentParser(UnixArgumentParser.Instance);
         }
 
         public async Task HandleRuntimeExceptionAsync(AbyssRequestContext context, Exception exception, CommandExecutionStep step, string reason)
@@ -241,38 +243,6 @@ namespace Abyss
 
             await base.AfterExecutedAsync(result, context);
         }
-
-        public async Task ImportPackAsync(Type type)
-        {
-            if (!typeof(AbyssPack).IsAssignableFrom(type)) throw new InvalidOperationException("Abyss packs must be of the AbyssPack type.");
-            var pack = (AbyssPack) this.Create(type);
-
-            var discoverableAttributeType = typeof(DiscoverableTypeParserAttribute);
-            var typeParserType = typeof(TypeParser<>);
-            var addTypeParserMethod = GetType().GetMethod("AddTypeParser") ?? throw new Exception("Cannot find method AddTypeParser.");
-
-            var loadedTypes = new List<Type>();
-
-            foreach (var exportedType in pack.Assembly.ExportedTypes)
-            {
-                if (!exportedType.HasCustomAttribute<DiscoverableTypeParserAttribute>(out var attr)) continue;
-                if (typeParserType.IsAssignableFrom(exportedType)) continue;
-
-                var parser = exportedType.GetConstructor(Type.EmptyTypes)!.Invoke(Array.Empty<object>());
-                var method = addTypeParserMethod.MakeGenericMethod(exportedType.BaseType!.GenericTypeArguments[0]);
-                method.Invoke(this, new object[] { parser, attr.ReplacingPrimitive });
-                loadedTypes.Add(exportedType);
-            }
-
-            var rootModulesLoaded = AddModules(pack.Assembly, action: ProcessModule);
-            
-            await pack.OnLoadAsync().ConfigureAwait(false);
-            _logger.LogInformation($"Loaded {rootModulesLoaded.Count} modules, {rootModulesLoaded.Sum(a => a.Commands.Count)} commands, and {loadedTypes.Count} type parsers from {pack.FriendlyName}.");
-            LoadedPacks.Add(pack);
-        }
-
-        public Task ImportPackAsync<TPack>() where TPack : AbyssPack
-            => ImportPackAsync(typeof(TPack));
 
         private void ProcessModule(ModuleBuilder moduleBuilder)
         {

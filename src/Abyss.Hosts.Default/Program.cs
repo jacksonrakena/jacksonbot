@@ -1,11 +1,10 @@
 using System;
 using System.IO;
-using System.Net.Http;
-using AbyssalSpotify;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Abyss;
 
 namespace Abyss.Hosts.Default
 {
@@ -44,29 +43,11 @@ namespace Abyss.Hosts.Default
 
         public static void ConfigureServices(string dataRoot, IServiceCollection services)
         {
-            // Configuration
-            services.AddSingleton(p =>
-            {
-                var ob = new AbyssConfig();
-                p.GetRequiredService<IConfiguration>().Bind(ob);
-                return ob;
-            });
-
-            // Abyss framework
-            services.AddAbyssFramework<DefaultPackLoader>((provider, botOptions) =>
+            // Abyss
+            services.AddAbyssBot((provider, botOptions) =>
             {
                 botOptions.DataRoot = dataRoot;
             });
-
-            // Abyss.Commands.Default
-            services.AddSingleton(provider =>
-            {
-                var configurationModel = provider.GetRequiredService<AbyssConfig>();
-                return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret);
-            });
-
-            services.AddSingleton<HttpClient>();
-            services.AddTransient<Random>();
         }
     }
 }

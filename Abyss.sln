@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Commands.Default", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abyss.Hosts.Default", "src\Abyss.Hosts.Default\Abyss.Hosts.Default.csproj", "{B7CAEFA6-6FA2-4968-B779-1E55F1207B68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abyss.Packs.Example", "example\Abyss.Packs.Example\Abyss.Packs.Example.csproj", "{8F82EF0C-EFDF-4444-B205-C7FE97B8C551}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -6,6 +6,8 @@ using Disqord;
 using System.Collections.Generic;
 using Disqord.Bot;
 using System.Linq;
+using AbyssalSpotify;
+using Microsoft.Extensions.Configuration;
 
 namespace Abyss
 {
@@ -15,21 +17,27 @@ namespace Abyss
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        ///     Configures the Abyss framework.
+        ///     Configures the Abyss bot application.
         /// </summary>
         /// <param name="serviceCollection">The service collection to add Abyss to.</param>
         /// <param name="acoAction">The configuration action for the host options.</param>
-        /// <typeparam name="TPackLoader">The pack loader to use for this framework instance.</typeparam>
         /// <remarks>
         ///     An instance of <see cref="AbyssConfig"/> is expected to be added to <paramref name="serviceCollection"/> before this method is called.
         /// </remarks>
-        public static void AddAbyssFramework<TPackLoader>(this IServiceCollection serviceCollection, Action<IServiceProvider, AbyssHostOptions> acoAction) where TPackLoader : class, IPackLoader
+        public static IServiceCollection AddAbyssBot(this IServiceCollection serviceCollection, Action<IServiceProvider, AbyssHostOptions> acoAction)
         {
             serviceCollection.AddSingleton(provider =>
             {
                 var abo = new AbyssHostOptions();
                 acoAction(provider, abo);
                 return abo;
+            });
+
+            serviceCollection.AddSingleton(provider =>
+            {
+                var ob = new AbyssConfig();
+                provider.GetRequiredService<IConfiguration>().Bind(ob);
+                return ob;
             });
 
             serviceCollection.AddSingleton(provider =>
@@ -62,7 +70,15 @@ namespace Abyss
             serviceCollection.AddSingleton<HttpClient>();
             serviceCollection.AddSingleton<NotificationsService>();
             serviceCollection.AddSingleton<MarketingService>();
-            serviceCollection.AddSingleton<IPackLoader, TPackLoader>();
+            serviceCollection.AddSingleton(provider =>
+            {
+                var configurationModel = provider.GetRequiredService<AbyssConfig>();
+                return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret);
+            });
+
+            serviceCollection.AddSingleton<HttpClient>();
+            serviceCollection.AddTransient<Random>();
+            return serviceCollection;
         }
     }
 }

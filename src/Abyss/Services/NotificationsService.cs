@@ -28,7 +28,7 @@ namespace Abyss
             if (!(ch != null && ch is CachedTextChannel stc)) return;
 
             var message = $"{CurrentDateTime} {_emotes.OnlineEmote} **{_abyss.CurrentUser.Name}** is now online. " +
-            $"Connected to {_abyss.Guilds.Count} servers. {_abyss.LoadedPacks.Count} packs loaded: {_abyss.LoadedPacks.Select(c => $"{c.FriendlyName} (v{c.Assembly.GetVersion()})").Humanize()}";
+            $"Connected to {_abyss.Guilds.Count} servers.";
 
             await stc.SendMessageAsync(message);
         }
