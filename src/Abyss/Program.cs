@@ -24,7 +24,6 @@ namespace Abyss
 
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
-            Console.WriteLine(Environment.GetEnvironmentVariable("ABYSS_ENVIRONMENT", EnvironmentVariableTarget.Process));
             return new HostBuilder()
                 .UseContentRoot((args.Length > 0 && Directory.Exists(args[0])) ? args[0] : AppContext.BaseDirectory)
                 .UseEnvironment(Environment.GetEnvironmentVariable("ABYSS_ENVIRONMENT", EnvironmentVariableTarget.Process) == "Development" ? Environments.Development : Environments.Production)
