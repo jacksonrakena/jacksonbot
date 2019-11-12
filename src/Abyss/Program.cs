@@ -26,7 +26,7 @@ namespace Abyss
         {
             return new HostBuilder()
                 .UseContentRoot((args.Length > 0 && Directory.Exists(args[0])) ? args[0] : AppContext.BaseDirectory)
-                .UseEnvironment(Environment.GetEnvironmentVariable("ABYSS_ENVIRONMENT", EnvironmentVariableTarget.Process) ?? "Production")
+                .UseEnvironment(Environment.GetEnvironmentVariable("ABYSS_ENVIRONMENT", EnvironmentVariableTarget.Process) == "Development" ? "Development" : "Production");
                 .UseDefaultServiceProvider(c =>
                 {
                     c.ValidateOnBuild = true;
