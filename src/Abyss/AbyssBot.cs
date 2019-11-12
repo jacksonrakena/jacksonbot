@@ -54,7 +54,11 @@ namespace Abyss
             Logger.MessageLogged += DiscordClient_Log;
         }
 
-        private void DiscordClient_Log(object? sender, MessageLoggedEventArgs arg) => _discordLogger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception, "[" + arg.Source + "] " + arg.Message);
+        private void DiscordClient_Log(object? sender, MessageLoggedEventArgs arg)
+        {
+            if (arg.Severity == LogMessageSeverity.Debug || arg.Severity == LogMessageSeverity.Trace) return;
+            _discordLogger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception, "[" + arg.Source + "] " + arg.Message);
+        }
 
         private Task Discord_Ready(ReadyEventArgs e)
         {
