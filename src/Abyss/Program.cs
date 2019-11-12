@@ -49,7 +49,7 @@ namespace Abyss
                         .WriteTo.File(
                             outputTemplate: "[{Timestamp:HH:mm:ss yyyy-MM-dd} {SourceContext} {Level:u3}] {Message:lj}{NewLine}{Exception}",
                             path: Path.Combine(hbc.HostingEnvironment.ContentRootPath, "logs", "abyss.log"),
-                            restrictedToMinimumLevel: LogEventLevel.Verbose)
+                            restrictedToMinimumLevel: LogEventLevel.Information)
                         .CreateLogger();
 
                     logging.AddSerilog(logger, true);
