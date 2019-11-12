@@ -52,6 +52,7 @@ namespace Abyss
 
             Ready += Discord_Ready;
             Logger.MessageLogged += DiscordClient_Log;
+            MessageReceived += async (m) => Console.WriteLine(m.Message.Content);
         }
 
         private void DiscordClient_Log(object? sender, MessageLoggedEventArgs arg)
