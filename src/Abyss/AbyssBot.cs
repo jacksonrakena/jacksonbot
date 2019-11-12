@@ -51,7 +51,7 @@ namespace Abyss
             AddArgumentParser(UnixArgumentParser.Instance);
 
             Ready += Discord_Ready;
-            //Logger.MessageLogged += DiscordClient_Log;
+            Logger.MessageLogged += DiscordClient_Log;
         }
 
         private void DiscordClient_Log(object? sender, MessageLoggedEventArgs arg) => _discordLogger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception, "[" + arg.Source + "] " + arg.Message);
