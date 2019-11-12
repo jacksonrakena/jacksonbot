@@ -52,13 +52,6 @@ namespace Abyss
 
             Ready += Discord_Ready;
             Logger.MessageLogged += DiscordClient_Log;
-            GuildAvailable += AbyssBot_GuildAvailable;
-        }
-
-        private Task AbyssBot_GuildAvailable(GuildAvailableEventArgs e)
-        {
-            Console.WriteLine($"{e.Guild.Name} available with {e.Guild.Members.Select(d => d.Value.Presence).Count()} presences for {e.Guild.Members.Count} members");
-            return Task.CompletedTask;
         }
 
         private void DiscordClient_Log(object? sender, MessageLoggedEventArgs arg)
