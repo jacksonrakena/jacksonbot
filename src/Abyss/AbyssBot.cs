@@ -52,7 +52,6 @@ namespace Abyss
 
             Ready += Discord_Ready;
             Logger.MessageLogged += DiscordClient_Log;
-            MessageReceived += async (m) => Console.WriteLine(m.Message.Content);
         }
 
         private void DiscordClient_Log(object? sender, MessageLoggedEventArgs arg)
@@ -87,6 +86,12 @@ namespace Abyss
                     await Task.Delay(TimeSpan.FromMinutes(1));
                 }
             });
+
+            foreach (var guild in Guilds)
+            {
+                Console.WriteLine(guild.Key + " " + (guild.Value.Name ?? "<NAME WAS NULL>"));
+            }
+            Console.WriteLine(Guilds.Count);
 
             return Task.CompletedTask;
         }
