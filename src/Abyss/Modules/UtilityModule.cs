@@ -17,7 +17,7 @@ namespace Abyss
     {
         [Command("time")]
         [Description("Displays time.")]
-        public Task<ActionResult> Command_TimeAsync([Name("Text")] [Remainder] string text)
+        public Task<AbyssResult> Command_TimeAsync([Name("Text")] [Remainder] string text)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace Abyss
 
         [Command("timed")]
         [Description("Displays time, in debug mode.")]
-        public Task<ActionResult> Command_TimeDetailedAsync([Name("Text")] [Remainder] string text)
+        public Task<AbyssResult> Command_TimeDetailedAsync([Name("Text")] [Remainder] string text)
         {
             try {
                 var res = HumanDateParser.HumanDateParser.ParseDetailed(text);
@@ -46,7 +46,7 @@ namespace Abyss
         [Command("ping")]
         [Description("Benchmarks the connection to the Discord servers.")]
         [AbyssCooldown(1, 3, CooldownMeasure.Seconds, CooldownType.User)]
-        public async Task<ActionResult> Command_PingAsync()
+        public async Task<AbyssResult> Command_PingAsync()
         {
             if (!Context.BotMember.GetPermissionsFor(Context.Channel).SendMessages) return Empty();
             var sw = Stopwatch.StartNew();
@@ -70,7 +70,7 @@ namespace Abyss
                             .AppendLine($"**REST** {restTime}ms")
                             .AppendLine($"**Round-trip** {rtt}ms")
                             .ToString())
-                        .WithColor(Context.BotMember.GetHighestRoleColourOrDefault())
+                        .WithColor(Context.BotMember.GetHighestRoleColourOrSystem())
                         .Build();
                 });
                 sw.Stop();
@@ -85,7 +85,7 @@ namespace Abyss
 
         [Command("echo")]
         [Description("Echoes the input text.")]
-        public Task<ActionResult> Command_EchoAsync([Name("Text")] [Remainder] string echocontent)
+        public Task<AbyssResult> Command_EchoAsync([Name("Text")] [Remainder] string echocontent)
         {
             return Ok(Context.InvokerIsOwner
                 ? echocontent
@@ -94,7 +94,7 @@ namespace Abyss
 
         [Command("echod")]
         [Description("Attempts to delete the source message, and then echoes the input text.")]
-        public async Task<ActionResult> Command_EchoDeleteAsync([Name("Text")] [Remainder] string echocontent)
+        public async Task<AbyssResult> Command_EchoDeleteAsync([Name("Text")] [Remainder] string echocontent)
         {
             return await Context.Message.TryDeleteAsync() ? Ok(Context.InvokerIsOwner
                 ? echocontent
@@ -105,8 +105,7 @@ namespace Abyss
         [Description("Deletes a message by ID.")]
         [RequireMemberGuildPermissions(Permission.ManageMessages)]
         [RequireBotGuildPermissions(Permission.ManageMessages)]
-        [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
-        public async Task<ActionResult> Command_DeleteMessageAsync(
+        public async Task<AbyssResult> Command_DeleteMessageAsync(
             [Name("Message")] [Description("The ID of the message to delete.")]
             ulong messageId,
             [Name("Silence")] [Description("Whether to respond with confirmation of the deletion.")]
@@ -122,8 +121,7 @@ namespace Abyss
 
         [Command("quote")]
         [Description("Quotes a message sent by a user.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter)]
-        public async Task<ActionResult> Command_QuoteMessageAsync([Name("ID")] [Description("The ID of the message.")]
+        public async Task<AbyssResult> Command_QuoteMessageAsync([Name("ID")] [Description("The ID of the message.")]
             ulong messageId)
         {
             var message = Context.Channel.GetMessage(messageId) as IUserMessage ?? await Context.Channel.GetMessageAsync(messageId).ConfigureAwait(false) as IUserMessage;
@@ -142,7 +140,7 @@ namespace Abyss
             });
 
             embed.WithTimestamp(message.Id.CreatedAt);
-            embed.WithColor(message.Author.GetHighestRoleColourOrDefault());
+            embed.WithColor(message.Author.GetHighestRoleColourOrSystem());
             embed.WithDescription((string.IsNullOrWhiteSpace(message.Content) ? "<< No content >>" : message.Content) +
                                   "\n\n" + jumpurl);
 

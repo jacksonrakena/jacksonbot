@@ -29,12 +29,7 @@ Follow the Docker instructions that are [available here.](DOCKER.md)
 An example Abyss configuration file can be found at [abyss.example.json](abyss.example.json), which should be renamed to `abyss.json` before running. This needs to be placed in the Abyss data root, which is explained in [the Docker instructions.](DOCKER.md)
 
 ### 🛠 Structure
-The project is broken down into the following projects:  
-**Core**
-- 🎀 `Abyss` (library) The core of Abyss. This project contains the message receiver, bot host, argument parsers, checks, contexts, results, and the command set.
-
-**Hosts**  
-- 🪐 `Abyss.Hosts.Default` (app) This is the default Abyss host, which wraps `Abyss` and runs the bot.   
+- 🎀 `Abyss` (C# Console Application) The core of Abyss. This project contains the message receiver, bot host, argument parsers, checks, contexts, results, and the command set.  
   
 ### 🖋 Copyright
 Copyright (c) 2019 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  

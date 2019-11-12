@@ -2,11 +2,11 @@ using System.Threading.Tasks;
 
 namespace Abyss
 {
-    public class EmptyResult : ActionResult
+    public class EmptyResult : AbyssResult
     {
         public override bool IsSuccessful => true;
 
-        public override Task ExecuteResultAsync(AbyssRequestContext context)
+        public override Task ExecuteResultAsync(AbyssCommandContext context)
         {
             return Task.CompletedTask;
         }

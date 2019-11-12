@@ -24,7 +24,7 @@ namespace Abyss
         [Command("track")]
         [Description("Searches the Spotify database for a song.")]
         [RunMode(RunMode.Parallel)]
-        public async Task<ActionResult> Command_TrackAsync(
+        public async Task<AbyssResult> Command_TrackAsync(
             [Name("Track Name")]
             [Description("The track to search for.")]
             [Remainder]
@@ -52,7 +52,7 @@ namespace Abyss
         [Command("album")]
         [Description("Searches the Spotify database for an album.")]
         [RunMode(RunMode.Parallel)]
-        public async Task<ActionResult> Command_SearchAlbumAsync(
+        public async Task<AbyssResult> Command_SearchAlbumAsync(
             [Name("Album Name")]
             [Description("The album name to search for.")]
             [Remainder]
@@ -90,7 +90,7 @@ namespace Abyss
 
             var embed = new LocalEmbedBuilder
             {
-                Color = AbyssHostedService.DefaultEmbedColour,
+                Color = AbyssBot.DefaultEmbedColour,
                 Author = new LocalEmbedAuthorBuilder
                 {
                     Name = album.Artists.Select(a => a.Name).Humanize(),
@@ -138,7 +138,7 @@ namespace Abyss
         {
             var embed = new LocalEmbedBuilder
             {
-                Color = AbyssHostedService.DefaultEmbedColour,
+                Color = AbyssBot.DefaultEmbedColour,
                 Author = new LocalEmbedAuthorBuilder
                 {
                     Name = track.Artists.Select(a => a.Name).Humanize(),

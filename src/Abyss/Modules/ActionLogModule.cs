@@ -1,8 +1,5 @@
 ﻿using Disqord;
 using Qmmands;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Disqord.Bot;
 
@@ -22,7 +19,7 @@ namespace Abyss
 
         [Command("set")]
         [Description("Enables and configures the Abyss Action Log.")]
-        public Task<ActionResult> Command_ActionLogManageAsync(
+        public Task<AbyssResult> Command_ActionLogManageAsync(
             [Name("Action Log Channel")] [Description("The channel that will be used for Action Log events.")] CachedTextChannel targetChannel)
         {
             var guild = _database.GetOrCreateGuild(Context.Guild.Id);
@@ -36,7 +33,7 @@ namespace Abyss
 
         [Command("disable")]
         [Description("Disables the Abyss Action Log.")]
-        public Task<ActionResult> Command_DisableActionLogAsync()
+        public Task<AbyssResult> Command_DisableActionLogAsync()
         {
             var guild = _database.GetOrCreateGuild(Context.Guild.Id);
             guild.ActionLogChannelId = 0;

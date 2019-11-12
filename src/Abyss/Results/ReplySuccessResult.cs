@@ -2,11 +2,11 @@
 
 namespace Abyss
 {
-    public class ReplySuccessResult : ActionResult
+    public class ReplySuccessResult : AbyssResult
     {
         public override bool IsSuccessful => true;
 
-        public override Task ExecuteResultAsync(AbyssRequestContext context)
+        public override Task ExecuteResultAsync(AbyssCommandContext context)
         {
             return context.ReplyAsync(":ok_hand:");
         }

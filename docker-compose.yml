@@ -2,8 +2,6 @@ version: "3.3"
 services:
   app:
     build: .
-    ports:
-    - "2110:2110"
     container_name: abyss
     volumes:
     - type: bind

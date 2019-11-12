@@ -4,12 +4,9 @@ using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Disqord.Bot;
 using Disqord;
-using Disqord.Rest;
 
 namespace Abyss
 {
@@ -19,11 +16,11 @@ namespace Abyss
     {
         [Command("server", "serverinfo")]
         [Description("Grabs information around this server.")]
-        public Task<ActionResult> Command_GuildInfoAsync()
+        public Task<AbyssResult> Command_GuildInfoAsync()
         {
             var embed = new LocalEmbedBuilder
             {
-                Color = AbyssHostedService.DefaultEmbedColour,
+                Color = AbyssBot.DefaultEmbedColour,
                 Author = new LocalEmbedAuthorBuilder
                 {
                     Name = "Server " + Context.Guild.Name,
@@ -42,13 +39,13 @@ namespace Abyss
         [Command("colour", "color")]
         [Description("Grabs the colour of a role.")]
         [RunMode(RunMode.Parallel)]
-        public async Task<ActionResult> Command_GetColourFromRoleAsync(
+        public async Task<AbyssResult> Command_GetColourFromRoleAsync(
             [Name("Role")] [Description("The role you wish to view the colour of.")] [Remainder]
             CachedRole role)
         {
             if (role.Color != null && role.Color.Value.RawValue == 0) return BadRequest("That role does not have a colour!");
 
-            var outStream = ImageHelper.CreateColourImage(new Rgba32(role.Color!.Value.R, role.Color.Value.G, role.Color.Value.B), 200, 200);
+            var outStream = AssetHelper.FillImageWithColor(new Rgba32(role.Color!.Value.R, role.Color.Value.G, role.Color.Value.B), 200, 200);
             await Context.Channel.SendMessageAsync(new LocalAttachment(outStream, "role.png"), null, embed: new LocalEmbedBuilder()
                 .WithColor(role.Color)
                 .WithTitle("Role Color")
@@ -65,7 +62,7 @@ namespace Abyss
         [Command("colour", "color")]
         [Description("Grabs the colour of a user.")]
         [RunMode(RunMode.Parallel)]
-        public Task<ActionResult> Command_GetColourFromUserAsync(
+        public Task<AbyssResult> Command_GetColourFromUserAsync(
             [Name("User")] [Description("The user you wish to view the colour of.")] [Remainder]
             CachedMember user)
         {
@@ -77,7 +74,7 @@ namespace Abyss
 
         [Command("permissions", "perms")]
         [Description("Shows a list of a user's current guild-level permissions.")]
-        public Task<ActionResult> Command_ShowPermissionsAsync(
+        public Task<AbyssResult> Command_ShowPermissionsAsync(
             [Name("Target")]
             [Description("The user to get permissions for.")]
             [DefaultValueDescription("You.")]
@@ -123,8 +120,7 @@ namespace Abyss
 
         [Command("tree", "channels")]
         [Description("Creates a tree of channels and categories in this server.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
-        public Task<ActionResult> Command_CreateChannelTreeAsync()
+        public Task<AbyssResult> Command_CreateChannelTreeAsync()
         {
             var guild = Context.Guild;
 
@@ -153,8 +149,7 @@ namespace Abyss
 
         [Command("analyzeperm")]
         [Description("Analyzes a permission for a user, and sees which role grants or denies that permission to them.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
-        public Task<ActionResult> Command_AnalyzePermissionAsync(
+        public Task<AbyssResult> Command_AnalyzePermissionAsync(
             [Name("User")] [Description("The user to check for the specified permission.")]
             CachedMember user,
             [Name("Permission")] [Description("The permission to analyze.")] [Remainder] string permission)

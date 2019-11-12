@@ -26,7 +26,7 @@ namespace Abyss
         /// <returns>The full alias of a command, followed by the names of the command parameters.</returns>
         public static string CreateCommandString(this Command command)
         {
-            return $"{command.FullAliases.First()} {string.Join(" ", command.Parameters.Select(a => a.Name))}";
+            return $"{command.FullAliases.First()} {string.Join(" ", command.Parameters.Select(a => "{" + a.Name + "}"))}";
         }
     }
 }

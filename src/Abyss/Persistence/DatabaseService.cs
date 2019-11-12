@@ -1,19 +1,36 @@
 ﻿using LiteDB;
+using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 
 namespace Abyss
 {
-    public class DatabaseService
+    public class DatabaseService : IDisposable
     {
-        private readonly DataService _data;
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _database.Dispose();
+            }
+        }
+
+        ~DatabaseService()
+        {
+            Dispose(false);
+        }
+
         private readonly LiteDatabase _database;
 
-        public DatabaseService(DataService data)
+        public DatabaseService(IHostEnvironment hostEnvironment)
         {
-            _data = data;
-            _database = new LiteDatabase(_data.GetDatabasePath());
+            _database = new LiteDatabase(Path.Combine(hostEnvironment.ContentRootPath, "AbyssDatabase.db"));
         }
 
         public PersistenceGuild GetOrCreateGuild(ulong guildId)

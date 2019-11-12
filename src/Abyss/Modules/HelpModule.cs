@@ -19,7 +19,7 @@ namespace Abyss
             _help = help;
         }
 
-        public async Task<ActionResult> CommandSubroutine_HelpQueryAsync(string query)
+        public async Task<AbyssResult> CommandSubroutine_HelpQueryAsync(string query)
         {
             // Searching for command or module
             var group = _bot.GetAllModules().Where(m => m.IsGroup()).Search(query);
@@ -38,8 +38,7 @@ namespace Abyss
         [Command("help", "commands")]
         [Description(
             "Retrieves a list of commands that you can use, or, if a command or module is provided, displays information on that command or module.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
-        public async Task<ActionResult> Command_ListCommandsAsync(
+        public async Task<AbyssResult> Command_ListCommandsAsync(
             [Name("Query")]
             [Description("The command or module to view, or nothing to see a list of commands.")]
             [Remainder]

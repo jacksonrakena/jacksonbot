@@ -30,11 +30,11 @@ namespace Abyss
         /// </summary>
         /// <param name="normalUser">The user to retrieve role colours from.</param>
         /// <returns>The highest role colour of the specified user, or the default embed colour.</returns>
-        public static Color GetHighestRoleColourOrDefault(this IUser normalUser)
+        public static Color GetHighestRoleColourOrSystem(this IUser normalUser)
         {
-            if (!(normalUser is CachedMember user)) return AbyssHostedService.DefaultEmbedColour;
+            if (!(normalUser is CachedMember user)) return AbyssBot.DefaultEmbedColour;
             var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color != null && r.Color.Value.RawValue != 0);
-            return orderedRoles?.Color ?? AbyssHostedService.DefaultEmbedColour;
+            return orderedRoles?.Color ?? AbyssBot.DefaultEmbedColour;
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Abyss
         /// <param name="user">The user to check.</param>
         /// <param name="predicate">The predicate of which to use to filter the roles of the user.</param>
         /// <returns>The highest role of the user that matches a predicate.</returns>
-        public static CachedRole GetHighestRoleOrDefault(this CachedMember user, Func<CachedRole, bool>? predicate = null)
+        public static CachedRole? GetHighestRoleOrDefault(this CachedMember user, Func<CachedRole, bool>? predicate = null)
         {
             return user.Roles.Values.OrderByDescending(r => r.Position).FirstOrDefault(predicate ?? (d => true));
         }

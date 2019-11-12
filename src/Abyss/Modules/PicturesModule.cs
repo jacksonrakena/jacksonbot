@@ -9,7 +9,6 @@ using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using SixLabors.Primitives;
 using System;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -31,7 +30,7 @@ namespace Abyss
         [Command("cat")]
         [Description("Meow.")]
         [AbyssCooldown(1, 5, CooldownMeasure.Seconds, CooldownType.User)]
-        public async Task<ActionResult> Command_GetCatPictureAsync()
+        public async Task<AbyssResult> Command_GetCatPictureAsync()
         {
             using var response = await _httpApi.GetAsync(CatApi).ConfigureAwait(false);
             var url = JToken.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Value<string>("file");
@@ -42,7 +41,7 @@ namespace Abyss
         [RunMode(RunMode.Parallel)]
         [Description("Shows an enlarged form of an emoji.")]
         [AbyssCooldown(1, 5, CooldownMeasure.Seconds, CooldownType.User)]
-        public async Task<ActionResult> Command_GetBigEmojiAsync([Name("Emoji")] [Description("The emoji to enlarge.")]
+        public async Task<AbyssResult> Command_GetBigEmojiAsync([Name("Emoji")] [Description("The emoji to enlarge.")]
             LocalCustomEmoji emote)
         {
             var url = emote.GetUrl();
@@ -60,7 +59,7 @@ namespace Abyss
         [Description("Resizes an image from a URL to specified dimensions.")]
         [AbyssCooldown(1, 30, CooldownMeasure.Seconds, CooldownType.User)]
         [RunMode(RunMode.Parallel)]
-        public async Task<ActionResult> Command_ResizeImageAsync(
+        public async Task<AbyssResult> Command_ResizeImageAsync(
             [Name("Image_URL")] [Description("The URL of the image to resize.")]
             Uri url,
             [Name("Width")] [Description("The width to resize to.")] [Range(1, 500, true, true)]

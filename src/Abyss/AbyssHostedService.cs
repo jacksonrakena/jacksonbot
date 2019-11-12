@@ -9,86 +9,36 @@ using Disqord;
 using Disqord.Logging;
 using Disqord.Events;
 using Microsoft.Extensions.DependencyInjection;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Abyss
 {
     public class AbyssHostedService: IHostedService
     {
-        public const string ZeroWidthSpace = "​";
-        public static readonly Color DefaultEmbedColour = new Color(0xB2F7EF);
-        private readonly AbyssConfig _config;
         private readonly AbyssBot _bot;
 
         private readonly ILogger<AbyssHostedService> _logger;
-        private readonly Microsoft.Extensions.Logging.ILogger _discordLogger;
 
         private readonly NotificationsService _notifications;
-        private readonly MarketingService _marketing;
 
-        public AbyssHostedService(ILogger<AbyssHostedService> logger, AbyssConfig config, AbyssBot bot,
-            NotificationsService notifications, ILoggerFactory factory,
-            MarketingService marketing, IServiceProvider services)
+        public AbyssHostedService(ILogger<AbyssHostedService> logger, AbyssBot bot,
+            NotificationsService notifications)
         {
             _logger = logger;
             _bot = bot;
-            _config = config;
-            _bot.Logger.MessageLogged += DiscordClient_Log;
-            _bot.Ready += DiscordClient_Ready;
-            _bot.JoinedGuild += DiscordClient_JoinedGuild;
-            _bot.LeftGuild += DiscordClient_LeftGuild;
             _notifications = notifications;
-            _discordLogger = factory.CreateLogger("Discord");
-            _marketing = marketing;
 
-            services.GetRequiredService<ActionLogService>();
+            _bot.GetRequiredService<ActionLogService>();
+            _bot.GetRequiredService<MarketingService>();
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation(
-                $"Abyss hosted service starting on {Environment.OSVersion.VersionString}/CLR {Environment.Version} (args {string.Join(" ", Environment.GetCommandLineArgs())})");
+                $"Abyss services initialised on {Environment.OSVersion.VersionString}/CLR {Environment.Version} (args {string.Join(" ", Environment.GetCommandLineArgs())})");
 
             await _bot.ConnectAsync().ConfigureAwait(false);
         }
-
-        private Task DiscordClient_LeftGuild(LeftGuildEventArgs args) => _notifications.NotifyServerMembershipChangeAsync(args.Guild, false);
-        private Task DiscordClient_JoinedGuild(JoinedGuildEventArgs args) => _notifications.NotifyServerMembershipChangeAsync(args.Guild, true);
-
-        private Task DiscordClient_Ready(ReadyEventArgs args)
-        {
-            _ = _notifications.NotifyReadyAsync().ConfigureAwait(false);
-
-            _logger.LogInformation($"Ready. Logged in as {_bot.CurrentUser} with command prefix \"{_config.CommandPrefix}\".");
-
-            var startupConfiguration = _config.Startup;
-            var activities = startupConfiguration.Activity.Select(a =>
-            {
-                if (!Enum.TryParse<ActivityType>(a.Type, out var activityType))
-                {
-                    throw new InvalidOperationException(
-                        $"{a.Type} is not a valid Discord activity type.\n" +
-                        $"Available options are: {string.Join(", ", typeof(ActivityType).GetEnumNames())}");
-                }
-
-                return (activityType, a.Message);
-            }).ToList();
-
-            _ = Task.Run(async () =>
-            {
-                while (true)
-                {
-                    var (activityType, message) = activities.Random();
-                    await _bot.SetPresenceAsync(UserStatus.Online, new LocalActivity(message, activityType, null));
-                    await Task.Delay(TimeSpan.FromMinutes(1));
-                }
-            });
-
-            _ = _marketing.UpdateAllBotListsAsync().ConfigureAwait(false);
-
-            return Task.CompletedTask;
-        }
-
-        private void DiscordClient_Log(object? sender, MessageLoggedEventArgs arg) => _discordLogger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception, "[" + arg.Source + "] " + arg.Message);
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {

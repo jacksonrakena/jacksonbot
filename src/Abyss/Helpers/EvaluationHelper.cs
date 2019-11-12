@@ -1,32 +1,27 @@
 using Disqord;
 using Disqord.Rest;
-using Qmmands;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Abyss
 {
-    [DoNotAdd]
     public class EvaluationHelper
     {
-        public AbyssRequestContext Context { get; }
+        public AbyssCommandContext Context { get; }
 
-        public EvaluationHelper(AbyssRequestContext context)
+        public EvaluationHelper(AbyssCommandContext context)
         {
             Context = context;
         }
 
-        public Task<RestUserMessage> ReplyAsync(string content, LocalEmbed? embed = null)
-        {
-            return Context.Channel.SendMessageAsync(content, embed: embed);
-        }
+        public Task<RestUserMessage?> ReplyAsync(string content, LocalEmbedBuilder? embed = null, RestRequestOptions? options = null)
+            => Context.ReplyAsync(content, embed, options);
 
-        public static string InspectMethods(object obj)
+        public static string Methods(object obj)
         {
             var type = obj as Type ?? obj.GetType();
 
@@ -48,55 +43,12 @@ namespace Abyss
             return Markdown.CodeBlock(sb.ToString(), "ini");
         }
 
-        public static object ReadValue(FieldInfo prop, object obj)
-        {
-            return ReadValue((object) prop, obj);
-        }
 
-        public static object ReadValue(PropertyInfo prop, object obj)
-        {
-            return ReadValue((object) prop, obj);
-        }
+        public static string InspectInheritance(object obj) => Inheritance(obj.GetType());
 
-        private static string ReadValue(object prop, object obj)
-        {
+        public static string Inheritance<T>() => Inheritance(typeof(T));
 
-            /* PropertyInfo and FieldInfo both derive from MemberInfo, but that does not have a GetValue method, so the only
-                supported ancestor is object */
-            try
-            {
-                var value = prop switch
-                {
-                    PropertyInfo pinfo => pinfo.GetValue(obj),
-
-                    FieldInfo finfo => finfo.GetValue(obj),
-
-                    _ => throw new ArgumentException($"{nameof(prop)} must be PropertyInfo or FieldInfo", nameof(prop)),
-                };
-
-                if (value == null) return "Null";
-
-                if (value is IEnumerable e && !(value is string))
-                {
-                    var enu = e.Cast<object>().ToList();
-                    return $"{enu.Count} [{enu.GetType().Name}]";
-                } else
-                {
-                    return value + $" [{value.GetType().Name}]";
-                }
-            }
-            catch (Exception e)
-            {
-                return $"[[{e.GetType().Name} thrown]]";
-            }
-        }
-
-        public static string InspectInheritance<T>()
-        {
-            return InspectInheritance(typeof(T));
-        }
-
-        public static string InspectInheritance(Type type)
+        public static string Inheritance(Type type)
         {
             var baseTypes = new List<Type>() { type };
             var latestType = type.BaseType;
@@ -124,22 +76,6 @@ namespace Abyss
             }
 
             return Markdown.CodeBlock(sb.ToString(), "ini");
-        }
-
-        private static string FormatType(Type atype)
-        {
-            var vs = atype.Namespace + "." + atype.Name;
-
-            var t = atype.GenericTypeArguments;
-
-            if (t.Length > 0) vs += $"<{string.Join(", ", t.Select(a => a.Name))}>";
-
-            return vs;
-        }
-
-        public static string InspectInheritance(object obj)
-        {
-            return InspectInheritance(obj.GetType());
         }
 
         public static string Inspect(object obj)
@@ -175,7 +111,7 @@ namespace Abyss
                     var sep = new string(' ', columnWidth - prop.Name.Length);
 
                     /* Add the property name, then the separator, then the value */
-                    inspection.Append(prop.Name).Append(sep).Append(prop.CanRead ? ReadValue(prop, obj) : "Unreadable").AppendLine();
+                    inspection.Append(prop.Name).Append(sep).Append(prop.CanRead ? prop.ReadValue(obj) : "Unreadable").AppendLine();
                 }
             }
 
@@ -194,7 +130,7 @@ namespace Abyss
                     if (inspection.Length > 1800) break;
 
                     var sep = new string(' ', columnWidth - prop.Name.Length);
-                    inspection.Append(prop.Name).Append(":").Append(sep).Append(ReadValue(prop, obj)).AppendLine();
+                    inspection.Append(prop.Name).Append(":").Append(sep).Append(prop.ReadValue(obj)).AppendLine();
                 }
             }
 
@@ -210,22 +146,34 @@ namespace Abyss
             return Markdown.CodeBlock(inspection.ToString(), "ini");
         }
 
-        public CachedMember User(ulong id)
+
+        private static string FormatType(Type atype)
         {
-            return Context.Guild.Members[id];
+            var vs = atype.Namespace + "." + atype.Name;
+
+            var t = atype.GenericTypeArguments;
+
+            if (t.Length > 0) vs += $"<{string.Join(", ", t.Select(a => a.Name))}>";
+
+            return vs;
         }
 
-        public CachedMember User(string username)
+        public CachedMember? User(ulong id)
+        {
+            return Context.Guild.GetMember(id);
+        }
+
+        public CachedMember? User(string username)
         {
             return Context.Guild.Members.Values.FirstOrDefault(a => a.Name.Equals(username, StringComparison.OrdinalIgnoreCase) || (a.Nick != null && a.Nick.Equals(username, StringComparison.OrdinalIgnoreCase)));
         }
 
-        public CachedTextChannel TextChannel(ulong id)
+        public CachedTextChannel? TextChannel(ulong id)
         {
             return Context.Guild.GetTextChannel(id);
         }
 
-        public CachedTextChannel TextChannel(string name)
+        public CachedTextChannel? TextChannel(string name)
         {
             return Context.Guild.TextChannels.Values.FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }

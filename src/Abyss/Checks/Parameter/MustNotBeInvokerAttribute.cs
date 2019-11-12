@@ -16,12 +16,12 @@ namespace Abyss
             if (argument == null) return CheckResult.Successful;
             var id = argument is CachedUser user ? user.Id : argument is Snowflake dur ? dur : throw new InvalidOperationException($"{nameof(MustNotBeInvokerAttribute)} is being executed on an invalid object type.");
 
-            return id == context.ToRequestContext().Invoker.Id
+            return id == context.AsAbyssContext().Invoker.Id
                 ? new CheckResult("The provided user can't be you.")
                 : CheckResult.Successful;
         }
 
-        public string GetDescription(AbyssRequestContext requestContext) => "The provided user can't be you.";
+        public string GetDescription(AbyssCommandContext requestContext) => "The provided user can't be you.";
 
         /// <summary>
         ///     Initialises a new <see cref="MustNotBeInvokerAttribute"/>.

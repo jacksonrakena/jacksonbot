@@ -15,7 +15,7 @@ namespace Abyss
         /// <param name="builder">The embed builder to add to.</param>
         /// <param name="context">The context, of which the invoker will be used in the footer.</param>
         /// <returns>The embed builder.</returns>
-        public static LocalEmbedBuilder WithRequesterFooter(this LocalEmbedBuilder builder, AbyssRequestContext context)
+        public static LocalEmbedBuilder WithRequesterFooter(this LocalEmbedBuilder builder, AbyssCommandContext context)
         {
             return builder.WithFooter($"Requested by {context.Invoker.Format()}",
                 context.Invoker.GetAvatarUrl());

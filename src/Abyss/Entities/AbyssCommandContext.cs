@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 namespace Abyss
 {
     /// <summary>
-    ///     Represents a request context for an Abyss invocation request.
+    ///     Represents a request context for an Abyss command request.
     /// </summary>
-    public class AbyssRequestContext : DiscordCommandContext, IServiceProvider
+    public class AbyssCommandContext : DiscordCommandContext, IServiceProvider
     {
-        internal AbyssRequestContext(AbyssBot bot, CachedUserMessage message, string prefix) : base(bot, prefix, message)
+        internal AbyssCommandContext(AbyssBot bot, CachedUserMessage message, string prefix) : base(bot, prefix, message)
         {
             Bot = bot;
 
-            if (!Guild.Members.TryGetValue(Bot.CurrentUser.Id, out var botu)) throw new InvalidOperationException("Guild members doesn't contain current user.");
+            if (!Guild.Members.TryGetValue(Bot.CurrentUser.Id, out var botu)) throw new InvalidOperationException("Guild doesn't contain current user.");
             BotMember = botu;
             Channel = (CachedTextChannel) message.Channel;
         }
@@ -27,7 +27,7 @@ namespace Abyss
         public new CachedTextChannel Channel { get; }
         
         /// <summary>
-        ///     The bot that received the invocation.
+        ///     The bot that received the request.
         /// </summary>
         public new AbyssBot Bot { get; }
 

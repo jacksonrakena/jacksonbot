@@ -22,20 +22,18 @@ namespace Abyss
     public class SystemCommandGroup : AbyssModuleBase
     {
         private readonly ILogger<SystemCommandGroup> _logger;
-        private readonly DataService _dataService;
         private readonly IHostApplicationLifetime _lifetime;
 
-        public SystemCommandGroup(ILogger<SystemCommandGroup> logger, DataService dataService,
+        public SystemCommandGroup(ILogger<SystemCommandGroup> logger,
             IHostApplicationLifetime lifetime)
         {
             _lifetime = lifetime;
             _logger = logger;
-            _dataService = dataService;
         }
 
         [Command("throwex")]
         [Description("Throws a InvalidOperation .NET exception. For testing purposes.")]
-        public Task<ActionResult> Command_ThrowExceptionAsync([Name("Message")] [Description("The message for the exception.")] [Remainder] string message = "Test exception.")
+        public Task<AbyssResult> Command_ThrowExceptionAsync([Name("Message")] [Description("The message for the exception.")] [Remainder] string message = "Test exception.")
         {
             throw new InvalidOperationException(message);
         }
@@ -43,7 +41,7 @@ namespace Abyss
         [Command("hb")]
         [RunMode(RunMode.Parallel)]
         [Description("Evaluates and compiles a Handlebars template against the current execution context.")]
-        public ActionResult Command_HandlebarsEvaluate([Name("Template")] [Description("A Handlebars-compatible template.")] [Remainder]
+        public AbyssResult Command_HandlebarsEvaluate([Name("Template")] [Description("A Handlebars-compatible template.")] [Remainder]
             string script)
         {
             var handlebars = Handlebars.Create(new HandlebarsConfiguration { });
@@ -73,13 +71,13 @@ namespace Abyss
 
         [Command("announce")]
         [Description("Announces a message to a specified channel.")]
-        public async Task<ActionResult> Command_AnnounceAsync([Name("Channel")] [Description("The channel to send to.")]
+        public async Task<AbyssResult> Command_AnnounceAsync([Name("Channel")] [Description("The channel to send to.")]
             CachedTextChannel channel, [Name("Title")] [Description("The title of the announcement.")] string title,
             [Name("Message")] [Description("The message.")] [Remainder] string message)
         {
             return await channel.TrySendMessageAsync(string.Empty, false, 
                     new LocalEmbedBuilder()
-                    .WithColor(AbyssHostedService.DefaultEmbedColour)
+                    .WithColor(AbyssBot.DefaultEmbedColour)
                     .WithTitle(title)
                     .WithDescription(message)
                     .WithCurrentTimestamp()
@@ -90,7 +88,7 @@ namespace Abyss
         [Command("eval")]
         [RunMode(RunMode.Parallel)]
         [Description("Evaluates a piece of C# code.")]
-        public async Task<ActionResult> Command_EvaluateAsync(
+        public async Task<AbyssResult> Command_EvaluateAsync(
             [Name("Code")] [Description("The code to execute.")] [Remainder]
             string script)
         {
@@ -108,7 +106,7 @@ namespace Abyss
 
                     switch (result.ReturnValue)
                     {
-                        case ActionResult bresult:
+                        case AbyssResult bresult:
                             return bresult;
 
                         case string str:
@@ -218,7 +216,7 @@ namespace Abyss
         [Command("inspect")]
         [RunMode(RunMode.Parallel)]
         [Description("Evaluates and then inspects a type.")]
-        public Task<ActionResult> Command_InspectObjectAsync(
+        public Task<AbyssResult> Command_InspectObjectAsync(
             [Name("Object")] [Description("The object to inspect.")] [Remainder]
             string evaluateScript)
         {
@@ -229,7 +227,7 @@ namespace Abyss
         [Description("Stops the current bot process.")]
         [RunMode(RunMode.Parallel)]
         [BotOwnerOnly]
-        public async Task<ActionResult> Command_ShutdownAsync()
+        public async Task<AbyssResult> Command_ShutdownAsync()
         {
             await ReplyAsync($"Later.").ConfigureAwait(false);
             _logger.LogInformation($"Application terminated by user {Context.Invoker} (ID {Context.Invoker.Id})");
@@ -242,7 +240,7 @@ namespace Abyss
         [Command("edit")]
         [Description("Edits a message that was sent by me.")]
         [BotOwnerOnly]
-        public async Task<ActionResult> Command_EditAsync([Name("Message")] [Description("The message to edit.")]
+        public async Task<AbyssResult> Command_EditAsync([Name("Message")] [Description("The message to edit.")]
             Snowflake messageId, [Name("New Content")] [Description("The new content of the message.")] [Remainder] string newContent)
         {
             var channel = Context.Channel;
@@ -278,7 +276,7 @@ namespace Abyss
         [Description("Executes an executable on the host platform.")]
         [BotOwnerOnly]
         [RunMode(RunMode.Parallel)]
-        public async Task<ActionResult> Command_ExecuteAsync([Name("Executable")] [Description("The executable to run.")] string executable,
+        public async Task<AbyssResult> Command_ExecuteAsync([Name("Executable")] [Description("The executable to run.")] string executable,
             [Name("Arguments")] [Description("The arguments to provide.")] [Remainder] string? arguments = null)
         {
             using var process = new Process
@@ -302,24 +300,6 @@ namespace Abyss
             return Ok(c =>
             {
                 c.Description = new StringBuilder().AppendLine("Standard output:").AppendLine($"```{result}```").ToString();
-            });
-        }
-
-        [Command("info")]
-        [Description(
-            "Dumps current information about the client, the commands system and the current execution environment.")]
-        [BotOwnerOnly]
-        public Task<ActionResult> Command_SysInfoAsync()
-        {
-            var info = _dataService.GetServiceInfo();
-            return Ok(e =>
-            {
-                e.Author = Context.BotMember.ToEmbedAuthorBuilder();
-                e.Description = $"{info.ServiceName} instance running on {info.OperatingSystem} (runtime version {info.RuntimeVersion}), powering {info.Guilds} guilds ({info.Channels} channels, and {info.Users} users)";
-                e.AddField("Command statistics", $"{info.Modules} modules | {info.Commands} commands | {info.CommandSuccesses} successful calls | {info.CommandFailures} unsuccessful calls");
-                e.AddField("Process statistics", $"Process name {info.ProcessName} on machine name {info.MachineName} (thread {info.CurrentThreadId}, {info.ProcessorCount} processors)");
-                e.AddField("Content root", info.ContentRootPath);
-                e.AddField("Start time", info.StartTime.ToString("F"));
             });
         }
     }

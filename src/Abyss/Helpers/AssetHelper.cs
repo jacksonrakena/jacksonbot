@@ -2,12 +2,18 @@
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using System.IO;
+using System;
 
 namespace Abyss
 {
-    public static class ImageHelper
+    public static class AssetHelper
     {
-        public static MemoryStream CreateColourImage(Rgba32 colour, int width, int height)
+        public static string GetAssetLocation(string assetName)
+        {
+            return Path.Combine(AppContext.BaseDirectory, "Assets", assetName);
+        }
+
+        public static MemoryStream FillImageWithColor(Rgba32 colour, int width, int height)
         {
             var outStream = new MemoryStream();
 

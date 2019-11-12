@@ -1,5 +1,4 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -7,10 +6,12 @@ using System.Threading.Tasks;
 using Abyssal.Common;
 using Disqord;
 using Disqord.Bot;
+using Disqord.Events;
+using Disqord.Logging;
 using Humanizer;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Qmmands;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Abyss
 {
@@ -19,29 +20,73 @@ namespace Abyss
         public int CommandSuccesses { get; private set; }
         public int CommandFailures { get; private set; }
 
+        public const string ZeroWidthSpace = "​";
+        public static readonly Color DefaultEmbedColour = new Color(0xB2F7EF);
+
         private readonly ILogger _failedCommandsTracking;
         private readonly ILogger _successfulCommandsTracking;
+        private readonly ILogger _discordLogger;
+        private readonly ILogger<AbyssBot> _logger;
         private readonly HelpService _help;
+        private readonly AbyssConfig _config;
 
         internal readonly IServiceProvider Services;
 
         public override object GetService(Type serviceType) => Services.GetService(serviceType);
 
         public AbyssBot(AbyssConfig config, DiscordBotConfiguration botConfiguration, ILoggerFactory factory, IServiceProvider provider,
-            HelpService help) : base(TokenType.Bot, config.Connections.Discord.Token, botConfiguration)
+            HelpService help, ILogger<AbyssBot> logger) : base(TokenType.Bot, config.Connections.Discord.Token, botConfiguration)
         {
             Services = provider;
             _failedCommandsTracking = factory.CreateLogger("Failed Commands Tracking");
             _successfulCommandsTracking = factory.CreateLogger("Successful Commands Tracking");
+            _discordLogger = factory.CreateLogger("Discord");
+            _help = help;
+            _logger = logger;
+            _config = config;
+
             CommandExecuted += HandleCommandExecutedAsync;
             CommandExecutionFailed += HandleCommandExecutionFailedAsync;
-            _help = help;
-
             AddModules(Assembly.GetExecutingAssembly(), action: ProcessModule);
             AddArgumentParser(UnixArgumentParser.Instance);
+
+            Ready += Discord_Ready;
+            Logger.MessageLogged += DiscordClient_Log;
         }
 
-        public async Task HandleRuntimeExceptionAsync(AbyssRequestContext context, Exception exception, CommandExecutionStep step, string reason)
+        private void DiscordClient_Log(object? sender, MessageLoggedEventArgs arg) => _discordLogger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception, "[" + arg.Source + "] " + arg.Message);
+
+        private Task Discord_Ready(ReadyEventArgs e)
+        {
+            _logger.LogInformation($"Ready. Logged in as {CurrentUser} with command prefix \"{Prefixes[0]}\".");
+
+            var startupConfiguration = _config.Startup;
+            var activities = startupConfiguration.Activity.Select(a =>
+            {
+                if (!Enum.TryParse<ActivityType>(a.Type, out var activityType))
+                {
+                    throw new InvalidOperationException(
+                        $"{a.Type} is not a valid Discord activity type.\n" +
+                        $"Available options are: {string.Join(", ", typeof(ActivityType).GetEnumNames())}");
+                }
+
+                return (activityType, a.Message);
+            }).ToList();
+
+            _ = Task.Run(async () =>
+            {
+                while (true)
+                {
+                    var (activityType, message) = activities.Random();
+                    await SetPresenceAsync(UserStatus.Online, new LocalActivity(message, activityType, null));
+                    await Task.Delay(TimeSpan.FromMinutes(1));
+                }
+            });
+
+            return Task.CompletedTask;
+        }
+
+        public async Task HandleRuntimeExceptionAsync(AbyssCommandContext context, Exception exception, CommandExecutionStep step, string reason)
         {
             var command = context.Command;
             CommandFailures++;
@@ -74,15 +119,15 @@ namespace Abyss
             var result = args.Result;
             var ctx = args.Context;
             var command = ctx.Command;
-            var context = ctx.ToRequestContext();
+            var context = ctx.AsAbyssContext();
 
-            if (!(result is ActionResult baseResult))
+            if (!(result is AbyssResult baseResult))
             {
                 if (result == null)
                 {
                     _failedCommandsTracking.LogCritical(LoggingEventIds.CommandReturnedBadType, $"Command {command.Name} returned a null result type.");
-                } else _failedCommandsTracking.LogCritical(LoggingEventIds.CommandReturnedBadType, $"Command {command.Name} returned a result of type {result.GetType().Name} and not {typeof(ActionResult).Name}.");
-                await context.Channel.TrySendMessageAsync($"Man, this bot sucks. Command {command.Name} is broken, and will need to be recompiled. Try again later. (Developer: The command returned a type that isn't a {typeof(ActionResult).Name}.)");
+                } else _failedCommandsTracking.LogCritical(LoggingEventIds.CommandReturnedBadType, $"Command {command.Name} returned a result of type {result.GetType().Name} and not {typeof(AbyssResult).Name}.");
+                await context.Channel.TrySendMessageAsync($"Man, this bot sucks. Command {command.Name} is broken, and will need to be recompiled. Try again later. (Developer: The command returned a type that isn't a {typeof(AbyssResult).Name}.)");
                 return;
             }
 
@@ -112,12 +157,12 @@ namespace Abyss
 
         public Task HandleCommandExecutionFailedAsync(CommandExecutionFailedEventArgs e)
         {
-            return HandleRuntimeExceptionAsync(e.Context.ToRequestContext(), e.Result.Exception, e.Result.CommandExecutionStep, e.Result.Reason);
+            return HandleRuntimeExceptionAsync(e.Context.AsAbyssContext(), e.Result.Exception, e.Result.CommandExecutionStep, e.Result.Reason);
         }
 
         protected override async ValueTask AfterExecutedAsync(IResult result, DiscordCommandContext rawContext)
         {
-            var context = rawContext.ToRequestContext();
+            var context = rawContext.AsAbyssContext();
             if (result.IsSuccessful)
             {
                 if (!(result is SuccessfulResult)) CommandSuccesses++; // SuccessfulResult indicates a RunMode.Async
@@ -184,7 +229,7 @@ namespace Abyss
                     {
                         await context.Channel.SendMessageAsync(string.Empty, false, (await _help.CreateCommandEmbedAsync(apfr.Command, context))
                             .WithCurrentTimestamp()
-                            .WithColor(context.BotMember.GetHighestRoleColourOrDefault()).Build());
+                            .WithColor(context.BotMember.GetHighestRoleColourOrSystem()).Build());
                         break;
                     }
 
@@ -258,8 +303,8 @@ namespace Abyss
         // otherwise the command will return null. Strange.
         private async Task<CommandResult> CreateGroupRootBuilder(CommandContext c)
         {
-            var embed = await HelpService.CreateGroupEmbedAsync(c.ToRequestContext(), c.Command.Module);
-            return AbyssModuleBase.Ok(c.ToRequestContext(), embed);
+            var embed = await HelpService.CreateGroupEmbedAsync(c.AsAbyssContext(), c.Command.Module);
+            return AbyssModuleBase.Ok(c.AsAbyssContext(), embed);
         }
 
         protected override async ValueTask<bool> BeforeExecutedAsync(CachedUserMessage message)
@@ -270,7 +315,7 @@ namespace Abyss
 
         protected override ValueTask<DiscordCommandContext> GetCommandContextAsync(CachedUserMessage message, string prefix)
         {
-            return new ValueTask<DiscordCommandContext>(new AbyssRequestContext(this, message, prefix));
+            return new ValueTask<DiscordCommandContext>(new AbyssCommandContext(this, message, prefix));
         }
     }
 }

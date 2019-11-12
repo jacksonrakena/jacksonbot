@@ -36,17 +36,18 @@ namespace Abyss
                     [typeof(CachedMember)] = ("A server member.", "A list of server members.", null),
                     [typeof(CachedTextChannel)] = ("A server channel.", "A list of server channels.", null),
                     [typeof(CachedUser)] = ("A Discord user.", "A list of Discord users.", null),
+                    [typeof(LocalCustomEmoji)] = ("An emoji.", "A list of emojis.", null),
                     [typeof(string[])] = ("A list of words. Surround options with quotes.", "", null)
                 }.ToImmutableDictionary();
 
-        public static async Task<bool> CanShowCommandAsync(AbyssRequestContext context, Command command)
+        public static async Task<bool> CanShowCommandAsync(AbyssCommandContext context, Command command)
         {
             if (!(await command.RunChecksAsync(context).ConfigureAwait(false)).IsSuccessful)
                 return false;
             return !command.GetType().HasCustomAttribute<HiddenAttribute>();
         }
 
-        public static async Task<bool> CanShowModuleAsync(AbyssRequestContext context, Qmmands.Module module)
+        public static async Task<bool> CanShowModuleAsync(AbyssCommandContext context, Qmmands.Module module)
         {
             if (!(await module.RunChecksAsync(context).ConfigureAwait(false)).IsSuccessful)
                 return false;
@@ -59,7 +60,7 @@ namespace Abyss
             return firstAlias != null ? Markdown.Bold(Markdown.Code(firstAlias)) : null;
         }
 
-        public static async Task<LocalEmbedBuilder> CreateGroupEmbedAsync(AbyssRequestContext context, Qmmands.Module group)
+        public static async Task<LocalEmbedBuilder> CreateGroupEmbedAsync(AbyssCommandContext context, Qmmands.Module group)
         {
             var embed0 = new LocalEmbedBuilder
             {
@@ -126,7 +127,7 @@ namespace Abyss
             return type.Name;
         }
 
-        public async Task<LocalEmbedBuilder> CreateCommandEmbedAsync(Command command, AbyssRequestContext context)
+        public async Task<LocalEmbedBuilder> CreateCommandEmbedAsync(Command command, AbyssCommandContext context)
         {
             var prefix = context.Prefix;
 
@@ -174,13 +175,41 @@ namespace Abyss
             return embed;
         }
 
-        private async Task<string> FormatCheck(CheckAttribute cba, AbyssRequestContext context)
+        private async Task<string> FormatCheck(CheckAttribute cba, AbyssCommandContext context)
         {
             var message = GetCheckFriendlyMessage(context, cba);
             return $"- {((await cba.CheckAsync(context).ConfigureAwait(false)).IsSuccessful ? _config.Emotes.YesEmote : _config.Emotes.NoEmote)} {message}";
         }
 
-        public static string GetCheckFriendlyMessage(AbyssRequestContext context, CheckAttribute cba)
+        public static string GetParameterCheckFriendlyMessage(AbyssCommandContext context, ParameterCheckAttribute pca)
+        {
+            if (pca is IAbyssCheck iac) return iac.GetDescription(context);
+            string? message = null;
+            switch (pca)
+            {
+                case RangeAttribute ra:
+                    message = $"The value must be between {ra.Minimum} ({(ra.IsMinimumInclusive ? "inclusive" : "exclusive")}) and {ra.Maximum} ({(ra.IsMaximumInclusive ? "inclusive" : "exclusive")}).";
+                    break;
+                case MaximumAttribute max:
+                    message = $"The value has a maximum length/value of {max.Maximum}.";
+                    break;
+                case MinimumAttribute min:
+                    message = $"The value has a minimum length/value of {min.Minimum}.";
+                    break;
+                case StartsWithAttribute swa:
+                    message = $"The value must start with '{swa.Value}'.";
+                    break;
+                case EndsWithAttribute ewa:
+                    message = $"The value must end with '{ewa.Value}'.";
+                    break;
+                case ContainsAttribute ca:
+                    message = $"The value must contain '{ca.Value}'.";
+                    break;
+            }
+            return message ?? pca.GetType().Name;
+        }
+
+        public static string GetCheckFriendlyMessage(AbyssCommandContext context, CheckAttribute cba)
         {
             if (cba is IAbyssCheck iac) return iac.GetDescription(context);
 
@@ -229,11 +258,10 @@ namespace Abyss
                     break;
             }
 
-            if (message != null) return message;
-            return cba.GetType().Name;
+            return message ?? cba.GetType().Name;
         }
 
-        private static string FormatParameter(AbyssRequestContext ctx, Parameter parameterInfo)
+        private static string FormatParameter(AbyssCommandContext ctx, Parameter parameterInfo)
         {
             var type = GetFriendlyName(parameterInfo, ctx.Command.Service);
 
@@ -241,7 +269,7 @@ namespace Abyss
                 $"`{parameterInfo.Name}`: {type}{(parameterInfo.IsOptional ? " Optional." : "")}{FormatParameterTags(ctx, parameterInfo)}";
         }
 
-        private static string FormatParameterTags(AbyssRequestContext ctx, Parameter parameterInfo)
+        private static string FormatParameterTags(AbyssCommandContext ctx, Parameter parameterInfo)
         {
             var sb = new StringBuilder();
 
@@ -265,9 +293,9 @@ namespace Abyss
                     sb.AppendLine(" - Default: None");
             }
 
-            foreach (var check in parameterInfo.Checks.OfType<IAbyssCheck>())
+            foreach (var check in parameterInfo.Checks)
             {
-                sb.AppendLine(" - " + check.GetDescription(ctx));
+                sb.AppendLine(" - " + GetParameterCheckFriendlyMessage(ctx, check));
             }
 
             return sb.ToString();

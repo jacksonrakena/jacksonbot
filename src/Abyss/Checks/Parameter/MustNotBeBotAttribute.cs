@@ -16,12 +16,12 @@ namespace Abyss
             if (argument == null) return CheckResult.Successful;
             var id = argument is CachedUser user ? user.Id : argument is Snowflake dur ? dur : throw new InvalidOperationException($"{nameof(MustNotBeBotAttribute)} is being executed on an invalid object type.");
 
-            return id == context.ToRequestContext().Bot.CurrentUser.Id
+            return id == context.AsAbyssContext().Bot.CurrentUser.Id
                 ? new CheckResult("The provided user can't be me.")
                 : CheckResult.Successful;
         }
 
-        public string GetDescription(AbyssRequestContext requestContext) => "The provided user can't be me.";
+        public string GetDescription(AbyssCommandContext requestContext) => "The provided user can't be me.";
 
         /// <summary>
         ///     Initialises a new <see cref="MustNotBeBotAttribute"/>.

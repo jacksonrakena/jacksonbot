@@ -1,8 +1,6 @@
 ﻿using Disqord;
-using Humanizer;
+using Disqord.Events;
 using System;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Abyss
@@ -19,9 +17,13 @@ namespace Abyss
             _notifyConfig = config.Notifications;
             _emotes = config.Emotes;
             _abyss = abyss;
+
+            _abyss.Ready += NotifyReadyAsync;
+            _abyss.JoinedGuild += GuildJoined;
+            _abyss.LeftGuild += GuildLeft;
         }
 
-        public async Task NotifyReadyAsync()
+        public async Task NotifyReadyAsync(ReadyEventArgs args)
         {
             if (_notifyConfig?.Ready == null) return;
             var ch = _abyss.GetChannel(_notifyConfig.Ready.Value);
@@ -30,7 +32,7 @@ namespace Abyss
             var message = $"{CurrentDateTime} {_emotes.OnlineEmote} **{_abyss.CurrentUser.Name}** is ready. " +
             $"Connected to {_abyss.Guilds.Count} servers.";
 
-            await stc.SendMessageAsync(message);
+            await stc.SendMessageAsync(message).ConfigureAwait(false);
         }
 
         public async Task NotifyStoppingAsync()
@@ -45,6 +47,9 @@ namespace Abyss
             await stc.SendMessageAsync(message);
             return;
         }
+
+        private Task GuildJoined(JoinedGuildEventArgs e) => NotifyServerMembershipChangeAsync(e.Guild, true);
+        private Task GuildLeft(LeftGuildEventArgs e) => NotifyServerMembershipChangeAsync(e.Guild, false);
 
         public async Task NotifyServerMembershipChangeAsync(CachedGuild arg, bool botIsJoining)
         {

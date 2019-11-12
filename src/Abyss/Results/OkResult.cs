@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Abyss
 {
-    public class OkResult : ActionResult
+    public class OkResult : AbyssResult
     {
         public OkResult(string? text, params LocalAttachment[] attachments)
         {
@@ -28,7 +28,7 @@ namespace Abyss
         private LocalEmbedBuilder? Embed { get; }
         private LocalAttachment[] Attachments { get; }
 
-        public override async Task ExecuteResultAsync(AbyssRequestContext context)
+        public override async Task ExecuteResultAsync(AbyssCommandContext context)
         {
             if (!context.BotMember.GetPermissionsFor(context.Channel).SendMessages) return;
             if (Attachments.Length > 0 && !context.BotMember.GetPermissionsFor(context.Channel).AttachFiles) return;

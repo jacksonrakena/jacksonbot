@@ -13,12 +13,12 @@ namespace Abyss
         ///     a <see cref="InvalidCastException"/> will be thrown.
         /// </summary>
         /// <param name="context">The context to convert.</param>
-        /// <returns>The context as a <see cref="AbyssRequestContext"/>, or an exception will be thrown.</returns>
-        public static AbyssRequestContext ToRequestContext(this CommandContext context)
+        /// <returns>The context as a <see cref="AbyssCommandContext"/>, or an exception will be thrown.</returns>
+        public static AbyssCommandContext AsAbyssContext(this CommandContext context)
         {
-            return context is AbyssRequestContext requestContext
+            return context is AbyssCommandContext requestContext
                 ? requestContext
-                : throw new InvalidCastException($"Received a context that's not of type {nameof(AbyssRequestContext)}. (Type: {context.GetType().Name})");
+                : throw new InvalidCastException($"Received a context that's not of type {nameof(AbyssCommandContext)}. (Type: {context.GetType().Name})");
         }
     }
 }

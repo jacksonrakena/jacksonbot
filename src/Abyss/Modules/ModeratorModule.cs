@@ -26,7 +26,7 @@ namespace Abyss
         [Remarks("You can provide `clear` to remove their current nickname (if any).")]
         [RequireBotGuildPermissions(Permission.ManageNicknames)]
         [RequireMemberChannelPermissions(Permission.ManageNicknames)]
-        public async Task<ActionResult> Command_SetNicknameAsync(
+        public async Task<AbyssResult> Command_SetNicknameAsync(
             [Name("Target")] [Description("The user you would like me to change username of.")] CachedMember target,
             [Description("The nickname to set to. Omit to remove the current one (if set).")] [Name("New Nickname")] [Remainder]
             string? nickname = null)
@@ -53,7 +53,7 @@ namespace Abyss
         [Description("Bans a member from this server.")]
         [RequireMemberGuildPermissions(Permission.BanMembers)]
         [RequireBotGuildPermissions(Permission.BanMembers)]
-        public async Task<ActionResult> BanUserAsync(
+        public async Task<AbyssResult> BanUserAsync(
             [Name("Victim")] [Description("The user to ban.")] [MustNotBeBot] [MustNotBeInvoker]
             CachedMember target,
             [Name("Ban Reason")] [Description("The audit log reason for the ban.")] [Remainder] [Maximum(50)]
@@ -81,7 +81,7 @@ namespace Abyss
         [Description("Kicks a member.")]
         [RequireMemberGuildPermissions(Permission.KickMembers)]
         [RequireBotGuildPermissions(Permission.KickMembers)]
-        public async Task<ActionResult> Command_KickUserAsync(
+        public async Task<AbyssResult> Command_KickUserAsync(
             [Name("Target")] [Description("The user to kick.")] [MustNotBeBot] [MustNotBeInvoker] CachedMember target,
             [Name("Reason")] [Maximum(50)] [Remainder] [Description("The kick reason.")] string? reason = null)
         {
@@ -97,7 +97,7 @@ namespace Abyss
         [Description("Bans a user who is not in this server.")]
         [RequireMemberGuildPermissions(Permission.BanMembers)]
         [RequireBotGuildPermissions(Permission.BanMembers)]
-        public async Task<ActionResult> Command_HackBanUserAsync(
+        public async Task<AbyssResult> Command_HackBanUserAsync(
             [Name("Victim")] [Description("The user to ban.")] [MustNotBeBot] [MustNotBeInvoker]
             Snowflake target,
             [Name("Ban Reason")] [Description("The audit log reason for the ban.")] [Remainder] [Maximum(50)]
@@ -126,7 +126,7 @@ namespace Abyss
         [Description("Shows a list of all users banned in this server.")]
         [RequireBotGuildPermissions(Permission.BanMembers)]
         [RequireMemberGuildPermissions(Permission.BanMembers)]
-        public async Task<ActionResult> Command_GetBansListAsync()
+        public async Task<AbyssResult> Command_GetBansListAsync()
         {
             var bans = await Context.Guild.GetBansAsync().ConfigureAwait(false);
 
@@ -143,7 +143,7 @@ namespace Abyss
         [Description("Bans and then unbans a user from this server, effectively kicking them, but removes all their messages.")]
         [RequireMemberGuildPermissions(Permission.KickMembers)]
         [RequireBotGuildPermissions(Permission.BanMembers)]
-        public async Task<ActionResult> Command_SoftbanAsync([Name("Target")] [Description("The user to softban.")] [MustNotBeBot, MustNotBeInvoker] CachedMember user)
+        public async Task<AbyssResult> Command_SoftbanAsync([Name("Target")] [Description("The user to softban.")] [MustNotBeBot, MustNotBeInvoker] CachedMember user)
         {
             if (user.Hierarchy > Context.Invoker.Hierarchy) return BadRequest("That member is a higher rank than you!");
 
@@ -168,7 +168,7 @@ namespace Abyss
         [RequireMemberGuildPermissions(Permission.ManageMessages)]
         [RequireBotGuildPermissions(Permission.ManageMessages)]
         [OverrideArgumentParser(typeof(UnixArgumentParser))]
-        public async Task<ActionResult> Command_ClearAllAsync(
+        public async Task<AbyssResult> Command_ClearAllAsync(
             [Name("Count")] [Description("The number of messages to delete.")] [Range(1, 100, true, true)]
             int count = 100,
             [Name("User")] [Description("The user to target.")]

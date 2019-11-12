@@ -29,7 +29,7 @@ namespace Abyss
         [Command("otp")]
         [Description("One True Pairing: Ships two random members of this server.")]
         [RunMode(RunMode.Parallel)]
-        public Task<ActionResult> Command_OtpAsync()
+        public Task<AbyssResult> Command_OtpAsync()
         {
             try
             {
@@ -54,7 +54,7 @@ namespace Abyss
         [Command("roll", "dice")]
         [Remarks("This command also supports complex dice types, like `d20+d18+4`.")]
         [Description("Rolls a dice of the supplied size.")]
-        public Task<ActionResult> Command_DiceRollAsync(
+        public Task<AbyssResult> Command_DiceRollAsync(
             [Name("Dice")]
             [Description("The dice configuration to use. It can be simple, like `6`, or complex, like `d20+d18+4`.")]
             string dice, [Name("Number of Dice")]
@@ -88,8 +88,7 @@ namespace Abyss
 
         [Command("is")]
         [Description("Determines if a user has a specific attribute.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontAttachTimestamp | ResponseFormatOptions.DontAttachFooter)]
-        public Task<ActionResult> IsUserAsync(CachedMember target, [Remainder] string attribute)
+        public Task<AbyssResult> IsUserAsync(CachedMember target, [Remainder] string attribute)
         {
             var @is = _random.Next(0, 2) == 1;
             attribute = attribute.Replace("?", ".");
@@ -102,8 +101,7 @@ namespace Abyss
 
         [Command("does")]
         [Description("Determines if a user does something, or has an attribute.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontAttachTimestamp | ResponseFormatOptions.DontAttachFooter)]
-        public Task<ActionResult> DoesUserAsync(CachedMember target, [Remainder] string attribute)
+        public Task<AbyssResult> DoesUserAsync(CachedMember target, [Remainder] string attribute)
         {
             var does = _random.Next(0, 2) == 1;
             attribute = attribute.Replace("?", ".");
@@ -116,8 +114,7 @@ namespace Abyss
 
         [Command("choose")]
         [Description("Picks an option out of a list.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontAttachTimestamp | ResponseFormatOptions.DontAttachFooter)]
-        public Task<ActionResult> Command_PickOptionAsync(
+        public Task<AbyssResult> Command_PickOptionAsync(
             [Name("Options")] [Description("The options to choose from.")]
             params string[] options)
         {

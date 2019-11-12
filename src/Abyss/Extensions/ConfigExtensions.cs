@@ -13,7 +13,7 @@ namespace Abyss
         /// <param name="emoteSection">The config emote section which contains the status emojis.</param>
         /// <param name="status">The status to convert.</param>
         /// <returns>A string which represents the emoji for the status, or the offline emoji if the user status is invalid.</returns>
-        public static string GetEmoteFromActivity(this AbyssConfigEmoteSection emoteSection, UserStatus status)
+        public static string GetStatusEmote(this AbyssConfigEmoteSection emoteSection, UserStatus status)
         {
             return status switch
             {

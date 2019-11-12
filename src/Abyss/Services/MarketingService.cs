@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Disqord.Events;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -20,9 +21,10 @@ namespace Abyss
             _abyss = bot;
             _config = config;
             _logger = logger;
+            _abyss.Ready += UpdateAllBotListsAsync;
         }
 
-        public Task UpdateAllBotListsAsync()
+        public Task UpdateAllBotListsAsync(ReadyEventArgs args)
         {
             return Task.WhenAll(UpdateDiscordBotListDotComAsync(), UpdateDiscordBoatsAsync(), UpdateDiscordBotsListAsync());
         }

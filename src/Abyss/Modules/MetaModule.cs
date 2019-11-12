@@ -30,7 +30,7 @@ namespace Abyss
 
         [Command("uptime")]
         [Description("Displays the time that this bot process has been running.")]
-        public Task<ActionResult> Command_GetUptimeAsync()
+        public Task<AbyssResult> Command_GetUptimeAsync()
         {
             return Ok($"**Uptime:** {(DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize(20)}");
         }
@@ -38,7 +38,7 @@ namespace Abyss
         [Command("version")]
         [RunMode(RunMode.Parallel)]
         [Description("Provides some detailed information about the current version.")]
-        public Task<ActionResult> Command_GetVersionInfoAsync()
+        public Task<AbyssResult> Command_GetVersionInfoAsync()
         {
             var dotnetVersion =
                 Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ??
@@ -66,7 +66,7 @@ namespace Abyss
         [Command("info", "about")]
         [RunMode(RunMode.Parallel)]
         [Description("Shows some information about me.")]
-        public async Task<ActionResult> Command_GetAbyssInfoAsync()
+        public async Task<AbyssResult> Command_GetAbyssInfoAsync()
         {
             var app = await Context.Bot.GetCurrentApplicationAsync().ConfigureAwait(false);
             var response = new LocalEmbedBuilder
@@ -92,7 +92,7 @@ namespace Abyss
         [Command("feedback")]
         [Description("Sends feedback to the developer.")]
         [AbyssCooldown(1, 24, CooldownMeasure.Hours, CooldownType.User)]
-        public Task<ActionResult> Command_SendFeedbackAsync([Remainder] [Range(1, 500)] string feedback)
+        public Task<AbyssResult> Command_SendFeedbackAsync([Remainder] [Range(1, 500)] string feedback)
         {
             if (_config.Notifications.Feedback == null || !(_bot.GetChannel(_config.Notifications.Feedback.Value) is CachedTextChannel stc))
                 return BadRequest("Feedback has been disabled for this bot.");
@@ -105,14 +105,14 @@ namespace Abyss
 
         [Command("prefix")]
         [Description("Shows the prefix.")]
-        public Task<ActionResult> ViewPrefixesAsync()
+        public Task<AbyssResult> ViewPrefixesAsync()
         {
             return Ok($"The prefix is `{Context.Prefix}`, but you can invoke commands by mention as well, such as: \"{Context.BotMember.Mention} help\".");
         }
 
         [Command("hasperm")]
         [Description("Checks if I have a permission accepted.")]
-        public Task<ActionResult> Command_HasPermissionAsync(
+        public Task<AbyssResult> Command_HasPermissionAsync(
             [Name("Permission")] [Remainder] [Description("The permission to check for.")]
             string permission)
         {
@@ -136,7 +136,7 @@ namespace Abyss
 
         [Command("invite")]
         [Description("Creates an invite to add me to another server.")]
-        public Task<ActionResult> Command_GetInviteAsync()
+        public Task<AbyssResult> Command_GetInviteAsync()
         {
             return Ok($"You can add me using this link: <https://discordapp.com/api/oauth2/authorize?client_id={Context.Bot.CurrentUser.Id}&permissions=0&scope=bot>");
         }
