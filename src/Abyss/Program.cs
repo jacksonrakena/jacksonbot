@@ -89,7 +89,8 @@ namespace Abyss
                         }),
                         Prefixes = new List<string> { cfg.CommandPrefix },
                         // message cache default 100
-                        ProviderFactory = bot => ((AbyssBot)bot).Services
+                        ProviderFactory = bot => ((AbyssBot)bot).Services,
+                        GuildSubscriptions = false
                     };
                 })
                 .AddSingleton<AbyssBot>()

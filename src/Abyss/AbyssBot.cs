@@ -87,12 +87,6 @@ namespace Abyss
                 }
             });
 
-            foreach (var guild in Guilds)
-            {
-                Console.WriteLine(guild.Key + " " + (guild.Value.Name ?? "<NAME WAS NULL>"));
-            }
-            Console.WriteLine(Guilds.Count);
-
             return Task.CompletedTask;
         }
 
