@@ -114,7 +114,7 @@ namespace Abyss
             var message = await Context.Channel.GetMessageAsync(messageId).ConfigureAwait(false);
             if (message == null) return BadRequest("Couldn't find the message.");
             var success = await message.TryDeleteAsync(RestRequestOptions.FromReason($"Requested by {Context.Invoker} at {DateTime.UtcNow.ToUniversalTime():F}"));
-            if (success && !silent) return Ok();
+            if (success && !silent) return SuccessReply();
             else if (success) return Empty();
             else return BadRequest("Failed to delete message.");
         }

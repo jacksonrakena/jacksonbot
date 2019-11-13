@@ -264,7 +264,7 @@ namespace Abyss
                 {
                     await msg.ModifyAsync(v => v.Content = newContent);
                 }
-                return OkReaction();
+                return SuccessReaction();
             }
             catch (Exception)
             {

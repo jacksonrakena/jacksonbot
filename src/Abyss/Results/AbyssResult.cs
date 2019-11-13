@@ -13,7 +13,7 @@ namespace Abyss
         /// </summary>
         /// <param name="context">The context of the invocation of which this result was returned.</param>
         /// <returns>A Task representing the asynchronous execution operation.</returns>
-        public abstract Task ExecuteResultAsync(AbyssCommandContext context);
+        public abstract Task<bool> ExecuteResultAsync(AbyssCommandContext context);
 
         public static implicit operator Task<AbyssResult>(AbyssResult res)
         {

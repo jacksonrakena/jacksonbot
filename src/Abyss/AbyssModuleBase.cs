@@ -1,5 +1,4 @@
-﻿using Abyssal.Common;
-using Qmmands;
+﻿using Qmmands;
 using Disqord;
 using System;
 using System.Threading.Tasks;
@@ -16,39 +15,20 @@ namespace Abyss
         public ILoggerFactory LoggerFactory { get; set; }
         #pragma warning restore
         
-        public ILogger Logger => LoggerFactory.CreateLogger(GetType().Name);
+        protected ILogger Logger => LoggerFactory.CreateLogger(GetType().Name);
 
-
-        /// <summary>
-        ///     Sends a message to the context channel.
-        /// </summary>
-        /// <param name="content">The string context of the message.</param>
-        /// <param name="embed">The embed of the message.</param>
-        /// <param name="options">Request options.</param>
-        /// <returns>A Task representing the asynchronous message create call.</returns>
         public Task ReplyAsync(string? content = null, LocalEmbedBuilder? embed = null,
             RestRequestOptions? options = null)
         {
             return Context.ReplyAsync(content, embed, options);
         }
 
-        /// <summary>
-        ///     Returns an <see cref="AbyssResult"/> that represents sending an attachment to the channel.
-        /// </summary>
-        /// <param name="attachments">The attachments to send.</param>
-        /// <returns>An <see cref="AbyssResult"/> that represents sending the specified attachments to the context channel.</returns>
         public static AbyssResult Attachment(params LocalAttachment[] attachments)
         {
-            return new OkResult((string?) null, attachments);
+            return new ContentResult((string?) null, attachments: attachments);
         }
 
-        /// <summary>
-        ///     Returns an <see cref="AbyssResult"/> that represents sending an image with a URL to the channel.
-        /// </summary>
-        /// <param name="title">The (optional) title to send with the image.</param>
-        /// <param name="imageUrl">The image URL.</param>
-        /// <returns>An <see cref="AbyssResult"/> that represents sending the specified image to the context channel.</returns>
-        public AbyssResult Image(string? title, string imageUrl)
+        public static AbyssResult Image(string? title, string imageUrl)
         {
             return Ok(e =>
             {
@@ -57,52 +37,24 @@ namespace Abyss
             });
         }
 
-        /// <summary>
-        ///     Returns an <see cref="AbyssResult"/> that represents replying with the OK Hand emoji.
-        /// </summary>
-        /// <returns>A <see cref="ReplySuccessResult"/> that represents sending the "OK Hand" emoji to the context channel.</returns>
-        public static ReplySuccessResult Ok() => new ReplySuccessResult();
+        public static ReplySuccessResult SuccessReply() => new ReplySuccessResult();
 
-        /// <summary>
-        ///     Returns an <see cref="AbyssResult"/> that represents reacting to the invocation message with the OK Hand emoji.
-        /// </summary>
-        /// <returns>A <see cref="ReactSuccessResult"/> that represents reacting to the invocation message with the OK Hand emoji.</returns>
-        public static ReactSuccessResult OkReaction() => new ReactSuccessResult();
+        public static ReactSuccessResult SuccessReaction() => new ReactSuccessResult();
 
-        /// <summary>
-        ///     Represents an <see cref="AbyssResult"/> that represents replying to the invocation message with the specified text and attachments.
-        /// </summary>
-        /// <param name="content">The string message to send.</param>
-        /// <param name="attachments">The attachments to send.</param>
-        /// <returns>An <see cref="OkResult"/> that represents replying to the invocation message with the specified text and attachments.</returns>
-        public AbyssResult Ok(string content, params LocalAttachment[] attachments)
+        public static AbyssResult Ok(string content, Action<ContentResultOptions>? resultOptions = null, params LocalAttachment[] attachments)
         {
-            return new OkResult(content, attachments);
+            return new ContentResult(content, resultOptions, attachments);
         }
 
         /// <summary>
         ///     Returns an <see cref="AbyssResult"/> that represents replying to a context with the specified embed and attachments.
         /// </summary>
-        /// <param name="context">The context to reply to.</param>
         /// <param name="builder">The embed builder to send.</param>
         /// <param name="attachments">The attachments to send.</param>
         /// <returns>An <see cref="AbyssResult"/> that represents replying to the specified context with the specified embed and attachments.</returns>
-        public static AbyssResult Ok(AbyssCommandContext context, LocalEmbedBuilder builder, params LocalAttachment[] attachments)
+        public static AbyssResult Ok(LocalEmbedBuilder builder, Action<ContentResultOptions>? resultOptions = null, params LocalAttachment[] attachments)
         {
-            if (builder.Footer != null) builder.WithRequesterFooter(context);
-            if (builder.Timestamp != null) builder.WithTimestamp(DateTimeOffset.Now);
-            return new OkResult(builder.WithColor(context.BotMember.GetHighestRoleColourOrSystem()), attachments);
-        }
-
-        /// <summary>
-        ///     Returns an <see cref="AbyssResult"/> that represents replying to the invocation context with the specified embed and attachments.
-        /// </summary>
-        /// <param name="builder">The embed builder to send.</param>
-        /// <param name="attachments">The attachments to send.</param>
-        /// <returns>An <see cref="AbyssResult"/> that represents replying to the specified context with the specified embed and attachments.</returns>
-        public AbyssResult Ok(LocalEmbedBuilder builder, params LocalAttachment[] attachments)
-        {
-            return Ok(Context, builder, attachments);
+            return new ContentResult(builder, resultOptions, attachments);
         }
 
         /// <summary>
@@ -111,11 +63,11 @@ namespace Abyss
         /// <param name="actor">An actor which mutates the embed to send.</param>
         /// <param name="attachments">The attachments to send.</param>
         /// <returns>An <see cref="AbyssResult"/> that represents replying to the specified context with the specified embed and attachments.</returns>
-        public AbyssResult Ok(Action<LocalEmbedBuilder> actor, params LocalAttachment[] attachments)
+        public static AbyssResult Ok(Action<LocalEmbedBuilder> actor, Action<ContentResultOptions>? resultOptions = null, params LocalAttachment[] attachments)
         {
             var eb = new LocalEmbedBuilder();
             actor(eb);
-            return Ok(eb, attachments);
+            return Ok(eb, resultOptions, attachments);
         }
 
         /// <summary>

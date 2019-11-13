@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Disqord;
 
 namespace Abyss
@@ -7,9 +8,18 @@ namespace Abyss
     {
         public override bool IsSuccessful => true;
 
-        public override Task ExecuteResultAsync(AbyssCommandContext context)
+        public override async Task<bool> ExecuteResultAsync(AbyssCommandContext context)
         {
-            return context.Message.AddReactionAsync(new LocalEmoji("👌"));
+            if (!context.BotMember.GetPermissionsFor(context.Channel).AddReactions)
+                return false;
+            try
+            {
+                await context.Message.AddReactionAsync(new LocalEmoji("👌"));
+                return true;
+            } catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

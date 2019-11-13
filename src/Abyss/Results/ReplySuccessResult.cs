@@ -6,9 +6,9 @@ namespace Abyss
     {
         public override bool IsSuccessful => true;
 
-        public override Task ExecuteResultAsync(AbyssCommandContext context)
+        public override Task<bool> ExecuteResultAsync(AbyssCommandContext context)
         {
-            return context.ReplyAsync(":ok_hand:");
+            return context.Channel.TrySendMessageAsync(":ok_hand:");
         }
     }
 }

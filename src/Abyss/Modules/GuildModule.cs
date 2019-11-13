@@ -26,12 +26,19 @@ namespace Abyss
                     Name = "Server " + Context.Guild.Name,
                     IconUrl = Context.Guild.GetIconUrl()
                 },
-                ThumbnailUrl = Context.Guild.GetIconUrl()
+                ThumbnailUrl = Context.Guild.GetIconUrl(),
+                // broke atm Description = Context.Guild.Emojis.Count > 0 ? "Emojis: " + string.Join(" ", Context.Guild.Emojis.Values.Select(c => c.MessageFormat)) : string.Empty
             };
             embed.AddField("Owner", Context.Guild.Owner.ToString(), true);
-            embed.AddField("Created", FormatHelper.FormatTime(Context.Guild.Id.CreatedAt));
+            embed.AddField("Created", FormatHelper.FormatTime(Context.Guild.Id.CreatedAt), true);
+            embed.AddField("Abyss added", FormatHelper.FormatTime(Context.BotMember.JoinedAt), true);
             embed.AddField("Text Channels", Context.Guild.TextChannels.Count, true);
             embed.AddField("Voice Channels", Context.Guild.VoiceChannels.Count, true);
+            embed.AddField("Roles", Context.Guild.Roles.Count, true);
+            embed.AddField("Chat Moderators", Context.Guild.Members.Values.Count(c => c.Permissions.ManageMessages), true);
+            embed.AddField("Moderators", Context.Guild.Members.Values.Count(c => c.Permissions.BanMembers), true);
+            embed.AddField("Server Managers", Context.Guild.Members.Values.Count(c => c.Permissions.ManageGuild), true);
+            embed.AddField("Boost Status", $"{Context.Guild.BoostingMemberCount} boosters at {Context.Guild.BoostTier} Level", true);
 
             return Ok(embed);
         }

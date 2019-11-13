@@ -13,19 +13,21 @@ namespace Abyss
     public static class DiscordExtensions
     {
         /// <summary>
-        ///     Attempts to send a message to the specified message channel.
+        ///     Attempts to send a message to the specified messageable entity.
         /// </summary>
-        /// <param name="messageChannel">The channel to send to.</param>
+        /// <param name="messageChannel">The entity to send the message to.</param>
         /// <param name="message">The string content to send.</param>
         /// <param name="isTts">Whether this message is Text-To-Speech enabled.</param>
         /// <param name="embed">The embed to send.</param>
         /// <param name="options">Options for this REST request.</param>
         /// <returns>A Task representing whether the asynchronous message create call succeeded.</returns>
-        public static async Task<bool> TrySendMessageAsync(this IMessageChannel messageChannel, string? message = null, bool isTts = false, LocalEmbed? embed = null, RestRequestOptions? options = null)
+        public static async Task<bool> TrySendMessageAsync(this IMessagable messageChannel, string? message = null, bool isTts = false, LocalEmbed? embed = null, RestRequestOptions? options = null, params LocalAttachment[] attachments)
         {
             try
             {
-                await messageChannel.SendMessageAsync(message, isTts, embed, options);
+                await (attachments.Length > 0
+                    ? messageChannel.SendMessageAsync(attachments, message, isTts, embed, options)
+                    : messageChannel.SendMessageAsync(message, isTts, embed, options));
                 return true;
             }
             catch (Exception)

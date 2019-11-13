@@ -37,7 +37,7 @@ namespace Abyss
             try
             {
                 await target.ModifyAsync(a => a.Nick = (nickname == null || nickname == "clear") ? null : nickname, RestRequestOptions.FromReason($"Action performed by {Context.Invoker}")).ConfigureAwait(false);
-                return OkReaction();
+                return SuccessReaction();
             }
             catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.Forbidden)
             {

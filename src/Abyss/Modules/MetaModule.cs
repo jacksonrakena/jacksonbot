@@ -71,20 +71,24 @@ namespace Abyss
             var app = await Context.Bot.GetCurrentApplicationAsync().ConfigureAwait(false);
             var response = new LocalEmbedBuilder
             {
-                ThumbnailUrl = Context.Bot.CurrentUser.GetAvatarUrl(),
-                Description = string.IsNullOrEmpty(app.Description) ? "None" : app.Description,
+                Description = string.IsNullOrEmpty(app.Description) ? "Thank you for using Abyss. Here's a little information about me." : app.Description,
                 Author = new LocalEmbedAuthorBuilder
                 {
-                    Name = $"Information about Abyss",
+                    Name = $"Abyss!",
                     IconUrl = Context.Bot.CurrentUser.GetAvatarUrl()
                 }
             };
 
+            var uptime0 = DateTime.Now - Process.GetCurrentProcess().StartTime;
+            var uptime = new TimeSpan(uptime0.Days, uptime0.Hours, uptime0.Minutes, uptime0.Seconds);
+
             response
-                .AddField("Uptime", DateTime.Now - Process.GetCurrentProcess().StartTime)
+                .AddField("Uptime", uptime, true)
                 .AddField("Commands", _commandService.GetAllCommands().Count(), true)
                 .AddField("Modules", _commandService.GetAllModules().Count(), true)
-                .AddField("Source", $"https://github.com/abyssal/Abyss");
+                .AddField("Source", Markdown.MaskedUrl("abyssal/Abyss", "https://github.com/abyssal/Abyss"), true)
+                .AddField("Library", Markdown.MaskedUrl("Disqord", Library.RepositoryUrl), true)
+                .AddField("Servers", _bot.Guilds.Count, true);
 
             return Ok(response);
         }
@@ -100,7 +104,7 @@ namespace Abyss
             var _ = stc.SendMessageAsync(
                 $"Feedback from {Context.Invoker}:\n\"{feedback}\"");
 
-            return Ok();
+            return SuccessReply();
         }
 
         [Command("prefix")]

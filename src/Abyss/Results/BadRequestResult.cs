@@ -17,10 +17,10 @@ namespace Abyss
 
         public override bool IsSuccessful => false;
 
-        public override async Task ExecuteResultAsync(AbyssCommandContext context)
+        public override Task<bool> ExecuteResultAsync(AbyssCommandContext context)
         {
-            await context.Channel.SendMessageAsync(null, false, new LocalEmbedBuilder()
-                .WithTitle("You've been telling me lies, hun.")
+            return context.Channel.TrySendMessageAsync(null, false, new LocalEmbedBuilder()
+                .WithTitle("Bad request")
                 .WithDescription(Reason)
                 .WithColor(ErrorColor)
                 .WithTimestamp(DateTimeOffset.Now)

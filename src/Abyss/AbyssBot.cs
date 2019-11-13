@@ -308,7 +308,7 @@ namespace Abyss
         private async Task<CommandResult> CreateGroupRootBuilder(CommandContext c)
         {
             var embed = await HelpService.CreateGroupEmbedAsync(c.AsAbyssContext(), c.Command.Module);
-            return AbyssModuleBase.Ok(c.AsAbyssContext(), embed);
+            return new ContentResult(embed);
         }
 
         protected override async ValueTask<bool> BeforeExecutedAsync(CachedUserMessage message)

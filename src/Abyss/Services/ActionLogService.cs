@@ -48,7 +48,7 @@ namespace Abyss
             if (guildData.ActionLogChannelId == 0) return false;
             if (!(_bot.GetGuildChannel(guildData.ActionLogChannelId) is CachedTextChannel guildChannel)) return false;
             return await guildChannel.TrySendMessageAsync(
-                $"{Markdown.Code("[" + DateTime.Now.ToUniversalTime().ToString("HH:mm:ss yyyy-MM-dd") + "]")} {emoji} {message}");
+                $"{Markdown.Code("[" + FormatHelper.FormatTime(DateTime.Now.ToUniversalTime()) + "]")} {emoji} {message}");
         }
 
         private Task ChannelCreated(ChannelCreatedEventArgs e)
@@ -92,6 +92,7 @@ namespace Abyss
 
         private Task RoleUpdated(RoleUpdatedEventArgs e)
         {
+            if (e.OldRole.Position != e.NewRole.Position && e.OldRole.Name == e.NewRole.Name) return Task.CompletedTask; //quicc hack
             return CreateActionLogEntryAsync($"Role `{e.NewRole.Name}` ({e.NewRole.Id}) was updated.{(e.OldRole.Name != e.NewRole.Name ? $" The name was updated from `{e.OldRole.Name}` to `{e.NewRole.Name}`." : "")}", _emotes.YesEmote, e.NewRole.Guild.Id);
         }
 
