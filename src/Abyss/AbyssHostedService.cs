@@ -32,18 +32,19 @@ namespace Abyss
             _bot.GetRequiredService<MarketingService>();
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation(
                 $"Abyss services initialised on {Environment.OSVersion.VersionString}/CLR {Environment.Version} (args {string.Join(" ", Environment.GetCommandLineArgs())})");
 
-            await _bot.ConnectAsync().ConfigureAwait(false);
+            _ = _bot.RunAsync().ConfigureAwait(false);
+            return Task.CompletedTask;
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
             await _notifications.NotifyStoppingAsync().ConfigureAwait(false);
-            await _bot.DisconnectAsync().ConfigureAwait(false);
+            await _bot.StopAsync().ConfigureAwait(false);
         }
     }
 }
