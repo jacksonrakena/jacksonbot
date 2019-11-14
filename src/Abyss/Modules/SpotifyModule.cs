@@ -90,7 +90,7 @@ namespace Abyss
 
             var embed = new LocalEmbedBuilder
             {
-                Color = AbyssBot.DefaultEmbedColour,
+                Color = AbyssBot.SystemColor,
                 Author = new LocalEmbedAuthorBuilder
                 {
                     Name = album.Artists.Select(a => a.Name).Humanize(),
@@ -138,7 +138,7 @@ namespace Abyss
         {
             var embed = new LocalEmbedBuilder
             {
-                Color = AbyssBot.DefaultEmbedColour,
+                Color = AbyssBot.SystemColor,
                 Author = new LocalEmbedAuthorBuilder
                 {
                     Name = track.Artists.Select(a => a.Name).Humanize(),

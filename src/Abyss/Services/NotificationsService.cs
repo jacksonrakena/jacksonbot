@@ -1,6 +1,7 @@
 ﻿using Disqord;
 using Disqord.Events;
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Abyss
@@ -29,10 +30,17 @@ namespace Abyss
             var ch = _abyss.GetChannel(_notifyConfig.Ready.Value);
             if (!(ch != null && ch is CachedTextChannel stc)) return;
 
-            var message = $"{CurrentDateTime} {_emotes.OnlineEmote} **{_abyss.CurrentUser.Name}** is ready. " +
-            $"Connected to {_abyss.Guilds.Count} servers.";
+            var message = new LocalEmbedBuilder()
+                .WithColor(stc.Guild.CurrentMember.GetHighestRoleColourOrSystem())
+                .WithCurrentTimestamp()
+                .WithAuthor(args.Client.CurrentUser)
+                .WithDescription("Ready.")
+                .AddField("Servers", args.Client.Guilds.Count, true)
+                .AddField("Version", Assembly.GetExecutingAssembly().GetVersion(), true)
+                .AddField("Time UTC", FormatHelper.FormatTime(DateTimeOffset.Now), true)
+                .AddField("Session ID", args.SessionId);
 
-            await stc.SendMessageAsync(message).ConfigureAwait(false);
+            await stc.TrySendMessageAsync(embed: message.Build()).ConfigureAwait(false);
         }
 
         public async Task NotifyStoppingAsync()
@@ -42,9 +50,14 @@ namespace Abyss
             var ch = _abyss.GetChannel(_notifyConfig.Stopping.Value);
             if (!(ch != null && ch is CachedTextChannel stc)) return;
 
-            var message = $"{CurrentDateTime} {_emotes.OfflineEmote} **{_abyss.CurrentUser.Name}** is stopping.";
+            var message = new LocalEmbedBuilder()
+                .WithColor(Color.Red)
+                .WithCurrentTimestamp()
+                .WithAuthor(_abyss.CurrentUser)
+                .WithDescription("Stopping.")
+                .AddField("Time UTC", FormatHelper.FormatTime(DateTimeOffset.Now), true);
 
-            await stc.SendMessageAsync(message);
+            await stc.TrySendMessageAsync(embed: message.Build()).ConfigureAwait(false);
             return;
         }
 
@@ -57,10 +70,15 @@ namespace Abyss
             var updateChannel = _abyss.GetChannel(_notifyConfig.ServerMembershipChange.Value);
             if (!(updateChannel is CachedTextChannel stc)) return;
 
-            var message = $"{CurrentDateTime} {_emotes.GuildOwnerEmote} **{_abyss.CurrentUser.Name}** has {(botIsJoining ? "joined" : "left")} {Markdown.Code(arg.Name)}, with " +
-            $"{arg.MemberCount} members and owned by {arg.Owner?.ToString() ?? arg.OwnerId.ToString()}. Connected to {_abyss.Guilds.Count} servers total.";
+            var message = new LocalEmbedBuilder()
+                .WithColor(botIsJoining ? Color.Green : Color.Yellow)
+                .WithCurrentTimestamp()
+                .WithAuthor($"{(botIsJoining ? "Joined" : "Left")} server")
+                .AddField("Name", arg.Name, true)
+                .AddField("Members", arg.MemberCount, true)
+                .AddField("Owner", arg.Owner.ToString(), true);
 
-            await stc.SendMessageAsync(message);
+            await stc.TrySendMessageAsync(embed: message.Build()).ConfigureAwait(false);
         }
     }
 }

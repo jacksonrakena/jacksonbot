@@ -32,9 +32,9 @@ namespace Abyss
         /// <returns>The highest role colour of the specified user, or the default embed colour.</returns>
         public static Color GetHighestRoleColourOrSystem(this IUser normalUser)
         {
-            if (!(normalUser is CachedMember user)) return AbyssBot.DefaultEmbedColour;
+            if (!(normalUser is CachedMember user)) return AbyssBot.SystemColor;
             var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color != null && r.Color.Value.RawValue != 0);
-            return orderedRoles?.Color ?? AbyssBot.DefaultEmbedColour;
+            return orderedRoles?.Color ?? AbyssBot.SystemColor;
         }
 
         /// <summary>

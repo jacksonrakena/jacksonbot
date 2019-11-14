@@ -77,7 +77,7 @@ namespace Abyss
         {
             return await channel.TrySendMessageAsync(string.Empty, false, 
                     new LocalEmbedBuilder()
-                    .WithColor(AbyssBot.DefaultEmbedColour)
+                    .WithColor(AbyssBot.SystemColor)
                     .WithTitle(title)
                     .WithDescription(message)
                     .WithCurrentTimestamp()

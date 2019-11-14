@@ -20,14 +20,14 @@ namespace Abyss
         {
             var embed = new LocalEmbedBuilder
             {
-                Color = AbyssBot.DefaultEmbedColour,
+                Color = AbyssBot.SystemColor,
                 Author = new LocalEmbedAuthorBuilder
                 {
                     Name = "Server " + Context.Guild.Name,
                     IconUrl = Context.Guild.GetIconUrl()
                 },
                 ThumbnailUrl = Context.Guild.GetIconUrl(),
-                // broke atm Description = Context.Guild.Emojis.Count > 0 ? "Emojis: " + string.Join(" ", Context.Guild.Emojis.Values.Select(c => c.MessageFormat)) : string.Empty
+                Description = Context.Guild.Emojis.Count > 0 ? "Emojis: " + string.Join(" ", Context.Guild.Emojis.Values.Select(c => c.MessageFormat)) : string.Empty
             };
             embed.AddField("Owner", Context.Guild.Owner.ToString(), true);
             embed.AddField("Created", FormatHelper.FormatTime(Context.Guild.Id.CreatedAt), true);

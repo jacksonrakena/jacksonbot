@@ -21,7 +21,7 @@ namespace Abyss
         public int CommandFailures { get; private set; }
 
         public const string ZeroWidthSpace = "​";
-        public static readonly Color DefaultEmbedColour = new Color(0xB2F7EF);
+        public static readonly Color SystemColor = new Color(0xB2F7EF);
 
         private readonly ILogger _failedCommandsTracking;
         private readonly ILogger _successfulCommandsTracking;
