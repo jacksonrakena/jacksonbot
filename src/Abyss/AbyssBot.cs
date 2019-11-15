@@ -66,12 +66,14 @@ namespace Abyss
 
         private Task Discord_Ready(ReadyEventArgs e)
         {
-            _logger.Information("Ready. Logged in as {CurrentUser} with prefix \"{Prefix}\".", new
+            _logger.Information("Ready. Logged in as {CurrentUser}", new
             {
-                Name = CurrentUser.Name.ToString(),
+                Name = CurrentUser.ToString(),
                 Id = CurrentUser.Id.RawValue,
-                Guilds = Guilds.Count
-            }, Prefixes[0]);
+                Guilds = Guilds.Count,
+                Prefix = Prefixes[0],
+                SessionId = e.SessionId
+            });
 
             var startupConfiguration = _config.Startup;
             var activities = startupConfiguration.Activity.Select(a =>
