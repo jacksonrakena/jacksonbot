@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -66,7 +67,7 @@ namespace Abyss
 
         private Task Discord_Ready(ReadyEventArgs e)
         {
-            _logger.Information("Ready. Logged in as {CurrentUser}", new
+            _logger.Information("Ready. Time since start: {time}. Logged in as {CurrentUser}", (Process.GetCurrentProcess().StartTime - DateTime.Now).Humanize(), new
             {
                 Name = CurrentUser.ToString(),
                 Id = CurrentUser.Id.RawValue,

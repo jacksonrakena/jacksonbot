@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using AbyssalSpotify;
 using Disqord;
@@ -41,22 +42,22 @@ namespace Abyss
         {
             var environment = Enum.Parse<EnvironmentType>(Environment.GetEnvironmentVariable("ABYSS_ENVIRONMENT", EnvironmentVariableTarget.Process) ?? nameof(EnvironmentType.Development));
             var contentRoot = (args.Length > 0 && Directory.Exists(args[0])) ? args[0] : AppContext.BaseDirectory;
+            var outputLoggingString = "[{Timestamp:HH:mm:ss yyyy-MM-dd} {SourceContext} {Level:u3}] {Message:lj} {Properties}{NewLine}";
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.FromLogContext()
                 .WriteTo.Console(
-                    outputTemplate: "[{Timestamp:HH:mm:ss yyyy-MM-dd} {SourceContext} {Level:u3}] {Message:lj}{NewLine}{Exception}{Context}",
+                    outputTemplate: outputLoggingString,
                     restrictedToMinimumLevel: environment == EnvironmentType.Development ? LogEventLevel.Verbose : LogEventLevel.Information,
                     formatProvider: new CultureInfo("en-AU"))
                 .WriteTo.File(
-                    outputTemplate: "[{Timestamp:HH:mm:ss yyyy-MM-dd} {SourceContext} {Level:u3}] {Message:lj}{NewLine}{Exception}{Context}",
+                    outputTemplate: outputLoggingString,
                     path: Path.Combine(contentRoot, "logs", "abyss.log"),
                     restrictedToMinimumLevel: LogEventLevel.Verbose,
                     flushToDiskInterval: new TimeSpan(0, 2, 0),
                     formatProvider: new CultureInfo("en-AU"))
                 .CreateLogger();
-            AppDomain.CurrentDomain.ProcessExit += (sender, args) => Log.CloseAndFlush();
 
             var hostLogger = Log.Logger.ForContext("SourceContext", "Abyss Host");
             hostLogger.Information("Abyss bot starting in mode {environment} at {time}.", environment, FormatHelper.FormatTime(DateTimeOffset.Now));
@@ -121,23 +122,32 @@ namespace Abyss
         {
             var bot = services.GetRequiredService<AbyssBot>();
             var hostLogger = Log.Logger.ForContext("SourceContext", "Abyss Host");
+            var cts = new CancellationTokenSource();
+            var notifications = services.GetRequiredService<NotificationsService>();
 
             try
             {
                 hostLogger.Information("Abyss bot host starting at {time}.", FormatHelper.FormatTime(DateTimeOffset.Now));
-                bot.GetRequiredService<NotificationsService>();
                 Console.CancelKeyPress += async (sender, args) =>
                 {
-                    await services.GetRequiredService<NotificationsService>().NotifyStoppingAsync().ConfigureAwait(false);
+                    args.Cancel = true;
                     hostLogger.Information("Received cancel key press. Stopping...");
+                    await notifications.NotifyStoppingAsync().ConfigureAwait(false);
                     await bot.StopAsync().ConfigureAwait(false);
-                    hostLogger.Information("Stopped Discord service.");
+                    cts.Cancel();
                 };
-                await bot.RunAsync().ConfigureAwait(false);
+                _ = bot.RunAsync().ConfigureAwait(false);
+                await Task.Delay(-1, cts.Token).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException)
+            {
+                Environment.ExitCode = 0;
+                hostLogger.Information("Discord service has stopped.");
+                Log.CloseAndFlush();
             }
             catch (Exception e)
             {
-                hostLogger.Error(e, "Exception occurred that killed the bot.");
+                hostLogger.Error(e, "Root-level exception occurred that killed the bot.");
             }
         }
 

@@ -17,6 +17,7 @@ namespace Abyss
 
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
+            logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("SourceContext", "Command"));
             logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("Context", new
             {
                 Command = _context.Command?.FullAliases[0] ?? "None",
