@@ -52,7 +52,7 @@ namespace Abyss
 
         private void DiscordClient_Log(object? sender, MessageLoggedEventArgs arg)
         {
-            var severity = arg.Severity switch
+            LogEventLevel severity = arg.Severity switch
             {
                 LogMessageSeverity.Error => LogEventLevel.Error,
                 LogMessageSeverity.Critical => LogEventLevel.Fatal,
@@ -62,6 +62,7 @@ namespace Abyss
                 LogMessageSeverity.Information => LogEventLevel.Information,
                 _ => LogEventLevel.Information
             };
+            if (severity == LogEventLevel.Debug || severity == LogEventLevel.Verbose) return;
             Log.Logger.ForContext("SourceContext", $"Discord {arg.Source}").Write(severity, arg.Exception, arg.Message);
         }
 

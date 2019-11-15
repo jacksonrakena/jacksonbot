@@ -43,6 +43,15 @@ namespace Abyss
             var environment = Enum.Parse<EnvironmentType>(Environment.GetEnvironmentVariable("ABYSS_ENVIRONMENT", EnvironmentVariableTarget.Process) ?? nameof(EnvironmentType.Development));
             var contentRoot = (args.Length > 0 && Directory.Exists(args[0])) ? args[0] : AppContext.BaseDirectory;
             var outputLoggingString = "[{Timestamp:HH:mm:ss yyyy-MM-dd} {SourceContext} {Level:u3}] {Message:lj} {Properties}{NewLine}";
+            var logFile = Path.Combine(contentRoot, "logs", "abyss.log");
+            if (File.Exists(logFile))
+            {
+                try
+                {
+                    File.Delete(logFile);
+                }
+                finally { }
+            }
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -53,7 +62,7 @@ namespace Abyss
                     formatProvider: new CultureInfo("en-AU"))
                 .WriteTo.File(
                     outputTemplate: outputLoggingString,
-                    path: Path.Combine(contentRoot, "logs", "abyss.log"),
+                    path: logFile,
                     restrictedToMinimumLevel: LogEventLevel.Verbose,
                     flushToDiskInterval: new TimeSpan(0, 2, 0),
                     formatProvider: new CultureInfo("en-AU"))
