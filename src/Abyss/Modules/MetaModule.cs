@@ -86,8 +86,8 @@ namespace Abyss
                 .AddField("Uptime", uptime, true)
                 .AddField("Commands", _commandService.GetAllCommands().Count(), true)
                 .AddField("Modules", _commandService.GetAllModules().Count(), true)
-                .AddField("Source", Markdown.MaskedUrl("abyssal/Abyss", "https://github.com/abyssal/Abyss"), true)
-                .AddField("Library", Markdown.MaskedUrl("Disqord", Library.RepositoryUrl), true)
+                .AddField("Source", Markdown.Link("abyssal/Abyss", "https://github.com/abyssal/Abyss"), true)
+                .AddField("Library", Markdown.Link("Disqord", Library.RepositoryUrl), true)
                 .AddField("Servers", _bot.Guilds.Count, true);
 
             return Ok(response);
