@@ -9,14 +9,11 @@ namespace Abyss
     public class NotificationsService
     {
         private readonly AbyssConfigNotificationsSection? _notifyConfig;
-        private readonly AbyssConfigEmoteSection _emotes;
         private readonly AbyssBot _abyss;
-        private string CurrentDateTime => Markdown.Code("[" + DateTime.Now.ToUniversalTime().ToString("HH:mm:ss yyyy-MM-dd") + "]");
 
         public NotificationsService(AbyssBot abyss, AbyssConfig config)
         {
             _notifyConfig = config.Notifications;
-            _emotes = config.Emotes;
             _abyss = abyss;
 
             _abyss.Ready += NotifyReadyAsync;

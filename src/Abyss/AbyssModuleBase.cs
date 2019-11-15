@@ -2,7 +2,6 @@
 using Disqord;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace Abyss
 {
@@ -11,12 +10,6 @@ namespace Abyss
     /// </summary>
     public abstract class AbyssModuleBase : ModuleBase<AbyssCommandContext>
     {
-        #pragma warning disable 8618
-        public ILoggerFactory LoggerFactory { get; set; }
-        #pragma warning restore
-        
-        protected ILogger Logger => LoggerFactory.CreateLogger(GetType().Name);
-
         public Task ReplyAsync(string? content = null, LocalEmbedBuilder? embed = null,
             RestRequestOptions? options = null)
         {

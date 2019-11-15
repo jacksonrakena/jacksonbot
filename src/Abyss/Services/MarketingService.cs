@@ -3,8 +3,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Disqord.Events;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace Abyss
 {
@@ -13,15 +13,15 @@ namespace Abyss
         private readonly AbyssBot _abyss;
         private readonly HttpClient _http;
         private readonly AbyssConfig _config;
-        private readonly ILogger<MarketingService> _logger;
+        private readonly ILogger _logger;
 
-        public MarketingService(AbyssBot bot, AbyssConfig config, ILogger<MarketingService> logger)
+        public MarketingService(AbyssBot bot, AbyssConfig config)
         {
             _http = new HttpClient();
             _abyss = bot;
             _config = config;
-            _logger = logger;
             _abyss.Ready += UpdateAllBotListsAsync;
+            _logger = Log.ForContext<MarketingService>();
         }
 
         public Task UpdateAllBotListsAsync(ReadyEventArgs args)
@@ -33,7 +33,7 @@ namespace Abyss
         {
             if (_config.Marketing?.DiscordBoatsToken == null)
             {
-                _logger.LogWarning("Failed to update Discord.Boats: token missing");
+                _logger.Warning("Failed to update Discord.Boats: token missing");
                 return;
             }
 
@@ -47,11 +47,11 @@ namespace Abyss
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning($"Failed to update Discord.boats: error code " + response.StatusCode);
+                _logger.Warning($"Failed to update Discord.boats: error code " + response.StatusCode);
                 response.Dispose();
                 return;
             }
-            _logger.LogInformation("Updated statistics with discord.boats");
+            _logger.Information("Updated statistics with discord.boats");
             response.Dispose();
         }
 
@@ -59,7 +59,7 @@ namespace Abyss
         {
             if (_config.Marketing?.DiscordBotsListToken == null)
             {
-                _logger.LogWarning("Failed to update Discord Bots List: token missing");
+                _logger.Warning("Failed to update Discord Bots List: token missing");
                 return;
             }
 
@@ -73,11 +73,11 @@ namespace Abyss
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning($"Failed to update Discord Bots List: error code " + response.StatusCode);
+                _logger.Warning($"Failed to update Discord Bots List: error code " + response.StatusCode);
                 response.Dispose();
                 return;
             }
-            _logger.LogInformation("Updated statistics with Discord Bots List");
+            _logger.Information("Updated statistics with Discord Bots List");
             response.Dispose();
         }
 
@@ -85,7 +85,7 @@ namespace Abyss
         {
             if (_config.Marketing?.DblDotComToken == null)
             {
-                _logger.LogWarning("Failed to update Discordbotlist.com: token missing");
+                _logger.Warning("Failed to update Discordbotlist.com: token missing");
                 return;
             }
 
@@ -104,11 +104,11 @@ namespace Abyss
 
             if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
             {
-                _logger.LogWarning($"Failed to update Discordbotlist.com: error code " + response.StatusCode);
+                _logger.Warning($"Failed to update Discordbotlist.com: error code " + response.StatusCode);
                 response.Dispose();
                 return;
             }
-            _logger.LogInformation("Updated statistics with Discordbotlist.com");
+            _logger.Information("Updated statistics with Discordbotlist.com");
             response.Dispose();
         }
     }

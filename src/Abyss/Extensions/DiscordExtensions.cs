@@ -1,6 +1,5 @@
 using Disqord;
 using Disqord.Logging;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -72,20 +71,6 @@ namespace Abyss
                 && guild.CurrentMember.GetPermissionsFor(c).SendMessages);
 
             return firstOrDefault ?? guild.TextChannels.FirstOrDefault(c => guild.CurrentMember.GetPermissionsFor(c.Value).SendMessages).Value;
-        }
-
-        internal static LogLevel ToMicrosoftLogLevel(this LogMessageSeverity logSeverity)
-        {
-            return logSeverity switch
-            {
-                LogMessageSeverity.Information => LogLevel.Information,
-                LogMessageSeverity.Error => LogLevel.Error,
-                LogMessageSeverity.Debug => LogLevel.Debug,
-                LogMessageSeverity.Critical => LogLevel.Critical,
-                LogMessageSeverity.Trace => LogLevel.Trace,
-                LogMessageSeverity.Warning => LogLevel.Warning,
-                _ => LogLevel.Information
-            };
         }
     }
 }

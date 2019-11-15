@@ -44,7 +44,7 @@ namespace Abyss
                 Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName ??
                 ".NET Core";
 
-            var fwAssembly = Assembly.GetAssembly(typeof(AbyssHostedService))!;
+            var fwAssembly = Assembly.GetAssembly(typeof(AbyssBot))!;
 
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("```");

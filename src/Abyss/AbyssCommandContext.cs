@@ -1,5 +1,6 @@
 using Disqord;
 using Disqord.Bot;
+using Serilog;
 using Disqord.Rest;
 using Qmmands;
 using System;
@@ -20,6 +21,11 @@ namespace Abyss
             BotMember = botu;
             Channel = (CachedTextChannel) message.Channel;
         }
+
+        /// <summary>
+        ///     This context's logger.
+        /// </summary>
+        public ILogger Logger => Log.ForContext(new CommandContextEnricher(this));
 
         /// <summary>
         ///     The text channel that the command was invoked in.

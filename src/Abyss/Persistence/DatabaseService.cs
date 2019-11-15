@@ -1,5 +1,4 @@
 ﻿using LiteDB;
-using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
 
@@ -28,9 +27,9 @@ namespace Abyss
 
         private readonly LiteDatabase _database;
 
-        public DatabaseService(IHostEnvironment hostEnvironment)
+        public DatabaseService(AbyssEnvironment hostEnvironment)
         {
-            _database = new LiteDatabase(Path.Combine(hostEnvironment.ContentRootPath, "AbyssDatabase.db"));
+            _database = new LiteDatabase(Path.Combine(hostEnvironment.ContentRoot, "AbyssDatabase.db"));
         }
 
         public PersistenceGuild GetOrCreateGuild(ulong guildId)

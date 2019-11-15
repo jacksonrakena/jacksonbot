@@ -9,9 +9,10 @@ using Disqord.Bot;
 using Disqord.Events;
 using Disqord.Logging;
 using Humanizer;
-using Microsoft.Extensions.Logging;
 using Qmmands;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
+using Serilog;
+using Serilog.Events;
+using ILogger = Serilog.ILogger;
 
 namespace Abyss
 {
@@ -23,10 +24,7 @@ namespace Abyss
         public const string ZeroWidthSpace = "​";
         public static readonly Color SystemColor = new Color(0xB2F7EF);
 
-        private readonly ILogger _failedCommandsTracking;
-        private readonly ILogger _successfulCommandsTracking;
-        private readonly ILogger _discordLogger;
-        private readonly ILogger<AbyssBot> _logger;
+        private readonly ILogger _logger;
         private readonly HelpService _help;
         private readonly AbyssConfig _config;
 
@@ -34,15 +32,12 @@ namespace Abyss
 
         public override object GetService(Type serviceType) => Services.GetService(serviceType);
 
-        public AbyssBot(AbyssConfig config, DiscordBotConfiguration botConfiguration, ILoggerFactory factory, IServiceProvider provider,
-            HelpService help, ILogger<AbyssBot> logger) : base(TokenType.Bot, config.Connections.Discord.Token, botConfiguration)
+        public AbyssBot(AbyssConfig config, DiscordBotConfiguration botConfiguration, IServiceProvider provider,
+            HelpService help) : base(TokenType.Bot, config.Connections.Discord.Token, botConfiguration)
         {
             Services = provider;
-            _failedCommandsTracking = factory.CreateLogger("Failed Commands Tracking");
-            _successfulCommandsTracking = factory.CreateLogger("Successful Commands Tracking");
-            _discordLogger = factory.CreateLogger("Discord");
+            _logger = Log.Logger.ForContext<AbyssBot>();
             _help = help;
-            _logger = logger;
             _config = config;
 
             CommandExecuted += HandleCommandExecutedAsync;
@@ -56,13 +51,27 @@ namespace Abyss
 
         private void DiscordClient_Log(object? sender, MessageLoggedEventArgs arg)
         {
-            if (arg.Severity == LogMessageSeverity.Debug || arg.Severity == LogMessageSeverity.Trace) return;
-            _discordLogger.Log(arg.Severity.ToMicrosoftLogLevel(), arg.Exception, "[" + arg.Source + "] " + arg.Message);
+            var severity = arg.Severity switch
+            {
+                LogMessageSeverity.Error => LogEventLevel.Error,
+                LogMessageSeverity.Critical => LogEventLevel.Fatal,
+                LogMessageSeverity.Debug => LogEventLevel.Debug,
+                LogMessageSeverity.Trace => LogEventLevel.Verbose,
+                LogMessageSeverity.Warning => LogEventLevel.Warning,
+                LogMessageSeverity.Information => LogEventLevel.Information,
+                _ => LogEventLevel.Information
+            };
+            Log.Logger.ForContext("SourceContext", $"Discord {arg.Source}").Write(severity, arg.Exception, arg.Message);
         }
 
         private Task Discord_Ready(ReadyEventArgs e)
         {
-            _logger.LogInformation($"Ready. Logged in as {CurrentUser} with command prefix \"{Prefixes[0]}\".");
+            _logger.Information("Ready. Logged in as {CurrentUser} with prefix \"{Prefix}\".", new
+            {
+                Name = CurrentUser.Name.ToString(),
+                Id = CurrentUser.Id.RawValue,
+                Guilds = Guilds.Count
+            }, Prefixes[0]);
 
             var startupConfiguration = _config.Startup;
             var activities = startupConfiguration.Activity.Select(a =>
@@ -113,7 +122,7 @@ namespace Abyss
             embed.AddField("Pipeline step", step.Humanize());
             embed.AddField("Message", exception.Message);
 
-            _failedCommandsTracking.LogError(LoggingEventIds.ExceptionThrownInPipeline, exception, $"Pipeline failed at step {step}.");
+            Log.ForContext(new CommandContextEnricher(context)).Error(exception, "Pipeline failed at step {Step}.", step);
 
             await context.Channel.SendMessageAsync(string.Empty, false, embed.Build()).ConfigureAwait(false);
         }
@@ -124,13 +133,14 @@ namespace Abyss
             var ctx = args.Context;
             var command = ctx.Command;
             var context = ctx.AsAbyssContext();
+            var logger = Log.ForContext(new CommandContextEnricher(context));
 
             if (!(result is AbyssResult baseResult))
             {
                 if (result == null)
                 {
-                    _failedCommandsTracking.LogCritical(LoggingEventIds.CommandReturnedBadType, $"Command {command.Name} returned a null result type.");
-                } else _failedCommandsTracking.LogCritical(LoggingEventIds.CommandReturnedBadType, $"Command {command.Name} returned a result of type {result.GetType().Name} and not {typeof(AbyssResult).Name}.");
+                    logger.Error("Command {Name} returned a null result type.", command.Name);
+                } else logger.Error("Command {Name} returned a result of type {TypeName} and not {ResultTypeName}.", command.Name, result.GetType().Name, typeof(AbyssResult).Name);
                 await context.Channel.TrySendMessageAsync($"Man, this bot sucks. Command {command.Name} is broken, and will need to be recompiled. Try again later. (Developer: The command returned a type that isn't a {typeof(AbyssResult).Name}.)");
                 return;
             }
@@ -144,13 +154,11 @@ namespace Abyss
 
                 if (baseResult.IsSuccessful)
                 {
-                    _successfulCommandsTracking.LogInformation($"Command {command.Name} completed successfully for {context.Invoker} " +
-                        $"(message {context.Message.Id} - channel {context.Channel.Name}/{context.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
+                    logger.Information("Completed successfully.");
                 }
                 else
                 {
-                    _failedCommandsTracking.LogInformation($"Command {command.Name} didn't complete successfully for {context.Invoker} " +
-                        $"(message {context.Message.Id} - channel {context.Channel.Name}/{context.Channel.Id} - guild {context.Guild.Name}/{context.Guild.Id})");
+                    logger.ForContext("Exception", baseResult, true).Error("Returned unsuccessful result.");
                 }
             }
             catch (Exception e)
@@ -172,6 +180,7 @@ namespace Abyss
                 if (!(result is SuccessfulResult)) CommandSuccesses++; // SuccessfulResult indicates a RunMode.Async
                 return;
             }
+            var logger = context.Logger;
 
             switch (result)
             {
@@ -180,11 +189,11 @@ namespace Abyss
                     return;
 
                 case CommandNotFoundResult cnfr:
-                    _failedCommandsTracking.LogInformation(LoggingEventIds.UnknownCommand, $"No command found matching {context.Message.Content}.");
+                    //logger.Information("No command found matching \"{content}\"", context.Message.Content);
                     break;
 
                 case ChecksFailedResult cfr:
-                    _failedCommandsTracking.LogInformation(LoggingEventIds.ChecksFailed, $"{cfr.FailedChecks.Count} checks failed for {(cfr.Command == null ? "Module " + cfr.Module.Name : "Command " + cfr.Command.Name)}.)");
+                    logger.Information("{count} checks failed on {type}", cfr.FailedChecks.Count, cfr.Command?.FullAliases[0] ?? cfr.Module.GetType().Name);
 
                     var silentCheckType = typeof(SilentAttribute);
                     var checks = cfr.FailedChecks.Where(check => check.Check.GetType().CustomAttributes.Any(a => a.AttributeType != typeof(SilentAttribute))).ToList();
@@ -205,8 +214,7 @@ namespace Abyss
                     break;
 
                 case ParameterChecksFailedResult pcfr:
-                    _failedCommandsTracking.LogInformation(LoggingEventIds.ParameterChecksFailed,
-                        $"{pcfr.FailedChecks.Count} parameter checks on {pcfr.Parameter.Name} ({string.Join(", ", pcfr.FailedChecks.Select(c => c.Check.GetType().Name))}) failed for command {pcfr.Parameter.Command.Name}.");
+                    logger.Information("{count} parameter checks failed on {type} (command {command})", pcfr.FailedChecks.Count, pcfr.Parameter.Name, pcfr.Parameter.Command.Name);
 
                     var silentCheckType0 = typeof(SilentAttribute);
                     var pchecks = pcfr.FailedChecks.Where(check => check.Check.GetType().CustomAttributes.All(a => a.AttributeType != typeof(SilentAttribute))).ToList();
@@ -226,9 +234,7 @@ namespace Abyss
                     break;
 
                 case ArgumentParseFailedResult apfr0 when apfr0.ParserResult is DefaultArgumentParserResult apfr:
-                    _failedCommandsTracking.LogInformation(LoggingEventIds.ArgumentParseFailed,
-                        $"Parse failed for {apfr.Command.Name}. Reason: {apfr.Failure?.Humanize()}.");
-
+                    logger.Information("Parse failed for {commandName}. Reason: {reason}", apfr.Command.Name, apfr.Failure?.Humanize());
                     if (apfr.Failure != null && apfr.Failure == DefaultArgumentParserFailure.TooFewArguments)
                     {
                         await context.Channel.SendMessageAsync(string.Empty, false, (await _help.CreateCommandEmbedAsync(apfr.Command, context))
@@ -242,14 +248,13 @@ namespace Abyss
                     break;
 
                 case ArgumentParseFailedResult apfr1 when apfr1.ParserResult is UnixArgumentParserResult upfr:
-                    _failedCommandsTracking.LogInformation(LoggingEventIds.ArgumentParseFailed,
-                        $"UNIX parse failed for {upfr.Context.Command.Name}. Reason: {upfr.ParseFailure.Humanize()}.");
+                    logger.Information("UNIX parse failed for {commandName}. Reason: {reason}", upfr.Context.Command.Name, upfr.ParseFailure?.Humanize());
 
                     await context.Channel.SendMessageAsync(
                         $"I couldn't read whatever you just said: {upfr.ParseFailure.Humanize()}.").ConfigureAwait(false);
                     break;
                 case TypeParseFailedResult tpfr:
-                    _failedCommandsTracking.LogInformation(LoggingEventIds.TypeParserFailed, $"Failed to parse type {tpfr.Parameter.Type.Name} in command {tpfr.Parameter.Command.Name}.");
+                    logger.Information("Failed to parse \"{text}\" as type {type} for parameter {parameter} in command {command}", tpfr.Value, tpfr.Parameter.Type.Name, tpfr.Parameter.Name, tpfr.Parameter.Command.FullAliases[0]); ;
 
                     var sb = new StringBuilder().AppendLine(tpfr.Reason);
                     sb.AppendLine();
@@ -261,14 +266,14 @@ namespace Abyss
                     break;
 
                 case CommandOnCooldownResult cdr:
-                    _failedCommandsTracking.LogInformation($"Cooldown(s) activated for command {cdr.Command.Name}");
+                    _logger.Information("Cooldown(s) activated for command {command}", cdr.Command.Name);
 
                     await context.Channel.SendMessageAsync($"Cooldown(s) activated for command {cdr.Command.Name}. " +
                         $"Try again in {cdr.Cooldowns.Select(a => a.RetryAfter).OrderByDescending(c => c.TotalSeconds).First().Humanize(20, maxUnit: Humanizer.Localisation.TimeUnit.Hour)}.");
                     break;
 
                 case OverloadsFailedResult ofr:
-                    _failedCommandsTracking.LogInformation("Failed to find a matching command from input " + context.Message.Content + ".");
+                    _logger.Information("Overloads failed for text \"{content}\"", context.Message.Content);
 
                     await context.Channel.SendMessageAsync(embed: new LocalEmbedBuilder()
                         .WithTitle("Failed to find a matching command")
@@ -285,7 +290,7 @@ namespace Abyss
                     break;
 
                 default:
-                    _failedCommandsTracking.LogCritical(LoggingEventIds.UnknownResultType, $"Unknown result type: {result.GetType().Name}. Must be addressed immediately.");
+                    _logger.Error("Unknown result type \"{result}\"", result.GetType().Name);
                     break;
             }
 

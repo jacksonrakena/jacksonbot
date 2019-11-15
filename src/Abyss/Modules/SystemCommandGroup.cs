@@ -2,8 +2,6 @@ using Disqord;
 using Disqord.Bot;
 using HandlebarsDotNet;
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Qmmands;
 using System;
 using System.Collections;
@@ -21,16 +19,6 @@ namespace Abyss
     [BotOwnerOnly]
     public class SystemCommandGroup : AbyssModuleBase
     {
-        private readonly ILogger<SystemCommandGroup> _logger;
-        private readonly IHostApplicationLifetime _lifetime;
-
-        public SystemCommandGroup(ILogger<SystemCommandGroup> logger,
-            IHostApplicationLifetime lifetime)
-        {
-            _lifetime = lifetime;
-            _logger = logger;
-        }
-
         [Command("throwex")]
         [Description("Throws a InvalidOperation .NET exception. For testing purposes.")]
         public Task<AbyssResult> Command_ThrowExceptionAsync([Name("Message")] [Description("The message for the exception.")] [Remainder] string message = "Test exception.")
@@ -221,20 +209,6 @@ namespace Abyss
             string evaluateScript)
         {
             return Command_EvaluateAsync($"Inspect({evaluateScript})");
-        }
-
-        [Command("kill")]
-        [Description("Stops the current bot process.")]
-        [RunMode(RunMode.Parallel)]
-        [BotOwnerOnly]
-        public async Task<AbyssResult> Command_ShutdownAsync()
-        {
-            await ReplyAsync($"Later.").ConfigureAwait(false);
-            _logger.LogInformation($"Application terminated by user {Context.Invoker} (ID {Context.Invoker.Id})");
-            _lifetime.StopApplication();
-
-            Environment.Exit(0);
-            return Empty();
         }
 
         [Command("edit")]

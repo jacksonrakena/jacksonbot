@@ -1,113 +1,130 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using AbyssalSpotify;
 using Disqord;
 using Disqord.Bot;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Qmmands;
 using Serilog;
 using Serilog.Events;
 
 namespace Abyss
 {
+    public enum EnvironmentType
+    {
+        Staging,
+        Development,
+        Production
+    }
+
+    public class AbyssEnvironment
+    {
+        public EnvironmentType Environment { get; }
+        public string ContentRoot { get; }
+
+        public AbyssEnvironment(EnvironmentType environment, string contentRoot)
+        {
+            Environment = environment;
+            ContentRoot = contentRoot;
+        }
+    }
+
     public static class Program
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args)
-        {
-            return new HostBuilder()
-                .UseContentRoot((args.Length > 0 && Directory.Exists(args[0])) ? args[0] : AppContext.BaseDirectory)
-                .UseEnvironment(Environment.GetEnvironmentVariable("ABYSS_ENVIRONMENT", EnvironmentVariableTarget.Process) == "Development" ? Environments.Development : Environments.Production)
-                .UseDefaultServiceProvider(c =>
-                {
-                    c.ValidateOnBuild = true;
-                    c.ValidateScopes = true;
-                })
-                .ConfigureAppConfiguration((hostingContext, config) =>
-                {
-                    config.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath);
-                    config.AddJsonFile("abyss.json", false, true);
-                    config.AddJsonFile($"abyss.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true);
-                })
-                .ConfigureLogging((hbc, logging) =>
-                {
-                    var logger = new LoggerConfiguration()
-                        .MinimumLevel.Verbose()
-                        .Enrich.FromLogContext()
-                        .WriteTo.Console(
-                            outputTemplate: "[{Timestamp:HH:mm:ss yyyy-MM-dd} {SourceContext} {Level:u3}] {Message:lj}{NewLine}{Exception}",
-                            restrictedToMinimumLevel: hbc.HostingEnvironment.IsDevelopment() ? LogEventLevel.Verbose : LogEventLevel.Information)
-                        .WriteTo.File(
-                            outputTemplate: "[{Timestamp:HH:mm:ss yyyy-MM-dd} {SourceContext} {Level:u3}] {Message:lj}{NewLine}{Exception}",
-                            path: Path.Combine(hbc.HostingEnvironment.ContentRootPath, "logs", "abyss.log"),
+            var environment = Enum.Parse<EnvironmentType>(Environment.GetEnvironmentVariable("ABYSS_ENVIRONMENT", EnvironmentVariableTarget.Process) ?? nameof(EnvironmentType.Development));
+            var contentRoot = (args.Length > 0 && Directory.Exists(args[0])) ? args[0] : AppContext.BaseDirectory;
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(contentRoot)
+                .AddJsonFile("abyss.json", optional: false)
+                .AddJsonFile($"abyss.{environment}.json", optional: true)
+                .Build();
+            var configModel = new AbyssConfig();
+            configuration.Bind(configModel);
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .Enrich.FromLogContext()
+                .WriteTo.Console(
+                    outputTemplate: "[{Timestamp:HH:mm:ss yyyy-MM-dd} {SourceContext} {Level:u3}] {Message:lj}{NewLine}{Exception}{Context}",
+                    restrictedToMinimumLevel: environment == EnvironmentType.Development ? LogEventLevel.Verbose : LogEventLevel.Information,
+                    formatProvider: new CultureInfo("en-AU"))
+                .WriteTo.File(
+                            outputTemplate: "[{Timestamp:HH:mm:ss yyyy-MM-dd} {SourceContext} {Level:u3}] {Message:lj}{NewLine}{Exception}{Context}",
+                            path: Path.Combine(contentRoot, "logs", "abyss.log"),
                             restrictedToMinimumLevel: LogEventLevel.Verbose,
-                            flushToDiskInterval: new TimeSpan(0, 2, 0))
-                        .CreateLogger();
+                            flushToDiskInterval: new TimeSpan(0, 2, 0),
+                            formatProvider: new CultureInfo("en-AU"))
+                .CreateLogger();
+            AppDomain.CurrentDomain.ProcessExit += (sender, args) => Log.CloseAndFlush();
 
-                    logging.AddSerilog(logger, true);
-                })
-                .ConfigureServices(ConfigureServices);
+            var startupActivity = configModel.Startup.Activity.FirstOrDefault() ?? throw new InvalidOperationException("No Startup.Activity supplied.");
+            var botConfiguration = new DiscordBotConfiguration
+            {
+                Activity = new LocalActivity(startupActivity.Message, startupActivity.Type),
+                Status = UserStatus.Online,
+                HasMentionPrefix = true,
+                CommandService = new CommandService(new CommandServiceConfiguration
+                {
+                    StringComparison = StringComparison.OrdinalIgnoreCase,
+                    DefaultRunMode = RunMode.Sequential,
+                    IgnoresExtraArguments = true,
+                    CooldownBucketKeyGenerator = CooldownKeyGenerator,
+                    DefaultArgumentParser = DefaultArgumentParser.Instance
+                }),
+                Prefixes = new List<string> { configModel.CommandPrefix },
+                // Message cache default: 100
+                ProviderFactory = bot => ((AbyssBot)bot).Services
+            };
+            var spotifyClient = SpotifyClient.FromClientCredentials(configModel.Connections.Spotify.ClientId, configModel.Connections.Spotify.ClientSecret);
+
+            var serviceCollection = new ServiceCollection()
+                // Environment
+                .AddSingleton(new AbyssEnvironment(environment, contentRoot))
+                // Configuration
+                .AddSingleton(configuration)
+                // Configuration (strong type)
+                .AddSingleton(configModel)
+                // Bot configuration
+                .AddSingleton(botConfiguration)
+                // Bot
+                .AddSingleton<AbyssBot>()
+                // Core services
+                .AddSingleton<MarketingService>()
+                .AddSingleton<NotificationsService>()
+                .AddSingleton<DatabaseService>()
+                .AddSingleton<ActionLogService>()
+                .AddSingleton<HelpService>()
+                // Command services
+                .AddSingleton<HttpClient>()
+                .AddSingleton<Random>()
+                // Spotify
+                .AddSingleton(spotifyClient);
+
+            var services = serviceCollection.BuildServiceProvider();
+
+            StartAsync(services).GetAwaiter().GetResult();
         }
 
-        public static void ConfigureServices(IServiceCollection serviceCollection)
+        public static async Task StartAsync(IServiceProvider services)
         {
-            serviceCollection
-                .AddSingleton(provider =>
-                {
-                    var ob = new AbyssConfig();
-                    provider.GetRequiredService<IConfiguration>().Bind(ob);
+            var bot = services.GetRequiredService<AbyssBot>();
 
-                    if (ob.Startup.Activity == null || !ob.Startup.Activity.Any())
-                        throw new Exception("Startup.Activity was not found in the configuration.");
-                    return ob;
-                })
-                .AddSingleton(provider =>
-                {
-                    var cfg = provider.GetRequiredService<AbyssConfig>();
-                    var act = cfg.Startup.Activity.First();
-                    return new DiscordBotConfiguration
-                    {
-                        Activity = new LocalActivity(act.Message, act.Type),
-                        Status = UserStatus.Online,
-                        HasMentionPrefix = true,
-                        CommandService = new CommandService(new CommandServiceConfiguration
-                        {
-                            StringComparison = StringComparison.OrdinalIgnoreCase,
-                            DefaultRunMode = RunMode.Sequential,
-                            IgnoresExtraArguments = true,
-                            CooldownBucketKeyGenerator = CooldownKeyGenerator,
-                            DefaultArgumentParser = DefaultArgumentParser.Instance
-                        }),
-                        Prefixes = new List<string> { cfg.CommandPrefix },
-                        // message cache default 100
-                        ProviderFactory = bot => ((AbyssBot)bot).Services,
-                        GuildSubscriptions = false
-                    };
-                })
-                .AddSingleton<AbyssBot>()
-                .AddHostedService<AbyssHostedService>()
-                .AddSingleton<HelpService>()
-                .AddSingleton<HttpClient>()
-                .AddSingleton<NotificationsService>()
-                .AddSingleton<MarketingService>()
-                .AddSingleton(provider =>
-                {
-                    var configurationModel = provider.GetRequiredService<AbyssConfig>();
-                    return SpotifyClient.FromClientCredentials(configurationModel.Connections.Spotify.ClientId, configurationModel.Connections.Spotify.ClientSecret);
-                })
-                .AddSingleton<HttpClient>()
-                .AddTransient<Random>()
-                .AddSingleton<DatabaseService>()
-                .AddSingleton<ActionLogService>();
+            try
+            {
+                Log.Logger.Information("Abyss bot host starting at {time}.", FormatHelper.FormatTime(DateTimeOffset.Now));
+                bot.GetRequiredService<NotificationsService>();
+                await bot.RunAsync().ConfigureAwait(false);
+            } catch (Exception e)
+            {
+                Log.Logger.Error(e, "Exception occurred that killed the bot.");
+            }
         }
 
         public static CooldownBucketKeyGeneratorDelegate CooldownKeyGenerator = (t, ctx) =>
