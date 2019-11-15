@@ -128,6 +128,7 @@ namespace Abyss
                 bot.GetRequiredService<NotificationsService>();
                 Console.CancelKeyPress += async (sender, args) =>
                 {
+                    await services.GetRequiredService<NotificationsService>().NotifyStoppingAsync().ConfigureAwait(false);
                     hostLogger.Information("Received cancel key press. Stopping...");
                     await bot.StopAsync().ConfigureAwait(false);
                     hostLogger.Information("Stopped Discord service.");
