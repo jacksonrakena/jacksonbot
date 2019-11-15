@@ -10,5 +10,10 @@ namespace Abyss
         {
             return Task.FromResult(true);
         }
+
+        public override object ToLog()
+        {
+            return nameof(EmptyResult);
+        }
     }
 }

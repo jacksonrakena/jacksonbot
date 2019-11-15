@@ -137,7 +137,7 @@ namespace Abyss
             var ctx = args.Context;
             var command = ctx.Command;
             var context = ctx.AsAbyssContext();
-            var logger = Log.ForContext(new CommandContextEnricher(context));
+            var logger = context.Logger; 
 
             if (!(result is AbyssResult baseResult))
             {
@@ -155,14 +155,15 @@ namespace Abyss
             try
             {
                 await baseResult.ExecuteResultAsync(context).ConfigureAwait(false);
+                var resultLogger = logger.ForContext("Result", baseResult.ToLog(), true);
 
                 if (baseResult.IsSuccessful)
                 {
-                    logger.Information("Completed successfully.");
+                    resultLogger.Information("Completed successfully.");
                 }
                 else
                 {
-                    logger.ForContext("Exception", baseResult, true).Error("Returned unsuccessful result.");
+                    resultLogger.Error("Returned unsuccessful result.");
                 }
             }
             catch (Exception e)

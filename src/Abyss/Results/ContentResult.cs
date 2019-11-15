@@ -68,5 +68,15 @@ namespace Abyss
 
             return await context.Channel.TrySendMessageAsync(Message, false, Embed?.Build());
         }
+
+        public override object ToLog()
+        {
+            return new
+            {
+                Message = Message ?? "None",
+                Embed = Embed != null ? new { Embed.Title, Embed.Description } : (object) "None",
+                Attachments = Attachments.Length
+            };
+        }
     }
 }

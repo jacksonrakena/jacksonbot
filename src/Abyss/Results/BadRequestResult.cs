@@ -27,5 +27,13 @@ namespace Abyss
                 .WithFooter($"Requested by: {context.Invoker.Format()}", context.Invoker.GetAvatarUrl())
                 .Build());
         }
+
+        public override object ToLog()
+        {
+            return new
+            {
+                Reason
+            };
+        }
     }
 }

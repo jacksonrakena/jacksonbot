@@ -24,5 +24,7 @@ namespace Abyss
         {
             return new ValueTask<AbyssResult>(res);
         }
+
+        public abstract object ToLog();
     }
 }

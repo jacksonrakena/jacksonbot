@@ -25,7 +25,16 @@ namespace Abyss
         /// <summary>
         ///     This context's logger.
         /// </summary>
-        public ILogger Logger => Log.ForContext(new CommandContextEnricher(this));
+        public ILogger Logger
+        {
+            get
+            {
+                if (_logger == null) _logger = Log.ForContext(new CommandContextEnricher(this));
+                return _logger;
+            }
+        }
+
+        private ILogger? _logger;
 
         /// <summary>
         ///     The text channel that the command was invoked in.

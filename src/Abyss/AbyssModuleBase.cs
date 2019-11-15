@@ -2,6 +2,7 @@
 using Disqord;
 using System;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace Abyss
 {
@@ -10,6 +11,8 @@ namespace Abyss
     /// </summary>
     public abstract class AbyssModuleBase : ModuleBase<AbyssCommandContext>
     {
+        protected ILogger Logger => Context.Logger;
+
         public Task ReplyAsync(string? content = null, LocalEmbedBuilder? embed = null,
             RestRequestOptions? options = null)
         {

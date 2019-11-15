@@ -10,5 +10,10 @@ namespace Abyss
         {
             return context.Channel.TrySendMessageAsync(":ok_hand:");
         }
+
+        public override object ToLog()
+        {
+            return nameof(ReplySuccessResult);
+        }
     }
 }

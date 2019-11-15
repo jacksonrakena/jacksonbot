@@ -21,5 +21,10 @@ namespace Abyss
                 return false;
             }
         }
+
+        public override object ToLog()
+        {
+            return nameof(ReactSuccessResult);
+        }
     }
 }
