@@ -41,13 +41,7 @@ namespace Abyss
         {
             var environment = Enum.Parse<EnvironmentType>(Environment.GetEnvironmentVariable("ABYSS_ENVIRONMENT", EnvironmentVariableTarget.Process) ?? nameof(EnvironmentType.Development));
             var contentRoot = (args.Length > 0 && Directory.Exists(args[0])) ? args[0] : AppContext.BaseDirectory;
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(contentRoot)
-                .AddJsonFile("abyss.json", optional: false)
-                .AddJsonFile($"abyss.{environment}.json", optional: true)
-                .Build();
-            var configModel = new AbyssConfig();
-            configuration.Bind(configModel);
+
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.FromLogContext()
@@ -56,13 +50,24 @@ namespace Abyss
                     restrictedToMinimumLevel: environment == EnvironmentType.Development ? LogEventLevel.Verbose : LogEventLevel.Information,
                     formatProvider: new CultureInfo("en-AU"))
                 .WriteTo.File(
-                            outputTemplate: "[{Timestamp:HH:mm:ss yyyy-MM-dd} {SourceContext} {Level:u3}] {Message:lj}{NewLine}{Exception}{Context}",
-                            path: Path.Combine(contentRoot, "logs", "abyss.log"),
-                            restrictedToMinimumLevel: LogEventLevel.Verbose,
-                            flushToDiskInterval: new TimeSpan(0, 2, 0),
-                            formatProvider: new CultureInfo("en-AU"))
+                    outputTemplate: "[{Timestamp:HH:mm:ss yyyy-MM-dd} {SourceContext} {Level:u3}] {Message:lj}{NewLine}{Exception}{Context}",
+                    path: Path.Combine(contentRoot, "logs", "abyss.log"),
+                    restrictedToMinimumLevel: LogEventLevel.Verbose,
+                    flushToDiskInterval: new TimeSpan(0, 2, 0),
+                    formatProvider: new CultureInfo("en-AU"))
                 .CreateLogger();
             AppDomain.CurrentDomain.ProcessExit += (sender, args) => Log.CloseAndFlush();
+
+            var hostLogger = Log.Logger.ForContext("SourceContext", "Abyss Host");
+            hostLogger.Information("Abyss bot starting in mode {environment} at {time}.", environment, FormatHelper.FormatTime(DateTimeOffset.Now));
+
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(contentRoot)
+                .AddJsonFile("abyss.json", optional: false)
+                .AddJsonFile($"abyss.{environment}.json", optional: true)
+                .Build();
+            var configModel = new AbyssConfig();
+            configuration.Bind(configModel);
 
             var startupActivity = configModel.Startup.Activity.FirstOrDefault() ?? throw new InvalidOperationException("No Startup.Activity supplied.");
             var botConfiguration = new DiscordBotConfiguration
@@ -115,15 +120,23 @@ namespace Abyss
         public static async Task StartAsync(IServiceProvider services)
         {
             var bot = services.GetRequiredService<AbyssBot>();
+            var hostLogger = Log.Logger.ForContext("SourceContext", "Abyss Host");
 
             try
             {
-                Log.Logger.Information("Abyss bot host starting at {time}.", FormatHelper.FormatTime(DateTimeOffset.Now));
+                hostLogger.Information("Abyss bot host starting at {time}.", FormatHelper.FormatTime(DateTimeOffset.Now));
                 bot.GetRequiredService<NotificationsService>();
+                Console.CancelKeyPress += async (sender, args) =>
+                {
+                    hostLogger.Information("Received cancel key press. Stopping...");
+                    await bot.StopAsync().ConfigureAwait(false);
+                    hostLogger.Information("Stopped Discord service.");
+                };
                 await bot.RunAsync().ConfigureAwait(false);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
-                Log.Logger.Error(e, "Exception occurred that killed the bot.");
+                hostLogger.Error(e, "Exception occurred that killed the bot.");
             }
         }
 
