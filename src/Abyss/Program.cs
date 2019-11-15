@@ -54,7 +54,8 @@ namespace Abyss
                     path: Path.Combine(contentRoot, "logs", "abyss.log"),
                     restrictedToMinimumLevel: LogEventLevel.Verbose,
                     flushToDiskInterval: new TimeSpan(0, 2, 0),
-                    formatProvider: new CultureInfo("en-AU"))
+                    formatProvider: new CultureInfo("en-AU"),
+                    rollingInterval: RollingInterval.Minute)
                 .CreateLogger();
             AppDomain.CurrentDomain.ProcessExit += (sender, args) => Log.CloseAndFlush();
 
