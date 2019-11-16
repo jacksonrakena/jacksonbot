@@ -144,12 +144,12 @@ namespace Abyss
             if (command.Parameters.Count > 0)
             {
                 embed.AddField("Parameters",
-                   string.Join("\n", command.Parameters.Select((p, i) => $"**{i + 1})** {FormatParameter(context, p)}")));
+                   string.Join("\n", command.Parameters.Select(p => FormatParameter(context, p))));
             }
 
             if (command.CustomArgumentParserType == null)
             {
-                var cExecString = $"{context.Prefix}{command.FullAliases.First()} {string.Join(" ", command.Parameters.Select(a => $"{(a.IsOptional ? "[" : "{")}{a.Name}{(a.IsOptional ? "]" : "}")}"))}";
+                var cExecString = $"{context.Prefix}{command.FullAliases.First()} {string.Join(" ", command.Parameters.Select(a => $"{(a.IsOptional ? "[" : "<")}{a.Name}{(a.IsRemainder ? "..." : "")}{(a.IsOptional ? "]" : ">")}"))}";
                 embed.AddField("Usage", cExecString);
             }
 
@@ -276,10 +276,10 @@ namespace Abyss
             sb.AppendLine();
 
             if (!string.IsNullOrEmpty(parameterInfo.Description))
-                sb.AppendLine($"- Description: {parameterInfo.Description}");
+                sb.AppendLine(parameterInfo.Description);
 
             if (!string.IsNullOrEmpty(parameterInfo.Remarks))
-                sb.AppendLine($"- Remarks: {parameterInfo.Remarks}");
+                sb.AppendLine(parameterInfo.Remarks);
 
             if (parameterInfo.IsOptional)
             {
