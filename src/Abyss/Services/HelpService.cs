@@ -37,7 +37,8 @@ namespace Abyss
                     [typeof(CachedTextChannel)] = ("A server channel.", "A list of server channels.", null),
                     [typeof(CachedUser)] = ("A Discord user.", "A list of Discord users.", null),
                     [typeof(LocalCustomEmoji)] = ("An emoji.", "A list of emojis.", null),
-                    [typeof(string[])] = ("A list of words. Surround options with quotes.", "", null)
+                    [typeof(string[])] = ("A list of words. Surround options with quotes.", "", null),
+                    [typeof(bool)] = ("True or false.", "A list of 'true' or 'false' values.", null)
                 }.ToImmutableDictionary();
 
         public static async Task<bool> CanShowCommandAsync(AbyssCommandContext context, Command command)
@@ -264,9 +265,26 @@ namespace Abyss
         private static string FormatParameter(AbyssCommandContext ctx, Parameter parameterInfo)
         {
             var type = GetFriendlyName(parameterInfo, ctx.Command.Service);
+            var optional = parameterInfo.IsOptional ? " Optional." : "";
+            var defaultValue = GetDefaultValue(parameterInfo);
+            var defaultValueString = defaultValue != null ? " Defaults to " + defaultValue + ".": "";
 
             return
-                $"`{parameterInfo.Name}`: {type}{(parameterInfo.IsOptional ? " Optional." : "")}{FormatParameterTags(ctx, parameterInfo)}";
+                $"`{parameterInfo.Name}`: {type}{optional}{defaultValueString}{FormatParameterTags(ctx, parameterInfo)}";
+        }
+
+        private static string? GetDefaultValue(Parameter parameter)
+        {
+            if (!parameter.IsOptional) return null;
+
+            var dvda = (DefaultValueDescriptionAttribute)parameter.Attributes.FirstOrDefault(d => d is DefaultValueDescriptionAttribute);
+
+            if (dvda != null)
+                return dvda.DefaultValueDescription;
+            else if (parameter.DefaultValue != null && !(parameter.DefaultValue is string[]))
+                return parameter.DefaultValue?.ToString();
+            else
+                return null;
         }
 
         private static string FormatParameterTags(AbyssCommandContext ctx, Parameter parameterInfo)
@@ -280,18 +298,6 @@ namespace Abyss
 
             if (!string.IsNullOrEmpty(parameterInfo.Remarks))
                 sb.AppendLine(parameterInfo.Remarks);
-
-            if (parameterInfo.IsOptional)
-            {
-                var dvda = (DefaultValueDescriptionAttribute) parameterInfo.Attributes.FirstOrDefault(d => d is DefaultValueDescriptionAttribute);
-
-                if (dvda != null)
-                    sb.AppendLine($" - Default: {dvda.DefaultValueDescription}");
-                else if (parameterInfo.DefaultValue != null && !(parameterInfo.DefaultValue is string[]))
-                    sb.AppendLine(" - Default: " + parameterInfo.DefaultValue);
-                else
-                    sb.AppendLine(" - Default: None");
-            }
 
             foreach (var check in parameterInfo.Checks)
             {
