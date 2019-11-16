@@ -114,10 +114,10 @@ namespace Abyss
                 // Bot
                 .AddSingleton<AbyssBot>()
                 // Core services
-                .AddSingleton<MarketingService>()
+                .AddSingleton<IStartupService, MarketingService>()
+                .AddSingleton<IStartupService, ActionLogService>()
                 .AddSingleton<NotificationsService>()
                 .AddSingleton<DatabaseService>()
-                .AddSingleton<ActionLogService>()
                 .AddSingleton<HelpService>()
                 // Command services
                 .AddSingleton<HttpClient>()
@@ -135,10 +135,11 @@ namespace Abyss
             var bot = services.GetRequiredService<AbyssBot>();
             var hostLogger = Log.Logger.ForContext("SourceContext", "Abyss Host");
             var notifications = services.GetRequiredService<NotificationsService>();
+            var startupServices = services.GetServices<IStartupService>();
 
             try
             {
-                hostLogger.Information("Abyss bot host starting at {time}.", FormatHelper.FormatTime(DateTimeOffset.Now));
+                hostLogger.Information("Abyss Discord service starting at {time}.", FormatHelper.FormatTime(DateTimeOffset.Now));
 
                 // SIGTERM handler (Docker)
                 AssemblyLoadContext.Default.Unloading += ctx =>

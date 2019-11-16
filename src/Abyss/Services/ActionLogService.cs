@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Abyss
 {
-    public class ActionLogService
+    public class ActionLogService : IStartupService
     {
         private readonly AbyssBot _bot;
         private readonly DatabaseService _database;
