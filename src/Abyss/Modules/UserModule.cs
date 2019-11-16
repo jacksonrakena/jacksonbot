@@ -80,9 +80,9 @@ namespace Abyss
             desc.AppendLine($"**- Muted:** {(member.IsMuted ? "Yes" : "No")}");
             desc.AppendLine($"**- Nickname:** {member.Nick ?? "None"}");
             desc.AppendLine($"**- Voice Status:** {GetVoiceChannelStatus(member)}");
-            if (member.Presence.Activity != null)
+            if (member.Presence?.Activity != null)
                 desc.AppendLine($"**- Activity:** {FormatActivity(member.Presence.Activity)}");
-            desc.AppendLine($"**- Status:** {_config.Emotes.GetStatusEmote(member.Presence.Status)} {member.Presence.Status.Humanize()}");
+            if (member.Presence != null) desc.AppendLine($"**- Status:** {_config.Emotes.GetStatusEmote(member.Presence.Status)} {member.Presence.Status.Humanize()}");
             
             if (user.MutualGuilds != null) desc.AppendLine($"**- Mutual servers:** {user.MutualGuilds.Count}");
             if (effectiveColor != null) desc.AppendLine($"**- Colour:** {effectiveColor.Value.ToString()} (R {effectiveColor.Value.R}, G {effectiveColor.Value.G}, B {effectiveColor.Value.B})");
