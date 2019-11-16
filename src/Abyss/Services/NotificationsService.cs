@@ -40,12 +40,12 @@ namespace Abyss
             await stc.TrySendMessageAsync(embed: message.Build()).ConfigureAwait(false);
         }
 
-        public async Task NotifyStoppingAsync()
+        public Task NotifyStoppingAsync()
         {
-            if (_notifyConfig?.Stopping == null) return;
+            if (_notifyConfig?.Stopping == null) return Task.CompletedTask;
 
             var ch = _abyss.GetChannel(_notifyConfig.Stopping.Value);
-            if (!(ch != null && ch is CachedTextChannel stc)) return;
+            if (!(ch != null && ch is CachedTextChannel stc)) return Task.CompletedTask;
 
             var message = new LocalEmbedBuilder()
                 .WithColor(Color.Red)
@@ -54,8 +54,7 @@ namespace Abyss
                 .WithDescription("Stopping.")
                 .AddField("Time UTC", FormatHelper.FormatTime(DateTimeOffset.Now), true);
 
-            await stc.TrySendMessageAsync(embed: message.Build()).ConfigureAwait(false);
-            return;
+            return stc.TrySendMessageAsync(embed: message.Build());
         }
 
         private Task GuildJoined(JoinedGuildEventArgs e) => NotifyServerMembershipChangeAsync(e.Guild, true);

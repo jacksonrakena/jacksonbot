@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
 using AbyssalSpotify;
@@ -38,6 +39,8 @@ namespace Abyss
 
     public static class Program
     {
+        private static readonly CancellationTokenSource _cts = new CancellationTokenSource();
+
         public static void Main(string[] args)
         {
             var environment = Enum.Parse<EnvironmentType>(Environment.GetEnvironmentVariable("ABYSS_ENVIRONMENT", EnvironmentVariableTarget.Process) ?? nameof(EnvironmentType.Development));
@@ -131,26 +134,30 @@ namespace Abyss
         {
             var bot = services.GetRequiredService<AbyssBot>();
             var hostLogger = Log.Logger.ForContext("SourceContext", "Abyss Host");
-            var cts = new CancellationTokenSource();
-            var notifications = services.GetRequiredService<NotificationsService>();
 
             try
             {
                 hostLogger.Information("Abyss bot host starting at {time}.", FormatHelper.FormatTime(DateTimeOffset.Now));
-                Console.CancelKeyPress += async (sender, args) =>
+
+                // SIGTERM handler (Docker)
+                AssemblyLoadContext.Default.Unloading += ctx =>
+                {
+                    if (!_cts.IsCancellationRequested) _cts.Cancel();
+                };
+
+                // CTRL+C handler 
+                Console.CancelKeyPress += (sender, args) =>
                 {
                     args.Cancel = true;
-                    hostLogger.Information("Received cancel key press. Stopping...");
-                    await notifications.NotifyStoppingAsync().ConfigureAwait(false);
-                    await bot.StopAsync().ConfigureAwait(false);
-                    cts.Cancel();
+                    if (!_cts.IsCancellationRequested) _cts.Cancel();
                 };
                 _ = bot.RunAsync().ConfigureAwait(false);
-                await Task.Delay(-1, cts.Token).ConfigureAwait(false);
+                await Task.Delay(-1, _cts.Token).ConfigureAwait(false);
             }
             catch (TaskCanceledException)
             {
-                Environment.ExitCode = 0;
+                hostLogger.Information("Received sigterm or CTRL+C. Stopping.");
+                await services.GetRequiredService<NotificationsService>().NotifyStoppingAsync().ConfigureAwait(false);
                 hostLogger.Information("Discord service has stopped.");
                 Log.CloseAndFlush();
             }
@@ -158,6 +165,8 @@ namespace Abyss
             {
                 hostLogger.Error(e, "Root-level exception occurred that killed the bot.");
             }
+
+            _cts.Dispose();
         }
 
         public static CooldownBucketKeyGeneratorDelegate CooldownKeyGenerator = (t, ctx) =>
