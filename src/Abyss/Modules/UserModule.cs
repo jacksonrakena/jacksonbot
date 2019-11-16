@@ -82,7 +82,7 @@ namespace Abyss
             if (member.Presence.Activity != null)
                 desc.AppendLine($"**- Activity:** {FormatActivity(member.Presence.Activity)}");
             desc.AppendLine($"**- Status:** {_config.Emotes.GetStatusEmote(member.Presence.Status)} {member.Presence.Status.Humanize()}");
-            desc.AppendLine($"**- Mutual servers:** {Context.Invoker.MutualGuilds.Count}");
+            if (Context.Invoker.MutualGuilds != null) desc.AppendLine($"**- Mutual servers:** {Context.Invoker.MutualGuilds.Count}");
             //if (member. != null) desc.AppendLine($"**- Nitro membership since: {FormatOffset(member.PremiumSince.Value)}");
             //if (member.ActiveClients != null) desc.AppendLine($"**- Active on:** {string.Join(", ", member.ActiveClients)}");
             if (effectiveColor != null) desc.AppendLine($"**- Colour:** {effectiveColor.Value.ToString()} (R {effectiveColor.Value.R}, G {effectiveColor.Value.G}, B {effectiveColor.Value.B})");
