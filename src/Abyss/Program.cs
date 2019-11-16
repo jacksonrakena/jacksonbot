@@ -134,6 +134,7 @@ namespace Abyss
         {
             var bot = services.GetRequiredService<AbyssBot>();
             var hostLogger = Log.Logger.ForContext("SourceContext", "Abyss Host");
+            var notifications = services.GetRequiredService<NotificationsService>();
 
             try
             {
@@ -157,7 +158,7 @@ namespace Abyss
             catch (TaskCanceledException)
             {
                 hostLogger.Information("Received sigterm or CTRL+C. Stopping.");
-                await services.GetRequiredService<NotificationsService>().NotifyStoppingAsync().ConfigureAwait(false);
+                await notifications.NotifyStoppingAsync().ConfigureAwait(false);
                 hostLogger.Information("Discord service has stopped.");
                 Log.CloseAndFlush();
             }
