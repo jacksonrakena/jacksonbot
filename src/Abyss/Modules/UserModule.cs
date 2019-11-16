@@ -49,6 +49,7 @@ namespace Abyss
             CachedMember? member = null)
         {
             member ??= Context.Invoker;
+            var user = Context.Invoker.Client.GetUser(member.Id);
 
             var embed = new LocalEmbedBuilder
             {
@@ -82,9 +83,8 @@ namespace Abyss
             if (member.Presence.Activity != null)
                 desc.AppendLine($"**- Activity:** {FormatActivity(member.Presence.Activity)}");
             desc.AppendLine($"**- Status:** {_config.Emotes.GetStatusEmote(member.Presence.Status)} {member.Presence.Status.Humanize()}");
-            if (Context.Invoker.MutualGuilds != null) desc.AppendLine($"**- Mutual servers:** {Context.Invoker.MutualGuilds.Count}");
-            //if (member. != null) desc.AppendLine($"**- Nitro membership since: {FormatOffset(member.PremiumSince.Value)}");
-            //if (member.ActiveClients != null) desc.AppendLine($"**- Active on:** {string.Join(", ", member.ActiveClients)}");
+            
+            if (user.MutualGuilds != null) desc.AppendLine($"**- Mutual servers:** {user.MutualGuilds.Count}");
             if (effectiveColor != null) desc.AppendLine($"**- Colour:** {effectiveColor.Value.ToString()} (R {effectiveColor.Value.R}, G {effectiveColor.Value.G}, B {effectiveColor.Value.B})");
             embed.Description = desc.ToString();
 
