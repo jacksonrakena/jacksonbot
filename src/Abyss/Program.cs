@@ -160,6 +160,7 @@ namespace Abyss
             {
                 hostLogger.Information("Received sigterm or CTRL+C. Stopping.");
                 await notifications.NotifyStoppingAsync().ConfigureAwait(false);
+                await bot.StopAsync().ConfigureAwait(false);
                 hostLogger.Information("Discord service has stopped.");
                 Log.CloseAndFlush();
             }
