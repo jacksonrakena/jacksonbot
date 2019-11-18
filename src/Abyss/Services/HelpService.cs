@@ -61,30 +61,41 @@ namespace Abyss
             return firstAlias != null ? Markdown.Bold(Markdown.Code(firstAlias)) : null;
         }
 
-        public static async Task<LocalEmbedBuilder> CreateGroupEmbedAsync(AbyssCommandContext context, Qmmands.Module group)
+        public static LocalEmbedBuilder CreateGroupEmbed(AbyssCommandContext context, Qmmands.Module group)
         {
             var embed0 = new LocalEmbedBuilder
             {
-                Title = "Group information"
+                Title = group.Name
             };
 
-            embed0.Description = $"{Markdown.Code(group.FullAliases.First())}: {group.Description ?? "No description provided."}";
+            var description = new StringBuilder();
+
+            if (!string.IsNullOrWhiteSpace(group.Description))
+            {
+                description.AppendLine(group.Description);
+                description.AppendLine();
+            }
 
             if (group.FullAliases.Count > 1) embed0.AddField("Aliases", string.Join(", ", group.FullAliases.Select(Markdown.Code)));
 
-            var commands = new List<string>();
-            foreach (var command in group.Commands)
+            foreach (var command in CommandUtilities.EnumerateAllCommands(group).OrderBy(c => c.FullAliases.First().Length))
             {
-                if (await CanShowCommandAsync(context, command))
+                foreach (var alias in command.FullAliases.OrderBy(c => c.Length))
                 {
-                    var format = FormatCommandShort(command);
-                    if (format != null) commands.Add(format);
+                    description.AppendLine("`" + $"{context.Prefix}{alias} {string.Join(" ", command.Parameters.Select(a => $"{(a.IsOptional ? "[" : "<")}{a.Name}{(a.IsRemainder ? "..." : "")}{(a.IsOptional ? "]" : ">")}"))}".Trim() + "`");
                 }
+                description.AppendLine(command.Description);
+                description.AppendLine();
             }
-            if (commands.Count != 0)
-                embed0.AddField("Subcommands", string.Join(", ", commands));
+
+            embed0.Description = description.ToString();
 
             return embed0;
+        }
+
+        public static string GetCommandUsage(AbyssCommandContext context, Command command)
+        {
+            return $"{context.Prefix}{command.FullAliases.First()} {string.Join(" ", command.Parameters.Select(a => $"{(a.IsOptional ? "[" : "<")}{a.Name}{(a.IsRemainder ? "..." : "")}{(a.IsOptional ? "]" : ">")}"))}".Trim();
         }
 
         public static string GetFriendlyName(Parameter info, CommandService commandService)

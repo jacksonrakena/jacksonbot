@@ -1,30 +1,35 @@
 ﻿using Abyssal.Common;
 using Disqord;
+using Disqord.Bot;
+using Disqord.Rest;
 using Humanizer;
 using Qmmands;
+using System;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Abyss
 {
-    [Name("User Information")]
-    [Description("Commands that help you interact with other Discord users.")]
-    public class UserModule : AbyssModuleBase
+    [Name("User information")]
+    [Group("user")]
+    public class UserCommandGroup : AbyssModuleBase
     {
         private readonly AbyssConfig _config;
 
-        public UserModule(AbyssConfig config)
+        public UserCommandGroup(AbyssConfig config)
         {
             _config = config;
         }
 
         [Command("avatar")]
-        [Description("Grabs the avatar for a user.")]
+        [Description("View the avatar of a user.")]
         public Task<AbyssResult> Command_GetAvatarAsync(
-            [Name("User")]
+            [Name("user")]
             [Description("The user who you wish to get the avatar for.")]
             [DefaultValueDescription("The user who invoked this command.")]
+            [Remainder]
             CachedMember? target = null)
         {
             target ??= Context.Invoker;
@@ -40,12 +45,13 @@ namespace Abyss
             });
         }
 
-        [Command("user", "userinfo")]
-        [Description("Grabs information around a member.")]
+        [Command("", "info")]
+        [Description("View information about a member.")]
         public Task<AbyssResult> Command_GetUserInfoAsync(
-            [Name("Member")]
+            [Name("member")]
             [Description("The user to get information for.")]
             [DefaultValueDescription("The user who invoked this command.")]
+            [Remainder]
             CachedMember? member = null)
         {
             member ??= Context.Invoker;
@@ -96,22 +102,47 @@ namespace Abyss
             return Ok(embed);
         }
 
-        [Command("hug")]
-        [Description("Gives them all your hugging potential.")]
-        public Task<AbyssResult> Command_HugUserAsync([Name("Member")] [Description("The user to hug.")]
-            CachedMember hugee)
-        {
-            if (hugee.Id == Context.Invoker.Id) return Ok("You hug yourself.");
-
-            return Ok(e =>
-            {
-                e.Description = $"**{Context.Invoker.DisplayName}** hugs **{hugee.DisplayName}**!";
-            });
-        }
-
         private static string GetVoiceChannelStatus(CachedMember user)
         {
             return user.VoiceChannel == null ? "Not in a voice channel" : $"In {user.VoiceChannel.Name}";
+        }
+
+        [Name("Nickname")]
+        [Group("nick")]
+        public class NicknameSubgroup : AbyssModuleBase
+        {
+            [Command("reset")]
+            [Description("Reset (remove) the nickname for a member.")]
+            [RequireBotGuildPermissions(Permission.ManageNicknames)]
+            [RequireMemberGuildPermissions(Permission.ManageNicknames)]
+            public Task<AbyssResult> Command_ResetNicknameAsync(
+                [Name("member")] [Description("The user you would like me to reset.")] CachedMember member)
+            {
+                return Command_SetNicknameAsync(member, null);
+            }
+
+            [Command("set")]
+            [Description("Set the nickname for a user.")]
+            [RequireBotGuildPermissions(Permission.ManageNicknames)]
+            [RequireMemberGuildPermissions(Permission.ManageNicknames)]
+            public async Task<AbyssResult> Command_SetNicknameAsync(
+                [Name("member")] [Description("The user you would like me to change nickname of.")] CachedMember target,
+                [Description("The nickname to set.")] [Name("new nickname")] [Remainder] string? nickname)
+            {
+                try
+                {
+                    await target.ModifyAsync(a => a.Nick = nickname, RestRequestOptions.FromReason($"Action performed by {Context.Invoker}")).ConfigureAwait(false);
+                    return SuccessReaction();
+                }
+                catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.Forbidden)
+                {
+                    return BadRequest("Not allowed to.");
+                }
+                catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.BadRequest)
+                {
+                    return BadRequest("Bad format.");
+                }
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Abyss
 
         public async Task<AbyssResult> CommandSubroutine_HelpQueryAsync(string query)
         {
-            // Searching for command or module
+            // Searching for module/group first
             var group = _bot.GetAllModules().Where(m => m.IsGroup()).Search(query);
             if (group == null)
             {
@@ -32,7 +32,7 @@ namespace Abyss
                 return Ok(await _help.CreateCommandEmbedAsync(search[0].Command, Context));
             }
             
-            return Ok(await HelpService.CreateGroupEmbedAsync(Context, group));
+            return Ok(HelpService.CreateGroupEmbed(Context, group));
         }
 
         [Command("help", "commands")]
@@ -68,7 +68,7 @@ namespace Abyss
                 embed.AddField("Commands", string.Join(", ", commands));
 
             var groups = new List<string>();
-            foreach (var module in _bot.GetAllModules().Where(m => m.IsGroup()))
+            foreach (var module in _bot.GetAllModules().Where(m => m.IsGroup() && m.Parent == null))
             {
                 if (await HelpService.CanShowModuleAsync(Context, module))
                 {

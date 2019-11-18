@@ -5,14 +5,15 @@ using Disqord.Bot;
 
 namespace Abyss
 {
+    [Name("Action Log Configuration")]
     [Group("actionlog")]
     [Description("Commands related to the Abyss Action Log.")]
     [RequireMemberGuildPermissions(Permission.ManageGuild)]
-    public class ActionLogModule : AbyssModuleBase
+    public class ActionLogCommandGroup : AbyssModuleBase
     {
         private readonly DatabaseService _database;
 
-        public ActionLogModule(DatabaseService database)
+        public ActionLogCommandGroup(DatabaseService database)
         {
             _database = database;
         }
@@ -20,7 +21,7 @@ namespace Abyss
         [Command("set")]
         [Description("Enables and configures the Abyss Action Log.")]
         public Task<AbyssResult> Command_ActionLogManageAsync(
-            [Name("Action Log Channel")] [Description("The channel that will be used for Action Log events.")] CachedTextChannel targetChannel)
+            [Name("action log channel")] [Description("The channel that will be used for Action Log events.")] [Remainder] CachedTextChannel targetChannel)
         {
             var guild = _database.GetOrCreateGuild(Context.Guild.Id);
             if (!Context.BotMember.GetPermissionsFor(targetChannel).SendMessages)
@@ -28,10 +29,10 @@ namespace Abyss
             guild.ActionLogChannelId = targetChannel.Id;
             _database.UpdateGuild(guild);
 
-            return Ok($"Updated the Action Log channel to {targetChannel.Mention}");
+            return Ok($"Now posting Action Log events for this server to {targetChannel.Mention}.");
         }
 
-        [Command("disable")]
+        [Command("reset")]
         [Description("Disables the Abyss Action Log.")]
         public Task<AbyssResult> Command_DisableActionLogAsync()
         {
@@ -39,7 +40,7 @@ namespace Abyss
             guild.ActionLogChannelId = 0;
             _database.UpdateGuild(guild);
 
-            return Ok($"Disabled the Action Log for this server. Use 'a.actionlog set <channel>' to re-enable.");
+            return Ok("Disabled the Action Log for this server. ");
         }
     }
 }

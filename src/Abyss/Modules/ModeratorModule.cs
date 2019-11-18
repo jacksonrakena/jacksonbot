@@ -21,34 +21,6 @@ namespace Abyss
             _actionLog = actionLog;
         }
 
-        [Command("setnick")]
-        [Description("Sets the current nickname for a user.")]
-        [Remarks("You can provide `clear` to remove their current nickname (if any).")]
-        [RequireBotGuildPermissions(Permission.ManageNicknames)]
-        [RequireMemberChannelPermissions(Permission.ManageNicknames)]
-        public async Task<AbyssResult> Command_SetNicknameAsync(
-            [Name("Target")] [Description("The user you would like me to change username of.")] CachedMember target,
-            [Description("The nickname to set to. Omit to remove the current one (if set).")] [Name("New Nickname")] [Remainder]
-            string? nickname = null)
-        {
-            if ((nickname == null || nickname.Equals("clear", StringComparison.OrdinalIgnoreCase)) && string.IsNullOrEmpty(target.Nick))
-                return BadRequest($"{target.Format()} doesn't have a nickname.");
-
-            try
-            {
-                await target.ModifyAsync(a => a.Nick = (nickname == null || nickname == "clear") ? null : nickname, RestRequestOptions.FromReason($"Action performed by {Context.Invoker}")).ConfigureAwait(false);
-                return SuccessReaction();
-            }
-            catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.Forbidden)
-            {
-                return BadRequest("Not allowed to.");
-            }
-            catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.BadRequest)
-            {
-                return BadRequest("Bad format.");
-            }
-        }
-
         [Command("ban")]
         [Description("Bans a member from this server.")]
         [RequireMemberGuildPermissions(Permission.BanMembers)]

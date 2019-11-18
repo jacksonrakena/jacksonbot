@@ -43,7 +43,7 @@ namespace Abyss
 
             CommandExecuted += HandleCommandExecutedAsync;
             CommandExecutionFailed += HandleCommandExecutionFailedAsync;
-            AddModules(Assembly.GetExecutingAssembly(), action: ProcessModule);
+            AddModules(Assembly.GetExecutingAssembly());
             AddArgumentParser(UnixArgumentParser.Instance);
 
             Ready += Discord_Ready;
@@ -281,9 +281,9 @@ namespace Abyss
                     _logger.Information("Overloads failed for text \"{content}\"", context.Message.Content);
 
                     await context.Channel.SendMessageAsync(embed: new LocalEmbedBuilder()
-                        .WithTitle("Failed to find a matching command")
+                        .WithTitle("There's multiple versions of this command available")
                         .WithDescription(
-                            $"Multiple versions of the command you requested exist, and your supplied information doesn't match any of them. Try using {context.Prefix}help <your command> for more information on the different versions.")
+                            $"I tried to run the closest available version, but none of them worked. Here's why:")
                         .WithCurrentTimestamp()
                         .WithColor(Color.Red)
                         .WithFields(ofr.FailedOverloads.Select(ov =>
@@ -300,25 +300,6 @@ namespace Abyss
             }
 
             await base.AfterExecutedAsync(result, context);
-        }
-
-        private void ProcessModule(ModuleBuilder moduleBuilder)
-        {
-            if (moduleBuilder.Type.HasCustomAttribute<GroupAttribute>())
-            {
-                moduleBuilder.AddCommand(CreateGroupRootBuilder, b =>
-                {
-                    b.AddAttribute(new HiddenAttribute());
-                });
-            }
-        }
-
-        // Qmmands requires this to return Task<CommandResult> (instead of Task<ActionResult>)
-        // otherwise the command will return null. Strange.
-        private async Task<CommandResult> CreateGroupRootBuilder(CommandContext c)
-        {
-            var embed = await HelpService.CreateGroupEmbedAsync(c.AsAbyssContext(), c.Command.Module);
-            return new ContentResult(embed);
         }
 
         protected override async ValueTask<bool> BeforeExecutedAsync(CachedUserMessage message)
