@@ -18,7 +18,6 @@
     </PropertyGroup>
   
     <ItemGroup>
-        <PackageReference Include="Abyssal.HumanDateParser" Version="2.0.0-20191024.6" />
         <PackageReference Include="Handlebars.Net" Version="1.10.1" />
         <PackageReference Include="AbyssalSpotify" Version="1.0.1-20191018.6" />
         <PackageReference Include="LiteDB" Version="4.1.4" />

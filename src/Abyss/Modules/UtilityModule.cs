@@ -1,7 +1,6 @@
 using Disqord;
 using Disqord.Bot;
 using Disqord.Events;
-using HumanDateParser;
 using Qmmands;
 using System;
 using System.Diagnostics;
@@ -15,34 +14,6 @@ namespace Abyss
     [Description("Commands that provide useful utilities.")]
     public class UtilityModule : AbyssModuleBase
     {
-        [Command("time")]
-        [Description("Displays time.")]
-        public Task<AbyssResult> Command_TimeAsync([Name("Text")] [Remainder] string text)
-        {
-            try
-            {
-                return Ok($"`{text}` => {HumanDateParser.HumanDateParser.Parse(text)}");
-            } catch (ParseException pe)
-            {
-                return BadRequest($"Error during parsing: " + pe.Message);
-            }
-        }
-
-        [Command("timed")]
-        [Description("Displays time, in debug mode.")]
-        public Task<AbyssResult> Command_TimeDetailedAsync([Name("Text")] [Remainder] string text)
-        {
-            try {
-                var res = HumanDateParser.HumanDateParser.ParseDetailed(text);
-                return Ok($"`{text}` => {res.Result.ToString()}\n" +
-                $"**Tokens:** {string.Join(", ", res.Tokens.Select(c => Markdown.Code(c.GetType().Name)))}");
-            }
-            catch (ParseException pe)
-            {
-                return BadRequest($"Error during parsing: " + pe.Message);
-            }
-        }
-
         [Command("ping")]
         [Description("Benchmarks the connection to the Discord servers.")]
         [AbyssCooldown(1, 3, CooldownMeasure.Seconds, CooldownType.User)]
@@ -124,7 +95,7 @@ namespace Abyss
         public async Task<AbyssResult> Command_QuoteMessageAsync([Name("ID")] [Description("The ID of the message.")]
             ulong messageId)
         {
-            var message = Context.Channel.GetMessage(messageId) as IUserMessage ?? await Context.Channel.GetMessageAsync(messageId).ConfigureAwait(false) as IUserMessage;
+            var message = Context.Channel.GetMessage(messageId) ?? await Context.Channel.GetMessageAsync(messageId).ConfigureAwait(false) as IUserMessage;
 
             if (message == null) return BadRequest("Can't find message.");
 

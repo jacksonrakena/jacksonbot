@@ -74,7 +74,7 @@ namespace Abyss
                 Id = CurrentUser.Id.RawValue,
                 Guilds = Guilds.Count,
                 Prefix = Prefixes[0],
-                SessionId = e.SessionId
+                e.SessionId
             });
 
             var startupConfiguration = _config.Startup;
@@ -90,12 +90,12 @@ namespace Abyss
                 return (activityType, a.Message);
             }).ToList();
 
-            _ = Task.Run(async () =>
+            Task.Run(async () =>
             {
                 while (true)
                 {
                     var (activityType, message) = activities.Random();
-                    await SetPresenceAsync(UserStatus.Online, new LocalActivity(message, activityType, null));
+                    await SetPresenceAsync(UserStatus.Online, new LocalActivity(message, activityType));
                     await Task.Delay(TimeSpan.FromMinutes(1));
                 }
             });
@@ -193,14 +193,13 @@ namespace Abyss
                 case ExecutionFailedResult _:
                     return;
 
-                case CommandNotFoundResult cnfr:
+                case CommandNotFoundResult _:
                     //logger.Information("No command found matching \"{content}\"", context.Message.Content);
                     break;
 
                 case ChecksFailedResult cfr:
                     logger.Information("{count} checks failed on {type}", cfr.FailedChecks.Count, cfr.Command?.FullAliases[0] ?? cfr.Module.GetType().Name);
 
-                    var silentCheckType = typeof(SilentAttribute);
                     var checks = cfr.FailedChecks.Where(check => check.Check.GetType().CustomAttributes.Any(a => a.AttributeType != typeof(SilentAttribute))).ToList();
 
                     if (checks.Count == 0) break;
@@ -221,7 +220,6 @@ namespace Abyss
                 case ParameterChecksFailedResult pcfr:
                     logger.Information("{count} parameter checks failed on {type} (command {command})", pcfr.FailedChecks.Count, pcfr.Parameter.Name, pcfr.Parameter.Command.Name);
 
-                    var silentCheckType0 = typeof(SilentAttribute);
                     var pchecks = pcfr.FailedChecks.Where(check => check.Check.GetType().CustomAttributes.All(a => a.AttributeType != typeof(SilentAttribute))).ToList();
 
                     if (pchecks.Count == 0) break;
@@ -259,7 +257,7 @@ namespace Abyss
                         $"I couldn't read whatever you just said: {upfr.ParseFailure.Humanize()}.").ConfigureAwait(false);
                     break;
                 case TypeParseFailedResult tpfr:
-                    logger.Information("Failed to parse \"{text}\" as type {type} for parameter {parameter} in command {command}", tpfr.Value, tpfr.Parameter.Type.Name, tpfr.Parameter.Name, tpfr.Parameter.Command.FullAliases[0]); ;
+                    logger.Information("Failed to parse \"{text}\" as type {type} for parameter {parameter} in command {command}", tpfr.Value, tpfr.Parameter.Type.Name, tpfr.Parameter.Name, tpfr.Parameter.Command.FullAliases[0]);
 
                     var sb = new StringBuilder().AppendLine(tpfr.Reason);
                     sb.AppendLine();
