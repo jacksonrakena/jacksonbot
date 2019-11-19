@@ -81,6 +81,8 @@ namespace Abyss
                 .Build();
             var configModel = new AbyssConfig();
             configuration.Bind(configModel);
+            
+            hostLogger.Information("Loaded configuration from {0} providers. {1} activities loaded.", configuration.Providers.Count(), configModel.Startup.Activity.Count());
 
             var startupActivity = configModel.Startup.Activity.FirstOrDefault() ?? throw new InvalidOperationException("No Startup.Activity supplied.");
             var botConfiguration = new DiscordBotConfiguration
