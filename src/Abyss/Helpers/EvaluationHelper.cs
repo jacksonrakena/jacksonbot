@@ -40,7 +40,7 @@ namespace Abyss
                 sb.AppendLine();
             }
 
-            return Markdown.CodeBlock(sb.ToString(), "ini");
+            return Markdown.CodeBlock("ini", sb.ToString());
         }
 
 
@@ -75,7 +75,7 @@ namespace Abyss
                 sb.AppendLine();
             }
 
-            return Markdown.CodeBlock(sb.ToString(), "ini");
+            return Markdown.CodeBlock("ini", sb.ToString());
         }
 
         public static string Inspect(object obj)
@@ -143,7 +143,7 @@ namespace Abyss
                 foreach (var prop in objEnumerable) inspection.Append(" - ").Append(prop).AppendLine();
             }
 
-            return Markdown.CodeBlock(inspection.ToString(), "ini");
+            return Markdown.CodeBlock("ini", inspection.ToString());
         }
 
 
