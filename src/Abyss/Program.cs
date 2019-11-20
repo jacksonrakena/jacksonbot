@@ -155,14 +155,11 @@ namespace Abyss
                     args.Cancel = true;
                     if (!_cts.IsCancellationRequested) _cts.Cancel();
                 };
-                _ = bot.RunAsync().ConfigureAwait(false);
-                await Task.Delay(-1, _cts.Token).ConfigureAwait(false);
+                
+                await bot.RunAsync(_cts.Token).ConfigureAwait(false);
             }
             catch (TaskCanceledException)
             {
-                hostLogger.Information("Received sigterm or CTRL+C. Stopping.");
-                await notifications.NotifyStoppingAsync().ConfigureAwait(false);
-                await bot.StopAsync().ConfigureAwait(false);
                 hostLogger.Information("Discord service has stopped.");
                 Log.CloseAndFlush();
             }

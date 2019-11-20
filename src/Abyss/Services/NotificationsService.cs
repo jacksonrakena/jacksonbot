@@ -40,7 +40,7 @@ namespace Abyss
             await stc.TrySendMessageAsync(embed: message.Build()).ConfigureAwait(false);
         }
 
-        public Task NotifyStoppingAsync()
+        /*public Task NotifyStoppingAsync()
         {
             if (_notifyConfig?.Stopping == null) return Task.CompletedTask;
 
@@ -55,7 +55,7 @@ namespace Abyss
                 .AddField("Time UTC", FormatHelper.FormatTime(DateTimeOffset.Now), true);
 
             return stc.TrySendMessageAsync(embed: message.Build());
-        }
+        }*/
 
         private Task GuildJoined(JoinedGuildEventArgs e) => NotifyServerMembershipChangeAsync(e.Guild, true);
         private Task GuildLeft(LeftGuildEventArgs e) => NotifyServerMembershipChangeAsync(e.Guild, false);
