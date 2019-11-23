@@ -5,6 +5,7 @@ using Disqord.Rest;
 using Humanizer;
 using Qmmands;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -66,13 +67,17 @@ namespace Abyss
 
             var desc = new StringBuilder();
 
-            static string FormatActivity(Activity activity)
+            static string FormatActivity(Presence presence)
             {
-                if (activity is SpotifyActivity spotify)
+                var strings = new List<string>();
+                foreach (var act in presence.Activities)
                 {
-                    return $"Listening to {spotify.TrackTitle} by {spotify.Artists.Humanize()}";
+                    if (act is SpotifyActivity sact)
+                    {
+                        strings.Add($"{sact.TrackTitle} by {sact.Artists[0]}");
+                    } else strings.Add($"{act.Type} {act.Name}");
                 }
-                return $"{activity.Type.Humanize()} {activity.Name}";
+                return string.Join(", ", strings);
             }
 
             var effectiveColor = member.GetHighestRoleColour();
@@ -86,8 +91,8 @@ namespace Abyss
             desc.AppendLine($"**- Muted:** {(member.IsMuted ? "Yes" : "No")}");
             desc.AppendLine($"**- Nickname:** {member.Nick ?? "None"}");
             desc.AppendLine($"**- Voice Status:** {GetVoiceChannelStatus(member)}");
-            if (member.Presence?.Activity != null)
-                desc.AppendLine($"**- Activity:** {FormatActivity(member.Presence.Activity)}");
+            if (member.Presence != null && member.Presence.Activities.Count > 0)
+                desc.AppendLine($"**- Activity:** {FormatActivity(member.Presence)}");
             if (member.Presence != null) desc.AppendLine($"**- Status:** {_config.Emotes.GetStatusEmote(member.Presence.Status)} {member.Presence.Status.Humanize()}");
             
             if (user.MutualGuilds != null) desc.AppendLine($"**- Mutual servers:** {user.MutualGuilds.Count}");
