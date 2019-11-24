@@ -119,8 +119,8 @@ namespace Abyss
                 // Bot
                 .AddSingleton<AbyssBot>()
                 // Core services
-                .AddSingleton<IStartupService, MarketingService>()
-                .AddSingleton<IStartupService, ActionLogService>()
+                .AddSingleton<MarketingService>()
+                .AddSingleton<ActionLogService>()
                 .AddSingleton<NotificationsService>()
                 .AddSingleton<DatabaseService>()
                 .AddSingleton<HelpService>()
@@ -140,7 +140,8 @@ namespace Abyss
             var bot = services.GetRequiredService<AbyssBot>();
             var hostLogger = Log.Logger.ForContext("SourceContext", "Abyss Host");
             var notifications = services.GetRequiredService<NotificationsService>();
-            var startupServices = services.GetServices<IStartupService>();
+            services.GetRequiredService<MarketingService>();
+            services.GetRequiredService<ActionLogService>();
 
             var addTypeParser = typeof(AbyssBot).GetMethod("AddTypeParser");
             if (addTypeParser == null) throw new InvalidOperationException("AddTypeParser method missing."); 
@@ -148,7 +149,7 @@ namespace Abyss
             {
                 if (type.GetCustomAttribute<DiscoverableTypeParserAttribute>() is DiscoverableTypeParserAttribute dtpa)
                 {
-                    var method = addTypeParser.MakeGenericMethod(type.BaseType.GetGenericArguments()[0]);
+                    var method = addTypeParser.MakeGenericMethod(type.BaseType!.GetGenericArguments()[0]);
                     method.Invoke(bot, new object[] { services.Create(type), dtpa.ReplacingPrimitive });
                     hostLogger.Information("Added parser {parser}.", type.Name);
                 }

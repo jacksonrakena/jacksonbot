@@ -8,7 +8,7 @@ using Serilog;
 
 namespace Abyss
 {
-    public class MarketingService : IStartupService
+    public class MarketingService
     {
         private readonly AbyssBot _abyss;
         private readonly HttpClient _http;
