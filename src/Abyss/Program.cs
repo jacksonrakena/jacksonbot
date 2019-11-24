@@ -41,7 +41,7 @@ namespace Abyss
 
     public static class Program
     {
-        private static readonly CancellationTokenSource _cts = new CancellationTokenSource();
+        private static CancellationTokenSource _cts = new CancellationTokenSource();
 
         public static void Main(string[] args)
         {
@@ -144,7 +144,7 @@ namespace Abyss
             services.GetRequiredService<ActionLogService>();
 
             var addTypeParser = typeof(AbyssBot).GetMethod("AddTypeParser");
-            if (addTypeParser == null) throw new InvalidOperationException("AddTypeParser method missing."); 
+            if (addTypeParser == null) throw new InvalidOperationException("AddTypeParser method missing.");
             foreach (var type in Assembly.GetExecutingAssembly().DefinedTypes)
             {
                 if (type.GetCustomAttribute<DiscoverableTypeParserAttribute>() is DiscoverableTypeParserAttribute dtpa)
@@ -154,37 +154,44 @@ namespace Abyss
                     hostLogger.Information("Added parser {parser}.", type.Name);
                 }
             }
-
-            try
+            AssemblyLoadContext.Default.Unloading += ctx =>
             {
-                hostLogger.Information("Abyss Discord service starting at {time}.", FormatHelper.FormatTime(DateTimeOffset.Now));
+                if (!_cts.IsCancellationRequested) _cts.Cancel();
+            };
 
-                // SIGTERM handler (Docker)
-                AssemblyLoadContext.Default.Unloading += ctx =>
+            // CTRL+C handler 
+            Console.CancelKeyPress += (sender, args) =>
+            {
+                args.Cancel = true;
+                if (!_cts.IsCancellationRequested) _cts.Cancel();
+            };
+
+            var run = true;
+            while (run)
+            {
+                _cts = new CancellationTokenSource();
+                try
                 {
-                    if (!_cts.IsCancellationRequested) _cts.Cancel();
-                };
+                    hostLogger.Information("Abyss Discord service starting at {time}.", FormatHelper.FormatTime(DateTimeOffset.Now));
 
-                // CTRL+C handler 
-                Console.CancelKeyPress += (sender, args) =>
+                    await bot.RunAsync(_cts.Token).ConfigureAwait(false);
+                }
+                catch (TaskCanceledException)
                 {
-                    args.Cancel = true;
-                    if (!_cts.IsCancellationRequested) _cts.Cancel();
-                };
-                
-                await bot.RunAsync(_cts.Token).ConfigureAwait(false);
-            }
-            catch (TaskCanceledException)
-            {
-                hostLogger.Information("Discord service has stopped.");
-                Log.CloseAndFlush();
-            }
-            catch (Exception e)
-            {
-                hostLogger.Error(e, "Root-level exception occurred that killed the bot.");
-            }
-
-            _cts.Dispose();
+                    hostLogger.Information("Discord service has stopped.");
+                    Log.CloseAndFlush();
+                    run = false;
+                    _cts.Dispose();
+                    continue;
+                }
+                catch (Exception e)
+                {
+                    hostLogger.Error(e, "Root-level exception occurred that killed the bot.");
+                    _cts.Dispose();
+                    continue;
+                }
+                hostLogger.Error("The Discord service task stopped blocking. Restarting...");
+            }    
         }
 
         public static CooldownBucketKeyGeneratorDelegate CooldownKeyGenerator = (t, ctx) =>
