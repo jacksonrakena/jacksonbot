@@ -4,9 +4,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
+using Abyssal.Common;
 using AbyssalSpotify;
 using Disqord;
 using Disqord.Bot;
@@ -139,6 +141,18 @@ namespace Abyss
             var hostLogger = Log.Logger.ForContext("SourceContext", "Abyss Host");
             var notifications = services.GetRequiredService<NotificationsService>();
             var startupServices = services.GetServices<IStartupService>();
+
+            var addTypeParser = typeof(AbyssBot).GetMethod("AddTypeParser");
+            if (addTypeParser == null) throw new InvalidOperationException("AddTypeParser method missing."); 
+            foreach (var type in Assembly.GetExecutingAssembly().DefinedTypes)
+            {
+                if (type.GetCustomAttribute<DiscoverableTypeParserAttribute>() is DiscoverableTypeParserAttribute dtpa)
+                {
+                    var method = addTypeParser.MakeGenericMethod(type.BaseType.GetGenericArguments()[0]);
+                    method.Invoke(bot, new object[] { services.Create(type), dtpa.ReplacingPrimitive });
+                    hostLogger.Information("Added parser {parser}.", type.Name);
+                }
+            }
 
             try
             {
