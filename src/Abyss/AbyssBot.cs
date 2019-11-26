@@ -200,7 +200,7 @@ namespace Abyss
                 case ChecksFailedResult cfr:
                     logger.Information("{count} checks failed on {type}", cfr.FailedChecks.Count, cfr.Command?.FullAliases[0] ?? cfr.Module.GetType().Name);
 
-                    var checks = cfr.FailedChecks.Where(check => check.Check.GetType().CustomAttributes.Any(a => a.AttributeType != typeof(SilentAttribute))).ToList();
+                    var checks = cfr.FailedChecks.Where(check => check.Check.GetType().CustomAttributes.All(a => a.AttributeType != typeof(SilentAttribute))).ToList();
 
                     if (checks.Count == 0) break;
 
