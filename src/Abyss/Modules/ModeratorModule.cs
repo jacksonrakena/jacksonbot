@@ -21,22 +21,6 @@ namespace Abyss
             _actionLog = actionLog;
         }
 
-        [Command("announce")]
-        [Description("Announces a message to a specified channel.")]
-        public async Task<AbyssResult> Command_AnnounceAsync([Name("Channel")] [Description("The channel to send to.")]
-            CachedTextChannel channel, [Name("Title")] [Description("The title of the announcement.")] string title,
-            [Name("Message")] [Description("The message.")] [Remainder] string message)
-        {
-            return await channel.TrySendMessageAsync(string.Empty, false,
-                    new LocalEmbedBuilder()
-                    .WithColor(AbyssBot.SystemColor)
-                    .WithTitle(title)
-                    .WithDescription(message)
-                    .WithCurrentTimestamp()
-                    .Build())
-                    ? new ReactSuccessResult() : BadRequest("Failed to send a message to that channel.");
-        }
-
         [Command("ban")]
         [Description("Bans a member from this server.")]
         [RequireMemberGuildPermissions(Permission.BanMembers)]
