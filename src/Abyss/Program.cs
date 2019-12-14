@@ -45,10 +45,10 @@ namespace Abyss
 
         public static void Main(string[] args)
         {
-            var environment = Enum.Parse<EnvironmentType>(Environment.GetEnvironmentVariable("ABYSS_ENVIRONMENT", EnvironmentVariableTarget.Process) ?? nameof(EnvironmentType.Development));
+            var environment = Enum.Parse<EnvironmentType>(Environment.GetEnvironmentVariable("ROSALINA_ENVIRONMENT", EnvironmentVariableTarget.Process) ?? nameof(EnvironmentType.Development));
             var contentRoot = (args.Length > 0 && Directory.Exists(args[0])) ? args[0] : AppContext.BaseDirectory;
             var outputLoggingString = "[{Timestamp:HH:mm:ss yyyy-MM-dd} {Environment} {SourceContext} {Level:u3}] {Message:lj} {Properties}{NewLine}";
-            var logFile = Path.Combine(contentRoot, "logs", "abyss.log");
+            var logFile = Path.Combine(contentRoot, "logs", "rosalina.log");
             if (File.Exists(logFile))
             {
                 try
@@ -74,13 +74,13 @@ namespace Abyss
                     formatProvider: new CultureInfo("en-AU"))
                 .CreateLogger();
 
-            var hostLogger = Log.Logger.ForContext("SourceContext", "Abyss Host");
+            var hostLogger = Log.Logger.ForContext("SourceContext", "Rosalina Host");
             hostLogger.Information("Abyss bot starting in mode {environment} at {time}.", environment, FormatHelper.FormatTime(DateTimeOffset.Now));
 
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(contentRoot)
-                .AddJsonFile("abyss.json", optional: false)
-                .AddJsonFile($"abyss.{environment}.json", optional: true)
+                .AddJsonFile("rosalina.json", optional: false)
+                .AddJsonFile($"rosalina.{environment}.json", optional: true)
                 .Build();
             var configModel = new AbyssConfig();
             configuration.Bind(configModel);
@@ -136,7 +136,7 @@ namespace Abyss
         public static async Task StartAsync(IServiceProvider services)
         {
             var bot = services.GetRequiredService<AbyssBot>();
-            var hostLogger = Log.Logger.ForContext("SourceContext", "Abyss Host");
+            var hostLogger = Log.Logger.ForContext("SourceContext", "Rosalina Host");
             var notifications = services.GetRequiredService<NotificationsService>();
 
             var addTypeParser = typeof(AbyssBot).GetMethod("AddTypeParser");
