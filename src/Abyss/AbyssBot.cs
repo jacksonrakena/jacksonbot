@@ -294,10 +294,10 @@ namespace Abyss
             await base.AfterExecutedAsync(result, context);
         }
 
-        protected override async ValueTask<bool> BeforeExecutedAsync(CachedUserMessage message)
+        protected override async ValueTask<bool> BeforeExecutedAsync(DiscordCommandContext context)
         {
-            var b = await base.BeforeExecutedAsync(message);
-            return b && message.Guild != null;
+            var b = await base.BeforeExecutedAsync(context);
+            return b && context.Guild != null;
         }
 
         protected override ValueTask<DiscordCommandContext> GetCommandContextAsync(CachedUserMessage message, string prefix)
