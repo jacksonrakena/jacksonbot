@@ -119,8 +119,6 @@ namespace Abyss
                 // Bot
                 .AddSingleton<AbyssBot>()
                 // Core services
-                .AddSingleton<MarketingService>()
-                .AddSingleton<ActionLogService>()
                 .AddSingleton<NotificationsService>()
                 .AddSingleton<DatabaseService>()
                 .AddSingleton<HelpService>()
@@ -140,8 +138,6 @@ namespace Abyss
             var bot = services.GetRequiredService<AbyssBot>();
             var hostLogger = Log.Logger.ForContext("SourceContext", "Abyss Host");
             var notifications = services.GetRequiredService<NotificationsService>();
-            services.GetRequiredService<MarketingService>();
-            services.GetRequiredService<ActionLogService>();
 
             var addTypeParser = typeof(AbyssBot).GetMethod("AddTypeParser");
             if (addTypeParser == null) throw new InvalidOperationException("AddTypeParser method missing.");

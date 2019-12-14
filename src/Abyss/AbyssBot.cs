@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -78,17 +79,10 @@ namespace Abyss
             });
 
             var startupConfiguration = _config.Startup;
-            var activities = startupConfiguration.Activity.Select(a =>
+            var activities = new List<(ActivityType, string)>
             {
-                if (!Enum.TryParse<ActivityType>(a.Type, out var activityType))
-                {
-                    throw new InvalidOperationException(
-                        $"{a.Type} is not a valid Discord activity type.\n" +
-                        $"Available options are: {string.Join(", ", typeof(ActivityType).GetEnumNames())}");
-                }
-
-                return (activityType, a.Message);
-            }).ToList();
+                (ActivityType.Watching, "over the cosmos")
+            };
 
             Task.Run(async () =>
             {

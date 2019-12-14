@@ -14,12 +14,6 @@ namespace Abyss
     [Description("Commands that help you moderate and protect your server.")]
     public class ModeratorModule : AbyssModuleBase
     {
-        private readonly ActionLogService _actionLog;
-
-        public ModeratorModule(ActionLogService actionLog)
-        {
-            _actionLog = actionLog;
-        }
 
         [Command("ban")]
         [Description("Bans a member from this server.")]
@@ -44,7 +38,6 @@ namespace Abyss
                     $"I don't have permission to ban them.");
             }
 
-            await _actionLog.CreateModeratorActionLogEntryAsync($"{Context.Invoker} ({Context.Invoker.Id}) used Abyss to ban {target.Name} ({target.Id}).", Context.Guild.Id);
             return Ok(
                 $"Banned user {target}{(reason != null ? " with reason: " + reason : "")}.");
         }
@@ -61,7 +54,6 @@ namespace Abyss
             if (target.Hierarchy > Context.BotMember.Hierarchy) return BadRequest("That member is a higher rank than me!");
 
             await target.KickAsync(RestRequestOptions.FromReason($"{Context.Invoker} ({Context.Invoker.Id}){(reason != null ? $": {reason}" : ": No reason provided")}")).ConfigureAwait(false);
-            await _actionLog.CreateModeratorActionLogEntryAsync($"{Context.Invoker} ({Context.Invoker.Id}) used Abyss to kick {target.Name} ({target.Id}).", Context.Guild.Id);
             return Ok($"Kicked {target}.");
         }
 
@@ -89,7 +81,6 @@ namespace Abyss
                     $"I don't have permission to ban them.");
             }
 
-            await _actionLog.CreateModeratorActionLogEntryAsync($"{Context.Invoker} ({Context.Invoker.Id}) used Abyss to hackban {target}.", Context.Guild.Id);
             return Ok(
                 $"Added ban for user {guildUser?.ToString() ?? target.ToString()}{(reason != null ? " with reason: " + reason : "")}.");
         }
@@ -123,8 +114,6 @@ namespace Abyss
             {
                 await Context.Guild.BanMemberAsync(user.Id, deleteMessageDays: 7).ConfigureAwait(false);
                 await Context.Guild.UnbanMemberAsync(user.Id).ConfigureAwait(false);
-
-                await _actionLog.CreateModeratorActionLogEntryAsync($"{Context.Invoker} ({Context.Invoker.Id}) used Abyss to softban {user} ({user.Id}).", Context.Guild.Id);
 
                 return Ok($"Softbanned {user}.");
             }
@@ -188,7 +177,6 @@ namespace Abyss
             {
                 sb.AppendLine($"**{Context.Guild.GetMember(author.Key)?.ToString() ?? author.Key.ToString()}**: {author.Count()} messages");
             }
-            await _actionLog.CreateModeratorActionLogEntryAsync($"{Context.Invoker} ({Context.Invoker.Id}) used Abyss to clear {messages.Count} messages from channel {ch.Name} ({ch.Id}).", Context.Guild.Id);
             return Ok(sb.ToString());
         }
     }

@@ -1,13 +1,5 @@
 {
-  "CommandPrefix": "a.",
-  "Startup": {
-    "Activity": [ // Bot rotates through these every minute
-      {
-        "Type": "Watching",
-        "Message": "you <3"
-      }
-    ]
-  },
+  "CommandPrefix": "r?",
   "Connections": {
     "Discord": {
       "Token": "Discord bot user token. Required."
@@ -17,13 +9,13 @@
       "ClientSecret": "Spotify client secret. Required."
     }
   },
-  "Notifications": { // Abyss will notify you of these events. Blank/missing values will be ignored. These are Discord channels that the bot should have read/write access to.
+  "Notifications": { // Rosalina will notify you of these events. Blank/missing values will be ignored. These are Discord channels that the bot should have read/write access to.
     "Ready": 598437593721602068,
     "ServerMembershipChange": 598437593721602068,
     "Feedback": 600565543010828288,
     "Stopping": 598437593721602068
   },
-  "Emotes": { // The emotes that Abyss will use. All of these must be filled.
+  "Emotes": { // The emotes that Rosalina will use. All of these must be filled.
     "YesEmote": "<:AbyssYes:598658539287871510>",
     "NoEmote": "<:AbyssNo:598658540042846258>",
     "AfkEmote": "<:discordAfk:609952141414629376>",
