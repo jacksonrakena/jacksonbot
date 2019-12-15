@@ -21,6 +21,50 @@ namespace Rosalina
             _spotify = spotify;
         }
 
+        [Command("artist")]
+        [Description("Searches the Spotify database for an artist.")]
+        [RunMode(RunMode.Parallel)]
+        public async Task<RosalinaResult> Command_ArtistAsync(
+            [Name("Artist")] [Description("The artist to search for.")] [Remainder]
+            string? artistQuery = null)
+        {
+            SpotifyArtist artist;
+            if (artistQuery == null)
+            {
+                if (!(Context.Invoker.Presence.Activities.FirstOrDefault(d => d is SpotifyActivity) is SpotifyActivity spot))
+                {
+                    return BadRequest(
+                       "You didn't supply an artist name, and you're not currently listening to anything!");
+                }
+
+                var track = await _spotify.GetTrackAsync(spot.TrackId).ConfigureAwait(false);
+                artist = await track.Artists[0].GetFullEntityAsync().ConfigureAwait(false);
+            }
+            else
+            {
+                try
+                {
+                    var result = await _spotify.SearchAsync(artistQuery, SearchType.Artist).ConfigureAwait(false);
+                    var sa0 = result.Artists.Items.FirstOrDefault();
+
+                    if (sa0 == null) return BadRequest("Cannot find artist by that name.");
+
+                    artist = await _spotify.GetArtistAsync(sa0.Id.Id).ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                    return BadRequest("An error occurred while searching for the artist.");
+                }
+            }
+
+            return Ok(c =>
+            {
+                c.Author = new LocalEmbedAuthorBuilder { Name = artist.Name, IconUrl = artist.Images.FirstOrDefault().Url, Url = artist.Id.Url };
+                c.ThumbnailUrl = (artist.Images.Length > 1 ? artist.Images[1] : artist.Images[0]).Url;
+                c.AddField("Followers", artist.FollowerCount, true);
+            });
+        }
+
         [Command("track")]
         [Description("Searches the Spotify database for a song.")]
         [RunMode(RunMode.Parallel)]

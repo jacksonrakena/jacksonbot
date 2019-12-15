@@ -186,7 +186,8 @@ namespace Rosalina
                     _cts.Dispose();
                     continue;
                 }
-                hostLogger.Error("The Discord service task stopped blocking. Restarting...");
+                hostLogger.Error("The Discord service task stopped blocking. Restarting in 5 minutes...");
+                await Task.Delay(TimeSpan.FromMinutes(5));
             }    
         }
 

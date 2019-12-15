@@ -14,7 +14,6 @@ namespace Rosalina
     [Description("Commands that help you moderate and protect your server.")]
     public class ModeratorModule : RosalinaModuleBase
     {
-
         [Command("ban")]
         [Description("Bans a member from this server.")]
         [RequireMemberGuildPermissions(Permission.BanMembers)]

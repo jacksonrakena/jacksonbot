@@ -50,7 +50,7 @@ namespace Rosalina
             stringBuilder.AppendLine("```");
 
             stringBuilder.AppendLine($"                 Runtime: {dotnetVersion}");
-            stringBuilder.AppendLine($"         Rosalina framework: {fwAssembly.GetVersion()}");
+            stringBuilder.AppendLine($"      Rosalina framework: {fwAssembly.GetVersion()}");
             stringBuilder.AppendLine($"                 Disqord: {Assembly.GetAssembly(typeof(DiscordClient))!.GetVersion()}");
             stringBuilder.AppendLine($"                 Qmmands: {Assembly.GetAssembly(typeof(CommandService))!.GetVersion()}");
             stringBuilder.AppendLine($"          AbyssalSpotify: {Assembly.GetAssembly(typeof(SpotifyClient))!.GetVersion()}");
@@ -93,20 +93,6 @@ namespace Rosalina
             return Ok(response);
         }
 
-        [Command("feedback")]
-        [Description("Sends feedback to the developer.")]
-        [RosalinaCooldown(1, 24, CooldownMeasure.Hours, CooldownType.User)]
-        public Task<RosalinaResult> Command_SendFeedbackAsync([Remainder] [Range(1, 500)] string feedback)
-        {
-            if (_config.Notifications.Feedback == null || !(_bot.GetChannel(_config.Notifications.Feedback.Value) is CachedTextChannel stc))
-                return BadRequest("Feedback has been disabled for this bot.");
-
-            var _ = stc.SendMessageAsync(
-                $"Feedback from {Context.Invoker}:\n\"{feedback}\"");
-
-            return SuccessReply();
-        }
-
         [Command("prefix")]
         [Description("Shows the prefix.")]
         public Task<RosalinaResult> ViewPrefixesAsync()
@@ -136,13 +122,6 @@ namespace Rosalina
             var value = (bool)perm.GetValue(guildPerms)!;
 
             return Ok($"I **{(value ? "do" : "do not")}** have permission `{name}`!");
-        }
-
-        [Command("invite")]
-        [Description("Creates an invite to add me to another server.")]
-        public Task<RosalinaResult> Command_GetInviteAsync()
-        {
-            return Ok($"You can add me using this link: <https://discordapp.com/api/oauth2/authorize?client_id={Context.Bot.CurrentUser.Id}&permissions=0&scope=bot>");
         }
     }
 }
