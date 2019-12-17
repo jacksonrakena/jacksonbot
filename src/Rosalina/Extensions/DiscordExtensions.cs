@@ -1,5 +1,6 @@
 using Disqord;
 using Disqord.Logging;
+using Disqord.Rest;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

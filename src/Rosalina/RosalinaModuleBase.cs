@@ -3,6 +3,7 @@ using Disqord;
 using System;
 using System.Threading.Tasks;
 using Serilog;
+using Disqord.Rest;
 
 namespace Rosalina
 {

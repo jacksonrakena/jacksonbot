@@ -1,6 +1,7 @@
 using Disqord;
 using Disqord.Bot;
 using Disqord.Events;
+using Disqord.Rest;
 using Qmmands;
 using System;
 using System.Diagnostics;
