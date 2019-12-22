@@ -144,8 +144,10 @@ namespace Rosalina
             [Name("After")] [Description("The message ID to start at, going forward.")]
             ulong? afterMessageId = null,
             [Name("Silent")] [Description("Whether or not to return the results of the purge.")]
-            bool silent = false
-        )
+            bool silent = false,
+            [Name("Dry")] [Description("Whether to perform a dry run.")]
+            bool dry = false
+          )
         {
             if (afterMessageId != null && messageId != null) return BadRequest("You can only supply one direction, `--before` or `--after`, not both!");
             var ch = channel ?? Context.Channel;
@@ -166,11 +168,12 @@ namespace Rosalina
                 })
                 .ToList();
 
-            await ch.DeleteMessagesAsync(messages.Select(c => c.Id)).ConfigureAwait(false);
+            if (!dry) await ch.DeleteMessagesAsync(messages.Select(c => c.Id)).ConfigureAwait(false);
 
             if (silent) return Empty();
             var sb = new StringBuilder();
-            sb.AppendLine($"Deleted `{messages.Count}` messages.");
+            if (!dry) sb.AppendLine($"Deleted `{messages.Count}` messages.");
+            else sb.AppendLine($"Deleting with those parameters would delete `{messages.Count}` messages.");
             sb.AppendLine();
             foreach (var author in messages.GroupBy(b => b.Author.Id))
             {
