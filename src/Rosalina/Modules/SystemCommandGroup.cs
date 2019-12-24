@@ -271,10 +271,7 @@ namespace Rosalina
             }
             var result = await process.StandardOutput.ReadToEndAsync();
             if (result.Length > 2048) result = result.Substring(0, 2000);
-            return Ok(c =>
-            {
-                c.Description = new StringBuilder().AppendLine("Standard output:").AppendLine($"```{result}```").ToString();
-            });
+            return Ok(new StringBuilder().AppendLine("Standard output:").AppendLine($"```{result}```").ToString());
         }
     }
 }
