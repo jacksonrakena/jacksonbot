@@ -5,6 +5,7 @@ using Disqord.Rest;
 using Qmmands;
 using System;
 using System.Threading.Tasks;
+using Disqord.Bot.Prefixes;
 
 namespace Rosalina
 {
@@ -13,7 +14,7 @@ namespace Rosalina
     /// </summary>
     public class RosalinaCommandContext : DiscordCommandContext, IServiceProvider
     {
-        internal RosalinaCommandContext(RosalinaBot bot, CachedUserMessage message, string prefix) : base(bot, prefix, message)
+        internal RosalinaCommandContext(RosalinaBot bot, CachedUserMessage message, IPrefix prefix) : base(bot, prefix, message)
         {
             Bot = bot;
 

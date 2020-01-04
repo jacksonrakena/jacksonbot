@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Abyssal.Common;
 using Disqord;
 using Disqord.Bot;
+using Disqord.Bot.Prefixes;
 using Disqord.Events;
 using Disqord.Logging;
 using Humanizer;
@@ -34,8 +35,8 @@ namespace Rosalina
 
         public override object GetService(Type serviceType) => Services.GetService(serviceType);
 
-        public RosalinaBot(RosalinaConfig config, DiscordBotConfiguration botConfiguration, IServiceProvider provider,
-            HelpService help) : base(TokenType.Bot, config.Connections.Discord.Token, botConfiguration)
+        public RosalinaBot(RosalinaConfig config, DiscordBotConfiguration botConfiguration, IPrefixProvider prefixes, IServiceProvider provider,
+            HelpService help) : base(TokenType.Bot, config.Connections.Discord.Token, prefixes, botConfiguration)
         {
             Services = provider;
             _logger = Log.Logger.ForContext<RosalinaBot>();
@@ -74,7 +75,7 @@ namespace Rosalina
                 Name = CurrentUser.ToString(),
                 Id = CurrentUser.Id.RawValue,
                 Guilds = Guilds.Count,
-                Prefix = Prefixes[0],
+                Prefix = _config.CommandPrefix,
                 e.SessionId
             });
 
@@ -300,7 +301,8 @@ namespace Rosalina
             return b && context.Guild != null;
         }
 
-        protected override ValueTask<DiscordCommandContext> GetCommandContextAsync(CachedUserMessage message, string prefix)
+
+        protected override ValueTask<DiscordCommandContext> GetCommandContextAsync(CachedUserMessage message, IPrefix prefix)
         {
             return new ValueTask<DiscordCommandContext>(new RosalinaCommandContext(this, message, prefix));
         }

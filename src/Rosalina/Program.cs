@@ -12,6 +12,7 @@ using Abyssal.Common;
 using AbyssalSpotify;
 using Disqord;
 using Disqord.Bot;
+using Disqord.Bot.Prefixes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
@@ -92,7 +93,6 @@ namespace Rosalina
             {
                 Activity = new LocalActivity(startupActivity.Message, startupActivity.Type),
                 Status = UserStatus.Online,
-                HasMentionPrefix = true,
                 CommandService = new CommandService(new CommandServiceConfiguration
                 {
                     StringComparison = StringComparison.OrdinalIgnoreCase,
@@ -101,10 +101,12 @@ namespace Rosalina
                     CooldownBucketKeyGenerator = CooldownKeyGenerator,
                     DefaultArgumentParser = DefaultArgumentParser.Instance
                 }),
-                Prefixes = new List<string> { configModel.CommandPrefix },
                 // Message cache default: 100
                 ProviderFactory = bot => ((RosalinaBot)bot).Services
             };
+            var prefixProvider = new DefaultPrefixProvider();
+            prefixProvider.AddMentionPrefix();
+            prefixProvider.AddPrefix(configModel.CommandPrefix, StringComparison.OrdinalIgnoreCase);
             var spotifyClient = SpotifyClient.FromClientCredentials(configModel.Connections.Spotify.ClientId, configModel.Connections.Spotify.ClientSecret);
 
             var serviceCollection = new ServiceCollection()
@@ -115,6 +117,7 @@ namespace Rosalina
                 // Configuration (strong type)
                 .AddSingleton(configModel)
                 // Bot configuration
+                .AddSingleton<IPrefixProvider>(prefixProvider)
                 .AddSingleton(botConfiguration)
                 // Bot
                 .AddSingleton<RosalinaBot>()
