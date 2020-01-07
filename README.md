@@ -1,7 +1,7 @@
-![Rosalina](https://d.lu.je/avatar/532099058941034498?size=256) 
-# Rosalina
+![Avatar](https://d.lu.je/avatar/532099058941034498?size=256) 
+# Zelda
 
-A .NET Core 3.1 Discord bot.
+A private .NET Core 3.1 Discord bot.
 
 ### 🖋 Copyright
 Copyright (c) 2019 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
