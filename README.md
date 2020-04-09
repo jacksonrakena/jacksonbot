@@ -1,6 +1,4 @@
-# ☄ Midnight
-*Named after the [Midnight zone](https://en.wikipedia.org/wiki/Bathyal_zone)*.
-
+# ☄ Adora
 A private Discord bot, powered by .NET.
 
 ### 🖋 Copyright

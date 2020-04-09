@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Adora": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ABYSS_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

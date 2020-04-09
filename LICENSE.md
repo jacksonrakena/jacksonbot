@@ -1,4 +1,4 @@
-Copyright (c) 2019 Abyssal
+Copyright (c) 2018-2020 Abyssal
 
 MIT License
 
