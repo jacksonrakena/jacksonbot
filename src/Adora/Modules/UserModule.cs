@@ -1,29 +1,17 @@
 ﻿using Abyssal.Common;
 using Disqord;
-using Disqord.Bot;
-using Disqord.Rest;
 using Humanizer;
 using Qmmands;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Adora
 {
     [Name("User information")]
-    [Group("user")]
-    public class UserCommandGroup : AdoraModuleBase
+    public class UserModule : AdoraModuleBase
     {
-        private readonly AdoraConfig _config;
-
-        public UserCommandGroup(AdoraConfig config)
-        {
-            _config = config;
-        }
-
         [Command("avatar")]
         [Description("View the avatar of a user.")]
         public Task<AdoraResult> Command_GetAvatarAsync(
@@ -46,7 +34,7 @@ namespace Adora
             });
         }
 
-        [Command("", "info")]
+        [Command("userinfo", "user")]
         [Description("View information about a member.")]
         public Task<AdoraResult> Command_GetUserInfoAsync(
             [Name("member")]
@@ -93,7 +81,7 @@ namespace Adora
             desc.AppendLine($"**- Voice Status:** {GetVoiceChannelStatus(member)}");
             if (member.Presence != null && member.Presence.Activities.Count > 0)
                 desc.AppendLine($"**- Activity:** {FormatActivity(member.Presence)}");
-            if (member.Presence != null) desc.AppendLine($"**- Status:** {_config.Emotes.GetStatusEmote(member.Presence.Status)} {member.Presence.Status.Humanize()}");
+            if (member.Presence != null) desc.AppendLine($"**- Status:** {member.Presence.Status.Humanize()}");
             
             if (user.MutualGuilds != null) desc.AppendLine($"**- Mutual servers:** {user.MutualGuilds.Count}");
             if (effectiveColor != null) desc.AppendLine($"**- Colour:** {effectiveColor.Value.ToString()} (R {effectiveColor.Value.R}, G {effectiveColor.Value.G}, B {effectiveColor.Value.B})");
@@ -110,44 +98,6 @@ namespace Adora
         private static string GetVoiceChannelStatus(CachedMember user)
         {
             return user.VoiceChannel == null ? "Not in a voice channel" : $"In {user.VoiceChannel.Name}";
-        }
-
-        [Name("Nickname")]
-        [Group("nick")]
-        public class NicknameSubgroup : AdoraModuleBase
-        {
-            [Command("reset")]
-            [Description("Reset (remove) the nickname for a member.")]
-            [RequireBotGuildPermissions(Permission.ManageNicknames)]
-            [RequireMemberGuildPermissions(Permission.ManageNicknames)]
-            public Task<AdoraResult> Command_ResetNicknameAsync(
-                [Name("member")] [Description("The user you would like me to reset.")] CachedMember member)
-            {
-                return Command_SetNicknameAsync(member, null);
-            }
-
-            [Command("set")]
-            [Description("Set the nickname for a user.")]
-            [RequireBotGuildPermissions(Permission.ManageNicknames)]
-            [RequireMemberGuildPermissions(Permission.ManageNicknames)]
-            public async Task<AdoraResult> Command_SetNicknameAsync(
-                [Name("member")] [Description("The user you would like me to change nickname of.")] CachedMember target,
-                [Description("The nickname to set.")] [Name("new nickname")] [Remainder] string? nickname)
-            {
-                try
-                {
-                    await target.ModifyAsync(a => a.Nick = nickname, RestRequestOptions.FromReason($"Action performed by {Context.Invoker}")).ConfigureAwait(false);
-                    return SuccessReaction();
-                }
-                catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.Forbidden)
-                {
-                    return BadRequest("Not allowed to.");
-                }
-                catch (DiscordHttpException e) when (e.HttpStatusCode == HttpStatusCode.BadRequest)
-                {
-                    return BadRequest("Bad format.");
-                }
-            }
         }
     }
 }

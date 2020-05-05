@@ -15,13 +15,7 @@ namespace Adora
 {
     public sealed class HelpService
     {
-        private readonly AdoraConfig _config;
         private static readonly MethodInfo _getTypeParserMethod = typeof(ICommandService).GetMethod("GetTypeParser") ?? throw new Exception("Cannot find method GetTypeParser on ICommandService. Check dependency versions.");
-
-        public HelpService(AdoraConfig config)
-        {
-            _config = config;
-        }
 
         private static readonly ImmutableDictionary<Type, (string Singular, string Multiple, string? Remainder)>
             FriendlyNames =
@@ -141,8 +135,6 @@ namespace Adora
 
         public async Task<LocalEmbedBuilder> CreateCommandEmbedAsync(Command command, AdoraCommandContext context)
         {
-            var prefix = context.Prefix;
-
             var embed = new LocalEmbedBuilder
             {
                 Title = $"Command information",
@@ -190,7 +182,7 @@ namespace Adora
         private async Task<string> FormatCheck(CheckAttribute cba, AdoraCommandContext context)
         {
             var message = GetCheckFriendlyMessage(context, cba);
-            return $"- {((await cba.CheckAsync(context).ConfigureAwait(false)).IsSuccessful ? _config.Emotes.YesEmote : _config.Emotes.NoEmote)} {message}";
+            return $"- {((await cba.CheckAsync(context).ConfigureAwait(false)).IsSuccessful ? "Passed" : "Failed")} {message}";
         }
 
         public static string GetParameterCheckFriendlyMessage(AdoraCommandContext context, ParameterCheckAttribute pca)

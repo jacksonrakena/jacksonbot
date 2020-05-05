@@ -2,7 +2,6 @@ using Disqord;
 using Disqord.Bot;
 using Serilog;
 using Disqord.Rest;
-using Qmmands;
 using System;
 using System.Threading.Tasks;
 using Disqord.Bot.Prefixes;
@@ -60,7 +59,7 @@ namespace Adora
         /// <summary>
         ///     A boolean indicating whether the request invoker is the current bot application owner.
         /// </summary>
-        public bool InvokerIsOwner => Invoker.Id == Bot.CurrentApplication.GetOrDownloadAsync().GetAwaiter().GetResult().Owner.Id;
+        public bool InvokerIsOwner => Invoker.Id == Bot.CurrentApplication.GetAsync().GetAwaiter().GetResult().Owner.Id;
 
         /// <summary>
         ///     Converts this current request context into string representation.
@@ -89,7 +88,7 @@ namespace Adora
             RestRequestOptions? options = null)
         {
             if (!BotMember.GetPermissionsFor(Channel).SendMessages) return Task.FromResult((RestUserMessage?) null);
-            return Channel.SendMessageAsync(content, false, embed?.Build(), options);
+            return Channel.SendMessageAsync(content, false, embed?.Build(), LocalMentions.None, options);
         }
     }
 }

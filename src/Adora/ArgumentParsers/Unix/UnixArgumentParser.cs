@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Qmmands;
 
 namespace Adora
@@ -37,7 +38,7 @@ namespace Adora
             return null;
         }
 
-        public ArgumentParserResult Parse(CommandContext context)
+        public async ValueTask<ArgumentParserResult> ParseAsync(CommandContext context)
         {
             var state = UnixParserState.Neutral;
             var parameters = new Dictionary<Parameter, object>();

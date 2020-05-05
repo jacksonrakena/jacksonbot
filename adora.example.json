@@ -16,21 +16,5 @@
       "ClientId": "Spotify client ID. Required.",
       "ClientSecret": "Spotify client secret. Required."
     }
-  },
-  "Notifications": {
-    "Ready": 598437593721602068,
-    "ServerMembershipChange": 598437593721602068,
-    "Feedback": 600565543010828288,
-    "Stopping": 598437593721602068
-  },
-  "Emotes": { 
-    "YesEmote": "<:RosalinaYes:598658539287871510>",
-    "NoEmote": "<:RosalinaNo:598658540042846258>",
-    "AfkEmote": "<:discordAfk:609952141414629376>",
-    "OnlineEmote": "<:discordOnline:609952141980729360>",
-    "OfflineEmote": "<:discordOffline:609952141775339533>",
-    "DndEmote": "<:discordDnd:609952141620150418>",
-    "StaffEmote": "<:discordStaff:609952142379188235>",
-    "GuildOwnerEmote": "<:discordGuildOwner:609952141599309875>"
   }
 }

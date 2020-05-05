@@ -19,7 +19,7 @@ namespace Adora
 
         public override Task<bool> ExecuteResultAsync(AdoraCommandContext context)
         {
-            return context.Channel.TrySendMessageAsync(null, false, new LocalEmbedBuilder()
+            return context.Channel.TrySendMessageAsync(null, null, false, new LocalEmbedBuilder()
                 .WithTitle("Bad request")
                 .WithDescription(Reason)
                 .WithColor(ErrorColor)

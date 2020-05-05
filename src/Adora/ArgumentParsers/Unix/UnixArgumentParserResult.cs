@@ -83,7 +83,7 @@ namespace Adora
         /// </summary>
         public int? Position { get; }
 
-        public override string GetFailureReason() => _reason!;
+        public override string Reason => _reason!;
     }
 
     public enum UnixArgumentParseFailure

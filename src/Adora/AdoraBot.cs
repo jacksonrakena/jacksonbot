@@ -46,7 +46,6 @@ namespace Adora
             CommandExecuted += HandleCommandExecutedAsync;
             CommandExecutionFailed += HandleCommandExecutionFailedAsync;
             AddModules(Assembly.GetExecutingAssembly());
-            AddArgumentParser(UnixArgumentParser.Instance);
 
             Ready += Discord_Ready;
             Logger.MessageLogged += DiscordClient_Log;
@@ -79,7 +78,6 @@ namespace Adora
                 e.SessionId
             });
 
-            var startupConfiguration = _config.Startup;
             var activities = new List<(ActivityType, string)>
             {
                 (ActivityType.Watching, "over the cosmos")

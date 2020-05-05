@@ -1,8 +1,5 @@
 using Disqord;
-using Disqord.Rest;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Adora
@@ -59,14 +56,14 @@ namespace Adora
 
             if (Attachments.Length == 1)
             {
-                return await context.Channel.TrySendMessageAsync(Message, false, Embed?.Build(), null, Attachments[0]);
+                return await context.Channel.TrySendMessageAsync(Message, null, false, Embed?.Build(), null, Attachments[0]);
             }
             else if (Attachments.Length > 0)
             {
-                return await context.Channel.TrySendMessageAsync(Message, false, Embed?.Build()) && await context.Channel.TrySendMessageAsync(null, false, null, null, Attachments);
+                return await context.Channel.TrySendMessageAsync(Message, null, false, Embed?.Build()) && await context.Channel.TrySendMessageAsync(null, null, false, null, null, Attachments);
             }
 
-            return await context.Channel.TrySendMessageAsync(Message, false, Embed?.Build());
+            return await context.Channel.TrySendMessageAsync(Message, null, false, Embed?.Build());
         }
 
         public override object ToLog()

@@ -1,6 +1,5 @@
 using Disqord;
 using Disqord.Bot;
-using HandlebarsDotNet;
 using Microsoft.CodeAnalysis;
 using Qmmands;
 using System;
@@ -14,63 +13,15 @@ using DescriptionAttribute = Qmmands.DescriptionAttribute;
 namespace Adora
 {
     [Name("System")]
-    [Group("sys")]
     [Description("Provides commands for my creator.")]
     [BotOwnerOnly]
-    public class SystemCommandGroup : AdoraModuleBase
+    public class SystemModule : AdoraModuleBase
     {
         [Command("throwex")]
         [Description("Throws a InvalidOperation .NET exception. For testing purposes.")]
         public Task<AdoraResult> Command_ThrowExceptionAsync([Name("Message")] [Description("The message for the exception.")] [Remainder] string message = "Test exception.")
         {
             throw new InvalidOperationException(message);
-        }
-
-        [Command("hb")]
-        [RunMode(RunMode.Parallel)]
-        [Description("Evaluates and compiles a Handlebars template against the current execution context.")]
-        public AdoraResult Command_HandlebarsEvaluate([Name("Template")] [Description("A Handlebars-compatible template.")] [Remainder]
-            string script)
-        {
-            var handlebars = Handlebars.Create(new HandlebarsConfiguration { });
-            handlebars.RegisterHelper("create_message", async (output, context, arguments) =>
-            {
-                var str = string.Join(" ", arguments);
-                await Context.ReplyAsync(str);
-            });
-
-            try
-            {
-                var hbscript = handlebars.Compile(script);
-
-                var output = hbscript(new EvaluationHelper(Context));
-
-                return Ok(output);
-            }
-            catch (HandlebarsException e)
-            {
-                return BadRequest("Handlebars failed: " + e.Message);
-            }
-            catch (Exception e)
-            {
-                return BadRequest("Generic error: " + e.Message);
-            }
-        }
-
-        [Command("announce")]
-        [Description("Announces a message to a specified channel.")]
-        public async Task<AdoraResult> Command_AnnounceAsync([Name("Channel")] [Description("The channel to send to.")]
-            CachedTextChannel channel, [Name("Title")] [Description("The title of the announcement.")] string title,
-            [Name("Message")] [Description("The message.")] [Remainder] string message)
-        {
-            return await channel.TrySendMessageAsync(string.Empty, false, 
-                    new LocalEmbedBuilder()
-                    .WithColor(AdoraBot.SystemColor)
-                    .WithTitle(title)
-                    .WithDescription(message)
-                    .WithCurrentTimestamp()
-                    .Build())
-                    ? new ReactSuccessResult() : BadRequest("Failed to send a message to that channel.");
         }
 
         [Command("eval")]

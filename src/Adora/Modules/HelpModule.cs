@@ -53,7 +53,7 @@ namespace Adora
             embed.WithTitle("Help listing for " + Context.BotMember.Format());
 
             embed.WithDescription(
-                $"Listing all top-level commands and groups. Commands that are above your permission level are hidden. You can use `{prefix}help <command/group>` for more details on a command or group.");
+                $"Listing all commands. Commands that are above your access level are hidden. You can use `{prefix}help <command/group>` for more details on a command or group.");
 
             var commands = new List<string>();
             foreach (var command in _bot.GetAllCommands())
@@ -66,17 +66,6 @@ namespace Adora
             }
             if (commands.Count != 0)
                 embed.AddField("Commands", string.Join(", ", commands));
-
-            var groups = new List<string>();
-            foreach (var module in _bot.GetAllModules().Where(m => m.IsGroup() && m.Parent == null))
-            {
-                if (await HelpService.CanShowModuleAsync(Context, module))
-                {
-                    groups.Add(Markdown.Bold(Markdown.Code(module.FullAliases.First())));
-                }
-            }
-            if (groups.Count != 0)
-                embed.AddField("Groups", string.Join(", ", groups));
 
             return Ok(embed);
         }

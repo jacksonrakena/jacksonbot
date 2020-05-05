@@ -1,5 +1,4 @@
 using Disqord;
-using Disqord.Logging;
 using Disqord.Rest;
 using System;
 using System.Linq;
@@ -17,17 +16,18 @@ namespace Adora
         /// </summary>
         /// <param name="messageChannel">The entity to send the message to.</param>
         /// <param name="message">The string content to send.</param>
+        /// <param name="localMentions">The mentions properties to send.</param>
         /// <param name="isTts">Whether this message is Text-To-Speech enabled.</param>
         /// <param name="embed">The embed to send.</param>
         /// <param name="options">Options for this REST request.</param>
         /// <returns>A Task representing whether the asynchronous message create call succeeded.</returns>
-        public static async Task<bool> TrySendMessageAsync(this IMessagable messageChannel, string? message = null, bool isTts = false, LocalEmbed? embed = null, RestRequestOptions? options = null, params LocalAttachment[] attachments)
+        public static async Task<bool> TrySendMessageAsync(this IMessagable messageChannel, string? message = null, LocalMentions? localMentions = null, bool isTts = false, LocalEmbed? embed = null, RestRequestOptions? options = null, params LocalAttachment[] attachments)
         {
             try
-            {
+            { 
                 await (attachments.Length > 0
-                    ? messageChannel.SendMessageAsync(attachments, message, isTts, embed, options)
-                    : messageChannel.SendMessageAsync(message, isTts, embed, options));
+                    ? messageChannel.SendMessageAsync(attachments[0], message, isTts, embed, localMentions, options)
+                    : messageChannel.SendMessageAsync(message, isTts, embed, localMentions, options));
                 return true;
             }
             catch (Exception)

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -11,11 +10,11 @@ using System.Threading.Tasks;
 using Abyssal.Common;
 using AbyssalSpotify;
 using Disqord;
-using Disqord.Bot;
 using Disqord.Bot.Prefixes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
+using Qmmands.Delegates;
 using Serilog;
 using Serilog.Events;
 
@@ -56,7 +55,10 @@ namespace Adora
                 {
                     File.Delete(logFile);
                 }
-                finally { }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
 
             Log.Logger = new LoggerConfiguration()
@@ -93,20 +95,20 @@ namespace Adora
             {
                 Activity = new LocalActivity(startupActivity.Message, startupActivity.Type),
                 Status = UserStatus.Online,
-                CommandService = new CommandService(new CommandServiceConfiguration
+                CommandServiceConfiguration = new CommandServiceConfiguration
                 {
                     StringComparison = StringComparison.OrdinalIgnoreCase,
                     DefaultRunMode = RunMode.Sequential,
                     IgnoresExtraArguments = true,
                     CooldownBucketKeyGenerator = CooldownKeyGenerator,
                     DefaultArgumentParser = DefaultArgumentParser.Instance
-                }),
+                },
                 // Message cache default: 100
                 ProviderFactory = bot => ((AdoraBot)bot).Services
             };
             var prefixProvider = new DefaultPrefixProvider();
             prefixProvider.AddMentionPrefix();
-            prefixProvider.AddPrefix(configModel.CommandPrefix, StringComparison.OrdinalIgnoreCase);
+            prefixProvider.AddPrefix(configModel.CommandPrefix);
             var spotifyClient = SpotifyClient.FromClientCredentials(configModel.Connections.Spotify.ClientId, configModel.Connections.Spotify.ClientSecret);
 
             var serviceCollection = new ServiceCollection()
@@ -122,8 +124,6 @@ namespace Adora
                 // Bot
                 .AddSingleton<AdoraBot>()
                 // Core services
-                .AddSingleton<NotificationsService>()
-                .AddSingleton<DatabaseService>()
                 .AddSingleton<HelpService>()
                 // Command services
                 .AddSingleton<HttpClient>()
@@ -140,18 +140,15 @@ namespace Adora
         {
             var bot = services.GetRequiredService<AdoraBot>();
             var hostLogger = Log.Logger.ForContext("SourceContext", "Adora Host");
-            var notifications = services.GetRequiredService<NotificationsService>();
 
             var addTypeParser = typeof(AdoraBot).GetMethod("AddTypeParser");
             if (addTypeParser == null) throw new InvalidOperationException("AddTypeParser method missing.");
             foreach (var type in Assembly.GetExecutingAssembly().DefinedTypes)
             {
-                if (type.GetCustomAttribute<DiscoverableTypeParserAttribute>() is DiscoverableTypeParserAttribute dtpa)
-                {
-                    var method = addTypeParser.MakeGenericMethod(type.BaseType!.GetGenericArguments()[0]);
-                    method.Invoke(bot, new object[] { services.Create(type), dtpa.ReplacingPrimitive });
-                    hostLogger.Information("Added parser {parser}.", type.Name);
-                }
+                if (!(type.GetCustomAttribute<DiscoverableTypeParserAttribute>() is { } dtpa)) continue;
+                var method = addTypeParser.MakeGenericMethod(type.BaseType!.GetGenericArguments()[0]);
+                method.Invoke(bot, new[] { services.Create(type), dtpa.ReplacingPrimitive });
+                hostLogger.Information("Added parser {parser}.", type.Name);
             }
             AssemblyLoadContext.Default.Unloading += ctx =>
             {

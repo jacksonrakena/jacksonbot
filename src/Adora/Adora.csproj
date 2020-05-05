@@ -12,15 +12,13 @@
         <RepositoryUrl>http://github.com/adoraal/Adora</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <Nullable>enable</Nullable>
-        <Version>12.0.1</Version>
+        <Version>13.1.8</Version>
         <NeutralLanguage>en-NZ</NeutralLanguage>
         <SignAssembly>false</SignAssembly>
     </PropertyGroup>
   
     <ItemGroup>
-        <PackageReference Include="Handlebars.Net" Version="1.10.1" />
         <PackageReference Include="AbyssalSpotify" Version="1.0.1-20191018.6" />
-        <PackageReference Include="LiteDB" Version="4.1.4" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0" />
         <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
@@ -29,7 +27,7 @@
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.3.1" />
         <PackageReference Include="Abyssal.Common" Version="1.0.0-20191019.1" />
         <PackageReference Include="Humanizer.Core" Version="2.7.9" />
-        <PackageReference Include="Disqord.Bot" Version="1.0.0-nightly-00006" />
+        <PackageReference Include="Disqord.Bot" Version="1.0.0-nightly-00051" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
     </ItemGroup>

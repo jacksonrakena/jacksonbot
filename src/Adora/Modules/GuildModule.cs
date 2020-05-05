@@ -2,9 +2,7 @@
 using Qmmands;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Disqord;
 
@@ -14,35 +12,6 @@ namespace Adora
     [Description("Commands that help you interact with your server in useful and efficient ways.")]
     public class GuildModule : AdoraModuleBase
     {
-        [Command("server", "serverinfo")]
-        [Description("Grabs information around this server.")]
-        public Task<AdoraResult> Command_GuildInfoAsync()
-        {
-            var embed = new LocalEmbedBuilder
-            {
-                Color = AdoraBot.SystemColor,
-                Author = new LocalEmbedAuthorBuilder
-                {
-                    Name = "Server " + Context.Guild.Name,
-                    IconUrl = Context.Guild.GetIconUrl()
-                },
-                ThumbnailUrl = Context.Guild.GetIconUrl(),
-                Description = Context.Guild.Emojis.Count > 0 ? "Emojis: " + string.Join(" ", Context.Guild.Emojis.Values.Select(c => c.MessageFormat)) : string.Empty
-            };
-            embed.AddField("Owner", Context.Guild.Owner.ToString(), true);
-            embed.AddField("Created", FormatHelper.FormatTime(Context.Guild.Id.CreatedAt), true);
-            embed.AddField("Adora added", FormatHelper.FormatTime(Context.BotMember.JoinedAt), true);
-            embed.AddField("Text Channels", Context.Guild.TextChannels.Count, true);
-            embed.AddField("Voice Channels", Context.Guild.VoiceChannels.Count, true);
-            embed.AddField("Roles", Context.Guild.Roles.Count, true);
-            embed.AddField("Chat Moderators", Context.Guild.Members.Values.Count(c => c.Permissions.ManageMessages), true);
-            embed.AddField("Moderators", Context.Guild.Members.Values.Count(c => c.Permissions.BanMembers), true);
-            embed.AddField("Server Managers", Context.Guild.Members.Values.Count(c => c.Permissions.ManageGuild), true);
-            embed.AddField("Boost Status", $"{Context.Guild.BoostingMemberCount} boosters at {Context.Guild.BoostTier} Level", true);
-
-            return Ok(embed);
-        }
-
         [Command("colour", "color")]
         [Description("Grabs the colour of a role.")]
         [RunMode(RunMode.Parallel)]
@@ -124,36 +93,7 @@ namespace Adora
             embed.AddField("Denied", string.Join("\n", string.IsNullOrEmpty(denyString) ? "- None" : denyString), true);
             return Ok(embed);
         }
-
-        [Command("tree", "channels")]
-        [Description("Creates a tree of channels and categories in this server.")]
-        public Task<AdoraResult> Command_CreateChannelTreeAsync()
-        {
-            var guild = Context.Guild;
-
-            var uncategorized = new StringBuilder().AppendLine("**Uncategorized**");
-            var categories = new StringBuilder();
-            var channelsProcessed = new List<ulong>();
-
-            foreach (var channel in guild.TextChannels.Values.Where(c => c.CategoryId == null).Cast<CachedGuildChannel>().Concat(guild.VoiceChannels.Values.Where(a => a.CategoryId == null).Cast<CachedGuildChannel>()).OrderBy(c => c.Position))
-            {
-                uncategorized.AppendLine($"- {(channel is IVoiceChannel ? "" : "#")}{channel.Name} ({channel.Id})");
-            }
-            uncategorized.AppendLine();
-            foreach (var category in guild.CategoryChannels.OrderBy(c => c.Value.Position))
-            {
-                var categoryBuilder = new StringBuilder().AppendLine($"**{category.Value.Name}** ({category.Value.Id})");
-                foreach (var childChannel in category.Value.Channels.OrderBy(c => c.Value.Position))
-                {
-                    categoryBuilder.AppendLine($"- {(childChannel.Value is IVoiceChannel ? "" : "#")}{childChannel.Value.Name} ({childChannel.Value.Id})");
-                }
-                categories.AppendLine(categoryBuilder.ToString());
-            }
-            var res = uncategorized.AppendLine(categories.ToString()).ToString();
-            if (res.Length >= 4000) return BadRequest("Server too big.");
-            return Ok(res);
-        }
-
+        
         [Command("analyzeperm")]
         [Description("Analyzes a permission for a user, and sees which role grants or denies that permission to them.")]
         public Task<AdoraResult> Command_AnalyzePermissionAsync(

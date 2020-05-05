@@ -28,11 +28,11 @@ namespace Adora
             Task Handler(MessageReceivedEventArgs emsg)
             {
                 var msg = emsg.Message;
-                if (msg.Id != initial.Id) return Task.CompletedTask;
+                if (initial == null || msg.Id != initial.Id) return Task.CompletedTask;
 
                 var _ = initial.ModifyAsync(m =>
                 {
-                    var rtt = sw.ElapsedMilliseconds.ToString();
+                    var rtt = sw?.ElapsedMilliseconds.ToString();
                     Context.Bot.MessageReceived -= Handler;
                     m.Content = null;
                     m.Embed = new LocalEmbedBuilder()
@@ -45,7 +45,7 @@ namespace Adora
                         .WithColor(Context.BotMember.GetHighestRoleColourOrSystem())
                         .Build();
                 });
-                sw.Stop();
+                sw?.Stop();
 
                 return Task.CompletedTask;
             }
@@ -53,24 +53,6 @@ namespace Adora
             Context.Bot.MessageReceived += Handler;
 
             return Empty();
-        }
-
-        [Command("echo")]
-        [Description("Echoes the input text.")]
-        public Task<AdoraResult> Command_EchoAsync([Name("Text")] [Remainder] string echocontent)
-        {
-            return Ok(Context.InvokerIsOwner
-                ? echocontent
-                : $"{Context.Invoker}: {echocontent}");
-        }
-
-        [Command("echod")]
-        [Description("Attempts to delete the source message, and then echoes the input text.")]
-        public async Task<AdoraResult> Command_EchoDeleteAsync([Name("Text")] [Remainder] string echocontent)
-        {
-            return await Context.Message.TryDeleteAsync() ? Ok(Context.InvokerIsOwner
-                ? echocontent
-                : $"{Context.Invoker}: {echocontent}") : Empty();
         }
 
         [Command("delete")]
@@ -87,8 +69,7 @@ namespace Adora
             if (message == null) return BadRequest("Couldn't find the message.");
             var success = await message.TryDeleteAsync(RestRequestOptions.FromReason($"Requested by {Context.Invoker} at {DateTime.UtcNow.ToUniversalTime():F}"));
             if (success && !silent) return SuccessReply();
-            else if (success) return Empty();
-            else return BadRequest("Failed to delete message.");
+            return success ? Empty() : BadRequest("Failed to delete message.");
         }
 
         [Command("quote")]
