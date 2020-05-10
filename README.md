@@ -1,5 +1,3 @@
-[![DBL Big](https://discordbots.org/api/widget/532099058941034498.svg)](https://discordbots.org/bot/532099058941034498)   
- 
 # 🎀 Abyss
 A **fully modular, expandable, open-source (for life)** Discord bot, written in C# using .NET Core.
   
