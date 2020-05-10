@@ -11,10 +11,9 @@ using Disqord.Bot;
 using Disqord;
 using Disqord.Rest;
 
-namespace Abyss.Commands.Default
+namespace Abyss
 {
     [Name("Server Information")]
-    [Description("Commands that help you interact with your server in useful and efficient ways.")]
     public class GuildModule : AbyssModuleBase
     {
 
@@ -59,27 +58,26 @@ namespace Abyss.Commands.Default
 
         [Command("permissions", "perms")]
         [Description("Shows a list of a user's current guild-level permissions.")]
-        public Task<ActionResult> Command_ShowPermissionsAsync(
-            [Name("Target")]
-            [Description("The user to get permissions for.")]
-            [DefaultValueDescription("You.")]
-            CachedMember? user = null)
+        public async Task Command_ShowPermissionsAsync(CachedMember user = null)
         {
             user ??= Context.Invoker; // Get the user (or the invoker, if none specified)
 
-            var embed = new EmbedBuilder();
+            var embed = new LocalEmbedBuilder();
+            embed.WithColor(AbyssBot.Color);
             embed.WithAuthor(user);
 
             if (user.Id == Context.Guild.OwnerId)
             {
                 embed.WithDescription("User is owner of server, and has all permissions");
-                return Ok(embed);
+                await ReplyAsync(embed: embed);
+                return;
             }
 
             if (user.Permissions.Administrator)
             {
                 embed.WithDescription("User has Administrator permission, and has all permissions");
-                return Ok(embed);
+                await ReplyAsync(embed: embed);
+                return;
             }
 
             var guildPerms = user.Permissions; // Get the user's permissions
@@ -100,13 +98,12 @@ namespace Abyss.Commands.Default
             var denyString = string.Join("\n", deny.Select(a => $"- {a.Item1}"));
             embed.AddField("Allowed", string.IsNullOrEmpty(allowString) ? "- None" : allowString, true);
             embed.AddField("Denied", string.Join("\n", string.IsNullOrEmpty(denyString) ? "- None" : denyString), true);
-            return Ok(embed);
+            await ReplyAsync(embed: embed);
         }
 
         [Command("tree", "channels")]
         [Description("Creates a tree of channels and categories in this server.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
-        public Task<ActionResult> Command_CreateChannelTreeAsync()
+        public async Task Command_CreateChannelTreeAsync()
         {
             var guild = Context.Guild;
 
@@ -129,14 +126,17 @@ namespace Abyss.Commands.Default
                 categories.AppendLine(categoryBuilder.ToString());
             }
             var res = uncategorized.AppendLine(categories.ToString()).ToString();
-            if (res.Length >= 4000) return BadRequest("Server too big.");
-            return Ok(res);
+            if (res.Length >= 4000)
+            {
+                await ReplyAsync("Server too big.");
+            }
+
+            await ReplyAsync(res);
         }
 
         [Command("analyzeperm")]
         [Description("Analyzes a permission for a user, and sees which role grants or denies that permission to them.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontAttachFooter | ResponseFormatOptions.DontAttachTimestamp)]
-        public Task<ActionResult> Command_AnalyzePermissionAsync(
+        public async Task Command_AnalyzePermissionAsync(
             [Name("User")] [Description("The user to check for the specified permission.")]
             CachedMember user,
             [Name("Permission")] [Description("The permission to analyze.")] [Remainder] string permission)
@@ -147,24 +147,30 @@ namespace Abyss.Commands.Default
                 a.PropertyType.IsAssignableFrom(typeof(bool))
                 && (a.Name.Equals(permission, StringComparison.OrdinalIgnoreCase)
                  || a.Name.Humanize().Equals(permission, StringComparison.OrdinalIgnoreCase)));
-            if (perm == null) return BadRequest($"Unknown permission `{permission}`. :(");
-
-            var embed = new EmbedBuilder
+            if (perm == null)
             {
-                Author = user.ToEmbedAuthorBuilder(),
-                Title = "Permission: " + perm.Name.Humanize()
-            };
+                await ReplyAsync($"Unknown permission `{permission}`. :(");
+                return;
+            }
+
+            var embed = new LocalEmbedBuilder
+            {
+                Title = "Permission: " + perm.Name.Humanize(),
+                Color = GetColor()
+            }.WithAuthor(user);
 
             if (user.Roles.Count == 0)
             {
                 embed.Description = "User has no roles.";
-                return Ok(embed);
+                await ReplyAsync(embed: embed);
+                return;
             }
 
             if (user.Guild.OwnerId == user.Id)
             {
                 embed.Description = "User is owner of this server, and has every permission regardless of roles.";
-                return Ok(embed);
+                await ReplyAsync(embed: embed);
+                return;
             }
 
             var p = user.Roles.Where(a => a.Value.Permissions.Administrator).ToList();
@@ -173,7 +179,8 @@ namespace Abyss.Commands.Default
                 embed.Description =
                     "User has administrator, and has every permission. To deny them administrator, remove the Administrator permission from the following roles:\n" +
                     $"`{string.Join(", ", p.Select(b => b.Value.Name))}`";
-                return Ok(embed);
+                await ReplyAsync(embed: embed);
+                return;
             }
 
             var grantedRoles = user.Roles.Where(r => (bool)perm.GetValue(r.Value.Permissions)!);
@@ -194,7 +201,7 @@ namespace Abyss.Commands.Default
                 embed.Description = $"To **allow** this permission, allow \"{permission}\" for at least one of the following roles: {dRolesString}.";
             }
 
-            return Ok(embed);
+            await ReplyAsync(embed: embed);
         }
     }
 }

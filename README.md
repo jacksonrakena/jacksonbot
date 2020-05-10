@@ -6,7 +6,7 @@ A niche little Discord bot, written in C# using .NET Core.
 | $$         | [🎀 Abyssal](https://github.com/abyssal) | .NET | [Disqord](https://github.com/Quahu/Disqord) | 
   
 ### 🎉 Features
-- Spotify track and album lookup, via [AbyssalSpotify](http://github.com/abyssal/AbyssalSpotify).
+- Spotify track and album lookup, via [SpotiNET](https://github.com/abyssal/SpotiNET).
 - Bicubic resizing of emojis and custom images, both animated and not-animated.
 - Live C# script evaluation. (owner-only)
 - Dice rolling with DND-style expressions (e.g. `a.roll d20+d48+d10`).

@@ -1,18 +1,18 @@
 using Disqord;
 using Disqord.Bot;
 using Disqord.Rest;
-using Qmmands;
 using System;
 using System.Threading.Tasks;
+using Disqord.Bot.Prefixes;
 
 namespace Abyss
 {
     /// <summary>
     ///     Represents a request context for an Abyss invocation request.
     /// </summary>
-    public class AbyssRequestContext : DiscordCommandContext, IServiceProvider
+    public sealed class AbyssCommandContext : DiscordCommandContext, IServiceProvider
     {
-        internal AbyssRequestContext(AbyssBot bot, CachedUserMessage message, string prefix) : base(bot, prefix, message)
+        internal AbyssCommandContext(AbyssBot bot, CachedUserMessage message, IPrefix prefix) : base(bot, prefix, message, bot.Services)
         {
             Bot = bot;
 
@@ -57,18 +57,24 @@ namespace Abyss
         /// <inheritdoc />
         public object GetService(Type serviceType) => ServiceProvider.GetService(serviceType);
 
+        public Color GetColor()
+        {
+            return AbyssBot.Color;
+        }
+        
         /// <summary>
         ///     Replies to the current request context with the specified context.
         /// </summary>
         /// <param name="content">The string content to send.</param>
         /// <param name="embed">The embed to send.</param>
         /// <param name="options">Options for this request.</param>
+        /// <param name="mentions">Mentions options.</param>
         /// <returns>The message, if sent, otherwise null.</returns>
-        public Task<RestUserMessage?> ReplyAsync(string? content = null, EmbedBuilder? embed = null,
-            RestRequestOptions? options = null)
+        public Task<RestUserMessage> ReplyAsync(string content = null, LocalMentions mentions = null, LocalEmbedBuilder embed = null,
+            RestRequestOptions options = null)
         {
-            if (!BotMember.GetPermissionsFor(Channel).SendMessages) return Task.FromResult((RestUserMessage?) null);
-            return Channel.SendMessageAsync(content, false, embed?.Build(), options);
+            if (!BotMember.GetPermissionsFor(Channel).SendMessages) return Task.FromResult((RestUserMessage) null);
+            return Channel.SendMessageAsync(content, false, embed?.Build(), mentions, options);
         }
     }
 }

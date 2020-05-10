@@ -1,11 +1,15 @@
 using System;
+using System.IO;
 using System.Net.Http;
+using System.Reflection;
 using AbyssalSpotify;
 using Disqord;
 using Disqord.Bot.Prefixes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Qmmands;
 
 namespace Abyss.Runtimes.Default
 {
@@ -20,8 +24,13 @@ namespace Abyss.Runtimes.Default
                 .ConfigureHostConfiguration(config =>
                 {
                     config
+                        .SetBasePath(Directory.GetCurrentDirectory())
                         .AddJsonFile("appsettings.json", optional: false)
                         .Build();
+                })
+                .ConfigureLogging(logging =>
+                {
+                    logging.AddConsole();
                 })
                 .ConfigureServices((context, services) =>
                 {
@@ -30,6 +39,10 @@ namespace Abyss.Runtimes.Default
                         Status = UserStatus.Online,
                         DefaultMentions = LocalMentions.NoEveryone,
                         ProviderFactory = bot => ((AbyssBot) bot).Services,
+                        CommandServiceConfiguration = new CommandServiceConfiguration
+                        {
+                            CooldownBucketKeyGenerator = AbyssCooldownBucketKeyGenerators.Default
+                        }
                     };
                     var prefixProvider = new DefaultPrefixProvider().AddMentionPrefix()
                         .AddPrefix(context.Configuration["Commands:Prefix"]);
@@ -42,7 +55,9 @@ namespace Abyss.Runtimes.Default
                         .AddSingleton<AbyssBot>()
                         .AddSingleton<HttpClient>()
                         .AddSingleton<Random>()
-                        .AddSingleton(spotifyClient);
+                        .AddSingleton<HelpService>()
+                        .AddSingleton(spotifyClient)
+                        .AddHostedService<AbyssHostedService>();
                 })
                 .RunConsoleAsync().GetAwaiter().GetResult();
         }

@@ -10,31 +10,15 @@ namespace Abyss
     public static class UserExtensions
     {
         /// <summary>
-        ///     Converts a cached user to an <see cref="EmbedAuthorBuilder"/>.
-        /// </summary>
-        /// <param name="user">The user to convert.</param>
-        /// <returns>The equivalent of the user.</returns>
-        public static EmbedAuthorBuilder ToEmbedAuthorBuilder(this CachedUser user)
-        {
-            var builder = new EmbedAuthorBuilder
-            {
-                IconUrl = user.GetAvatarUrl(),
-                Name = user.Format()
-            };
-
-            return builder;
-        }
-
-        /// <summary>
         ///     Returns the highest role colour of the specified user, or the default embed colour.
         /// </summary>
         /// <param name="normalUser">The user to retrieve role colours from.</param>
         /// <returns>The highest role colour of the specified user, or the default embed colour.</returns>
         public static Color GetHighestRoleColourOrDefault(this IUser normalUser)
         {
-            if (!(normalUser is CachedMember user)) return AbyssHostedService.DefaultEmbedColour;
-            var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color.RawValue != 0);
-            return orderedRoles?.Color ?? AbyssHostedService.DefaultEmbedColour;
+            if (!(normalUser is CachedMember user)) return AbyssBot.Color;
+            var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color != null && r.Color.Value.RawValue != 0);
+            return orderedRoles?.Color ?? AbyssBot.Color;
         }
 
         /// <summary>
@@ -45,7 +29,7 @@ namespace Abyss
         public static Color? GetHighestRoleColour(this IUser normalUser)
         {
             if (!(normalUser is CachedMember user)) return null;
-            var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color.RawValue != 0);
+            var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color != null && r.Color.Value.RawValue != 0);
             return orderedRoles?.Color;
         }
 

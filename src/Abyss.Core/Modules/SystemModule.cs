@@ -1,6 +1,5 @@
 using Disqord;
 using Disqord.Bot;
-using HandlebarsDotNet;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Qmmands;
@@ -12,66 +11,32 @@ using System.Text;
 using System.Threading.Tasks;
 using DescriptionAttribute = Qmmands.DescriptionAttribute;
 
-namespace Abyss.Commands.Default
+namespace Abyss
 {
     [Name("System")]
-    [Group("sys")]
-    [Description("Provides commands for my creator.")]
     [BotOwnerOnly]
-    public class SystemCommandGroup : AbyssModuleBase
+    public class SystemModule : AbyssModuleBase
     {
-        private readonly ILogger<SystemCommandGroup> _logger;
-        private readonly DataService _dataService;
+        private readonly ILogger<SystemModule> _logger;
 
-        public SystemCommandGroup(ILogger<SystemCommandGroup> logger, DataService dataService)
+        public SystemModule(ILogger<SystemModule> logger)
         {
             _logger = logger;
-            _dataService = dataService;
         }
 
         [Command("throwex")]
         [Description("Throws a InvalidOperation .NET exception. For testing purposes.")]
-        public Task<ActionResult> Command_ThrowExceptionAsync([Name("Message")] [Description("The message for the exception.")] [Remainder] string message = "Test exception.")
+        public Task Command_ThrowExceptionAsync(
+            [Name("Message")] [Description("The message for the exception.")] [Remainder]
+            string message = "Test exception.")
         {
             throw new InvalidOperationException(message);
-        }
-
-        [Command("hb")]
-        [RunMode(RunMode.Parallel)]
-        [Description("Evaluates and compiles a Handlebars template against the current execution context.")]
-        public ActionResult Command_HandlebarsEvaluate([Name("Template")] [Description("A Handlebars-compatible template.")] [Remainder]
-            string script)
-        {
-            var handlebars = Handlebars.Create(new HandlebarsConfiguration { });
-            handlebars.RegisterHelper("create_message", async (output, context, arguments) =>
-            {
-                var str = string.Join(" ", arguments);
-                await Context.ReplyAsync(str);
-            });
-
-            try
-            {
-                var hbscript = handlebars.Compile(script);
-
-                var output = hbscript(new EvaluationHelper(Context));
-
-                return Ok(output);
-            }
-            catch (HandlebarsException e)
-            {
-                return BadRequest("Handlebars failed: " + e.Message);
-            }
-            catch (Exception e)
-            {
-                return BadRequest("Generic error: " + e.Message);
-            }
         }
 
         [Command("eval")]
         [RunMode(RunMode.Parallel)]
         [Description("Evaluates a piece of C# code.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontEmbed)]
-        public async Task<ActionResult> Command_EvaluateAsync(
+        public async Task Command_EvaluateAsync(
             [Name("Code")] [Description("The code to execute.")] [Remainder]
             string script)
         {
@@ -89,9 +54,6 @@ namespace Abyss.Commands.Default
 
                     switch (result.ReturnValue)
                     {
-                        case ActionResult bresult:
-                            return bresult;
-
                         case string str:
                             stringRep = str;
                             break;
@@ -140,7 +102,8 @@ namespace Abyss.Commands.Default
                     var footerString =
                         $"{(result.CompilationTime != -1 ? $"Compilation time: {result.CompilationTime}ms" : "")} {(result.ExecutionTime != -1 ? $"| Execution time: {result.ExecutionTime}ms" : "")}";
 
-                    return Ok(e => e
+                    await ReplyAsync(embed: new LocalEmbedBuilder()
+                        .WithColor(GetColor())
                         .WithTitle("Scripting Result")
                         .WithDescription(result.ReturnValue != null
                             ? "Type: `" + result.ReturnValue.GetType().Name + "`"
@@ -148,13 +111,16 @@ namespace Abyss.Commands.Default
                         .AddField("Input", $"```cs\n{script}```")
                         .AddField("Output", stringRep)
                         .WithFooter(footerString, Context.BotMember.GetAvatarUrl()));
+                    return;
                 }
 
-                return Ok(stringRep);
+                await ReplyAsync(stringRep);
+                return;
             }
 
-            var embed = new EmbedBuilder
+            var embed = new LocalEmbedBuilder
             {
+                Color = GetColor(),
                 Title = "Scripting Result",
                 Description = $"Scripting failed during stage **{FormatEnumMember(result.FailedStage)}**"
             };
@@ -181,7 +147,7 @@ namespace Abyss.Commands.Default
 
             if (result.Exception != null)
                 embed.AddField("Exception", $"``{result.Exception.GetType().Name}``: ``{result.Exception.Message}``");
-            return Ok(embed);
+            await ReplyAsync(embed: embed);
         }
 
         private static string FormatEnumMember(Enum value)
@@ -199,38 +165,26 @@ namespace Abyss.Commands.Default
         [Command("inspect")]
         [RunMode(RunMode.Parallel)]
         [Description("Evaluates and then inspects a type.")]
-        public Task<ActionResult> Command_InspectObjectAsync(
+        public Task Command_InspectObjectAsync(
             [Name("Object")] [Description("The object to inspect.")] [Remainder]
             string evaluateScript)
         {
             return Command_EvaluateAsync($"Inspect({evaluateScript})");
         }
 
-        [Command("kill")]
-        [Description("Stops the current bot process.")]
-        [RunMode(RunMode.Parallel)]
-        [BotOwnerOnly]
-        public async Task<ActionResult> Command_ShutdownAsync()
-        {
-            await ReplyAsync($"Later.").ConfigureAwait(false);
-            _logger.LogInformation($"Application terminated by user {Context.Invoker} (ID {Context.Invoker.Id})");
-            await Context.Bot.DisconnectAsync().ConfigureAwait(false);
-            Context.Bot.Dispose();
-
-            Environment.Exit(0);
-            return Empty();
-        }
-
         [Command("edit")]
         [Description("Edits a message that was sent by me.")]
         [BotOwnerOnly]
-        public async Task<ActionResult> Command_EditAsync([Name("Message")] [Description("The message to edit.")]
+        public async Task Command_EditAsync([Name("Message")] [Description("The message to edit.")]
             Snowflake messageId, [Name("New Content")] [Description("The new content of the message.")] [Remainder] string newContent)
         {
             var channel = Context.Channel;
             var message = (IMessage) channel.GetMessage(messageId) ?? await channel.GetMessageAsync(messageId);
             if (message == null || !(message is IUserMessage msg) || msg.Author.Id != Context.Bot.CurrentUser.Id)
-                return BadRequest("Unknown message!");
+            {
+                await ReplyAsync("Unknown message.");
+                return;
+            }
 
             try
             {
@@ -248,11 +202,10 @@ namespace Abyss.Commands.Default
                 {
                     await msg.ModifyAsync(v => v.Content = newContent);
                 }
-                return OkReaction();
             }
             catch (Exception)
             {
-                return BadRequest("Failed to modify the message!");
+                await ReplyAsync("Failed to modify the message.");
             }
         }
 
@@ -260,8 +213,10 @@ namespace Abyss.Commands.Default
         [Description("Executes an executable on the host platform.")]
         [BotOwnerOnly]
         [RunMode(RunMode.Parallel)]
-        public async Task<ActionResult> Command_ExecuteAsync([Name("Executable")] [Description("The executable to run.")] string executable,
-            [Name("Arguments")] [Description("The arguments to provide.")] [Remainder] string? arguments = null)
+        public async Task Command_ExecuteAsync([Name("Executable")] [Description("The executable to run.")]
+            string executable,
+            [Name("Arguments")] [Description("The arguments to provide.")] [Remainder]
+            string? arguments = null)
         {
             using var process = new Process
             {
@@ -277,32 +232,18 @@ namespace Abyss.Commands.Default
             process.Start();
             if (!process.WaitForExit(8000))
             {
-                return BadRequest("Timed out after 8 seconds.");
+                await ReplyAsync("Timed out after 8 seconds.");
+                process.Kill();
+                return;
             }
+
             var result = await process.StandardOutput.ReadToEndAsync();
             if (result.Length > 2048) result = result.Substring(0, 2000);
-            return Ok(c =>
-            {
-                c.Description = new StringBuilder().AppendLine("Standard output:").AppendLine($"```{result}```").ToString();
-            });
-        }
-
-        [Command("info")]
-        [Description(
-            "Dumps current information about the client, the commands system and the current execution environment.")]
-        [BotOwnerOnly]
-        public Task<ActionResult> Command_SysInfoAsync()
-        {
-            var info = _dataService.GetServiceInfo();
-            return Ok(e =>
-            {
-                e.Author = Context.BotMember.ToEmbedAuthorBuilder();
-                e.Description = $"{info.ServiceName} instance running on {info.OperatingSystem} (runtime version {info.RuntimeVersion}), powering {info.Guilds} guilds ({info.Channels} channels, and {info.Users} users)";
-                e.AddField("Command statistics", $"{info.Modules} modules | {info.Commands} commands | {info.CommandSuccesses} successful calls | {info.CommandFailures} unsuccessful calls");
-                e.AddField("Process statistics", $"Process name {info.ProcessName} on machine name {info.MachineName} (thread {info.CurrentThreadId}, {info.ProcessorCount} processors)");
-                e.AddField("Content root", info.ContentRootPath);
-                e.AddField("Start time", info.StartTime.ToString("F"));
-            });
+            await ReplyAsync(embed:
+                new LocalEmbedBuilder()
+                    .WithColor(GetColor())
+                    .WithDescription(new StringBuilder().AppendLine("Standard output:").AppendLine($"```{result}```")
+                        .ToString()));
         }
     }
 }

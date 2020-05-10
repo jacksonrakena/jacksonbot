@@ -16,12 +16,12 @@ namespace Abyss
             if (argument == null) return CheckResult.Successful;
             var id = argument is CachedUser user ? (ulong) user.Id : argument is ulong dur ? dur : throw new InvalidOperationException($"{nameof(MustNotBeInvokerAttribute)} is being executed on an invalid object type. Expected a SocketUser or DiscordUserReference variant, got {argument.GetType().Name}."); ;
 
-            return id == context.ToRequestContext().Invoker.Id
+            return id == context.ToCommandContext().Invoker.Id
                 ? new CheckResult("The provided user can't be you.")
                 : CheckResult.Successful;
         }
 
-        public string GetDescription(AbyssRequestContext requestContext) => "The provided user can't be you.";
+        public string GetDescription(AbyssCommandContext commandContext) => "The provided user can't be you.";
 
         /// <summary>
         ///     Initialises a new <see cref="MustNotBeInvokerAttribute"/>.

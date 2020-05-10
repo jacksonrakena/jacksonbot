@@ -14,7 +14,7 @@ namespace Abyss
                    $"Cooldown bucket type is incorrect. Expected {typeof(CooldownType)}, received {t.GetType().Name}.");
             }
 
-            var discordContext = ctx.ToRequestContext();
+            var discordContext = ctx.ToCommandContext();
 
             if (discordContext.Invoker.Id == discordContext.Bot.CurrentApplication.GetAsync().GetAwaiter().GetResult().Owner.Id)
                 return null; // Owners have no cooldown

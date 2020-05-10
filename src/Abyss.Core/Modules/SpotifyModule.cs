@@ -7,17 +7,16 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Abyss.Commands.Default
+namespace Abyss
 {
     [Name("Spotify")]
     [Description(
         "Commands that relate to Spotify, a digital music service that gives you access to millions of songs.")]
-    [Group("spotify", "spot", "sp")]
-    public class SpotifyCommandGroup : AbyssModuleBase
+    public class SpotifyModule : AbyssModuleBase
     {
         private readonly SpotifyClient _spotify;
 
-        public SpotifyCommandGroup(SpotifyClient spotify)
+        public SpotifyModule(SpotifyClient spotify)
         {
             _spotify = spotify;
         }
@@ -25,12 +24,11 @@ namespace Abyss.Commands.Default
         [Command("track")]
         [Description("Searches the Spotify database for a song.")]
         [RunMode(RunMode.Parallel)]
-        public async Task<ActionResult> Command_TrackAsync(
+        public async Task Command_TrackAsync(
             [Name("Track Name")]
             [Description("The track to search for.")]
             [Remainder]
-            [DefaultValueDescription("The track that you're currently listening to.")]
-            string? trackQuery = null)
+            string trackQuery = null)
         {
             SpotifyTrack track;
             if (trackQuery != null)
@@ -40,37 +38,48 @@ namespace Abyss.Commands.Default
             }
             else
             {
-                Console.WriteLine(Context.Invoker.Activity);
-                if (!(Context.Invoker.Activity is SpotifyActivity spot))
-                    return BadRequest("You didn't supply a track, and you're not currently listening to anything!");
+                var spotifyActivity =
+                    Context.Invoker.Presence.Activities.FirstOrDefault(d => d is SpotifyActivity spot) as
+                        SpotifyActivity;
+                if (spotifyActivity == null)
+                {
+                    await ReplyAsync("You didn't supply a track, and you're not currently listening to anything!");
+                    return;
+                }
 
-                track = await _spotify.GetTrackAsync(spot.TrackId).ConfigureAwait(false);
+                track = await _spotify.GetTrackAsync(spotifyActivity.TrackId).ConfigureAwait(false);
             }
 
-            if (track == null) return BadRequest("Cannot find a track by that name.");
-            return Ok(CreateTrackEmbed(track));
+            if (track == null)
+            {
+                await ReplyAsync("Cannot find a track by that name.");
+                return;
+            }
+            await ReplyAsync(embed: CreateTrackEmbed(track));
         }
 
         [Command("album")]
         [Description("Searches the Spotify database for an album.")]
         [RunMode(RunMode.Parallel)]
-        public async Task<ActionResult> Command_SearchAlbumAsync(
+        public async Task Command_SearchAlbumAsync(
             [Name("Album Name")]
             [Description("The album name to search for.")]
             [Remainder]
-            [DefaultValueDescription("The album of the track you're currently listening to.")]
             string? albumQuery = null)
         {
             SpotifyAlbum album;
             if (albumQuery == null)
             {
-                if (!(Context.Invoker.Activity is SpotifyActivity spot))
+                var spotifyActivity =
+                    Context.Invoker.Presence.Activities.FirstOrDefault(d => d is SpotifyActivity spot) as
+                        SpotifyActivity;
+                if (spotifyActivity == null)
                 {
-                    return BadRequest(
-                       "You didn't supply an album name, and you're not currently listening to anything!");
+                    await ReplyAsync("You didn't supply an album name, and you're not currently listening to anything!");
+                    return;
                 }
 
-                var track = await _spotify.GetTrackAsync(spot.TrackId).ConfigureAwait(false);
+                var track = await _spotify.GetTrackAsync(spotifyActivity.TrackId).ConfigureAwait(false);
                 album = await track.Album.GetFullEntityAsync().ConfigureAwait(false);
             }
             else
@@ -80,20 +89,25 @@ namespace Abyss.Commands.Default
                     var result = await _spotify.SearchAsync(albumQuery, SearchType.Album).ConfigureAwait(false);
                     var sa0 = result.Albums.Items.FirstOrDefault();
 
-                    if (sa0 == null) return BadRequest("Cannot find album by that name.");
+                    if (sa0 == null)
+                    {
+                        await ReplyAsync("Cannot find album by that name.");
+                        return;
+                    }
 
                     album = await _spotify.GetAlbumAsync(sa0.Id.Id).ConfigureAwait(false);
                 }
                 catch (Exception)
                 {
-                    return BadRequest("An error occurred while searching for the album.");
+                    await ReplyAsync("An error occurred while searching for the album.");
+                    return;
                 }
             }
 
-            var embed = new EmbedBuilder
+            var embed = new LocalEmbedBuilder
             {
-                Color = AbyssHostedService.DefaultEmbedColour,
-                Author = new EmbedAuthorBuilder
+                Color = GetColor(),
+                Author = new LocalEmbedAuthorBuilder
                 {
                     Name = album.Artists.Select(a => a.Name).Humanize(),
                     IconUrl = album.Images.FirstOrDefault()?.Url,
@@ -101,7 +115,7 @@ namespace Abyss.Commands.Default
                 },
                 Title = album.Name,
                 ThumbnailUrl = album.Images.FirstOrDefault()?.Url,
-                Footer = new EmbedFooterBuilder
+                Footer = new LocalEmbedFooterBuilder
                 {
                     Text = string.Join("\n",
                         album.Copyrights.Distinct().Select(a =>
@@ -133,15 +147,15 @@ namespace Abyss.Commands.Default
             var length = TimeSpan.FromMilliseconds(album.Tracks.Items.Sum(a => a.Duration.TotalMilliseconds));
 
             embed.AddField("Length", $"{length.Hours} hours, {length.Minutes} minutes", true);
-            return Ok(embed);
+            await ReplyAsync(embed: embed);
         }
 
-        private static EmbedBuilder CreateTrackEmbed(SpotifyTrack track)
+        private static LocalEmbedBuilder CreateTrackEmbed(SpotifyTrack track)
         {
-            var embed = new EmbedBuilder
+            var embed = new LocalEmbedBuilder
             {
-                Color = AbyssHostedService.DefaultEmbedColour,
-                Author = new EmbedAuthorBuilder
+                Color = AbyssBot.Color,
+                Author = new LocalEmbedAuthorBuilder
                 {
                     Name = track.Artists.Select(a => a.Name).Humanize(),
                     IconUrl = track.Album.Images.FirstOrDefault()?.Url,

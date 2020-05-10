@@ -14,17 +14,12 @@ namespace Abyss
     [DoNotAdd]
     public class EvaluationHelper : AbyssModuleBase
     {
-        public EvaluationHelper(AbyssRequestContext context)
+        public EvaluationHelper(AbyssCommandContext context)
         {
             Context = context;
         }
 
-        public new AbyssRequestContext Context { get; }
-
-        public Task<RestUserMessage> ReplyAsync(string content, Embed? embed = null)
-        {
-            return Context.Channel.SendMessageAsync(content, embed: embed);
-        }
+        public new AbyssCommandContext Context { get; }
 
         public static string InspectMethods(object obj)
         {

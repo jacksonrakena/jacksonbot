@@ -16,38 +16,14 @@ namespace Abyss
 {
     public sealed class HelpService
     {
-        private readonly IConfiguration _config;
-        private static readonly MethodInfo _getTypeParserMethod = typeof(ICommandService).GetMethod("GetTypeParser") ?? throw new Exception("Cannot find method GetTypeParser on ICommandService. Check dependency versions.");
-
-        public HelpService(IConfiguration config)
-        {
-            _config = config;
-        }
-
-        private static readonly ImmutableDictionary<Type, (string Singular, string Multiple, string? Remainder)>
-            FriendlyNames =
-                new Dictionary<Type, (string, string, string?)>
-                {
-                    [typeof(string)] = ("Any text (surround with quotes if more than one word long).", "A list of words.",
-                        "Any text."),
-                    [typeof(int)] = ("A number.", "A list of numbers.", null),
-                    [typeof(Snowflake)] = ("A Discord ID.", "A list of Discord IDs.", null),
-                    [typeof(ulong)] = ("A Discord ID.", "A list of Discord IDs.", null),
-                    [typeof(CachedRole)] = ("A server role.", "A list of server roles.", null),
-                    [typeof(CachedMember)] = ("A server member.", "A list of server members.", null),
-                    [typeof(CachedTextChannel)] = ("A server channel.", "A list of server channels.", null),
-                    [typeof(CachedUser)] = ("A Discord user.", "A list of Discord users.", null),
-                    [typeof(string[])] = ("A list of words. Surround options with quotes.", "", null)
-                }.ToImmutableDictionary();
-
-        public static async Task<bool> CanShowCommandAsync(AbyssRequestContext context, Command command)
+        public static async Task<bool> CanShowCommandAsync(AbyssCommandContext context, Command command)
         {
             if (!(await command.RunChecksAsync(context).ConfigureAwait(false)).IsSuccessful)
                 return false;
             return !command.GetType().HasCustomAttribute<HiddenAttribute>();
         }
 
-        public static async Task<bool> CanShowModuleAsync(AbyssRequestContext context, Qmmands.Module module)
+        public static async Task<bool> CanShowModuleAsync(AbyssCommandContext context, Qmmands.Module module)
         {
             if (!(await module.RunChecksAsync(context).ConfigureAwait(false)).IsSuccessful)
                 return false;
@@ -60,81 +36,13 @@ namespace Abyss
             return firstAlias != null ? FormatHelper.Bold(FormatHelper.Code(firstAlias)) : null;
         }
 
-        public static async Task<LocalEmbedBuilder> CreateGroupEmbedAsync(AbyssRequestContext context, Qmmands.Module group)
+        public async Task<LocalEmbedBuilder> CreateCommandEmbedAsync(Command command, AbyssCommandContext context)
         {
-            var embed0 = new LocalEmbedBuilder
-            {
-                Title = "Group information"
-            };
-
-            embed0.Description = $"{FormatHelper.Code(group.FullAliases.First())}: {group.Description ?? "No description provided."}";
-
-            if (group.FullAliases.Count > 1) embed0.AddField("Aliases", string.Join(", ", group.FullAliases.Select(FormatHelper.Code)));
-
-            var commands = new List<string>();
-            foreach (var command in group.Commands)
-            {
-                if (await CanShowCommandAsync(context, command))
-                {
-                    var format = FormatCommandShort(command);
-                    if (format != null) commands.Add(format);
-                }
-            }
-            if (commands.Count != 0)
-                embed0.AddField("Subcommands", string.Join(", ", commands));
-
-            return embed0;
-        }
-
-        public static string GetFriendlyName(Parameter info, CommandService commandService)
-        {
-            var type = Nullable.GetUnderlyingType(info.Type) ?? info.Type;
-
-            // Check if enum type first, to avoid reflection logic
-            if (type.IsEnum) return type.GetEnumNames().HumanizeChoiceCollection();
-
-            (string? Singular, string? Multiple, string? Remainder) friendlyNameSet = (null, null, null);
-
-            // Look for friendly name data in the above table (unimplemented primitive parsers)
-            if (FriendlyNames.TryGetValue(type, out var fnPair))
-            {
-                friendlyNameSet = fnPair;
-            }
-            // Look for friendly name data in the type parser of the type
-            else
-            {
-                var rawParserObject = _getTypeParserMethod.MakeGenericMethod(type)
-                    .Invoke(commandService, new object[] { type.IsPrimitive });
-                if (rawParserObject != null)
-                {
-                    var parserType = rawParserObject.GetType();
-
-                    if (parserType.BaseType != null && typeof(AbyssTypeParser<>).IsAssignableFrom(parserType.BaseType.GetGenericTypeDefinition()))
-                    {
-                        friendlyNameSet = (ValueTuple<string, string, string>)parserType.GetProperty("FriendlyName")!.GetValue(rawParserObject)!;
-                    }
-                }
-            }
-
-            // Return retrieved data, if any
-            if (friendlyNameSet != (null, null, null))
-            {
-                if (friendlyNameSet.Remainder != null && info.IsRemainder) return friendlyNameSet.Remainder;
-                return (info.IsMultiple ? friendlyNameSet.Multiple : friendlyNameSet.Singular) ?? type.Name;
-            }
-
-            // Return type name if no friendly data found
-            return type.Name;
-        }
-
-        public async Task<LocalEmbedBuilder> CreateCommandEmbedAsync(Command command, AbyssRequestContext context)
-        {
-            var prefix = context.Prefix;
-
             var embed = new LocalEmbedBuilder
             {
-                Title = $"Command information",
-                Description = $"{FormatHelper.Code(command.FullAliases.First())}: {command.Description ?? "No description provided."}"
+                Title = "Command information",
+                Description = $"{FormatHelper.Code(command.FullAliases.First())}: {command.Description ?? "No description provided."}",
+                Color = context.GetColor(),
             };
             if (command.Remarks != null) embed.Description += " " + command.Remarks;
 
@@ -144,7 +52,7 @@ namespace Abyss
             if (command.Parameters.Count > 0)
             {
                 embed.AddField("Parameters",
-                   string.Join("\n", command.Parameters.Select((p, i) => $"**{i + 1})** {FormatParameter(context, p)}")));
+                   string.Join("\n", command.Parameters.Select(p => FormatParameter(context, p))));
             }
 
             if (command.CustomArgumentParserType == null)
@@ -175,13 +83,13 @@ namespace Abyss
             return embed;
         }
 
-        private async Task<string> FormatCheck(CheckAttribute cba, AbyssRequestContext context)
+        private async Task<string> FormatCheck(CheckAttribute cba, AbyssCommandContext context)
         {
             var message = GetCheckFriendlyMessage(context, cba);
             return $"- {message}";
         }
 
-        public static string GetCheckFriendlyMessage(AbyssRequestContext context, CheckAttribute cba)
+        public static string GetCheckFriendlyMessage(AbyssCommandContext context, CheckAttribute cba)
         {
             if (cba is IAbyssCheck iac) return iac.GetDescription(context);
 
@@ -230,36 +138,13 @@ namespace Abyss
                     break;
             }
 
-            if (message != null) return message;
-            return cba.GetType().Name;
+            return message ?? cba.GetType().Name;
         }
 
-        private static string FormatParameter(AbyssRequestContext ctx, Parameter parameterInfo)
+        private static string FormatParameter(AbyssCommandContext ctx, Parameter parameterInfo)
         {
-            var type = GetFriendlyName(parameterInfo, ctx.Command.Service);
-
-            return
-                $"`{parameterInfo.Name}`: {type}{(parameterInfo.IsOptional ? " Optional." : "")}{FormatParameterTags(ctx, parameterInfo)}";
+            return !string.IsNullOrWhiteSpace(parameterInfo.Description) ? $"`{parameterInfo.Name}`: {parameterInfo.Description}" : $"`{parameterInfo.Name}`";
         }
 
-        private static string FormatParameterTags(AbyssRequestContext ctx, Parameter parameterInfo)
-        {
-            var sb = new StringBuilder();
-
-            sb.AppendLine();
-
-            if (!string.IsNullOrEmpty(parameterInfo.Description))
-                sb.AppendLine($"- Description: {parameterInfo.Description}");
-
-            if (!string.IsNullOrEmpty(parameterInfo.Remarks))
-                sb.AppendLine($"- Remarks: {parameterInfo.Remarks}");
-
-            foreach (var check in parameterInfo.Checks.OfType<IAbyssCheck>())
-            {
-                sb.AppendLine(" - " + check.GetDescription(ctx));
-            }
-
-            return sb.ToString();
-        }
     }
 }

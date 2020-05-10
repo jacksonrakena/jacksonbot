@@ -9,25 +9,14 @@ namespace Abyss
     /// </summary>
     public static class EmbedExtensions
     {
-        /// <summary>
-        ///     Adds the "Requested by" footer.
-        /// </summary>
-        /// <param name="builder">The embed builder to add to.</param>
-        /// <param name="context">The context, of which the invoker will be used in the footer.</param>
-        /// <returns>The embed builder.</returns>
-        public static EmbedBuilder WithRequesterFooter(this EmbedBuilder builder, AbyssRequestContext context)
-        {
-            return builder.WithFooter($"Requested by {context.Invoker.Format()}",
-                context.Invoker.GetAvatarUrl());
-        }
-
+        
         /// <summary>
         ///     Adds fields to an embed.
         /// </summary>
         /// <param name="builder">The embed builder to add to.</param>
         /// <param name="fields">The fields to add to the embed.</param>
         /// <returns>The embed builder.</returns>
-        public static EmbedBuilder WithFields(this EmbedBuilder builder, IEnumerable<EmbedFieldBuilder> fields)
+        public static LocalEmbedBuilder WithFields(this LocalEmbedBuilder builder, IEnumerable<LocalEmbedFieldBuilder> fields)
         {
             foreach (var field in fields)
             {
@@ -41,7 +30,7 @@ namespace Abyss
         /// </summary>
         /// <param name="builder">The embed builder to add to.</param>
         /// <returns>The embed builder.</returns>
-        public static EmbedBuilder WithCurrentTimestamp(this EmbedBuilder builder)
+        public static LocalEmbedBuilder WithCurrentTimestamp(this LocalEmbedBuilder builder)
         {
             return builder.WithTimestamp(DateTimeOffset.Now);
         }
@@ -51,11 +40,11 @@ namespace Abyss
         /// </summary>
         /// <param name="embed">The embed to convert.</param>
         /// <returns>An <see cref="EmbedBuilder"/>.</returns>
-        public static EmbedBuilder ToEmbedBuilder(this Embed embed)
+        public static LocalEmbedBuilder ToEmbedBuilder(this Embed embed)
         {
             if (embed.Type != "rich") throw new InvalidOperationException($"Invalid embed type.");
 
-            var builder = new EmbedBuilder
+            var builder = new LocalEmbedBuilder
             {
                 Color = embed.Color,
                 Description = embed.Description,
@@ -66,14 +55,14 @@ namespace Abyss
                 Url = embed.Url
             };
 
-            if (embed.Author != null) builder.Author = new EmbedAuthorBuilder
+            if (embed.Author != null) builder.Author = new LocalEmbedAuthorBuilder
             {
                 Name = embed.Author.Name,
                 IconUrl = embed.Author.IconUrl,
                 Url = embed.Author.Url
             };
 
-            if (embed.Footer != null) builder.Footer = new EmbedFooterBuilder
+            if (embed.Footer != null) builder.Footer = new LocalEmbedFooterBuilder
             {
                 Text = embed.Footer.Text,
                 IconUrl = embed.Footer.IconUrl

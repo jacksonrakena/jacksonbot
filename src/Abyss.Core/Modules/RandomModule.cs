@@ -7,10 +7,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Abyss.Commands.Default
+namespace Abyss
 {
     [Name("Random")]
-    [Description("Commands that involve a computerised RNG calculator.")]
     public class RandomModule : AbyssModuleBase
     {
         public enum DiceExpressionOptions
@@ -26,35 +25,10 @@ namespace Abyss.Commands.Default
             _random = random;
         }
 
-        [Command("otp")]
-        [Description("One True Pairing: Ships two random members of this server.")]
-        [RunMode(RunMode.Parallel)]
-        public Task<ActionResult> Command_OtpAsync()
-        {
-            try
-            {
-                var guildUsers = Context.Guild.Members.Values.Where(c => !c.IsBot).ToArray();
-
-                if (guildUsers.Length < 2) return Ok("This guild is too small!");
-
-                var member1 = guildUsers.Random(_random);
-                var member2 = guildUsers.Random(_random);
-
-                while (member1 == member2) member1 = guildUsers.Random(_random);
-
-                return Ok(
-                    $":heart: I ship **{member1.DisplayName}** x **{member2.DisplayName}**! :heart:");
-
-            } catch (Exception)
-            {
-                return Ok("Can't ship. This server is probably too big for my awful code.");
-            }
-        }
-
         [Command("roll", "dice")]
         [Remarks("This command also supports complex dice types, like `d20+d18+4`.")]
         [Description("Rolls a dice of the supplied size.")]
-        public Task<ActionResult> Command_DiceRollAsync(
+        public async Task Command_DiceRollAsync(
             [Name("Dice")]
             [Description("The dice configuration to use. It can be simple, like `6`, or complex, like `d20+d18+4`.")]
             string dice, [Name("Number of Dice")]
@@ -64,32 +38,35 @@ namespace Abyss.Commands.Default
         {
             if (!dice.Contains("d" /* No dice */) && int.TryParse(dice, out var diceParsed))
             {
-                if (diceParsed < 1) return BadRequest("Your dice roll must be 1 or above!");
+                if (diceParsed < 1)
+                {
+                    await ReplyAsync("Your dice roll must be 1 or above!");
+                    return;
+                }
 
-                return numberOfDice == 1
-                    ? Ok($"I rolled **{_random.Next(1, diceParsed)}** on a **{dice}**-sided die.")
-                    : Ok(
-                        string.Join("\n",
+                await ReplyAsync(numberOfDice == 1
+                    ? $"I rolled **{_random.Next(1, diceParsed)}** on a **{dice}**-sided die."
+                    : string.Join("\n",
                             Enumerable.Range(1, numberOfDice)
                                 .Select(a => $"- **Die {a}:** {_random.Next(1, diceParsed)}")));
-            }
+                return;
+            } 
 
             try
             {
-                if (numberOfDice == 1) return Ok($"I rolled **{DiceExpression.Evaluate(dice)}** on a **{dice}** die.");
-                return Ok(string.Join("\n", Enumerable.Range(1, numberOfDice)
+                if (numberOfDice == 1) await ReplyAsync($"I rolled **{DiceExpression.Evaluate(dice)}** on a **{dice}** die.");
+                else await ReplyAsync(string.Join("\n", Enumerable.Range(1, numberOfDice)
                     .Select(a => $"- **Die {a}:** {DiceExpression.Evaluate(dice)}")));
             }
             catch (ArgumentException)
             {
-                return BadRequest("Invalid dice!");
+                await ReplyAsync("Invalid dice!");
             }
         }
 
         [Command("is")]
         [Description("Determines if a user has a specific attribute.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontAttachTimestamp | ResponseFormatOptions.DontAttachFooter)]
-        public Task<ActionResult> IsUserAsync(CachedMember target, [Remainder] string attribute)
+        public async Task IsUserAsync(CachedMember target, [Remainder] string attribute)
         {
             var @is = _random.Next(0, 2) == 1;
             attribute = attribute.Replace("?", ".");
@@ -97,13 +74,12 @@ namespace Abyss.Commands.Default
 
             var response =
                 $"{(@is ? "Yes" : "No")}, {username} is {(@is ? "" : "not ")}{attribute}{(attribute.EndsWith(".") ? "" : ".")}";
-            return Ok(response);
+            await ReplyAsync(response);
         }
 
         [Command("does")]
         [Description("Determines if a user does something, or has an attribute.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontAttachTimestamp | ResponseFormatOptions.DontAttachFooter)]
-        public Task<ActionResult> DoesUserAsync(CachedMember target, [Remainder] string attribute)
+        public async Task DoesUserAsync(CachedMember target, [Remainder] string attribute)
         {
             var does = _random.Next(0, 2) == 1;
             attribute = attribute.Replace("?", ".");
@@ -111,20 +87,23 @@ namespace Abyss.Commands.Default
 
             var response =
                 $"{(does ? "Yes" : "No")}, {username} does {(does ? "" : "not ")}{attribute}{(attribute.EndsWith(".") ? "" : ".")}";
-            return Ok(response);
+            await ReplyAsync(response);
         }
 
         [Command("choose")]
         [Description("Picks an option out of a list.")]
-        [ResponseFormatOptions(ResponseFormatOptions.DontAttachTimestamp | ResponseFormatOptions.DontAttachFooter)]
-        public Task<ActionResult> Command_PickOptionAsync(
+        public async Task Command_PickOptionAsync(
             [Name("Options")] [Description("The options to choose from.")]
             params string[] options)
         {
-            if (options.Length == 0) return BadRequest("You have to give me options to pick from!");
+            if (options.Length == 0)
+            {
+                await ReplyAsync("You have to give me options to pick from!");
+                return;
+            }
 
             var roll = _random.Next(0, options.Length);
-            return Ok($"I choose **{options[roll]}**.");
+            await ReplyAsync($"I choose **{options[roll]}**.");
         }
 
         private class DiceExpression

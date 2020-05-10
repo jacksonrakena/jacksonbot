@@ -13,6 +13,7 @@
         <PackageReference Include="Humanizer.Core" Version="2.7.9" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
         <PackageReference Include="AbyssalSpotify" Version="1.0.1-20191018.6" />
         <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0007" />

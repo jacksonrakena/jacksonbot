@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 using Abyssal.Common;
 using Disqord;
 using Disqord.Bot;
+using Disqord.Bot.Prefixes;
+using Disqord.Events;
 using Humanizer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Qmmands;
 
@@ -17,18 +20,20 @@ namespace Abyss
     {
         public int CommandSuccesses { get; private set; }
         public int CommandFailures { get; private set; }
-        public static Color Color = Color.Aqua;
+        public static Color Color = Color.LightPink;
 
         private readonly ILogger _failedCommandsTracking;
         private readonly ILogger _successfulCommandsTracking;
         private readonly ILogger<AbyssBot> _logger;
+        private readonly IConfiguration _config;
 
         public readonly IServiceProvider Services;
 
         public override object GetService(Type serviceType) => Services.GetService(serviceType);
 
-        public AbyssBot(DiscordBotConfiguration botConfiguration, ILoggerFactory factory, IServiceProvider provider) : base(TokenType.Bot, config.Connections.Discord.Token, botConfiguration)
+        public AbyssBot(IConfiguration config, IPrefixProvider prefixProvider, DiscordBotConfiguration botConfiguration, ILoggerFactory factory, IServiceProvider provider) : base(TokenType.Bot, config["Connections:Discord:Token"], prefixProvider, botConfiguration)
         {
+            _config = config;
             Services = provider;
             _failedCommandsTracking = factory.CreateLogger("Failed Commands Tracking");
             _logger = factory.CreateLogger<AbyssBot>();
@@ -36,8 +41,8 @@ namespace Abyss
             CommandExecuted += HandleCommandExecutedAsync;
             CommandExecutionFailed += HandleCommandExecutionFailedAsync;
         }
-
-        public async Task HandleRuntimeExceptionAsync(AbyssRequestContext context, Exception exception, CommandExecutionStep step, string reason)
+        
+        public async Task HandleRuntimeExceptionAsync(AbyssCommandContext context, Exception exception, CommandExecutionStep step, string reason)
         {
             _failedCommandsTracking.LogError(LoggingEventIds.ExceptionThrownInPipeline, exception, $"Pipeline failed at step {step}.");
         }
@@ -47,16 +52,7 @@ namespace Abyss
             var result = args.Result;
             var ctx = args.Context;
             var command = ctx.Command;
-            var context = ctx.ToRequestContext();
-
-            if (!(result is ActionResult baseResult))
-            {
-                _failedCommandsTracking.LogCritical(LoggingEventIds.CommandReturnedBadType,
-                    result == null
-                        ? $"Command {command.Name} returned a null result type."
-                        : $"Command {command.Name} returned a result of type {result.GetType().Name} and not {typeof(ActionResult).Name}.");
-                return;
-            }
+            var context = ctx.ToCommandContext();
 
             if (result.IsSuccessful) CommandSuccesses++;
             else CommandFailures++;
@@ -64,12 +60,12 @@ namespace Abyss
 
         public Task HandleCommandExecutionFailedAsync(CommandExecutionFailedEventArgs e)
         {
-            return HandleRuntimeExceptionAsync(e.Context.ToRequestContext(), e.Result.Exception, e.Result.CommandExecutionStep, e.Result.Reason);
+            return HandleRuntimeExceptionAsync(e.Context.ToCommandContext(), e.Result.Exception, e.Result.CommandExecutionStep, e.Result.Reason);
         }
 
         protected override async ValueTask AfterExecutedAsync(IResult result, DiscordCommandContext rawContext)
         {
-            var context = rawContext.ToRequestContext();
+            var context = rawContext.ToCommandContext();
             if (result.IsSuccessful)
             {
                 if (!(result is SuccessfulResult)) CommandSuccesses++; // SuccessfulResult indicates a RunMode.Async
@@ -94,7 +90,7 @@ namespace Abyss
 
                     if (checks.Count == 0) break;
 
-                    await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
+                    await context.Channel.SendMessageAsync(embed: new LocalEmbedBuilder()
                         .WithTitle(
                             $"No can do.")
                         .WithDescription("Can't do that, because: \n" + string.Join("\n",
@@ -116,7 +112,7 @@ namespace Abyss
 
                     if (pchecks.Count == 0) break;
 
-                    await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
+                    await context.Channel.SendMessageAsync(embed: new LocalEmbedBuilder()
                         .WithTitle(
                             $"No can do.")
                         .WithDescription(string.Join("\n",
@@ -141,7 +137,7 @@ namespace Abyss
 
                     var sb = new StringBuilder().AppendLine(tpfr.Reason);
                     sb.AppendLine();
-                    sb.AppendLine($"**Expected:** {HelpService.GetFriendlyName(tpfr.Parameter, tpfr.Parameter.Service)}");
+                    sb.AppendLine($"**Expected:** {tpfr.Parameter.Type.Name}");
                     sb.AppendLine($"**Received:** {tpfr.Value}");
                     sb.AppendLine($"Try using {context.Prefix}help {tpfr.Parameter.Command.Name} for help on this command.");
 
@@ -158,17 +154,13 @@ namespace Abyss
                 case OverloadsFailedResult ofr:
                     _failedCommandsTracking.LogInformation("Failed to find a matching command from input " + context.Message.Content + ".");
 
-                    await context.Channel.SendMessageAsync(embed: new EmbedBuilder()
+                    await context.Channel.SendMessageAsync(embed: new LocalEmbedBuilder()
                         .WithTitle("Failed to find a matching command")
                         .WithDescription(
                             $"Multiple versions of the command you requested exist, and your supplied information doesn't match any of them. Try using {context.Prefix}help <your command> for more information on the different versions.")
                         .WithCurrentTimestamp()
                         .WithColor(Color.Red)
-                        .WithFields(ofr.FailedOverloads.Select(ov =>
-                        {
-                            return new EmbedFieldBuilder().WithName(ov.Key.CreateCommandString()).WithValue(ov.Value.Reason).WithIsInline(false);
-                        }))
-                        .WithRequesterFooter(context)
+                        .WithFields(ofr.FailedOverloads.Select(ov => new LocalEmbedFieldBuilder().WithName(ov.Key.CreateCommandString()).WithValue(ov.Value.Reason).WithIsInline(false)))
                         .Build()).ConfigureAwait(false);
                     break;
 
@@ -180,69 +172,18 @@ namespace Abyss
             await base.AfterExecutedAsync(result, context);
         }
 
-        public void ImportPack(Type type)
+
+ 
+
+        protected override async ValueTask<bool> BeforeExecutedAsync(DiscordCommandContext context)
         {
-            if (!typeof(AbyssPack).IsAssignableFrom(type)) throw new InvalidOperationException("Abyss packs must be of the AbyssPack type.");
-            var pack = (AbyssPack) this.Create(type);
-            ImportAssembly(pack.Assembly);
-            _logger.LogInformation($"Finished loading pack {pack.FriendlyName}.");
-            LoadedPacks.Add(pack);
+            var b = await base.BeforeExecutedAsync(context);
+            return b && context.Guild != null;
         }
-
-        public void ImportPack<TPack>() where TPack : AbyssPack
-            => ImportPack(typeof(TPack));
-
-        private void ImportAssembly(Assembly assembly)
+        
+        protected override ValueTask<DiscordCommandContext> GetCommandContextAsync(CachedUserMessage message, IPrefix prefix)
         {
-            var discoverableAttributeType = typeof(DiscoverableTypeParserAttribute);
-            var typeParserType = typeof(TypeParser<>);
-            var addTypeParserMethod = GetType().GetMethod("AddTypeParser") ?? throw new Exception("Cannot find method AddTypeParser.");
-
-            var loadedTypes = new List<Type>();
-
-            foreach (var type in assembly.ExportedTypes)
-            {
-                if (!type.HasCustomAttribute<DiscoverableTypeParserAttribute>(out var attr)) continue;
-                if (typeParserType.IsAssignableFrom(type)) continue;
-
-                var parser = type.GetConstructor(Type.EmptyTypes)!.Invoke(Array.Empty<object>());
-                var method = addTypeParserMethod.MakeGenericMethod(type.BaseType!.GenericTypeArguments[0]);
-                method.Invoke(this, new object[] { parser, attr.ReplacingPrimitive });
-                loadedTypes.Add(type);
-            }
-            var rootModulesLoaded = AddModules(assembly, action: ProcessModule);
-
-            _logger.LogInformation($"Loaded {rootModulesLoaded.Count} modules, {rootModulesLoaded.Sum(a => a.Commands.Count)} commands, and {loadedTypes.Count} type parsers from {assembly.GetName().Name}.");
-        }
-
-        private void ProcessModule(ModuleBuilder moduleBuilder)
-        {
-            if (moduleBuilder.Type.HasCustomAttribute<GroupAttribute>())
-            {
-                moduleBuilder.AddCommand(CreateGroupRootBuilder, b =>
-                {
-                    b.AddAttribute(new HiddenAttribute());
-                });
-            }
-        }
-
-        // Qmmands requires this to return Task<CommandResult> (instead of Task<ActionResult>)
-        // otherwise the command will return null. Strange.
-        private async Task<CommandResult> CreateGroupRootBuilder(CommandContext c)
-        {
-            var embed = await HelpService.CreateGroupEmbedAsync(c.ToRequestContext(), c.Command.Module);
-            return AbyssModuleBase.Ok(c.ToRequestContext(), embed);
-        }
-
-        protected override async ValueTask<bool> BeforeExecutedAsync(CachedUserMessage message)
-        {
-            var b = await base.BeforeExecutedAsync(message);
-            return b && message.Guild != null;
-        }
-
-        protected override ValueTask<DiscordCommandContext> GetCommandContextAsync(CachedUserMessage message, string prefix)
-        {
-            return new ValueTask<DiscordCommandContext>(new AbyssRequestContext(this, message, prefix));
+            return new ValueTask<DiscordCommandContext>(new AbyssCommandContext(this, message, prefix));
         }
     }
 }
