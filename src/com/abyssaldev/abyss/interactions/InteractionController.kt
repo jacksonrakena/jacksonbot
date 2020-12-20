@@ -26,59 +26,64 @@ class InteractionController: Loggable {
 
     fun getAllCommands() = commands
 
-    suspend fun registerCommand(appInfo: ApplicationInfo, command: InteractionCommand, guild: String?) {
+    suspend fun registerCommand(appInfo: ApplicationInfo, command: InteractionCommand) {
         val httpClient = AbyssApplication.instance.httpClientEngine
-        val data: HashMap<String, String> = httpClient.post {
-            method = HttpMethod.Post
-            header("Authorization", "Bot ${AppConfig.instance.discord.botToken}")
-            contentType(ContentType.Application.Json)
-            url(if (guild == null) {
-                "https://discord.com/api/v8/applications/${appInfo.id}/commands"
-            } else {
-                "https://discord.com/api/v8/applications/${appInfo.id}/guilds/${guild}/commands"
-            })
-            body = hashMapOf(
-                "name" to command.name,
-                "description" to command.description,
-                "options" to if (command.arguments != null) {
-                    command.arguments!!.map {
-                        hashMapOf(
-                            "name" to it.name,
-                            "description" to it.description,
-                            "type" to it.type.raw,
-                            "required" to it.isRequired,
-                            "choices" to if (it.choices != null) {
-                                it.choices.map { choice ->
-                                    hashMapOf(
-                                        "name" to choice.name,
-                                        "value" to choice.value
-                                    )
-                                }
-                            } else {
-                                emptyArray<String>()
-                            }
-                        )
-                    }
+        try {
+            val data: HashMap<String, String> = httpClient.post {
+                method = HttpMethod.Post
+                header("Authorization", "Bot ${AppConfig.instance.discord.botToken}")
+                contentType(ContentType.Application.Json)
+                url(if (!command.isGuildLocked) {
+                    "https://discord.com/api/v8/applications/${appInfo.id}/commands"
                 } else {
-                    emptyArray<String>()
-                }
-            )
-        }
-        if (data["name"] == command.name) {
-            logger.info("Registered slash command ${command.name}.")
-        } else {
-            logger.error("Failed to register slash command ${command.name}. Raw response: ${AbyssApplication.objectMapper.writeValueAsString(data)}")
+                    "https://discord.com/api/v8/applications/${appInfo.id}/guilds/${command.guildLock}/commands"
+                })
+                body = hashMapOf(
+                    "name" to command.name,
+                    "description" to command.description,
+                    "options" to if (command.arguments != null) {
+                        command.arguments!!.map {
+                            hashMapOf(
+                                "name" to it.name,
+                                "description" to it.description,
+                                "type" to it.type.raw,
+                                "required" to it.isRequired,
+                                "choices" to if (it.choices != null) {
+                                    it.choices.map { choice ->
+                                        hashMapOf(
+                                            "name" to choice.name,
+                                            "value" to choice.value
+                                        )
+                                    }
+                                } else {
+                                    emptyArray<String>()
+                                }
+                            )
+                        }
+                    } else {
+                        emptyArray<String>()
+                    }
+                )
+            }
+            if (data["name"] == command.name) {
+                logger.info("Registered slash command ${command.name} to ${if (command.isGuildLocked) { command.guildLock } else { "global scope" }}")
+            } else {
+                logger.error("Failed to register slash command ${command.name}. Raw response: ${AbyssApplication.objectMapper.writeValueAsString(data)}")
+            }
+        } catch (e: Exception) {
+            logger.error("Failed to register slash command ${command.name} (exception).", e)
         }
     }
 
-    suspend fun registerAllCommandsInGuild(appInfo: ApplicationInfo, guild: String) {
+    suspend fun registerAllCommandsGlobally(appInfo: ApplicationInfo) {
+        logger.info("Registering all commands.")
         for (command in this.commands) {
-            registerCommand(appInfo, command, guild)
+            registerCommand(appInfo, command)
         }
     }
 
     suspend fun registerAllInteractions(appInfo: ApplicationInfo) {
-        registerAllCommandsInGuild(appInfo, "385902350432206849")
+        registerAllCommandsGlobally(appInfo)
 
         logger.info("All interactions registered.")
     }

@@ -7,6 +7,10 @@ import com.abyssaldev.abyss.interactions.InteractionResponse
 interface InteractionCommand {
     val name: String
     val description: String
+    val guildLock: Long
+        get() = -1
+    val isGuildLocked
+        get() = guildLock != (-1).toLong()
     val arguments: Array<InteractionCommandArgument>?
         get() = null
 

@@ -6,6 +6,7 @@ import com.abyssaldev.abyss.interactions.InteractionController
 import com.abyssaldev.abyss.interactions.commands.CatPictureCommand
 import com.abyssaldev.abyss.interactions.commands.HelpCommand
 import com.abyssaldev.abyss.interactions.commands.TextCommand
+import com.abyssaldev.abyss.interactions.commands.UserInfoCommand
 import com.abyssaldev.abyss.interactions.http.IndexRouting.Companion.indexRouting
 import com.abyssaldev.abyss.util.Loggable
 import com.abyssaldev.abyss.util.time
@@ -84,7 +85,7 @@ class AbyssApplication private constructor() : Loggable {
 
         discordEngineBuilder = JDABuilder
             .createDefault(AppConfig.instance.discord.botToken)
-            .setActivity(Activity.playing("/abysshelp"))
+            .setActivity(Activity.playing("/help"))
             .addEventListeners(AbyssDiscordListenerAdapter())
 
         Runtime.getRuntime().addShutdownHook(Thread {
@@ -102,7 +103,8 @@ class AbyssApplication private constructor() : Loggable {
             interactions.addCommands(
                 CatPictureCommand(),
                 TextCommand("ping", "Checks to see if I'm online.", "Pong!"),
-                HelpCommand()
+                HelpCommand(),
+                UserInfoCommand()
             )
         }
 
