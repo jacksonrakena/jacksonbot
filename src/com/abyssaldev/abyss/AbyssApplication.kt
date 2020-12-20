@@ -1,12 +1,14 @@
 package com.abyssaldev.abyss
 
-import com.abyssaldev.abyss.http.modules.discordInteractionModule
+import com.abyssaldev.abyss.gateway.AbyssDiscordListenerAdapter
+import com.abyssaldev.abyss.http.modules.DiscordInteractionRouting.Companion.discordInteractionRouting
 import com.abyssaldev.abyss.interactions.InteractionController
 import com.abyssaldev.abyss.interactions.commands.CatPictureCommand
 import com.abyssaldev.abyss.interactions.commands.TextCommand
 import com.abyssaldev.abyss.util.Loggable
-import com.abyssaldev.abyss.util.Responder
 import com.abyssaldev.abyss.util.time
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import io.ktor.application.*
 import io.ktor.client.*
@@ -16,13 +18,9 @@ import io.ktor.jackson.*
 import io.ktor.request.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
-import net.dv8tion.jda.api.events.ReadyEvent
-import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.requests.RestAction
 import org.slf4j.event.Level
 
@@ -32,8 +30,15 @@ class AbyssApplication private constructor() : Loggable {
         val instance: AbyssApplication by lazy {
             AbyssApplication()
         }
+
+        // JSON (de)serialization
+        val objectMapper = ObjectMapper().apply {
+            // Ensure that JSON deserialiation doesn't fail if we haven't mapped all the properties
+            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        }
     }
 
+    // Handles incoming interactions and registering slash commands over REST with Discord
     val interactions: InteractionController = InteractionController()
 
     // HTTP server for Discord interactions and web API/control panel
@@ -42,7 +47,7 @@ class AbyssApplication private constructor() : Loggable {
     // HTTP client for Discord interactions and some commands
     val httpClientEngine: HttpClient
 
-    // Discord engine
+    // Discord engine for gateway presence
     lateinit var discordEngine: JDA
     private val discordEngineBuilder: JDABuilder
 
@@ -60,12 +65,12 @@ class AbyssApplication private constructor() : Loggable {
             }
 
             // ROUTING MODULES
-            discordInteractionModule()
+            discordInteractionRouting()
         }
 
         httpClientEngine = HttpClient {
             install(JsonFeature) {
-                serializer = JacksonSerializer()
+                serializer = JacksonSerializer(objectMapper)
             }
         }
 
@@ -95,21 +100,5 @@ class AbyssApplication private constructor() : Loggable {
         logger.info("Added all commands to registration queue.")
         logger.info("Started HTTP and Discord engines in ${elapsed}ms.")
         logger.info("Abyss initialisation complete.")
-    }
-}
-
-class AbyssDiscordListenerAdapter: ListenerAdapter(), Loggable, Responder {
-    override fun onReady(event: ReadyEvent) {
-        logger.info("Received Discord READY signal.")
-        logger.info("Starting interaction controller...")
-        AbyssApplication.instance.discordEngine.retrieveApplicationInfo().queue {
-            if (it == null) {
-                logger.error("Failed to retrieve application information. Cannot register interactions.")
-                return@queue
-            }
-            GlobalScope.launch {
-                AbyssApplication.instance.interactions.registerAllCommandsInGuild(it, "385902350432206849")
-            }
-        }
     }
 }

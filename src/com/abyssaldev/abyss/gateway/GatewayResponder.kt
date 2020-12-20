@@ -1,9 +1,8 @@
-package com.abyssaldev.abyss.util
+package com.abyssaldev.abyss.gateway
 
 import net.dv8tion.jda.api.requests.RestAction
-import net.dv8tion.jda.api.requests.restaction.MessageAction
 
-interface Responder {
+interface GatewayResponder {
     fun respond(vararg actions: RestAction<*>) {
         actions.forEach {
             it.queue()

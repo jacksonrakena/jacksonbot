@@ -65,7 +65,7 @@ class InteractionController: Loggable {
         if (data["name"] == command.name) {
             logger.info("Registered slash command ${command.name}.")
         } else {
-            logger.error("Failed to register slash command ${command.name}. Raw response: ${AppConfig.objectMapper.writeValueAsString(data)}")
+            logger.error("Failed to register slash command ${command.name}. Raw response: ${AbyssApplication.objectMapper.writeValueAsString(data)}")
         }
     }
 
@@ -75,18 +75,29 @@ class InteractionController: Loggable {
         }
     }
 
+    suspend fun registerAllInteractions(appInfo: ApplicationInfo) {
+        registerAllCommandsInGuild(appInfo, "385902350432206849")
+
+        logger.info("All interactions registered.")
+    }
+
     fun handleInteractionCommandInvoked(data: Interaction): InteractionResponse {
+        if (data.data == null) {
+            return InteractionResponse.empty()
+        }
         val command = commands.firstOrNull { it.name == data.data!!.name }
         if (command == null) {
             logger.error("Received a command invocation for command ${data.data!!.name}, but no command is registered.")
             return InteractionResponse(content = "That command has been removed from Abyss.")
         }
         logger.info("Invoking command " + command.name)
-        try {
-            return command.invoke(data)
+        return try {
+            command.invoke(
+                InteractionRequest(data.guildId, data.channelId, data.member, data.data!!.options ?: emptyArray<InteractionCommandOption>())
+            )
         } catch (e: Throwable) {
             logger.error("Error thrown while processing command ${command.name}", e)
-            return InteractionResponse(content = "There was an internal error running that command. Try again later.")
+            InteractionResponse(content = "There was an internal error running that command. Try again later.")
         }
     }
 }
