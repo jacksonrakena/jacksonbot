@@ -60,7 +60,7 @@ fun Application.mainModuleWeb(testing: Boolean = false) {
 
             val cryptLog = LoggerFactory.getLogger("Discord Interactions")
             try {
-                if (validate(discordPublicKey, signature!!, timestamp!!, body)) {
+                if (!validate(discordPublicKey, signature!!, timestamp!!, body)) {
                     cryptLog.warn("Received invalid request signature. Signature=${signature} Timestamp=${timestamp} Body=${body} PublicKey=${discordPublicKey}")
                     return@post call.respond(HttpStatusCode.Unauthorized, "Invalid request signature")
                 } else {
