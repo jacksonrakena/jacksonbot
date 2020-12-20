@@ -76,7 +76,26 @@ fun Application.mainModuleWeb(testing: Boolean = false) {
                 1 -> call.respond(pingAcknowledgeHashMap) // Ping acknowledge
                 2 -> { // Application command
                     val response = AbyssApplication.instance.interactions.handleInteractionCommandInvoked(interaction)
-                    return@post call.respond(response)
+                    val typeInt = if (response.hideUserMessage) {
+                        if (response.content == "") {
+                            2
+                        } else {
+                            3
+                        }
+                    } else {
+                        if (response.content == "") {
+                            5
+                        } else {
+                            4
+                        }
+                    }
+                    return@post call.respond(hashMapOf(
+                        "type" to typeInt,
+                        "data" to hashMapOf(
+                            "content" to response.content,
+                            "tts" to response.tts
+                        )
+                    ))
                 }
             }
         }
