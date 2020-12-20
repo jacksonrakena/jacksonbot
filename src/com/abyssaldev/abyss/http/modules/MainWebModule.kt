@@ -12,8 +12,31 @@ import com.fasterxml.jackson.databind.*
 import com.goterl.lazycode.lazysodium.utils.Key
 import io.ktor.jackson.*
 import io.ktor.features.*
+import org.bouncycastle.asn1.edec.EdECObjectIdentifiers
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.bouncycastle.util.encoders.Hex
 import org.slf4j.LoggerFactory
 import org.slf4j.event.*
+import java.security.KeyFactory
+import java.security.Security
+import java.security.Signature
+import java.security.spec.X509EncodedKeySpec
+
+fun validate(pubkey: String, signature: String, timestamp: String, message: String): Boolean {
+    val provider = BouncyCastleProvider()
+    Security.addProvider(provider)
+    val pki = SubjectPublicKeyInfo(AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519), Hex.decode(pubkey));
+    val pkSpec = X509EncodedKeySpec(pki.encoded)
+    val kf = KeyFactory.getInstance("ed25519", provider);
+    val publicKey = kf.generatePublic(pkSpec);
+    val signedData = Signature.getInstance("ed25519", provider);
+    signedData.initVerify(publicKey)
+    signedData.update(timestamp.toByteArray())
+    signedData.update(message.toByteArray())
+    return signedData.verify(Hex.decode(signature));
+}
 
 @JvmOverloads
 fun Application.mainModuleWeb(testing: Boolean = false) {
@@ -38,9 +61,8 @@ fun Application.mainModuleWeb(testing: Boolean = false) {
             val interaction = AppConfig.objectMapper.readValue(body, Interaction::class.java)
 
             val cryptLog = LoggerFactory.getLogger("Discord Interactions")
-
             try {
-                if (!crypt.cryptoSignVerifyDetached(signature, timestamp+body, Key.fromPlainString(discordPublicKey))) {
+                if (validate(discordPublicKey, signature!!, timestamp!!, body)) {
                     cryptLog.warn("Received invalid request signature. Signature=${signature} Timestamp=${timestamp} Body=${body} PublicKey=${discordPublicKey}")
                     return@post call.respond(HttpStatusCode.Unauthorized, "Invalid request signature")
                 } else {

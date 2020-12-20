@@ -44,8 +44,8 @@ dependencies {
     implementation "io.ktor:ktor-server-host-common:$ktor_version"
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
     compile "net.dv8tion:JDA:$jdaVersion"
-    implementation "com.goterl.lazycode:lazysodium-java:$lazysodiumVersion"
     implementation "net.java.dev.jna:jna:$jnaVersion"
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.67'
 }
 
 compileKotlin {
