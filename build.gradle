@@ -13,7 +13,7 @@ apply plugin: 'application'
 
 group 'com.abyssaldev'
 version '15.0.0'
-mainClassName = "io.ktor.server.netty.EngineMain"
+mainClassName = "com.abyssaldev.abyss.MainKt"
 
 sourceCompatibility = 1.8
 
