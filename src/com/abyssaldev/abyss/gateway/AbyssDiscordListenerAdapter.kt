@@ -16,6 +16,7 @@ class AbyssDiscordListenerAdapter: ListenerAdapter(), Loggable {
                 logger.error("Failed to retrieve application information. Cannot register interactions.")
                 return@queue
             }
+            AbyssApplication.instance.applicationInfo = it
             logger.info("Retrieved application info. Registering interactions with application ID ${it.id}")
             GlobalScope.launch {
                 AbyssApplication.instance.interactions.registerAllInteractions(it)

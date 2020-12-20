@@ -5,6 +5,7 @@ import com.abyssaldev.abyss.http.modules.DiscordInteractionRouting.Companion.dis
 import com.abyssaldev.abyss.interactions.InteractionController
 import com.abyssaldev.abyss.interactions.commands.CatPictureCommand
 import com.abyssaldev.abyss.interactions.commands.TextCommand
+import com.abyssaldev.abyss.interactions.http.IndexRouting.Companion.indexRouting
 import com.abyssaldev.abyss.util.Loggable
 import com.abyssaldev.abyss.util.time
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -21,6 +22,7 @@ import io.ktor.server.netty.*
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.entities.ApplicationInfo
 import net.dv8tion.jda.api.requests.RestAction
 import org.slf4j.event.Level
 
@@ -40,6 +42,9 @@ class AbyssApplication private constructor() : Loggable {
 
     // Handles incoming interactions and registering slash commands over REST with Discord
     val interactions: InteractionController = InteractionController()
+
+    // Cache application info after READY
+    var applicationInfo: ApplicationInfo? = null
 
     // HTTP server for Discord interactions and web API/control panel
     val httpServerEngine: NettyApplicationEngine
@@ -66,6 +71,8 @@ class AbyssApplication private constructor() : Loggable {
 
             // ROUTING MODULES
             discordInteractionRouting()
+
+            indexRouting()
         }
 
         httpClientEngine = HttpClient {
