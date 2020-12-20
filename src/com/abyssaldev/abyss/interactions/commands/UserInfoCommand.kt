@@ -14,7 +14,7 @@ class UserInfoCommand : InteractionCommand {
     )
     override val guildLock = 385902350432206849
     override fun invoke(call: InteractionRequest): InteractionResponse {
-        val userId = call.arguments[0].value
-        return respond("Information about $userId")
+        val user = call.arguments[0].getAsUser(call) ?: return respond("Unknown user.")
+        return respond("Information about ${user.user.name}#${user.user.discriminator}")
     }
 }
