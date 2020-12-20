@@ -63,6 +63,7 @@ class InteractionController: Loggable {
             logger.error("Received a command invocation for command ${data.data!!.name}, but no command is registered.")
             return InteractionResponse(content = "There was an internal error processing your request.")
         }
+        logger.info("Invoking command " + command.name)
         return command.invoke(data)
     }
 }
