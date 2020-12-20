@@ -24,6 +24,8 @@ class InteractionController: Loggable {
         }
     }
 
+    fun getAllCommands() = commands
+
     suspend fun registerCommand(appInfo: ApplicationInfo, command: InteractionCommand, guild: String?) {
         val httpClient = AbyssApplication.instance.httpClientEngine
         val data: HashMap<String, String> = httpClient.post {

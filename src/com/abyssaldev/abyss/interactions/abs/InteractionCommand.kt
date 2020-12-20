@@ -11,4 +11,6 @@ interface InteractionCommand {
         get() = null
 
     fun invoke(call: InteractionRequest): InteractionResponse
+
+    fun respond(content: String) = InteractionResponse.message(content)
 }
