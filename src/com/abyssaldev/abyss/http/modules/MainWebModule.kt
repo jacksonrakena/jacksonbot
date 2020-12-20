@@ -73,6 +73,8 @@ fun Application.mainModuleWeb(testing: Boolean = false) {
             if (interaction.type == 1) {
                 cryptLog.info("Received interaction PING. Responding...")
                 call.respond(hashMapOf("type" to 1))
+            } else {
+                call.respond(hashMapOf("type" to 4, "data" to hashMapOf("content" to "Pong")))
             }
         }
         get("/") {
