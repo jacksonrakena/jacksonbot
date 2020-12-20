@@ -1,12 +1,16 @@
 package com.abyssaldev.abyss
 
 import com.abyssaldev.abyss.http.modules.mainModuleWeb
+import com.abyssaldev.abyss.interactions.InteractionController
 import com.abyssaldev.abyss.util.Loggable
 import com.abyssaldev.abyss.util.Responder
 import com.abyssaldev.abyss.util.time
 import io.ktor.application.*
+import io.ktor.client.*
+import io.ktor.client.features.json.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
@@ -23,8 +27,16 @@ class AbyssApplication private constructor() : Loggable {
         }
     }
 
+    val interactions: InteractionController = InteractionController()
+
     // HTTP server for Discord interactions and web API/control panel
     val httpServerEngine: NettyApplicationEngine
+
+    val httpClientEngine = HttpClient {
+        install(JsonFeature) {
+            serializer = JacksonSerializer()
+        }
+    }
 
     // Discord engine
     lateinit var discordEngine: JDA
@@ -58,6 +70,10 @@ class AbyssApplication private constructor() : Loggable {
 class AbyssDiscordListenerAdapter: ListenerAdapter(), Loggable, Responder {
     override fun onReady(event: ReadyEvent) {
         logger.info("Received Discord READY signal.")
+        logger.info("Starting interaction controller...")
+        runBlocking {
+            AbyssApplication.instance.interactions.registerAllCommandsInGuild("385902350432206849")
+        }
     }
 
     override fun onMessageReceived(event: MessageReceivedEvent) {

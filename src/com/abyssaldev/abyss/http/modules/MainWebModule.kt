@@ -37,6 +37,8 @@ fun validate(pubkey: String, signature: String, timestamp: String, message: Stri
     return signedData.verify(Hex.decode(signature));
 }
 
+val pingAcknowledgeHashMap = hashMapOf("type" to 1)
+
 @JvmOverloads
 fun Application.mainModuleWeb(testing: Boolean = false) {
     install(ContentNegotiation) {
@@ -70,15 +72,13 @@ fun Application.mainModuleWeb(testing: Boolean = false) {
                 return@post call.respond(HttpStatusCode.Unauthorized, "Error occurred while verifying.")
             }
 
-            if (interaction.type == 1) {
-                cryptLog.info("Received interaction PING. Responding...")
-                call.respond(hashMapOf("type" to 1))
-            } else {
-                call.respond(hashMapOf("type" to 4, "data" to hashMapOf("content" to "Pong")))
+            when (interaction.type) {
+                1 -> call.respond(pingAcknowledgeHashMap) // Ping acknowledge
+                2 -> { // Application command
+                    val response = AbyssApplication.instance.interactions.handleInteractionCommandInvoked(interaction)
+                    return@post call.respond(response)
+                }
             }
-        }
-        get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
         }
 
         install(StatusPages) {
