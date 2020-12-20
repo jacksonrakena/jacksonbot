@@ -12,9 +12,14 @@ class AppConfig {
     }
 
     lateinit var discord: AppConfigDiscord
+    lateinit var web: AppConfigWeb
 
     class AppConfigDiscord {
         lateinit var botToken: String
         lateinit var interactionsPublicKey: String
+    }
+
+    class AppConfigWeb {
+        var port: Int = 80
     }
 }

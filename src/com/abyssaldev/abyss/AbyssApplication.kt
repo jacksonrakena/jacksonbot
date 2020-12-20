@@ -52,7 +52,7 @@ class AbyssApplication private constructor() : Loggable {
     private val discordEngineBuilder: JDABuilder
 
     init {
-        httpServerEngine = embeddedServer(Netty, port = 1566) {
+        httpServerEngine = embeddedServer(Netty, port = AppConfig.instance.web.port) {
             install(ContentNegotiation) {
                 jackson {
                     enable(SerializationFeature.INDENT_OUTPUT)

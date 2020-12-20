@@ -1,0 +1,9 @@
+{
+  "discord": {
+    "botToken": "",
+    "interactionsPublicKey": ""
+  },
+  "web": {
+    "port": 80
+  }
+}

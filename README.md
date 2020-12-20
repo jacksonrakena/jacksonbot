@@ -7,6 +7,7 @@ A Discord bot, capable of both interactions (slash-commands) and gateway command
   
 ### 👮‍ Requirements
 - A [Discord bot application](https://discordapp.com/developers/applications/) with registered user and token (app -> Bot -> Add Bot)
+    - Interactions enabled, pointing to Abyss' `/discord/interactions` endpoint
 - HTTP/HTTPS port 80 open (configurable)
 - `appconfig.json` configuration file
 
