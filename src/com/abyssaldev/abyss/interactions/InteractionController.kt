@@ -82,6 +82,11 @@ class InteractionController: Loggable {
             return InteractionResponse(content = "That command has been removed from Abyss.")
         }
         logger.info("Invoking command " + command.name)
-        return command.invoke(data)
+        try {
+            return command.invoke(data)
+        } catch (e: Throwable) {
+            logger.error("Error thrown while processing command ${command.name}", e)
+            return InteractionResponse(content = "There was an internal error running that command. Try again later.")
+        }
     }
 }
