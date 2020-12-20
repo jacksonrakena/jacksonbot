@@ -25,6 +25,7 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.ApplicationInfo
+import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import org.slf4j.event.Level
@@ -85,7 +86,7 @@ class AbyssApplication private constructor() : Loggable {
         }
 
         discordEngineBuilder = JDABuilder
-            .createDefault(AppConfig.instance.discord.botToken)
+            .createDefault(AppConfig.instance.discord.botToken, GatewayIntent.GUILD_MEMBERS)
             .setActivity(Activity.playing("/help"))
             .setMemberCachePolicy(MemberCachePolicy.ALL)
             .addEventListeners(AbyssDiscordListenerAdapter())
