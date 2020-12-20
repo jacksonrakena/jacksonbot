@@ -4,13 +4,16 @@ import com.abyssaldev.abyss.AbyssApplication
 import com.abyssaldev.abyss.AppConfig
 import com.abyssaldev.abyss.interactions.abs.InteractionCommand
 import com.abyssaldev.abyss.interactions.commands.CatPictureCommand
+import com.abyssaldev.abyss.interactions.commands.FunctionCommand
+import com.abyssaldev.abyss.interactions.commands.TextCommand
 import com.abyssaldev.abyss.util.Loggable
 import io.ktor.client.request.*
 import io.ktor.http.*
 
 class InteractionController: Loggable {
     val commands: Array<InteractionCommand> = arrayOf(
-        CatPictureCommand()
+        CatPictureCommand(),
+        TextCommand("ping", "Checks to see if I'm online.", "Pong!")
     )
 
     suspend fun registerAllCommandsInGuild(guild: String) {
