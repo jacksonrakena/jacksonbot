@@ -57,6 +57,7 @@ class InteractionCommandOption {
     lateinit var value: String
 
     fun getAsUser(request: InteractionRequest): Member? {
+        println(request.guild == null)
         if (value.isEmpty() || request.guild == null) return null;
         return request.guild!!.getMemberById(value)
     }
