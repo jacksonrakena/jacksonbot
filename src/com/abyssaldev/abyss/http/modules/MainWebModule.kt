@@ -9,7 +9,6 @@ import io.ktor.request.*
 import io.ktor.routing.*
 import io.ktor.http.*
 import com.fasterxml.jackson.databind.*
-import com.goterl.lazycode.lazysodium.utils.Key
 import io.ktor.jackson.*
 import io.ktor.features.*
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers
@@ -53,7 +52,6 @@ fun Application.mainModuleWeb(testing: Boolean = false) {
 
     routing {
         post("/discord/interactions") {
-            val crypt = AbyssApplication.lazySodiumInstance
             val discordPublicKey = AppConfig.instance.discord.interactionsPublicKey
             val signature = call.request.headers["X-Signature-Ed25519"]
             val timestamp = call.request.headers["X-Signature-Timestamp"]

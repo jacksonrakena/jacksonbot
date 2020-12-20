@@ -4,8 +4,6 @@ import com.abyssaldev.abyss.http.modules.mainModuleWeb
 import com.abyssaldev.abyss.util.Loggable
 import com.abyssaldev.abyss.util.Responder
 import com.abyssaldev.abyss.util.time
-import com.goterl.lazycode.lazysodium.LazySodiumJava
-import com.goterl.lazycode.lazysodium.SodiumJava
 import io.ktor.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -22,10 +20,6 @@ class AbyssApplication private constructor() : Loggable {
         // AbyssApplication is a singleton instance, lazy initialised
         val instance: AbyssApplication by lazy {
             AbyssApplication()
-        }
-
-        val lazySodiumInstance: LazySodiumJava by lazy {
-            LazySodiumJava(SodiumJava())
         }
     }
 
