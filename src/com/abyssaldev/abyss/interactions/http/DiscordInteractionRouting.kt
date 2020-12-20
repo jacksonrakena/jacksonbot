@@ -68,10 +68,10 @@ class DiscordInteractionRouting : Loggable {
                          */
                         interactionLogger.error("Mapping exception decoding interaction data", e)
                         try {
-                            val interactionSimple: HashMap<String, String> =
+                            val interactionSimple: HashMap<String, Object> =
                                 AbyssApplication.objectMapper.readValue(stringContent)
                             val interactionType = interactionSimple["type"]
-                            if (interactionType != null && interactionType == "2") {
+                            if (interactionType != null && interactionType.toString() == "2") {
                                 return@post call.respond(
                                     hashMapOf(
                                         "type" to 4,

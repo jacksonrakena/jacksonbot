@@ -29,7 +29,7 @@ class InteractionController: Loggable {
     suspend fun registerCommand(appInfo: ApplicationInfo, command: InteractionCommand) {
         val httpClient = AbyssApplication.instance.httpClientEngine
         try {
-            val data: HashMap<String, String> = httpClient.post {
+            val data: HashMap<String, Object> = httpClient.post {
                 method = HttpMethod.Post
                 header("Authorization", "Bot ${AppConfig.instance.discord.botToken}")
                 contentType(ContentType.Application.Json)
@@ -65,7 +65,7 @@ class InteractionController: Loggable {
                     }
                 )
             }
-            if (data["name"] == command.name) {
+            if (data["name"].toString() == command.name) {
                 logger.info("Registered slash command ${command.name} to ${if (command.isGuildLocked) { command.guildLock } else { "global scope" }}")
             } else {
                 logger.error("Failed to register slash command ${command.name}. Raw response: ${AbyssApplication.objectMapper.writeValueAsString(data)}")
