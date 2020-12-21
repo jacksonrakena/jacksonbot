@@ -1,6 +1,8 @@
-package com.abyssaldev.abyss.interactions.commands.models
+package com.abyssaldev.abyss.interactions.commands.models.subcommands
 
-import java.util.HashMap
+import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandArgumentType
+import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandOption
+import java.util.*
 
 class InteractionSubcommandGroup(
     override val name: String,

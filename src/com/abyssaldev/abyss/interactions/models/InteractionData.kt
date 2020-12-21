@@ -1,6 +1,6 @@
 package com.abyssaldev.abyss.interactions.models
 
-import com.abyssaldev.abyss.interactions.commands.models.InteractionCommandArgumentChoice
+import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandArgumentChoice
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties(ignoreUnknown = true)

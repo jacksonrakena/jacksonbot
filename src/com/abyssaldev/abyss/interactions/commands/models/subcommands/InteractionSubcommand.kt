@@ -1,6 +1,10 @@
-package com.abyssaldev.abyss.interactions.commands.models
+package com.abyssaldev.abyss.interactions.commands.models.subcommands
 
-import java.util.HashMap
+import com.abyssaldev.abyss.interactions.commands.models.InteractionExecutable
+import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandArgument
+import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandArgumentType
+import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandOption
+import java.util.*
 
 abstract class InteractionSubcommand: InteractionCommandOption, InteractionExecutable {
     override val type: InteractionCommandArgumentType = InteractionCommandArgumentType.Subcommand

@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter
 
 class AbyssDiscordListenerAdapter: ListenerAdapter(), Loggable {
     override fun onReady(event: ReadyEvent) {
-        logger.info("Received Discord READY signal. Connected as ${event.jda.selfUser.toString()}")
+        logger.info("Received Discord READY signal. Connected as ${event.jda.selfUser}")
         logger.info("Starting interaction controller...")
         AbyssApplication.instance.discordEngine.retrieveApplicationInfo().queue {
             if (it == null) {

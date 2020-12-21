@@ -1,6 +1,10 @@
 package com.abyssaldev.abyss.interactions.commands
 
 import com.abyssaldev.abyss.interactions.commands.models.*
+import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandArgument
+import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandArgumentType
+import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandOption
+import com.abyssaldev.abyss.interactions.commands.models.subcommands.InteractionSubcommandSimple
 
 class InfoCommand : InteractionCommand() {
     override val name = "info"

@@ -1,8 +1,8 @@
-package com.abyssaldev.abyss.interactions.commands.models
+package com.abyssaldev.abyss.interactions.commands.models.arguments
 
 import com.abyssaldev.abyss.interactions.abs.JsonHashable
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.util.HashMap
+import java.util.*
 
 class InteractionCommandArgument(
     override val name: String,
@@ -13,7 +13,7 @@ class InteractionCommandArgument(
     val isRequired: Boolean = false
 ) : InteractionCommandOption, JsonHashable {
     override fun createMap(): HashMap<String, Any> {
-        var hashMapInit = hashMapOf<String, Any>(
+        val hashMapInit = hashMapOf<String, Any>(
             "name" to name,
             "description" to description,
             "type" to type.raw,

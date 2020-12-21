@@ -13,13 +13,13 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 
 class DiscordInteractionRouting : Loggable {
     companion object {
         private val pingAcknowledgeHashMap = hashMapOf("type" to 1)
+        private val emptyMessageAcknowledgeHashMap = hashMapOf("type" to 5)
 
         fun Application.discordInteractionRouting() {
             routing {
@@ -68,7 +68,7 @@ class DiscordInteractionRouting : Loggable {
                          */
                         interactionLogger.error("Mapping exception decoding interaction data", e)
                         try {
-                            val interactionSimple: HashMap<String, Object> =
+                            val interactionSimple: HashMap<String, Any> =
                                 AbyssApplication.objectMapper.readValue(stringContent)
                             val interactionType = interactionSimple["type"]
                             if (interactionType != null && interactionType.toString() == "2") {
@@ -106,13 +106,12 @@ class DiscordInteractionRouting : Loggable {
 
                         // Handle a command call
                         2 -> {
+                            call.respond(emptyMessageAcknowledgeHashMap)
 
-                            // Hand off to the InteractionController which will call the right command and return it's response
-                            val response =
+                            GlobalScope.launch(Dispatchers.Default) {
+                                delay(250)
                                 AbyssApplication.instance.interactions.handleInteractionCommandInvoked(interaction)
-
-                            // Respond to Discord's POST request with our response
-                            return@post call.respond(response.createMap())
+                            }
                         }
                     }
                 }

@@ -10,5 +10,5 @@ interface JsonHashable {
      * Creates a JSON map (a HashMap<String, Any>) that represents the data transfer object
      * for this instance.
      */
-    abstract fun createMap(): HashMap<String, Any>
+    fun createMap(): HashMap<String, Any>
 }

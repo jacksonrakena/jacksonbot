@@ -1,10 +1,18 @@
 package com.abyssaldev.abyss.interactions.commands.models
 
 import com.abyssaldev.abyss.interactions.InteractionRequest
-import com.abyssaldev.abyss.interactions.InteractionResponse
+import net.dv8tion.jda.api.MessageBuilder
 
 interface InteractionExecutable {
-    fun invoke(call: InteractionRequest): InteractionResponse
+    fun invoke(call: InteractionRequest): MessageBuilder
 
-    fun respond(content: String) = InteractionResponse.message(content)
+    fun respond(responder: MessageBuilder.() -> Unit): MessageBuilder {
+        val builder = MessageBuilder()
+        responder(builder)
+        return builder
+    }
+
+    fun respond(content: String): MessageBuilder {
+        return MessageBuilder().setContent(content)
+    }
 }
