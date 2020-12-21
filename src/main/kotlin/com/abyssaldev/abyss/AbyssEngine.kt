@@ -105,7 +105,8 @@ class AbyssEngine private constructor() : Loggable {
                 TextCommand("ping", "Checks to see if I'm online.", "Pong!"),
                 HelpCommand(),
                 InfoCommand(),
-                AboutCommand()
+                AboutCommand(),
+                DiceCommand()
             )
         }
         logger.info("Listening for Discord interactions at ${httpServerEngine.environment.connectors[0].host}:${httpServerEngine.environment.connectors[0].port}${AppConfig.instance.web.interactionsRoute}")
