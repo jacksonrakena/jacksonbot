@@ -6,5 +6,11 @@
   "web": {
     "port": 1566,
     "interactionsRoute": "/discord/interactions"
+  },
+  "appearance": {
+    "color": "#8edeaa"
+  },
+  "command_scopes": {
+
   }
 }

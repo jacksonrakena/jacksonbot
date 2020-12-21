@@ -2,6 +2,7 @@ package com.abyssaldev.abyss
 
 import com.abyssaldev.abyss.util.parseHexString
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.awt.Color
 import java.io.File
 
@@ -17,6 +18,14 @@ class AppConfig {
     var discord: AppConfigDiscord = AppConfigDiscord()
     var web: AppConfigWeb = AppConfigWeb()
     var appearance: AppConfigAppearance = AppConfigAppearance()
+
+    @JsonProperty("command_scopes")
+    var commandScopes: HashMap<String, String> = HashMap<String, String>()
+
+    fun determineCommandScope(name: String): String? {
+        if (!commandScopes["all"].isNullOrEmpty()) return commandScopes["all"]!!
+        return commandScopes[name]
+    }
 
     class AppConfigDiscord {
         lateinit var botToken: String

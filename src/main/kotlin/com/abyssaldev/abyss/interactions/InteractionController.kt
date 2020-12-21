@@ -33,24 +33,32 @@ class InteractionController: Loggable {
 
     fun getAllCommands() = commands
 
+    fun getRegistrarGuildId(appInfo: ApplicationInfo, command: InteractionCommand): String {
+        if (command.isGuildLocked) return command.guildLock.toString() //"https://discord.com/api/v8/applications/${appInfo.id}/guilds/${command.guildLock}/commands"
+        var scope = AppConfig.instance.determineCommandScope(command.name)
+        return if (!scope.isNullOrEmpty()) scope //"https://discord.com/api/v8/applications/${appInfo.id}/guilds/${scope}/commands"
+        else "" //""https://discord.com/api/v8/applications/${appInfo.id}/commands"
+    }
+
     suspend fun registerCommand(appInfo: ApplicationInfo, command: InteractionCommand) {
         val httpClient = AbyssEngine.instance.httpClientEngine
+        val id = getRegistrarGuildId(appInfo, command)
         try {
             val data: HashMap<String, Any> = httpClient.post {
                 method = HttpMethod.Post
                 header("Authorization", "Bot ${AppConfig.instance.discord.botToken}")
                 contentType(ContentType.Application.Json)
-                url(if (!command.isGuildLocked) {
+                url(if (id == "") {
                     "https://discord.com/api/v8/applications/${appInfo.id}/commands"
                 } else {
-                    "https://discord.com/api/v8/applications/${appInfo.id}/guilds/${command.guildLock}/commands"
+                    "https://discord.com/api/v8/applications/${appInfo.id}/guilds/${id}/commands"
                 })
                 body = command.createMap()
             }
             if (data["name"].toString() == command.name) {
-                logger.info("Registered slash command ${command.name} to ${if (command.isGuildLocked) { command.guildLock } else { "global scope" }}")
+                logger.info("Registered slash command ${command.name} to ${if (id != "") { id } else { "global scope" }}")
                 command.options.filterIsInstance<InteractionSubcommand>().forEach {
-                    logger.info("Registered slash subcommand ${it.name} (of command ${command.name}) to ${if (command.isGuildLocked) { command.guildLock } else { "global scope" }}")
+                    logger.info("Registered slash subcommand ${it.name} (of command ${command.name}) to ${if (id != "") { id } else { "global scope" }}")
                 }
             } else {
                 logger.error("Failed to register slash command ${command.name}. Raw response: ${AbyssEngine.objectMapper.writeValueAsString(data)}")
