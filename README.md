@@ -8,7 +8,7 @@ A Discord bot, capable of both interactions (slash-commands) and gateway command
 ### 👮‍ Requirements
 - A [Discord bot application](https://discordapp.com/developers/applications/) with registered user and token (app -> Bot -> Add Bot)
     - Interactions enabled, pointing to Abyss' `/discord/interactions` endpoint (configurable)
-- A reverse proxy or middleman to apply SSL from 443 to Abyss' configurable port (Nginx recommended - [example config](example_nginx_server_conf.txt))
+- A reverse proxy or middleman to apply SSL from 443 to Abyss' configurable port (Nginx recommended - [example config](example_nginx_server_conf.nginx))
 - `appconfig.json` configuration file
 
 ### 🛠 Structure
