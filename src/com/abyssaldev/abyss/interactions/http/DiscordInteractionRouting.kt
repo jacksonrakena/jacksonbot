@@ -2,8 +2,8 @@ package com.abyssaldev.abyss.http.modules
 
 import com.abyssaldev.abyss.AbyssApplication
 import com.abyssaldev.abyss.AppConfig
-import com.abyssaldev.abyss.interactions.Interaction
 import com.abyssaldev.abyss.interactions.InteractionController
+import com.abyssaldev.abyss.interactions.models.Interaction
 import com.abyssaldev.abyss.util.Loggable
 import com.abyssaldev.abyss.util.validateEd25519Message
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -110,30 +110,9 @@ class DiscordInteractionRouting : Loggable {
                             // Hand off to the InteractionController which will call the right command and return it's response
                             val response =
                                 AbyssApplication.instance.interactions.handleInteractionCommandInvoked(interaction)
-                            val typeInt = if (response.hideUserMessage) {
-                                if (response.content == "") {
-                                    2 // Acknowledge message, but hide user's call and do not reply
-                                } else {
-                                    3 // Acknowledge message, but hide user's call and respond with content
-                                }
-                            } else {
-                                if (response.content == "") {
-                                    5 // Acknowledge message, show user's call and do not reply
-                                } else {
-                                    4 // Acknowledge message, show user's call and reply
-                                }
-                            }
 
                             // Respond to Discord's POST request with our response
-                            return@post call.respond(
-                                hashMapOf(
-                                    "type" to typeInt,
-                                    "data" to hashMapOf(
-                                        "content" to response.content,
-                                        "tts" to response.tts
-                                    )
-                                )
-                            )
+                            return@post call.respond(response.createMap())
                         }
                     }
                 }

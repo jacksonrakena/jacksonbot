@@ -2,7 +2,10 @@ package com.abyssaldev.abyss.interactions
 
 import com.abyssaldev.abyss.AbyssApplication
 import com.abyssaldev.abyss.AppConfig
-import com.abyssaldev.abyss.interactions.abs.InteractionCommand
+import com.abyssaldev.abyss.interactions.commands.models.InteractionCommand
+import com.abyssaldev.abyss.interactions.commands.models.InteractionSubcommand
+import com.abyssaldev.abyss.interactions.commands.models.InteractionSubcommandGroup
+import com.abyssaldev.abyss.interactions.models.Interaction
 import com.abyssaldev.abyss.util.Loggable
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -27,6 +30,7 @@ class InteractionController: Loggable {
     fun getAllCommands() = commands
 
     suspend fun registerCommand(appInfo: ApplicationInfo, command: InteractionCommand) {
+        logger.info(AbyssApplication.objectMapper.writeValueAsString(command.createMap()))
         val httpClient = AbyssApplication.instance.httpClientEngine
         try {
             val data: HashMap<String, Object> = httpClient.post {
@@ -38,35 +42,13 @@ class InteractionController: Loggable {
                 } else {
                     "https://discord.com/api/v8/applications/${appInfo.id}/guilds/${command.guildLock}/commands"
                 })
-                body = hashMapOf(
-                    "name" to command.name,
-                    "description" to command.description,
-                    "options" to if (command.arguments != null) {
-                        command.arguments!!.map {
-                            hashMapOf(
-                                "name" to it.name,
-                                "description" to it.description,
-                                "type" to it.type.raw,
-                                "required" to it.isRequired,
-                                "choices" to if (it.choices != null) {
-                                    it.choices.map { choice ->
-                                        hashMapOf(
-                                            "name" to choice.name,
-                                            "value" to choice.value
-                                        )
-                                    }
-                                } else {
-                                    emptyArray<String>()
-                                }
-                            )
-                        }
-                    } else {
-                        emptyArray<String>()
-                    }
-                )
+                body = command.createMap()
             }
             if (data["name"].toString() == command.name) {
                 logger.info("Registered slash command ${command.name} to ${if (command.isGuildLocked) { command.guildLock } else { "global scope" }}")
+                command.options.filterIsInstance<InteractionSubcommand>().forEach {
+                    logger.info("Registered slash subcommand ${it.name} (of command ${command.name}) to ${if (command.isGuildLocked) { command.guildLock } else { "global scope" }}")
+                }
             } else {
                 logger.error("Failed to register slash command ${command.name}. Raw response: ${AbyssApplication.objectMapper.writeValueAsString(data)}")
             }
@@ -97,10 +79,27 @@ class InteractionController: Loggable {
             logger.error("Received a command invocation for command ${data.data!!.name}, but no command is registered.")
             return InteractionResponse(content = "That command has been removed from Abyss.")
         }
+        val commandSubcommandsOrSubcommandGroups = command.options.filter { it is InteractionSubcommand || it is InteractionSubcommandGroup }
+        if (commandSubcommandsOrSubcommandGroups.any()) {
+            data.data!!.options!!.forEach {
+                val matchingRootSubcommand = commandSubcommandsOrSubcommandGroups.firstOrNull { q ->
+                    q.name == it.name && q is InteractionSubcommand
+                } as InteractionSubcommand?
+                if (matchingRootSubcommand != null) {
+                    logger.info("Invoking matching subcommand ${matchingRootSubcommand.name}")
+                    return try {
+                        matchingRootSubcommand.invoke(InteractionRequest(data.guildId, data.channelId, data.member, data.data!!.options!![0].options))
+                    } catch (e: Throwable) {
+                        logger.error("Error thrown while processing subcommand ${matchingRootSubcommand.name}", e)
+                        InteractionResponse(content = "There was an internal error running that subcommand. Try again later.")
+                    }
+                }
+            }
+        }
         logger.info("Invoking command " + command.name)
         return try {
             command.invoke(
-                InteractionRequest(data.guildId, data.channelId, data.member, data.data!!.options ?: emptyArray<InteractionCommandOption>())
+                InteractionRequest(data.guildId, data.channelId, data.member, data.data!!.options ?: emptyArray())
             )
         } catch (e: Throwable) {
             logger.error("Error thrown while processing command ${command.name}", e)

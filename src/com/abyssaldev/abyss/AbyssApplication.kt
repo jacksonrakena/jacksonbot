@@ -5,8 +5,8 @@ import com.abyssaldev.abyss.http.modules.DiscordInteractionRouting.Companion.dis
 import com.abyssaldev.abyss.interactions.InteractionController
 import com.abyssaldev.abyss.interactions.commands.CatPictureCommand
 import com.abyssaldev.abyss.interactions.commands.HelpCommand
+import com.abyssaldev.abyss.interactions.commands.InfoCommand
 import com.abyssaldev.abyss.interactions.commands.TextCommand
-import com.abyssaldev.abyss.interactions.commands.UserInfoCommand
 import com.abyssaldev.abyss.interactions.http.IndexRouting.Companion.indexRouting
 import com.abyssaldev.abyss.util.Loggable
 import com.abyssaldev.abyss.util.time
@@ -107,7 +107,7 @@ class AbyssApplication private constructor() : Loggable {
                 CatPictureCommand(),
                 TextCommand("ping", "Checks to see if I'm online.", "Pong!"),
                 HelpCommand(),
-                UserInfoCommand()
+                InfoCommand()
             )
         }
 

@@ -1,11 +1,13 @@
 package com.abyssaldev.abyss.interactions
 
 import com.abyssaldev.abyss.AbyssApplication
+import com.abyssaldev.abyss.interactions.commands.models.InteractionCommandArgumentChoiceSet
+import com.abyssaldev.abyss.interactions.models.InteractionMember
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.TextChannel
 
-class InteractionRequest(private val guildId: String?, private val channelId: String?, private val rawMember: InteractionMember?, val arguments: Array<InteractionCommandOption>) {
+class InteractionRequest(private val guildId: String?, private val channelId: String?, private val rawMember: InteractionMember?, val arguments: InteractionCommandArgumentChoiceSet) {
     var guild: Guild?
     var channel: TextChannel?
     var member: Member?
