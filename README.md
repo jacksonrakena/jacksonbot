@@ -30,4 +30,4 @@ The project is broken down into the following domains:
 - 🧼 `com.abyssaldev.abyss.interactions.http` This package contains the Ktor routes and facilities to process Discord POST requests.
   
 ### 🖋 Copyright
-Copyright (c) 2018-2020 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
+Copyright (c) 2018-2021 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
