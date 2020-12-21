@@ -1,6 +1,6 @@
 package com.abyssaldev.abyss.interactions
 
-import com.abyssaldev.abyss.AbyssApplication
+import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.AppConfig
 import com.abyssaldev.abyss.interactions.framework.InteractionCommand
 import com.abyssaldev.abyss.interactions.framework.InteractionExecutable
@@ -33,7 +33,7 @@ class InteractionController: Loggable {
     fun getAllCommands() = commands
 
     suspend fun registerCommand(appInfo: ApplicationInfo, command: InteractionCommand) {
-        val httpClient = AbyssApplication.instance.httpClientEngine
+        val httpClient = AbyssEngine.instance.httpClientEngine
         try {
             val data: HashMap<String, Any> = httpClient.post {
                 method = HttpMethod.Post
@@ -52,7 +52,7 @@ class InteractionController: Loggable {
                     logger.info("Registered slash subcommand ${it.name} (of command ${command.name}) to ${if (command.isGuildLocked) { command.guildLock } else { "global scope" }}")
                 }
             } else {
-                logger.error("Failed to register slash command ${command.name}. Raw response: ${AbyssApplication.objectMapper.writeValueAsString(data)}")
+                logger.error("Failed to register slash command ${command.name}. Raw response: ${AbyssEngine.objectMapper.writeValueAsString(data)}")
             }
         } catch (e: Exception) {
             logger.error("Failed to register slash command ${command.name} (exception).", e)
@@ -78,7 +78,7 @@ class InteractionController: Loggable {
         val command = commands.firstOrNull { it.name == data.name }
         if (command == null) {
             logger.error("Received a command invocation for command ${data.name}, but no command is registered.")
-            AbyssApplication.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage("That command has been disabled.")
+            AbyssEngine.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage("That command has been disabled.")
             return
         }
         val commandSubcommandsOrSubcommandGroups = command.options.filter { it is InteractionSubcommand || it is InteractionSubcommandGroup }
@@ -101,10 +101,10 @@ class InteractionController: Loggable {
 
         try {
             val message = executable.invoke(InteractionRequest(raw.guildId, raw.channelId, raw.member, arguments))
-            AbyssApplication.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage(message.build())
+            AbyssEngine.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage(message.build())
         } catch (e: Throwable) {
             logger.error("Error thrown while processing ${if (executable is InteractionSubcommand) { "sub" } else {""}}command ${command.name}", e)
-            AbyssApplication.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage( "There was an internal error running that command. Try again later.")
+            AbyssEngine.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage( "There was an internal error running that command. Try again later.")
             return
         }
     }

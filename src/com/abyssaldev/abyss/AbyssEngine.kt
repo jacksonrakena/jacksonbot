@@ -30,11 +30,11 @@ import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import org.slf4j.event.Level
 
-class AbyssApplication private constructor() : Loggable {
+class AbyssEngine private constructor() : Loggable {
     companion object {
         // AbyssApplication is a singleton instance, lazy initialised
-        val instance: AbyssApplication by lazy {
-            AbyssApplication()
+        val instance: AbyssEngine by lazy {
+            AbyssEngine()
         }
 
         // JSON (de)serialization

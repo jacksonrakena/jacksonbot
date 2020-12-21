@@ -1,6 +1,6 @@
 package com.abyssaldev.abyss.interactions.commands
 
-import com.abyssaldev.abyss.AbyssApplication
+import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.interactions.InteractionRequest
 import com.abyssaldev.abyss.interactions.framework.InteractionCommand
 import io.ktor.client.request.*
@@ -16,7 +16,7 @@ class CatPictureCommand : InteractionCommand() {
     override fun invoke(call: InteractionRequest): MessageBuilder {
         return respond {
             setContent(runBlocking {
-                    return@runBlocking AbyssApplication.instance.httpClientEngine.get<HashMap<String, String>>(catApi)["file"]
+                    return@runBlocking AbyssEngine.instance.httpClientEngine.get<HashMap<String, String>>(catApi)["file"]
             })
         }
     }

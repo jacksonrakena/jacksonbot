@@ -1,6 +1,6 @@
 package com.abyssaldev.abyss.interactions.http
 
-import com.abyssaldev.abyss.AbyssApplication
+import com.abyssaldev.abyss.AbyssEngine
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -12,10 +12,10 @@ class IndexRouting {
         fun Application.indexRouting() {
             routing {
                 get("/") {
-                    if (AbyssApplication.instance.applicationInfo == null) {
+                    if (AbyssEngine.instance.applicationInfo == null) {
                         return@get call.respondRedirect("https://github.com/abyssal/abyss", permanent = false)
                     }
-                    return@get call.respondRedirect("https://discord.com/api/oauth2/authorize?client_id=${AbyssApplication.instance.applicationInfo!!.id}&permissions=0&scope=bot%20applications.commands", permanent = true)
+                    return@get call.respondRedirect("https://discord.com/api/oauth2/authorize?client_id=${AbyssEngine.instance.applicationInfo!!.id}&permissions=0&scope=bot%20applications.commands", permanent = true)
                 }
             }
         }

@@ -1,6 +1,6 @@
 package com.abyssaldev.abyss.interactions
 
-import com.abyssaldev.abyss.AbyssApplication
+import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgumentChoiceSet
 import com.abyssaldev.abyss.interactions.models.InteractionMember
 import net.dv8tion.jda.api.entities.Guild
@@ -13,7 +13,7 @@ class InteractionRequest(guildId: String?, channelId: String?, rawMember: Intera
     var member: Member?
 
     init {
-        val discord = AbyssApplication.instance.discordEngine
+        val discord = AbyssEngine.instance.discordEngine
 
         guild = if (guildId != null) { discord.getGuildById(guildId) } else { null }
         channel = if (channelId != null) { discord.getTextChannelById(channelId) } else { null }

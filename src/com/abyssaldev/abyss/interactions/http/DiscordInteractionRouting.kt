@@ -1,6 +1,6 @@
 package com.abyssaldev.abyss.http.modules
 
-import com.abyssaldev.abyss.AbyssApplication
+import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.AppConfig
 import com.abyssaldev.abyss.interactions.InteractionController
 import com.abyssaldev.abyss.interactions.models.Interaction
@@ -53,7 +53,7 @@ class DiscordInteractionRouting : Loggable {
                     // Read JSON data on another coroutine, because it could be quite big
                     val interaction: Interaction = try {
                         withContext(Dispatchers.Default) {
-                            AbyssApplication.objectMapper.readValue(
+                            AbyssEngine.objectMapper.readValue(
                                 stringContent,
                                 Interaction::class.java
                             )
@@ -69,7 +69,7 @@ class DiscordInteractionRouting : Loggable {
                         interactionLogger.error("Mapping exception decoding interaction data", e)
                         try {
                             val interactionSimple: HashMap<String, Any> =
-                                AbyssApplication.objectMapper.readValue(stringContent)
+                                AbyssEngine.objectMapper.readValue(stringContent)
                             val interactionType = interactionSimple["type"]
                             if (interactionType != null && interactionType.toString() == "2") {
                                 return@post call.respond(
@@ -110,7 +110,7 @@ class DiscordInteractionRouting : Loggable {
 
                             GlobalScope.launch(Dispatchers.Default) {
                                 delay(250)
-                                AbyssApplication.instance.interactions.handleInteractionCommandInvoked(interaction)
+                                AbyssEngine.instance.interactions.handleInteractionCommandInvoked(interaction)
                             }
                         }
                     }

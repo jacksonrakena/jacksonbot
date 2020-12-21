@@ -1,6 +1,6 @@
 package com.abyssaldev.abyss.interactions.commands
 
-import com.abyssaldev.abyss.AbyssApplication
+import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.interactions.InteractionRequest
 import com.abyssaldev.abyss.interactions.framework.InteractionCommand
 import net.dv8tion.jda.api.MessageBuilder
@@ -10,7 +10,7 @@ class HelpCommand : InteractionCommand() {
     override val description: String = "Shows a list of available commands."
 
     override fun invoke(call: InteractionRequest): MessageBuilder {
-        val commands = AbyssApplication.instance.interactions.getAllCommands()
+        val commands = AbyssEngine.instance.interactions.getAllCommands()
 
         return respond {
             setContent(StringBuilder().apply {

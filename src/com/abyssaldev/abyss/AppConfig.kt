@@ -7,7 +7,7 @@ class AppConfig {
         val configFile = File("appconfig.json")
 
         val instance: AppConfig by lazy {
-            AbyssApplication.objectMapper.readValue(configFile, AppConfig::class.java)
+            AbyssEngine.objectMapper.readValue(configFile, AppConfig::class.java)
         }
     }
 
