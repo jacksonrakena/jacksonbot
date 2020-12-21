@@ -1,7 +1,7 @@
 package com.abyssaldev.abyss.interactions
 
 import com.abyssaldev.abyss.AbyssApplication
-import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandArgumentChoiceSet
+import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgumentChoiceSet
 import com.abyssaldev.abyss.interactions.models.InteractionMember
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member

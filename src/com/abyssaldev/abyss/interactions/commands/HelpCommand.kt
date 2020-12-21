@@ -2,7 +2,7 @@ package com.abyssaldev.abyss.interactions.commands
 
 import com.abyssaldev.abyss.AbyssApplication
 import com.abyssaldev.abyss.interactions.InteractionRequest
-import com.abyssaldev.abyss.interactions.commands.models.InteractionCommand
+import com.abyssaldev.abyss.interactions.framework.InteractionCommand
 import net.dv8tion.jda.api.MessageBuilder
 
 class HelpCommand : InteractionCommand() {

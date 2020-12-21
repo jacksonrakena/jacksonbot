@@ -1,4 +1,4 @@
-package com.abyssaldev.abyss.interactions.commands.models
+package com.abyssaldev.abyss.interactions.framework
 
 import com.abyssaldev.abyss.interactions.InteractionRequest
 import net.dv8tion.jda.api.MessageBuilder

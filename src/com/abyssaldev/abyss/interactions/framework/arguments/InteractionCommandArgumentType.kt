@@ -1,4 +1,4 @@
-package com.abyssaldev.abyss.interactions.commands.models.arguments
+package com.abyssaldev.abyss.interactions.framework.arguments
 
 enum class InteractionCommandArgumentType(val raw: Int) {
     Subcommand(1),

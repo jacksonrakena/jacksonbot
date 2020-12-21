@@ -1,9 +1,9 @@
-package com.abyssaldev.abyss.interactions.commands.models.subcommands
+package com.abyssaldev.abyss.interactions.framework.subcommands
 
-import com.abyssaldev.abyss.interactions.commands.models.InteractionExecutable
-import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandArgument
-import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandArgumentType
-import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandOption
+import com.abyssaldev.abyss.interactions.framework.InteractionExecutable
+import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgument
+import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgumentType
+import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandOption
 import java.util.*
 
 abstract class InteractionSubcommand: InteractionCommandOption, InteractionExecutable {

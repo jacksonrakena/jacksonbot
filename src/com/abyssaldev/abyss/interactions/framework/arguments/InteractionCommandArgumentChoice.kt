@@ -1,4 +1,4 @@
-package com.abyssaldev.abyss.interactions.commands.models.arguments
+package com.abyssaldev.abyss.interactions.framework.arguments
 
 import com.abyssaldev.abyss.interactions.InteractionRequest
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties

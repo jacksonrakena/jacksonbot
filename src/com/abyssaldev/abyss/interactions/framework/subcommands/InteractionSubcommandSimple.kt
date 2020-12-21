@@ -1,8 +1,8 @@
-package com.abyssaldev.abyss.interactions.commands.models.subcommands
+package com.abyssaldev.abyss.interactions.framework.subcommands
 
 import com.abyssaldev.abyss.interactions.InteractionRequest
-import com.abyssaldev.abyss.interactions.abs.JsonHashable
-import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandArgument
+import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgument
+import com.abyssaldev.abyss.util.JsonHashable
 import net.dv8tion.jda.api.MessageBuilder
 
 class InteractionSubcommandSimple(override val name: String,

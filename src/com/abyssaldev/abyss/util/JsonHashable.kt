@@ -1,4 +1,4 @@
-package com.abyssaldev.abyss.interactions.abs
+package com.abyssaldev.abyss.util
 
 import java.util.*
 

@@ -1,6 +1,6 @@
-package com.abyssaldev.abyss.interactions.commands.models.arguments
+package com.abyssaldev.abyss.interactions.framework.arguments
 
-import com.abyssaldev.abyss.interactions.abs.JsonHashable
+import com.abyssaldev.abyss.util.JsonHashable
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.*
 

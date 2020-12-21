@@ -1,6 +1,6 @@
-package com.abyssaldev.abyss.interactions.commands.models
+package com.abyssaldev.abyss.interactions.framework
 
-import com.abyssaldev.abyss.interactions.abs.JsonHashable
+import com.abyssaldev.abyss.util.JsonHashable
 import com.fasterxml.jackson.annotation.JsonIgnore
 
 interface InteractionBase: JsonHashable {

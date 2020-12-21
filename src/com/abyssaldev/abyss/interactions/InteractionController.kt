@@ -2,11 +2,11 @@ package com.abyssaldev.abyss.interactions
 
 import com.abyssaldev.abyss.AbyssApplication
 import com.abyssaldev.abyss.AppConfig
-import com.abyssaldev.abyss.interactions.commands.models.InteractionCommand
-import com.abyssaldev.abyss.interactions.commands.models.InteractionExecutable
-import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandArgumentChoiceSet
-import com.abyssaldev.abyss.interactions.commands.models.subcommands.InteractionSubcommand
-import com.abyssaldev.abyss.interactions.commands.models.subcommands.InteractionSubcommandGroup
+import com.abyssaldev.abyss.interactions.framework.InteractionCommand
+import com.abyssaldev.abyss.interactions.framework.InteractionExecutable
+import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgumentChoiceSet
+import com.abyssaldev.abyss.interactions.framework.subcommands.InteractionSubcommand
+import com.abyssaldev.abyss.interactions.framework.subcommands.InteractionSubcommandGroup
 import com.abyssaldev.abyss.interactions.models.Interaction
 import com.abyssaldev.abyss.util.Loggable
 import com.abyssaldev.abyss.util.trySendMessage

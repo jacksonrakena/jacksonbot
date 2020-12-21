@@ -1,7 +1,7 @@
-package com.abyssaldev.abyss.interactions.commands.models
+package com.abyssaldev.abyss.interactions.framework
 
 import com.abyssaldev.abyss.interactions.InteractionRequest
-import com.abyssaldev.abyss.interactions.commands.models.arguments.InteractionCommandOption
+import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandOption
 import net.dv8tion.jda.api.MessageBuilder
 
 class InteractionCommandSimple(override val name: String,
