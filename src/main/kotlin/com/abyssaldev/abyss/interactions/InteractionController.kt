@@ -33,9 +33,9 @@ class InteractionController: Loggable {
 
     fun getAllCommands() = commands
 
-    fun getRegistrarGuildId(appInfo: ApplicationInfo, command: InteractionCommand): String {
+    private fun getRegistrarGuildId(appInfo: ApplicationInfo, command: InteractionCommand): String {
         if (command.isGuildLocked) return command.guildLock.toString() //"https://discord.com/api/v8/applications/${appInfo.id}/guilds/${command.guildLock}/commands"
-        var scope = AppConfig.instance.determineCommandScope(command.name)
+        val scope = AppConfig.instance.determineCommandScope(command.name)
         return if (!scope.isNullOrEmpty()) scope //"https://discord.com/api/v8/applications/${appInfo.id}/guilds/${scope}/commands"
         else "" //""https://discord.com/api/v8/applications/${appInfo.id}/commands"
     }
@@ -68,15 +68,11 @@ class InteractionController: Loggable {
         }
     }
 
-    suspend fun registerAllCommandsGlobally(appInfo: ApplicationInfo) {
+    suspend fun registerAllInteractions(appInfo: ApplicationInfo) {
         logger.info("Registering all commands.")
         for (command in this.commands) {
             registerCommand(appInfo, command)
         }
-    }
-
-    suspend fun registerAllInteractions(appInfo: ApplicationInfo) {
-        registerAllCommandsGlobally(appInfo)
 
         logger.info("All interactions registered.")
     }

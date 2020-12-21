@@ -39,7 +39,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.11")
 }
 
-tasks.withType<KotlinCompile>() {
+tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "14"
 }
 

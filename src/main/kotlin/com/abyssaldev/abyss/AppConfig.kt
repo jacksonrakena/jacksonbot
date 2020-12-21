@@ -8,7 +8,7 @@ import java.io.File
 
 class AppConfig {
     companion object {
-        val configFile = File("appconfig.json")
+        private val configFile = File("appconfig.json")
 
         val instance: AppConfig by lazy {
             AbyssEngine.objectMapper.readValue(configFile, AppConfig::class.java)
@@ -20,7 +20,7 @@ class AppConfig {
     var appearance: AppConfigAppearance = AppConfigAppearance()
 
     @JsonProperty("command_scopes")
-    var commandScopes: HashMap<String, String> = HashMap<String, String>()
+    var commandScopes: HashMap<String, String> = HashMap()
 
     fun determineCommandScope(name: String): String? {
         if (!commandScopes["all"].isNullOrEmpty()) return commandScopes["all"]!!

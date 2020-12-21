@@ -2,9 +2,9 @@ package com.abyssaldev.abyss
 
 import com.abyssaldev.abyss.gateway.AbyssDiscordListenerAdapter
 import com.abyssaldev.abyss.http.IndexRouting.Companion.indexRouting
-import com.abyssaldev.abyss.http.modules.DiscordInteractionRouting.Companion.discordInteractionRouting
 import com.abyssaldev.abyss.interactions.InteractionController
 import com.abyssaldev.abyss.interactions.commands.*
+import com.abyssaldev.abyss.interactions.http.DiscordInteractionRouting.Companion.discordInteractionRouting
 import com.abyssaldev.abyss.util.Loggable
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper

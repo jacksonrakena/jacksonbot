@@ -7,8 +7,6 @@ import io.ktor.routing.*
 
 class IndexRouting {
     companion object {
-        private val pingAcknowledgeHashMap = hashMapOf("type" to 1)
-
         fun Application.indexRouting() {
             routing {
                 get("/invite") {

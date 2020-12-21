@@ -1,4 +1,4 @@
-package com.abyssaldev.abyss.http.modules
+package com.abyssaldev.abyss.interactions.http
 
 import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.AppConfig
