@@ -1,6 +1,8 @@
 # Example NGINX reverse proxy configuration for Abyss server operating on default port 1566
+# In this example, your Discord interactions URL would be https://discord.mydomain.com/discord/interactions
+# (assuming you left the config web.interactionsRoute as default)
 server {
-    server_name discord.mydomain.com;
+    server_name discord.mydomain.com; # You'll need an A or CNAME record at your registrar pointing here
     listen 80 http2;
     listen [::]:80 http2;
 
