@@ -15,7 +15,7 @@ class HelpCommand : InteractionCommand() {
         return respond {
             embed {
                 setTitle("Commands")
-                appendDescription("Remember, you can type `/` and commands will show up above your chat bar.")
+                appendDescriptionLine("Remember, you can type `/` and commands will show up above your chat bar.")
                 addField("Slash commands", commands.joinToString(", ") {
                     "`/" + it.name + "`"
                 }, true)

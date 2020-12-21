@@ -14,6 +14,7 @@ repositories {
     mavenLocal()
     maven("https://plugins.gradle.org/m2/")
     maven("https://kotlin.bintray.com/ktor")
+    maven(url = "https://kotlin.bintray.com/kotlinx/")
 }
 
 val ktorVersion = "1.4.2"
@@ -35,6 +36,7 @@ dependencies {
     implementation("io.ktor:ktor-server-host-common:$ktorVersion")
     implementation("net.dv8tion:JDA:$jdaVersion")
     implementation("org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion")
+    implementation("org.apache.commons:commons-lang3:3.11")
 }
 
 tasks.withType<KotlinCompile>() {

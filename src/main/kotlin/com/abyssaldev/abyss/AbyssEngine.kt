@@ -1,15 +1,11 @@
 package com.abyssaldev.abyss
 
 import com.abyssaldev.abyss.gateway.AbyssDiscordListenerAdapter
+import com.abyssaldev.abyss.http.IndexRouting.Companion.indexRouting
 import com.abyssaldev.abyss.http.modules.DiscordInteractionRouting.Companion.discordInteractionRouting
 import com.abyssaldev.abyss.interactions.InteractionController
-import com.abyssaldev.abyss.interactions.commands.CatPictureCommand
-import com.abyssaldev.abyss.interactions.commands.HelpCommand
-import com.abyssaldev.abyss.interactions.commands.InfoCommand
-import com.abyssaldev.abyss.interactions.commands.TextCommand
-import com.abyssaldev.abyss.interactions.http.IndexRouting.Companion.indexRouting
+import com.abyssaldev.abyss.interactions.commands.*
 import com.abyssaldev.abyss.util.Loggable
-import com.abyssaldev.abyss.util.time
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -29,6 +25,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import org.slf4j.event.Level
+import kotlin.system.measureTimeMillis
 
 class AbyssEngine private constructor() : Loggable {
     companion object {
@@ -99,7 +96,7 @@ class AbyssEngine private constructor() : Loggable {
     }
 
     fun startAll() {
-        val elapsed = time {
+        val elapsed = measureTimeMillis {
             httpServerEngine.start(wait = false)
             discordEngine = discordEngineBuilder.build()
 
@@ -107,7 +104,8 @@ class AbyssEngine private constructor() : Loggable {
                 CatPictureCommand(),
                 TextCommand("ping", "Checks to see if I'm online.", "Pong!"),
                 HelpCommand(),
-                InfoCommand()
+                InfoCommand(),
+                AboutCommand()
             )
         }
         logger.info("Listening for Discord interactions at ${httpServerEngine.environment.connectors[0].host}:${httpServerEngine.environment.connectors[0].port}${AppConfig.instance.web.interactionsRoute}")

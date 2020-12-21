@@ -38,4 +38,7 @@ abstract class InteractionCommand: InteractionBase, InteractionExecutable {
         setEmbed(embedBuilder.build())
     }
 
+    fun EmbedBuilder.appendDescriptionLine(line: String) = apply {
+        this.descriptionBuilder.appendLine(line)
+    }
 }

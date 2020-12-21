@@ -13,15 +13,6 @@ import java.security.Security
 import java.security.Signature
 import java.security.spec.X509EncodedKeySpec
 
-
-
-
-fun time(func: () -> Unit): Long {
-    val start = System.currentTimeMillis()
-    func()
-    return System.currentTimeMillis() - start
-}
-
 fun validateEd25519Message(publicKey: String, signature: String, timestamp: String, message: String): Boolean {
     val provider = BouncyCastleProvider()
     Security.addProvider(provider)
