@@ -21,5 +21,6 @@ class AppConfig {
 
     class AppConfigWeb {
         var port: Int = 80
+        var interactionsRoute: String = "/discord/interactions"
     }
 }

@@ -4,6 +4,7 @@
     "interactionsPublicKey": ""
   },
   "web": {
-    "port": 80
+    "port": 1566,
+    "interactionsRoute": "/discord/interactions"
   }
 }

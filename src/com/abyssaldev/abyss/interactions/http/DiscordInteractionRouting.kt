@@ -24,7 +24,7 @@ class DiscordInteractionRouting : Loggable {
         fun Application.discordInteractionRouting() {
             routing {
                 // Handle all Discord interaction requests
-                post("/discord/interactions") {
+                post(AppConfig.instance.web.interactionsRoute) {
                     val discordPublicKey = AppConfig.instance.discord.interactionsPublicKey
                     val signature = call.request.headers["X-Signature-Ed25519"] ?: return@post call.respond(
                         HttpStatusCode.BadRequest, "Missing signature."
