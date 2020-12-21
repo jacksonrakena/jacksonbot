@@ -109,7 +109,7 @@ class AbyssEngine private constructor() : Loggable {
                 DiceCommand()
             )
         }
-        logger.info("Listening for Discord interactions at ${httpServerEngine.environment.connectors[0].host}:${httpServerEngine.environment.connectors[0].port}${AppConfig.instance.web.interactionsRoute}")
+        logger.info("Listening for Discord interactions at http://${httpServerEngine.environment.connectors[0].host}:${httpServerEngine.environment.connectors[0].port}${AppConfig.instance.web.interactionsRoute}")
         logger.info("Added all commands to registration queue.")
         logger.info("Started HTTP and Discord engines in ${elapsed}ms.")
         logger.info("Abyss initialisation complete.")
