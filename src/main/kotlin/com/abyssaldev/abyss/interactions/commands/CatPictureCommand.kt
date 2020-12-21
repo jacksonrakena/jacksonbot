@@ -1,8 +1,8 @@
 package com.abyssaldev.abyss.interactions.commands
 
 import com.abyssaldev.abyss.AbyssEngine
-import com.abyssaldev.abyss.interactions.InteractionRequest
 import com.abyssaldev.abyss.interactions.framework.InteractionCommand
+import com.abyssaldev.abyss.interactions.framework.InteractionRequest
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.MessageBuilder

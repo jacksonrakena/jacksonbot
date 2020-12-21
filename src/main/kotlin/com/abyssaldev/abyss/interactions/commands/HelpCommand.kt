@@ -1,8 +1,8 @@
 package com.abyssaldev.abyss.interactions.commands
 
 import com.abyssaldev.abyss.AbyssEngine
-import com.abyssaldev.abyss.interactions.InteractionRequest
 import com.abyssaldev.abyss.interactions.framework.InteractionCommand
+import com.abyssaldev.abyss.interactions.framework.InteractionRequest
 import net.dv8tion.jda.api.MessageBuilder
 
 class HelpCommand : InteractionCommand() {
@@ -13,13 +13,13 @@ class HelpCommand : InteractionCommand() {
         val commands = AbyssEngine.instance.interactions.getAllCommands()
 
         return respond {
-            setContent(StringBuilder().apply {
-                appendLine("Remember, you can type `/` and commands will show up above your chat bar.")
-                appendLine()
-                appendLine(commands.joinToString(", ") {
+            embed {
+                setTitle("Commands")
+                appendDescription("Remember, you can type `/` and commands will show up above your chat bar.")
+                addField("Slash commands", commands.joinToString(", ") {
                     "`/" + it.name + "`"
-                })
-            }.toString())
+                }, true)
+            }
         }
     }
 }

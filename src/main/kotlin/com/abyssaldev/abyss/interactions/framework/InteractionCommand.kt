@@ -1,7 +1,8 @@
 package com.abyssaldev.abyss.interactions.framework
 
-import com.abyssaldev.abyss.interactions.InteractionRequest
+import com.abyssaldev.abyss.AppConfig
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandOption
+import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import java.util.*
 
@@ -23,4 +24,18 @@ abstract class InteractionCommand: InteractionBase, InteractionExecutable {
         }
         return hashMapInit
     }
+
+    fun MessageBuilder.content(content: String) = apply {
+        setContent(content)
+    }
+
+    fun MessageBuilder.embed(builder: EmbedBuilder.() -> Unit) = apply {
+        val embedBuilder = EmbedBuilder()
+        builder(embedBuilder)
+        if (embedBuilder.build().color == null && AppConfig.instance.appearance.defaultEmbedColorObject != null) {
+            embedBuilder.setColor(AppConfig.instance.appearance.defaultEmbedColorObject)
+        }
+        setEmbed(embedBuilder.build())
+    }
+
 }

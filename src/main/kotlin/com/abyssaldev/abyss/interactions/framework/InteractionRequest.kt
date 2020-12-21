@@ -1,4 +1,4 @@
-package com.abyssaldev.abyss.interactions
+package com.abyssaldev.abyss.interactions.framework
 
 import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgumentChoiceSet

@@ -20,11 +20,19 @@ class DiscordInteractionRouting : Loggable {
     companion object {
         private val pingAcknowledgeHashMap = hashMapOf("type" to 1)
         private val emptyMessageAcknowledgeHashMap = hashMapOf("type" to 5)
+        private val internalDecoderErrorAcknowledgeHashMap = hashMapOf(
+            "type" to 4,
+            "data" to hashMapOf(
+                "content" to "Hey there! There appears to be an internal issue affecting Abyss commands. Please try again later.",
+                "tts" to false
+            )
+        )
 
         fun Application.discordInteractionRouting() {
             routing {
                 // Handle all Discord interaction requests
                 post(AppConfig.instance.web.interactionsRoute) {
+                    // Read Discord's encryption information and verify integrity
                     val discordPublicKey = AppConfig.instance.discord.interactionsPublicKey
                     val signature = call.request.headers["X-Signature-Ed25519"] ?: return@post call.respond(
                         HttpStatusCode.BadRequest, "Missing signature."
@@ -43,11 +51,11 @@ class DiscordInteractionRouting : Loggable {
 
                     try {
                         if (!validateEd25519Message(discordPublicKey, signature, timestamp, stringContent)) {
-                            interactionLogger.warn("Received invalid request signature. Signature=${signature} Timestamp=${timestamp} Body=${stringContent} PublicKey=${discordPublicKey}")
+                            interactionLogger.warn("Received invalid request signature. Signature=${signature} Timestamp=${timestamp} Body=${stringContent}")
                             return@post call.respond(HttpStatusCode.Unauthorized, "Invalid request signature.")
                         }
                     } catch (e: Throwable) {
-                        return@post call.respond(HttpStatusCode.Unauthorized, "Invalid request signature.")
+                        return@post call.respond(HttpStatusCode.Unauthorized, "An error occurred while validating the request signature.")
                     }
 
                     // Read JSON data on another coroutine, because it could be quite big
@@ -66,22 +74,15 @@ class DiscordInteractionRouting : Loggable {
                          * right now. Otherwise we'll just reject it with an Internal Server Error and light
                          * up our console.
                          */
-                        interactionLogger.error("Mapping exception decoding interaction data", e)
+                        interactionLogger.error("Critical mapping exception decoding interaction data", e)
                         try {
                             val interactionSimple: HashMap<String, Any> =
                                 AbyssEngine.objectMapper.readValue(stringContent)
                             val interactionType = interactionSimple["type"]
-                            if (interactionType != null && interactionType.toString() == "2") {
-                                return@post call.respond(
-                                    hashMapOf(
-                                        "type" to 4,
-                                        "data" to hashMapOf(
-                                            "content" to "Hey there! There appears to be an internal issue affecting Abyss commands. Please try again later.",
-                                            "tts" to false
-                                        )
-                                    )
-                                )
-                            }
+
+                            if (interactionType?.toString() == "2")
+                                return@post call.respond(internalDecoderErrorAcknowledgeHashMap)
+
                             interactionLogger.error(
                                 "Failed to decode interaction data, but interaction wasn't a command invocation.",
                                 e
@@ -106,18 +107,32 @@ class DiscordInteractionRouting : Loggable {
 
                         // Handle a command call
                         2 -> {
+                            // With REST interactions you can reply with the message content,
+                            // but it's simpler (and easier) to just use JDA to send a regular message to
+                            // the channel ID (which is done with handleInteractionCommandInvoked)
                             call.respond(emptyMessageAcknowledgeHashMap)
 
                             GlobalScope.launch(Dispatchers.Default) {
+                                /**
+                                 * Intentional delay, otherwise the Discord user invoked message might show up
+                                 * after we send the command response. Discord's fault.
+                                 */
                                 delay(250)
                                 AbyssEngine.instance.interactions.handleInteractionCommandInvoked(interaction)
                             }
+                        }
+
+                        /**
+                         * There are no other interaction operation codes documented right now.
+                         */
+                        else -> {
+                            return@post call.respond(HttpStatusCode.BadRequest)
                         }
                     }
                 }
 
                 install(StatusPages) {
-                    // If a route throws return 500 Internal Server Error
+                    // If a route throws, return 500 Internal Server Error
                     exception<Throwable> { cause ->
                         println(cause.message)
                         call.respond(HttpStatusCode.InternalServerError)

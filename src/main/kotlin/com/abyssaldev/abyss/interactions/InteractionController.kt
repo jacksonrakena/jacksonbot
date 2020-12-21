@@ -4,6 +4,7 @@ import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.AppConfig
 import com.abyssaldev.abyss.interactions.framework.InteractionCommand
 import com.abyssaldev.abyss.interactions.framework.InteractionExecutable
+import com.abyssaldev.abyss.interactions.framework.InteractionRequest
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgumentChoiceSet
 import com.abyssaldev.abyss.interactions.framework.subcommands.InteractionSubcommand
 import com.abyssaldev.abyss.interactions.framework.subcommands.InteractionSubcommandGroup

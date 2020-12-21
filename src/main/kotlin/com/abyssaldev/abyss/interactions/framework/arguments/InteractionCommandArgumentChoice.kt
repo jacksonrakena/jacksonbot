@@ -1,6 +1,6 @@
 package com.abyssaldev.abyss.interactions.framework.arguments
 
-import com.abyssaldev.abyss.interactions.InteractionRequest
+import com.abyssaldev.abyss.interactions.framework.InteractionRequest
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonRawValue
 import net.dv8tion.jda.api.entities.Member

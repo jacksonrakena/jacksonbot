@@ -1,6 +1,6 @@
 package com.abyssaldev.abyss.interactions.framework.subcommands
 
-import com.abyssaldev.abyss.interactions.InteractionRequest
+import com.abyssaldev.abyss.interactions.framework.InteractionRequest
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgument
 import com.abyssaldev.abyss.util.JsonHashable
 import net.dv8tion.jda.api.MessageBuilder
