@@ -1,7 +1,6 @@
 package com.abyssaldev.abyss.interactions.commands
 
 import com.abyssaldev.abyss.interactions.framework.InteractionCommand
-import com.abyssaldev.abyss.interactions.commands.models.*
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgument
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgumentType
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandOption
