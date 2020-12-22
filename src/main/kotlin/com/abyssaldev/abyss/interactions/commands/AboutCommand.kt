@@ -16,7 +16,7 @@ class AboutCommand : InteractionCommand() {
             setTitle("About")
             appendDescriptionLine("I'm Abyss, and I'm running on a new Discord platform: 'slash commands'.")
             appendDescriptionLine("What this means is that you can see my commands on your screen by typing `/`.")
-            appendDescriptionLine("This is a very new technology, so there might be issues!")
+            appendDescriptionLine("This is very new technology, so there might be issues!")
             appendDescriptionLine("Feel free to report any issues you encounter.")
             addField("Uptime", DurationFormatUtils.formatDuration(ManagementFactory.getRuntimeMXBean().uptime, "H:mm:ss"), true)
             addField("Version", "16.1.0 (Production)", true)
