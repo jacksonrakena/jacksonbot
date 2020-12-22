@@ -1,9 +1,9 @@
 # 💚 Abyss
 A Discord bot, capable of both interactions (slash-commands) and gateway commands (with [JDA](https://github.com/DV8FromTheWorld/JDA))
   
-| Prefix     | Developer | Runtime   | Library                                    | Version | Platform |
-|------------|-----------|--------------------|--------------------------------------------|-|-|
-| /          | [Abyssal](https://github.com/abyssal) | JRE 1.8 | Custom & [JDA](https://github.com/DV8FromTheWorld/JDA) | 16.1 | Gradle |
+| Prefix | Developer | Runtime | Library | Version | Platform | Invite |
+|-|-|-|-|-|-|-|
+| / | [Abyssal](https://github.com/abyssal) | JRE 1.8 | Custom & [JDA](https://github.com/DV8FromTheWorld/JDA) | 16.1 | Gradle | [Add me](https://abyss.abyssaldev.com/invite)
   
 ### 👮‍ Requirements
 - A [Discord bot application](https://discordapp.com/developers/applications/) with registered user and token (app -> Bot -> Add Bot)
