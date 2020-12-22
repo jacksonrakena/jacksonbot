@@ -35,7 +35,7 @@ class AbyssEngine private constructor() : Loggable {
         }
 
         // JSON (de)serialization
-        val objectMapper = ObjectMapper().apply {
+        val jsonEngine = ObjectMapper().apply {
             // Ensure that JSON deserialiation doesn't fail if we haven't mapped all the properties
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         }
@@ -78,7 +78,7 @@ class AbyssEngine private constructor() : Loggable {
 
         httpClientEngine = HttpClient {
             install(JsonFeature) {
-                serializer = JacksonSerializer(objectMapper)
+                serializer = JacksonSerializer(jsonEngine)
             }
         }
 

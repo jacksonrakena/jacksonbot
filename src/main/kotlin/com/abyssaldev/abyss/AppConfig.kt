@@ -1,6 +1,7 @@
 package com.abyssaldev.abyss
 
 import com.abyssaldev.abyss.util.parseHexString
+import com.abyssaldev.abyss.util.read
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.awt.Color
@@ -11,7 +12,7 @@ class AppConfig {
         private val configFile = File("appconfig.json")
 
         val instance: AppConfig by lazy {
-            AbyssEngine.objectMapper.readValue(configFile, AppConfig::class.java)
+            AbyssEngine.jsonEngine.read<AppConfig>(configFile)
         }
     }
 

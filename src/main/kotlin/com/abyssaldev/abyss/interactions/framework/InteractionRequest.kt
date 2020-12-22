@@ -7,14 +7,16 @@ import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.TextChannel
 
-class InteractionRequest(guildId: String?, channelId: String?, rawMember: InteractionMember?, val arguments: InteractionCommandArgumentChoiceSet) {
+class InteractionRequest(guildId: String?, channelId: String?, rawMember: InteractionMember, val arguments: InteractionCommandArgumentChoiceSet) {
     var guild: Guild?
     var channel: TextChannel?
     var member: Member?
+    var memberId: String
 
     init {
         val discord = AbyssEngine.instance.discordEngine
 
+        memberId = rawMember.user.id
         guild = if (guildId != null) { discord.getGuildById(guildId) } else { null }
         channel = if (channelId != null) { discord.getTextChannelById(channelId) } else { null }
         member = if (rawMember?.user?.id != null) { guild?.getMemberById(rawMember.user.id) } else { null }

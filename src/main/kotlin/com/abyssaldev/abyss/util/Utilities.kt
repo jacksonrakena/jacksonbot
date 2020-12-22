@@ -1,5 +1,6 @@
 package com.abyssaldev.abyss.util
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageChannel
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers
@@ -8,6 +9,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.awt.Color
+import java.io.File
 import java.security.KeyFactory
 import java.security.Security
 import java.security.Signature
@@ -54,4 +56,16 @@ fun parseHexString(hex0: String): Color? {
         )
         else -> null
     }
+}
+
+inline fun <reified T> ObjectMapper.read(value: String): T {
+    return readValue(value, T::class.java)
+}
+
+inline fun <reified T> ObjectMapper.read(value: File): T {
+    return readValue(value, T::class.java)
+}
+
+fun <T> ObjectMapper.write(value: T): String {
+    return writeValueAsString(value)
 }

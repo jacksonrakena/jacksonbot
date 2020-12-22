@@ -11,6 +11,7 @@ import com.abyssaldev.abyss.interactions.framework.subcommands.InteractionSubcom
 import com.abyssaldev.abyss.interactions.models.Interaction
 import com.abyssaldev.abyss.util.Loggable
 import com.abyssaldev.abyss.util.trySendMessage
+import com.abyssaldev.abyss.util.write
 import io.ktor.client.request.*
 import io.ktor.http.*
 import net.dv8tion.jda.api.entities.ApplicationInfo
@@ -61,7 +62,7 @@ class InteractionController: Loggable {
                     logger.info("Registered slash subcommand ${it.name} (of command ${command.name}) to ${if (id != "") { id } else { "global scope" }}")
                 }
             } else {
-                logger.error("Failed to register slash command ${command.name}. Raw response: ${AbyssEngine.objectMapper.writeValueAsString(data)}")
+                logger.error("Failed to register slash command ${command.name}. Raw response: ${AbyssEngine.jsonEngine.write(data)}")
             }
         } catch (e: Exception) {
             logger.error("Failed to register slash command ${command.name} (exception).", e)
@@ -105,7 +106,15 @@ class InteractionController: Loggable {
         }
 
         try {
-            val message = executable.invoke(InteractionRequest(raw.guildId, raw.channelId, raw.member, arguments))
+            val interactionRequest = InteractionRequest(raw.guildId, raw.channelId, raw.member!!, arguments)
+            val canInvoke = executable.canInvoke(interactionRequest)
+            if (canInvoke == null) {
+                val message = executable.invoke(InteractionRequest(raw.guildId, raw.channelId, raw.member!!, arguments))
+                AbyssEngine.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage(message.build())
+            } else {
+                AbyssEngine.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage(canInvoke)
+            }
+            val message = executable.invoke(InteractionRequest(raw.guildId, raw.channelId, raw.member!!, arguments))
             AbyssEngine.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage(message.build())
         } catch (e: Throwable) {
             logger.error("Error thrown while processing ${if (executable is InteractionSubcommand) { "sub" } else {""}}command ${command.name}", e)

@@ -5,8 +5,8 @@ import com.abyssaldev.abyss.AppConfig
 import com.abyssaldev.abyss.interactions.InteractionController
 import com.abyssaldev.abyss.interactions.models.Interaction
 import com.abyssaldev.abyss.util.Loggable
+import com.abyssaldev.abyss.util.read
 import com.abyssaldev.abyss.util.validateEd25519Message
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
@@ -61,9 +61,8 @@ class DiscordInteractionRouting : Loggable {
                     // Read JSON data on another coroutine, because it could be quite big
                     val interaction: Interaction = try {
                         withContext(Dispatchers.Default) {
-                            AbyssEngine.objectMapper.readValue(
-                                stringContent,
-                                Interaction::class.java
+                            AbyssEngine.jsonEngine.read<Interaction>(
+                                stringContent
                             )
                         }
                     } catch (e: Exception) {
@@ -76,8 +75,7 @@ class DiscordInteractionRouting : Loggable {
                          */
                         interactionLogger.error("Critical mapping exception decoding interaction data", e)
                         try {
-                            val interactionSimple: HashMap<String, Any> =
-                                AbyssEngine.objectMapper.readValue(stringContent)
+                            val interactionSimple = AbyssEngine.jsonEngine.read<HashMap<String, Any>>(stringContent)
                             val interactionType = interactionSimple["type"]
 
                             if (interactionType?.toString() == "2")
