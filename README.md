@@ -1,7 +1,9 @@
 # 💚 Abyss
 A Discord bot, capable of both interactions (slash-commands) and gateway commands   
 Gateway handling is built with [JDA](https://github.com/DV8FromTheWorld/JDA) and the interactions server utilises [Ktor](https://github.com/ktorio/ktor) (on [Netty](https://ktor.io/docs/netty.html))
-  
+
+<img src="https://i.imgur.com/DF1ZIs2.png" height="150" />
+
 | Prefix | Developer | Runtime | Library | Version | Platform | Invite |
 |-|-|-|-|-|-|-|
 | / | [Abyssal](https://github.com/abyssal) | JRE 1.8 | Custom & [JDA](https://github.com/DV8FromTheWorld/JDA) | 16.1 | Gradle | [Add me](https://abyss.abyssaldev.com/invite)
