@@ -34,3 +34,5 @@ The project is broken down into the following domains:
   
 ### 🖋 Copyright
 Copyright (c) 2018-2021 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fabyssal%2Fabyss.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fabyssal%2Fabyss?ref=badge_large)
