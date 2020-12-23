@@ -55,20 +55,19 @@ fun MessageChannel.trySendMessage(m: CharSequence) = tryAndIgnoreExceptions { th
 fun parseHexString(hex0: String): Color? {
     var hex = hex0
     hex = hex.replace("#", "")
-    return when (hex.length) {
-        6 -> Color(
-            Integer.valueOf(hex.substring(0, 2), 16),
-            Integer.valueOf(hex.substring(2, 4), 16),
-            Integer.valueOf(hex.substring(4, 6), 16)
-        )
-        8 -> Color(
-            Integer.valueOf(hex.substring(0, 2), 16),
-            Integer.valueOf(hex.substring(2, 4), 16),
-            Integer.valueOf(hex.substring(4, 6), 16),
+
+    if (hex.length < 6) return null
+
+    return Color(
+        Integer.valueOf(hex.substring(0, 2), 16),
+        Integer.valueOf(hex.substring(2, 4), 16),
+        Integer.valueOf(hex.substring(4, 6), 16),
+        if (hex.length == 8) {
             Integer.valueOf(hex.substring(6, 8), 16)
-        )
-        else -> null
-    }
+        } else {
+            255
+        }
+    )
 }
 
 inline fun <reified T> ObjectMapper.read(value: String): T {
