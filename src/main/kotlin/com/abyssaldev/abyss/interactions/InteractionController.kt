@@ -108,14 +108,12 @@ class InteractionController: Loggable {
         try {
             val interactionRequest = InteractionRequest(raw.guildId, raw.channelId, raw.member!!, arguments)
             val canInvoke = executable.canInvoke(interactionRequest)
-            if (canInvoke == null) {
-                val message = executable.invoke(InteractionRequest(raw.guildId, raw.channelId, raw.member!!, arguments))
-                AbyssEngine.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage("‼ - " + message.build())
-            } else {
+            if (canInvoke != null) {
                 AbyssEngine.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage(canInvoke)
+                return
             }
-            val message = executable.invoke(InteractionRequest(raw.guildId, raw.channelId, raw.member!!, arguments))
-            AbyssEngine.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage(message.build())
+            val message = executable.invoke(interactionRequest)
+            AbyssEngine.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage("‼ - " + message.build())
         } catch (e: Throwable) {
             logger.error("Error thrown while processing ${if (executable is InteractionSubcommand) { "sub" } else {""}}command ${command.name}", e)
             AbyssEngine.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage( "There was an internal error running that command. Try again later.")
