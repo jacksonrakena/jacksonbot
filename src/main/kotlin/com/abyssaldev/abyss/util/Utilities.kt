@@ -18,15 +18,28 @@ import java.security.spec.X509EncodedKeySpec
 fun validateEd25519Message(publicKey: String, signature: String, timestamp: String, message: String): Boolean {
     val provider = BouncyCastleProvider()
     Security.addProvider(provider)
-    val pki = SubjectPublicKeyInfo(AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519), Hex.decode(publicKey))
-    val pkSpec = X509EncodedKeySpec(pki.encoded)
-    val kf = KeyFactory.getInstance("ed25519", provider)
-    val publicKeySet = kf.generatePublic(pkSpec)
-    val signedData = Signature.getInstance("ed25519", provider)
-    signedData.initVerify(publicKeySet)
-    signedData.update(timestamp.toByteArray())
-    signedData.update(message.toByteArray())
-    return signedData.verify(Hex.decode(signature))
+
+    return Signature
+        .getInstance("ed25519", provider)
+        .apply {
+            initVerify(
+                KeyFactory
+                    .getInstance("ed25519", provider)
+                    .generatePublic(
+                        X509EncodedKeySpec(
+                            SubjectPublicKeyInfo(
+                                AlgorithmIdentifier(
+                                    EdECObjectIdentifiers.id_Ed25519
+                                ),
+                                Hex.decode(publicKey)
+                            ).encoded
+                        )
+                    )
+            )
+            update(timestamp.toByteArray())
+            update(message.toByteArray())
+        }
+        .verify(Hex.decode(signature))
 }
 
 inline fun <T> tryAndIgnoreExceptions(f: () -> T) =
