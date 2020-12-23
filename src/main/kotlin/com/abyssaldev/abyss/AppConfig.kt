@@ -1,6 +1,6 @@
 package com.abyssaldev.abyss
 
-import com.abyssaldev.abyss.util.parseHexString
+import com.abyssaldev.abyss.util.parseHex
 import com.abyssaldev.abyss.util.read
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -43,8 +43,6 @@ class AppConfig {
         var defaultEmbedColor: String = "#8edeaa"
 
         @get:JsonIgnore
-        val defaultEmbedColorObject: Color? by lazy {
-            parseHexString(defaultEmbedColor)
-        }
+        val defaultEmbedColorObject: Color? by lazy(defaultEmbedColor::parseHex)
     }
 }
