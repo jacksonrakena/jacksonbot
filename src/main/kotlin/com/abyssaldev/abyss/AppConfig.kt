@@ -31,6 +31,7 @@ class AppConfig {
     class AppConfigDiscord {
         lateinit var botToken: String
         lateinit var interactionsPublicKey: String
+        lateinit var ownerId: String
     }
 
     class AppConfigWeb {

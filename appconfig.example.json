@@ -1,7 +1,8 @@
 {
   "discord": {
     "botToken": "",
-    "interactionsPublicKey": ""
+    "interactionsPublicKey": "",
+    "ownerId": 0
   },
   "web": {
     "port": 1566,

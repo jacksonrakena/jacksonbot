@@ -5,6 +5,7 @@ import com.abyssaldev.abyss.util.Loggable
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.events.ReadyEvent
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
 class AbyssDiscordListenerAdapter: ListenerAdapter(), Loggable {

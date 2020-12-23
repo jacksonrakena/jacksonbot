@@ -1,6 +1,7 @@
 package com.abyssaldev.abyss
 
 import com.abyssaldev.abyss.gateway.AbyssDiscordListenerAdapter
+import com.abyssaldev.abyss.gateway.GatewayController
 import com.abyssaldev.abyss.http.IndexRouting.Companion.indexRouting
 import com.abyssaldev.abyss.interactions.InteractionController
 import com.abyssaldev.abyss.interactions.commands.*
@@ -21,10 +22,15 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.ApplicationInfo
+import net.dv8tion.jda.api.events.GenericEvent
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import net.dv8tion.jda.api.hooks.EventListener
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.requests.RestAction
+import net.dv8tion.jda.api.utils.ChunkingFilter
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import org.slf4j.event.Level
+import java.util.*
 import kotlin.system.measureTimeMillis
 
 class AbyssEngine private constructor() : Loggable {
@@ -39,10 +45,16 @@ class AbyssEngine private constructor() : Loggable {
             // Ensure that JSON deserialiation doesn't fail if we haven't mapped all the properties
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         }
+
+        // JDA-Utilities annoys me sometimes
+        val globalActivity = Activity.playing("/help")
     }
 
     // Handles incoming interactions and registering slash commands over REST with Discord
     val interactions: InteractionController = InteractionController()
+
+    // Handles gateway (WebSocket) messages and commands
+    val gateway: GatewayController = GatewayController()
 
     // Cache application info after READY
     var applicationInfo: ApplicationInfo? = null
@@ -83,10 +95,13 @@ class AbyssEngine private constructor() : Loggable {
         }
 
         discordEngineBuilder = JDABuilder
-            .createDefault(AppConfig.instance.discord.botToken, GatewayIntent.GUILD_MEMBERS)
-            .setActivity(Activity.playing("/help"))
-            .setMemberCachePolicy(MemberCachePolicy.ALL)
-            .addEventListeners(AbyssDiscordListenerAdapter())
+            .createDefault(AppConfig.instance.discord.botToken, EnumSet.allOf(GatewayIntent::class.java))
+            .apply {
+                setActivity(globalActivity)
+                setMemberCachePolicy(MemberCachePolicy.ALL)
+                setChunkingFilter(ChunkingFilter.ALL)
+                addEventListeners(AbyssDiscordListenerAdapter(), gateway.commandClient)
+            }
 
         Runtime.getRuntime().addShutdownHook(Thread {
             discordEngine.shutdownNow()
