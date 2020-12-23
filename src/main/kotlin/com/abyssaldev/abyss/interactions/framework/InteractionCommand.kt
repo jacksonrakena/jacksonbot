@@ -9,7 +9,7 @@ import java.util.*
 abstract class InteractionCommand: InteractionBase, InteractionExecutable {
     open val options: Array<InteractionCommandOption> = emptyArray()
 
-    override fun invoke(call: InteractionRequest): MessageBuilder
+    override fun invoke(call: InteractionRequest): MessageBuilder?
         = respond("There was an error processing your subcommand.")
 
     override fun createMap(): HashMap<String, Any> {

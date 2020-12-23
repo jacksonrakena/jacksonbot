@@ -9,7 +9,7 @@ interface InteractionExecutable {
      */
     fun canInvoke(call: InteractionRequest): String? = ""
 
-    fun invoke(call: InteractionRequest): MessageBuilder
+    fun invoke(call: InteractionRequest): MessageBuilder?
 
     fun respond(responder: MessageBuilder.() -> Unit): MessageBuilder {
         val builder = MessageBuilder()
