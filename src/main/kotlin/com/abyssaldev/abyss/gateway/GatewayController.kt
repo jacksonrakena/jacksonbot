@@ -4,6 +4,7 @@ import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.AppConfig
 import com.abyssaldev.abyss.persistence.AbyssGatewayGuildSettingsManager
 import com.abyssaldev.abyss.util.Loggable
+import net.dv8tion.jda.api.JDABuilder
 
 class GatewayController: Loggable {
     val commandClient: GatewayCommandClient = GatewayCommandClientBuilder().apply {
@@ -16,5 +17,7 @@ class GatewayController: Loggable {
 
     val readyListenerAdapter = GatewayReadyListenerAdapter()
 
-    val listeners = arrayOf(commandClient, readyListenerAdapter)
+    fun applyListeners(jdaBuilder: JDABuilder) {
+        jdaBuilder.addEventListeners(commandClient, readyListenerAdapter)
+    }
 }

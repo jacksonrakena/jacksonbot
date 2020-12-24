@@ -97,7 +97,7 @@ class AbyssEngine private constructor() : Loggable {
                 setActivity(globalActivity)
                 setMemberCachePolicy(MemberCachePolicy.ALL)
                 setChunkingFilter(ChunkingFilter.ALL)
-                addEventListeners(gateway.listeners)
+                gateway.applyListeners(this)
             }
 
         Runtime.getRuntime().addShutdownHook(Thread {
