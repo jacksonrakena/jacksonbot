@@ -59,4 +59,5 @@ tasks.withType<ShadowJar> {
             )
         )
     }
+    archiveFileName.set("abyss.jar")
 }
