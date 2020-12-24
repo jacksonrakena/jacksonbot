@@ -54,7 +54,7 @@ class InteractionController: Loggable {
                 } else {
                     "https://discord.com/api/v8/applications/${appInfo.id}/guilds/${id}/commands"
                 })
-                body = command.createMap()
+                body = command.toJsonMap()
             }
             if (data["name"].toString() == command.name) {
                 logger.info("Registered slash command ${command.name} to ${if (id != "") { id } else { "global scope" }}")

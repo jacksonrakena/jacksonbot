@@ -12,15 +12,13 @@ abstract class InteractionCommand: InteractionBase, InteractionExecutable {
     override fun invoke(call: InteractionRequest): MessageBuilder?
         = respond("There was an error processing your subcommand.")
 
-    override fun createMap(): HashMap<String, Any> {
+    override fun toJsonMap(): HashMap<String, Any> {
         val hashMapInit = hashMapOf<String, Any>(
             "name" to name,
             "description" to description
         )
         if (options.any()) {
-            hashMapInit["options"] = options.map {
-                it.createMap()
-            }
+            hashMapInit["options"] = options.toJsonArray()
         }
         return hashMapInit
     }

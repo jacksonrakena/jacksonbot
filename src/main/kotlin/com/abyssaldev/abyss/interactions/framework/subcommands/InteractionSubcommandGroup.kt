@@ -11,16 +11,14 @@ class InteractionSubcommandGroup(
 ) : InteractionCommandOption {
     override val type: InteractionCommandArgumentType = InteractionCommandArgumentType.SubcommandGroup
 
-    override fun createMap(): HashMap<String, Any> {
+    override fun toJsonMap(): HashMap<String, Any> {
         val hashMapInit = hashMapOf<String, Any>(
             "name" to name,
             "description" to description,
             "type" to type.raw
         )
         if (subcommands.any()) {
-            hashMapInit["options"] = subcommands.map {
-                it.createMap()
-            }
+            hashMapInit["options"] = subcommands.toJsonArray()
         }
         return hashMapInit
     }
