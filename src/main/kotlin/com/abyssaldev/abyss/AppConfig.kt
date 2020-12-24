@@ -9,10 +9,8 @@ import java.io.File
 
 class AppConfig {
     companion object {
-        private val configFile = File("appconfig.json")
-
         val instance: AppConfig by lazy {
-            AbyssEngine.jsonEngine.read<AppConfig>(configFile)
+            AbyssEngine.jsonEngine.read(File("appconfig.json"))
         }
     }
 

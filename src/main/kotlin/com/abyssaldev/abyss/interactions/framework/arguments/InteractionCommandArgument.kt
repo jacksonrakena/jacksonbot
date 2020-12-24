@@ -12,17 +12,11 @@ class InteractionCommandArgument(
     @JsonProperty("required")
     val isRequired: Boolean = false
 ) : InteractionCommandOption, JsonHashable {
-    override fun toJsonMap(): HashMap<String, Any> {
-        val hashMapInit = hashMapOf<String, Any>(
-            "name" to name,
-            "description" to description,
-            "type" to type.raw,
-            "required" to isRequired
-        )
-        if (choices.any()) {
-            hashMapInit["choices"] = choices
-        }
-        return hashMapInit
-    }
-
+    override fun toJsonMap(): HashMap<String, Any> = hashMapOf(
+        "name" to name,
+        "description" to description,
+        "type" to type.raw,
+        "required" to isRequired,
+        "choices" to choices
+    )
 }

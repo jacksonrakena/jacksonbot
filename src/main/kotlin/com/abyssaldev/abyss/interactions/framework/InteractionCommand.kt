@@ -12,28 +12,22 @@ abstract class InteractionCommand: InteractionBase, InteractionExecutable {
     override fun invoke(call: InteractionRequest): MessageBuilder?
         = respond("There was an error processing your subcommand.")
 
-    override fun toJsonMap(): HashMap<String, Any> {
-        val hashMapInit = hashMapOf<String, Any>(
-            "name" to name,
-            "description" to description
-        )
-        if (options.any()) {
-            hashMapInit["options"] = options.toJsonArray()
-        }
-        return hashMapInit
-    }
+    override fun toJsonMap(): HashMap<String, Any> = hashMapOf(
+        "name" to name,
+        "description" to description,
+        "options" to options.toJsonArray()
+    )
 
     fun MessageBuilder.content(content: String) = apply {
         setContent(content)
     }
 
     fun MessageBuilder.embed(builder: EmbedBuilder.() -> Unit) = apply {
-        val embedBuilder = EmbedBuilder()
-        builder(embedBuilder)
-        if (embedBuilder.build().color == null && AppConfig.instance.appearance.defaultEmbedColorObject != null) {
-            embedBuilder.setColor(AppConfig.instance.appearance.defaultEmbedColorObject)
-        }
-        setEmbed(embedBuilder.build())
+        setEmbed(EmbedBuilder().apply(builder).apply {
+            if (this.build().color == null && AppConfig.instance.appearance.defaultEmbedColorObject != null) {
+                setColor(AppConfig.instance.appearance.defaultEmbedColorObject)
+            }
+        }.build())
     }
 
     fun EmbedBuilder.appendDescriptionLine(line: String) = apply {
