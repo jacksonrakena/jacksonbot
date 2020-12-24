@@ -14,7 +14,7 @@ class Ed25519Engine {
     companion object {
         private val cryptographyProvider = BouncyCastleProvider().apply(Security::addProvider)
 
-        fun validateEd25519Message(publicKey: String, signature: String, timestamp: String, message: String): Boolean =
+        fun verifyMessage(publicKey: String, signature: String, timestamp: String, message: String): Boolean =
             Signature
                 .getInstance("ed25519", cryptographyProvider)
                 .apply {

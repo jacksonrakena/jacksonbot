@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Interaction {
     lateinit var id: String
+
     var type: Int? = null
 
     var member: InteractionMember? = null

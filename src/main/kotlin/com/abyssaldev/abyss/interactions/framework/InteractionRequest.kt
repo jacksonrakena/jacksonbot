@@ -19,6 +19,6 @@ class InteractionRequest(guildId: String?, channelId: String?, rawMember: Intera
         memberId = rawMember.user.id
         guild = if (guildId != null) { discord.getGuildById(guildId) } else { null }
         channel = if (channelId != null) { discord.getTextChannelById(channelId) } else { null }
-        member = if (rawMember?.user?.id != null) { guild?.getMemberById(rawMember.user.id) } else { null }
+        member = guild?.getMemberById(rawMember.user.id)
     }
 }

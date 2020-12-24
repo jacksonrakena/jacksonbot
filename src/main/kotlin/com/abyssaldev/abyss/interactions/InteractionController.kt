@@ -34,16 +34,16 @@ class InteractionController: Loggable {
 
     fun getAllCommands() = commands
 
-    private fun getRegistrarGuildId(appInfo: ApplicationInfo, command: InteractionCommand): String {
+    private fun getGuildIdRegistrant(appInfo: ApplicationInfo, command: InteractionCommand): String {
         if (command.isGuildLocked) return command.guildLock.toString() //"https://discord.com/api/v8/applications/${appInfo.id}/guilds/${command.guildLock}/commands"
         val scope = AppConfig.instance.determineCommandScope(command.name)
         return if (!scope.isNullOrEmpty()) scope //"https://discord.com/api/v8/applications/${appInfo.id}/guilds/${scope}/commands"
         else "" //""https://discord.com/api/v8/applications/${appInfo.id}/commands"
     }
 
-    suspend fun registerCommand(appInfo: ApplicationInfo, command: InteractionCommand) {
+    private suspend fun registerCommand(appInfo: ApplicationInfo, command: InteractionCommand) {
         val httpClient = AbyssEngine.instance.httpClientEngine
-        val id = getRegistrarGuildId(appInfo, command)
+        val id = getGuildIdRegistrant(appInfo, command)
         try {
             val data: HashMap<String, Any> = httpClient.post {
                 method = HttpMethod.Post

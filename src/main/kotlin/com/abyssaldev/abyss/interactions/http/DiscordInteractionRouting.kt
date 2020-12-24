@@ -50,7 +50,7 @@ class DiscordInteractionRouting : Loggable {
                     val interactionLogger = LoggerFactory.getLogger(InteractionController::class.java)
 
                     try {
-                        if (!Ed25519Engine.validateEd25519Message(discordPublicKey, signature, timestamp, stringContent)) {
+                        if (!Ed25519Engine.verifyMessage(discordPublicKey, signature, timestamp, stringContent)) {
                             interactionLogger.warn("Received invalid request signature. Signature=${signature} Timestamp=${timestamp} Body=${stringContent}")
                             return@post call.respond(HttpStatusCode.Unauthorized, "Invalid request signature.")
                         }
