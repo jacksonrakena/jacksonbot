@@ -13,4 +13,8 @@ class GatewayController: Loggable {
         setOwnerId(AppConfig.instance.discord.ownerId)
         setActivity(AbyssEngine.globalActivity)
     }.build()
+
+    val readyListenerAdapter = GatewayReadyListenerAdapter()
+
+    val listeners = arrayOf(commandClient, readyListenerAdapter)
 }

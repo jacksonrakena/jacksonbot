@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.events.ReadyEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
-class AbyssDiscordListenerAdapter: ListenerAdapter(), Loggable {
+class GatewayReadyListenerAdapter: ListenerAdapter(), Loggable {
     override fun onReady(event: ReadyEvent) {
         logger.info("Received Discord READY signal. Connected as ${event.jda.selfUser}")
         logger.info("Starting interaction controller...")

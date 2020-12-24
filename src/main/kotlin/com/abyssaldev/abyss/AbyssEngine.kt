@@ -1,6 +1,5 @@
 package com.abyssaldev.abyss
 
-import com.abyssaldev.abyss.gateway.AbyssDiscordListenerAdapter
 import com.abyssaldev.abyss.gateway.GatewayController
 import com.abyssaldev.abyss.http.IndexRouting.Companion.indexRouting
 import com.abyssaldev.abyss.interactions.InteractionController
@@ -18,13 +17,11 @@ import io.ktor.jackson.*
 import io.ktor.request.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import kotlinx.coroutines.cancel
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.ApplicationInfo
-import net.dv8tion.jda.api.events.GenericEvent
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import net.dv8tion.jda.api.hooks.EventListener
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.utils.ChunkingFilter
@@ -100,11 +97,13 @@ class AbyssEngine private constructor() : Loggable {
                 setActivity(globalActivity)
                 setMemberCachePolicy(MemberCachePolicy.ALL)
                 setChunkingFilter(ChunkingFilter.ALL)
-                addEventListeners(AbyssDiscordListenerAdapter(), gateway.commandClient)
+                addEventListeners(gateway.listeners)
             }
 
         Runtime.getRuntime().addShutdownHook(Thread {
             discordEngine.shutdownNow()
+            httpServerEngine.stop(0, 0)
+            httpClientEngine.cancel("Abyss bot stopping")
         })
 
         RestAction.setPassContext(true)
