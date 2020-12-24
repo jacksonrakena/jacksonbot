@@ -4,9 +4,9 @@ import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.AppConfig
 import com.abyssaldev.abyss.interactions.InteractionController
 import com.abyssaldev.abyss.interactions.models.Interaction
+import com.abyssaldev.abyss.util.Ed25519Engine
 import com.abyssaldev.abyss.util.Loggable
 import com.abyssaldev.abyss.util.read
-import com.abyssaldev.abyss.util.validateEd25519Message
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
@@ -50,7 +50,7 @@ class DiscordInteractionRouting : Loggable {
                     val interactionLogger = LoggerFactory.getLogger(InteractionController::class.java)
 
                     try {
-                        if (!validateEd25519Message(discordPublicKey, signature, timestamp, stringContent)) {
+                        if (!Ed25519Engine.validateEd25519Message(discordPublicKey, signature, timestamp, stringContent)) {
                             interactionLogger.warn("Received invalid request signature. Signature=${signature} Timestamp=${timestamp} Body=${stringContent}")
                             return@post call.respond(HttpStatusCode.Unauthorized, "Invalid request signature.")
                         }
