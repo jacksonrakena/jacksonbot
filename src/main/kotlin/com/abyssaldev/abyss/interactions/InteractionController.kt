@@ -14,7 +14,6 @@ import com.abyssaldev.abyss.util.trySendMessage
 import com.abyssaldev.abyss.util.write
 import io.ktor.client.request.*
 import io.ktor.http.*
-import net.dv8tion.jda.api.entities.ApplicationInfo
 
 class InteractionController: Loggable {
     private val commands: ArrayList<InteractionCommand> = arrayListOf()
@@ -34,32 +33,33 @@ class InteractionController: Loggable {
 
     fun getAllCommands() = commands
 
-    private fun getGuildIdRegistrant(appInfo: ApplicationInfo, command: InteractionCommand): String {
-        if (command.isGuildLocked) return command.guildLock.toString() //"https://discord.com/api/v8/applications/${appInfo.id}/guilds/${command.guildLock}/commands"
+    private fun getGuildIdRegistrant(command: InteractionCommand): String {
+        if (command.isGuildLocked) return command.guildLock.toString()
         val scope = AppConfig.instance.determineCommandScope(command.name)
-        return if (!scope.isNullOrEmpty()) scope //"https://discord.com/api/v8/applications/${appInfo.id}/guilds/${scope}/commands"
-        else "" //""https://discord.com/api/v8/applications/${appInfo.id}/commands"
+        return if (!scope.isNullOrEmpty()) scope
+        else ""
     }
 
-    private suspend fun registerCommand(appInfo: ApplicationInfo, command: InteractionCommand) {
+    private suspend fun registerCommand(command: InteractionCommand) {
         val httpClient = AbyssEngine.instance.httpClientEngine
-        val id = getGuildIdRegistrant(appInfo, command)
+        val id = getGuildIdRegistrant(command)
+        val applicationId = AbyssEngine.instance.discordEngine.selfUser.id
         try {
             val data: HashMap<String, Any> = httpClient.post {
                 method = HttpMethod.Post
                 header("Authorization", "Bot ${AppConfig.instance.discord.botToken}")
                 contentType(ContentType.Application.Json)
                 url(if (id == "") {
-                    "https://discord.com/api/v8/applications/${appInfo.id}/commands"
+                    "https://discord.com/api/v8/applications/${applicationId}/commands"
                 } else {
-                    "https://discord.com/api/v8/applications/${appInfo.id}/guilds/${id}/commands"
+                    "https://discord.com/api/v8/applications/${applicationId}/guilds/${id}/commands"
                 })
                 body = command.toJsonMap()
             }
             if (data["name"].toString() == command.name) {
-                logger.info("Registered slash command ${command.name} to ${if (id != "") { id } else { "global scope" }}")
+                logger.info("Registered interaction ${command::class.simpleName}(name = ${command.name}) to ${if (id != "") { id } else { "global scope" }}")
                 command.options.filterIsInstance<InteractionSubcommand>().forEach {
-                    logger.info("Registered slash subcommand ${it.name} (of command ${command.name}) to ${if (id != "") { id } else { "global scope" }}")
+                    logger.info("Registered interaction subcommand ${it.name} (of command ${command::class.simpleName}) to ${if (id != "") { id } else { "global scope" }}")
                 }
             } else {
                 logger.error("Failed to register slash command ${command.name}. Raw response: ${AbyssEngine.jsonEngine.write(data)}")
@@ -69,10 +69,10 @@ class InteractionController: Loggable {
         }
     }
 
-    suspend fun registerAllInteractions(appInfo: ApplicationInfo) {
-        logger.info("Registering all commands.")
+    suspend fun registerAllInteractions() {
+        logger.info("Registering all interactions for ${AbyssEngine.instance.discordEngine.selfUser.id}.")
         for (command in this.commands) {
-            registerCommand(appInfo, command)
+            registerCommand(command)
         }
 
         logger.info("All interactions registered.")
