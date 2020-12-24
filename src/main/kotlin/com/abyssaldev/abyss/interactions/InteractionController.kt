@@ -108,7 +108,7 @@ class InteractionController: Loggable {
         try {
             val interactionRequest = InteractionRequest(raw.guildId, raw.channelId, raw.member!!, arguments)
             val canInvoke = executable.canInvoke(interactionRequest)
-            if (canInvoke != null) {
+            if (!canInvoke.isNullOrEmpty()) {
                 AbyssEngine.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage(canInvoke)
                 return
             }
