@@ -1,8 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     kotlin("jvm") version "1.4.21"
     application
+    id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
 group = "com.abyssaldev"
@@ -41,10 +43,20 @@ dependencies {
     implementation("com.jagrosh:jda-utilities:$jdaUtilitiesVersion")
 }
 
+application {
+    mainClassName = "com.abyssaldev.abyss.MainKt"
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "14"
 }
 
-application {
-    mainClassName = "com.abyssaldev.abyss.MainKt"
+tasks.withType<ShadowJar> {
+    manifest {
+        attributes(
+            mapOf(
+                "Main-Class" to application.mainClassName
+            )
+        )
+    }
 }
