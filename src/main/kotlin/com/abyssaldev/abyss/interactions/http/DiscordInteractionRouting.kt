@@ -30,6 +30,13 @@ class DiscordInteractionRouting : Loggable {
 
         fun Application.discordInteractionRouting() {
             routing {
+                // Handle troll requests
+                get(AppConfig.instance.web.interactionsRoute) {
+                    return@get call.respond(
+                        HttpStatusCode.Unauthorized, "Go away. You're not supposed to be here."
+                    )
+                }
+
                 // Handle all Discord interaction requests
                 post(AppConfig.instance.web.interactionsRoute) {
                     // Read Discord's encryption information and verify integrity
