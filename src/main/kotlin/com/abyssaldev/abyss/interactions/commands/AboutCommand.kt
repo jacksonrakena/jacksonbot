@@ -23,7 +23,7 @@ class AboutCommand : InteractionCommand() {
             addField("Runtime", "JRE ${System.getProperty("java.version")}/Kotlin ${KotlinVersion.CURRENT}", true)
             addField("Add me", "https://abyss.abyssaldev.com/invite", true)
             addField("Source & Issue Tracker", "https://abyss.abyssaldev.com/", true)
-            setFooter("© 2021 - An Abyssal production", AbyssEngine.instance.applicationInfo?.owner?.effectiveAvatarUrl)
+            setFooter("© 2021 - An Abyssal production", AbyssEngine.instance.discordEngine.selfUser.effectiveAvatarUrl)
         }
     }
 }

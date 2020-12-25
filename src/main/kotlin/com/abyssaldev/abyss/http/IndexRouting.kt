@@ -10,14 +10,8 @@ class IndexRouting {
         fun Application.indexRouting() {
             routing {
                 get("/invite") {
-                    if (AbyssEngine.instance.applicationInfo == null) {
-                        return@get call.respondRedirect(
-                            "https://github.com/abyssal/abyss",
-                            permanent = false
-                        )
-                    }
                     return@get call.respondRedirect(
-                        "https://discord.com/api/oauth2/authorize?client_id=${AbyssEngine.instance.applicationInfo!!.id}&permissions=0&scope=bot%20applications.commands",
+                        "https://discord.com/api/oauth2/authorize?client_id=${AbyssEngine.instance.discordEngine.selfUser.id}&permissions=0&scope=bot%20applications.commands",
                         permanent = false
                     )
                 }

@@ -21,7 +21,6 @@ import kotlinx.coroutines.cancel
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
-import net.dv8tion.jda.api.entities.ApplicationInfo
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.utils.ChunkingFilter
@@ -39,7 +38,7 @@ class AbyssEngine private constructor() : Loggable {
 
         // JSON (de)serialization
         val jsonEngine = ObjectMapper().apply {
-            // Ensure that JSON deserialiation doesn't fail if we haven't mapped all the properties
+            // Ensure that JSON deserialization doesn't fail if we haven't mapped all the properties
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         }
 
@@ -52,9 +51,6 @@ class AbyssEngine private constructor() : Loggable {
 
     // Handles gateway (WebSocket) messages and commands
     val gateway: GatewayController = GatewayController()
-
-    // Cache application info after READY
-    var applicationInfo: ApplicationInfo? = null
 
     // HTTP server for Discord interactions and web API/control panel
     val httpServerEngine: NettyApplicationEngine
