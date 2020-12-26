@@ -14,10 +14,8 @@ class CatPictureCommand : InteractionCommand() {
     override val description: String = "Finds a picture of a cat."
 
     override fun invoke(call: InteractionRequest): MessageBuilder {
-        return respond {
-            setContent(runBlocking {
-                    return@runBlocking AbyssEngine.instance.httpClientEngine.get<HashMap<String, String>>(catApi)["file"]
-            })
-        }
+        return respond(runBlocking {
+            AbyssEngine.instance.httpClientEngine.get<HashMap<String, String>>(catApi)["file"].toString()
+        })
     }
 }

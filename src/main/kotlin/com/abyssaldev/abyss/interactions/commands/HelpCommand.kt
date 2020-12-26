@@ -12,14 +12,13 @@ class HelpCommand : InteractionCommand() {
     override fun invoke(call: InteractionRequest): MessageBuilder {
         val commands = AbyssEngine.instance.interactions.getAllCommands()
 
-        return respond {
-            embed {
-                setTitle("Commands")
-                appendDescriptionLine("Remember, you can type `/` and commands will show up above your chat bar.")
-                addField("Slash commands", commands.joinToString(", ") {
-                    "`/" + it.name + "`"
-                }, true)
-            }
+        return respondEmbed {
+            setTitle("Commands")
+            appendDescriptionLine("Remember, you can type `/` and commands will show up above your chat bar.")
+            addField("Slash commands", commands.joinToString(", ") {
+                "`/" + it.name + "`"
+            }, true)
         }
+
     }
 }
