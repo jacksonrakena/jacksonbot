@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import io.ktor.client.request.*
 import net.dv8tion.jda.api.MessageBuilder
 import java.time.Instant
+import kotlin.math.roundToInt
 
 class ExchangeCommand : InteractionCommand() {
     override val name = "exchange"
@@ -51,7 +52,7 @@ class ExchangeCommand : InteractionCommand() {
         return respond {
             embed {
                 setTitle(":currency_exchange: Currency exchange")
-                appendDescriptionLine("${amount} **${response.originCurrency}** is ${response.conversionRates[to]!!*amount} **${to}**")
+                appendDescriptionLine("${amount} **${response.originCurrency}** is ${(response.conversionRates[to]!!*amount).roundToInt()} **${to}**")
                 setFooter("Exchange rate: 1 ${response.originCurrency} = ${response.conversionRates[to]} ${to}")
                 setTimestamp(Instant.now())
             }
