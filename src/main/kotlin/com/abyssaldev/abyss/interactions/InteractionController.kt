@@ -45,7 +45,6 @@ class InteractionController: Loggable {
         val id = getGuildIdRegistrant(command)
         val applicationId = AbyssEngine.instance.discordEngine.selfUser.id
         try {
-            logger.info(AbyssEngine.jsonEngine.write(command.toJsonMap()))
             val data: HashMap<String, Any> = httpClient.post {
                 method = HttpMethod.Post
                 header("Authorization", "Bot ${AppConfig.instance.discord.botToken}")
