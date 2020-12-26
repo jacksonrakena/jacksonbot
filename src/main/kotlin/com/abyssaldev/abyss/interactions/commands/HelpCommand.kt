@@ -9,7 +9,7 @@ class HelpCommand : InteractionCommand() {
     override val name = "help"
     override val description: String = "Shows a list of available commands."
 
-    override fun invoke(call: InteractionRequest): MessageBuilder {
+    override suspend fun invoke(call: InteractionRequest): MessageBuilder {
         val commands = AbyssEngine.instance.interactions.getAllCommands()
 
         return respondEmbed {

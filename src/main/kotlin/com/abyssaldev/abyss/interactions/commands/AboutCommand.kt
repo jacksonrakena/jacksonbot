@@ -11,7 +11,7 @@ class AboutCommand : InteractionCommand() {
     override val name = "about"
     override val description: String = "Shows some information about me."
 
-    override fun invoke(call: InteractionRequest): MessageBuilder = respondEmbed {
+    override suspend fun invoke(call: InteractionRequest): MessageBuilder = respondEmbed {
         setTitle("About")
         appendDescriptionLine("I'm Abyss, and I'm running on a new Discord platform: 'slash commands'.")
         appendDescriptionLine("What this means is that you can see my commands on your screen by typing `/`.")

@@ -27,7 +27,7 @@ class DiceCommand : InteractionCommand() {
         )
     )
 
-    override fun invoke(call: InteractionRequest): MessageBuilder = respond {
+    override suspend fun invoke(call: InteractionRequest): MessageBuilder = respond {
         val sides = call.arguments[0].value.toInt()
         val count = call.arguments[1].value.toInt()
 

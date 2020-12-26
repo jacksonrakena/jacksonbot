@@ -6,5 +6,5 @@ import net.dv8tion.jda.api.MessageBuilder
 
 class TextCommand(override val name: String, override val description: String, private val response: String) :
     InteractionCommand() {
-    override fun invoke(call: InteractionRequest): MessageBuilder = respond(response)
+    override suspend fun invoke(call: InteractionRequest): MessageBuilder = respond(response)
 }

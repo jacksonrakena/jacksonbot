@@ -45,6 +45,7 @@ class InteractionController: Loggable {
         val id = getGuildIdRegistrant(command)
         val applicationId = AbyssEngine.instance.discordEngine.selfUser.id
         try {
+            logger.info(AbyssEngine.jsonEngine.write(command.toJsonMap()))
             val data: HashMap<String, Any> = httpClient.post {
                 method = HttpMethod.Post
                 header("Authorization", "Bot ${AppConfig.instance.discord.botToken}")
@@ -78,7 +79,7 @@ class InteractionController: Loggable {
         logger.info("All interactions registered.")
     }
 
-    fun handleInteractionCommandInvoked(raw: Interaction) {
+    suspend fun handleInteractionCommandInvoked(raw: Interaction) {
         val data = raw.data ?: return
         val channelId = raw.channelId ?: return
         val command = commands.firstOrNull { it.name == data.name }

@@ -10,7 +10,7 @@ class InteractionCommandArgument(
     override val type: InteractionCommandArgumentType,
     val choices: InteractionCommandArgumentChoiceSet = emptyArray(),
     @JsonProperty("required")
-    val isRequired: Boolean = false
+    val isRequired: Boolean = true
 ) : InteractionCommandOption, JsonHashable {
     override fun toJsonMap(): HashMap<String, Any> = hashMapOf(
         "name" to name,

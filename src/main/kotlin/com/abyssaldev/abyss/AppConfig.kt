@@ -17,6 +17,7 @@ class AppConfig {
     var discord: AppConfigDiscord = AppConfigDiscord()
     var web: AppConfigWeb = AppConfigWeb()
     var appearance: AppConfigAppearance = AppConfigAppearance()
+    val keys: AppConfigApis = AppConfigApis()
 
     @JsonProperty("command_scopes")
     var commandScopes: HashMap<String, String> = HashMap()
@@ -42,5 +43,9 @@ class AppConfig {
 
         @get:JsonIgnore
         val defaultEmbedColorObject: Color? by lazy(defaultEmbedColor::parseHex)
+    }
+
+    class AppConfigApis {
+        lateinit var exchangeRateApiKey: String
     }
 }
