@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.MessageChannel
 import org.jetbrains.annotations.Contract
 import java.awt.Color
 import java.io.File
+import kotlin.math.round
 
 inline fun <T> tryAndIgnoreExceptions(f: () -> T) =
     try {
@@ -45,4 +46,10 @@ inline fun <reified T> ObjectMapper.read(value: File): T {
 
 fun <T> ObjectMapper.write(value: T): String {
     return writeValueAsString(value)
+}
+
+infix fun Double.round(decimals: Int): Double {
+    var multiplier = 1.0
+    repeat(decimals) { multiplier *= 10 }
+    return round(this * multiplier) / multiplier
 }

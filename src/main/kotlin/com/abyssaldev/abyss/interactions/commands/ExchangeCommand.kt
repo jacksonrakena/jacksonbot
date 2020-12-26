@@ -7,11 +7,11 @@ import com.abyssaldev.abyss.interactions.framework.InteractionRequest
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgument
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgumentType
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandOption
+import com.abyssaldev.abyss.util.round
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.ktor.client.request.*
 import net.dv8tion.jda.api.MessageBuilder
 import java.time.Instant
-import kotlin.math.roundToInt
 
 class ExchangeCommand : InteractionCommand() {
     override val name = "exchange"
@@ -52,7 +52,7 @@ class ExchangeCommand : InteractionCommand() {
         return respond {
             embed {
                 setTitle(":currency_exchange: Currency exchange")
-                appendDescriptionLine("${amount} **${response.originCurrency}** is ${(response.conversionRates[to]!!*amount).roundToInt()} **${to}**")
+                appendDescriptionLine("${amount} **${response.originCurrency}** is ${(response.conversionRates[to]!!*amount) round 2} **${to}**")
                 setFooter("Exchange rate: 1 ${response.originCurrency} = ${response.conversionRates[to]} ${to}")
                 setTimestamp(Instant.now())
             }
