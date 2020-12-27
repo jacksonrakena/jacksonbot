@@ -7,10 +7,12 @@ import com.abyssaldev.abyss.interactions.framework.InteractionRequest
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgument
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgumentType
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandOption
+import com.abyssaldev.abyss.util.SuspendedTimedCachable
 import com.abyssaldev.abyss.util.round
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.ktor.client.request.*
 import net.dv8tion.jda.api.MessageBuilder
+import java.time.Duration
 import java.time.Instant
 
 class ExchangeCommand : InteractionCommand() {
@@ -35,22 +37,29 @@ class ExchangeCommand : InteractionCommand() {
         )
     )
 
+    val rateMap: HashMap<String, SuspendedTimedCachable<ExchangeRateApiResponse>> = hashMapOf()
+
     override suspend fun invoke(call: InteractionRequest): MessageBuilder {
         val amount = call.arguments[0].value.toInt()
         val from = call.arguments[1].value.toUpperCase()
         val to = call.arguments[2].value.toUpperCase()
 
-        val url = "https://v6.exchangerate-api.com/v6/${AppConfig.instance.keys.exchangeRateApiKey}/latest/${from}"
-        val response = AbyssEngine.instance.httpClientEngine.get<ExchangeRateApiResponse>(url)
+        val ratesCachable = rateMap.getOrPut(from) {
+            SuspendedTimedCachable(fetch = {
+                return@SuspendedTimedCachable AbyssEngine.instance.httpClientEngine.get<ExchangeRateApiResponse>("https://v6.exchangerate-api.com/v6/${AppConfig.instance.keys.exchangeRateApiKey}/latest/${from}")
+            }, Duration.ofHours(24).toMillis())
+        }
+
+        val cachableRates = ratesCachable.get()
 
         return respond {
-            if ((response.result != "success") or !response.conversionRates.containsKey(to)) {
+            if ((cachableRates.result != "success") or !cachableRates.conversionRates.containsKey(to)) {
                 content("Unknown currency.")
             } else {
                 embed {
                     setTitle(":currency_exchange: Currency exchange")
-                    appendDescriptionLine("${amount} **${response.originCurrency}** is ${(response.conversionRates[to]!!*amount) round 2} **${to}**")
-                    setFooter("Exchange rate: 1 ${response.originCurrency} = ${response.conversionRates[to]} ${to}")
+                    appendDescriptionLine("${amount} **${cachableRates.originCurrency}** is ${(cachableRates.conversionRates[to]!!*amount) round 2} **${to}**")
+                    setFooter("Exchange rate: 1 ${cachableRates.originCurrency} = ${cachableRates.conversionRates[to]} ${to}")
                     setTimestamp(Instant.now())
                 }
             }
