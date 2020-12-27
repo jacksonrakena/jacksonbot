@@ -22,15 +22,12 @@ The project is broken down into the following domains:
 **Persistence**
 - 📜 `com.abyssaldev.abyss.persistence` This package contains Abyss' persistence logic, including its database connections.
 
-**Gateway**  
-- 🪐 `com.abyssaldev.abyss.framework.gateway` This handles Abyss' behaviour over the WebSocket gateway, including voice and traditional commands.
-- 🔊 `com.abyssaldev.abyss.framework.gateway.voice` This contains Abyss' experimental music playing logic.
-  
-**Interactions & Commands**
+**Gateway, Interactions, and Commands**  
+- 🪐 `com.abyssaldev.abyss.framework.common` This package contains base classes for Abyss' command parsing and execution logic.
 - 🤝 `com.abyssaldev.abyss.framework.interactions` This handles Abyss' interactions (also known as "slash commands"), handled over REST.  
-- ⚙ `com.abyssaldev.abyss.framework.interactions.framework` This package contains the logic for processing interactions and interactive commands.
-- 🎫 `com.abyssaldev.abyss.commands.interactions.commands` This package contains Abyss' stock commands and their logic.  
-- 🧼 `com.abyssaldev.abyss.framework.interactions.http` This package contains the Ktor routes and facilities to process Discord POST requests.
+  - `com.abyssaldev.abyss.commands.interactions` This package contains Abyss' default interactions set.
+- 🌀 `com.abyssaldev.abyss.framework.gateway` This handles Abyss' traditional commands, served over the WebSocket.
+  - `com.abyssaldev.abyss.commands.gateway` This package contains Abyss' default command set.
   
 ### 🖋 Copyright
 Copyright (c) 2018-2021 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
