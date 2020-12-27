@@ -1,6 +1,5 @@
 package com.abyssaldev.abyss.framework.common
 
-import com.abyssaldev.abyss.framework.interactions.InteractionCommandRequest
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Role
 import net.dv8tion.jda.api.entities.TextChannel
@@ -16,7 +15,7 @@ open class ArgumentSet(internal val argSet: List<String>, internal open val requ
         }
     }
 
-    class Named(val argSetNamed: HashMap<String, String>, override val request: InteractionCommandRequest) : ArgumentSet(
+    class Named(val argSetNamed: HashMap<String, String>, override val request: CommandRequest) : ArgumentSet(
         argSetNamed.values.toList(),
         request
     ) {
@@ -60,9 +59,9 @@ open class ArgumentSet(internal val argSet: List<String>, internal open val requ
 
         val string: String = value
 
-        class Named(private val value: String, private val request: InteractionCommandRequest) : ArgumentValue(value, request) {
+        class Named(private val value: String, private val request: CommandRequest) : ArgumentValue(value, request) {
             override val member: Member by lazy {
-                request.guild.getMemberById(value)!!
+                request.guild!!.getMemberById(value)!!
             }
 
             override val user: User by lazy {
@@ -86,7 +85,7 @@ open class ArgumentSet(internal val argSet: List<String>, internal open val requ
             }
 
             override val role: Role by lazy {
-                request.guild.getRoleById(value)!!
+                request.guild!!.getRoleById(value)!!
             }
         }
     }
