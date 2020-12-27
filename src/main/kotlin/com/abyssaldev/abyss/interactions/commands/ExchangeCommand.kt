@@ -7,7 +7,7 @@ import com.abyssaldev.abyss.interactions.framework.InteractionRequest
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgument
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandArgumentType
 import com.abyssaldev.abyss.interactions.framework.arguments.InteractionCommandOption
-import com.abyssaldev.abyss.util.SuspendedTimedCachable
+import com.abyssaldev.abyss.util.TimedCacheable
 import com.abyssaldev.abyss.util.round
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.ktor.client.request.*
@@ -37,7 +37,7 @@ class ExchangeCommand : InteractionCommand() {
         )
     )
 
-    val rateMap: HashMap<String, SuspendedTimedCachable<ExchangeRateApiResponse>> = hashMapOf()
+    val rateMap: HashMap<String, TimedCacheable.Suspended<ExchangeRateApiResponse>> = hashMapOf()
 
     override suspend fun invoke(call: InteractionRequest): MessageBuilder {
         val amount = call.arguments[0].value.toInt()
@@ -45,8 +45,8 @@ class ExchangeCommand : InteractionCommand() {
         val to = call.arguments[2].value.toUpperCase()
 
         val ratesCachable = rateMap.getOrPut(from) {
-            SuspendedTimedCachable(fetch = {
-                return@SuspendedTimedCachable AbyssEngine.instance.httpClientEngine.get<ExchangeRateApiResponse>("https://v6.exchangerate-api.com/v6/${AppConfig.instance.keys.exchangeRateApiKey}/latest/${from}")
+            TimedCacheable.Suspended(fetch = {
+                return@Suspended AbyssEngine.instance.httpClientEngine.get<ExchangeRateApiResponse>("https://v6.exchangerate-api.com/v6/${AppConfig.instance.keys.exchangeRateApiKey}/latest/${from}")
             }, Duration.ofHours(24).toMillis())
         }
 
