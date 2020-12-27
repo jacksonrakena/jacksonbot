@@ -1,12 +1,13 @@
 package com.abyssaldev.abyss.framework.interactions.subcommands
 
-import com.abyssaldev.abyss.framework.interactions.InteractionExecutable
+import com.abyssaldev.abyss.framework.common.CommandExecutable
+import com.abyssaldev.abyss.framework.interactions.InteractionCommandRequest
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandArgument
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandArgumentType
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandOption
 import java.util.*
 
-abstract class InteractionSubcommand: InteractionCommandOption, InteractionExecutable {
+abstract class InteractionSubcommand: InteractionCommandOption, CommandExecutable<InteractionCommandRequest> {
     override val type: InteractionCommandArgumentType = InteractionCommandArgumentType.Subcommand
     abstract val options: Array<InteractionCommandArgument>
 

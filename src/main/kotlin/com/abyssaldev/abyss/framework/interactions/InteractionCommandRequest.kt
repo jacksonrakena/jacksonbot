@@ -14,11 +14,12 @@ class InteractionCommandRequest(
     override val channel: TextChannel,
     override val member: Member,
     override val user: User,
-    override val rawArgs: HashMap<String, String>,
-    override val jda: JDA
+    override val rawArgs: List<String>,
+    override val jda: JDA,
+    val rawArgsNamed: HashMap<String, String>
 ) : CommandRequest() {
     override val args: ArgumentSet.Named by lazy {
-        ArgumentSet.Named(rawArgs, this)
+        ArgumentSet.Named(rawArgsNamed, this)
     }
 
     companion object {
@@ -29,8 +30,9 @@ class InteractionCommandRequest(
                 guild = guild,
                 jda = jda,
                 member = guild.getMemberById(model.member!!.user.id)!!,
-                rawArgs = rawArgs,
-                user = jda.getUserById(model.member!!.user.id)!!
+                rawArgs = rawArgs.values.toList(),
+                user = jda.getUserById(model.member!!.user.id)!!,
+                rawArgsNamed = rawArgs
             )
         }
     }

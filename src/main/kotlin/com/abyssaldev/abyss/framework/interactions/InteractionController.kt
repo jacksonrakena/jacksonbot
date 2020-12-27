@@ -2,6 +2,7 @@ package com.abyssaldev.abyss.framework.interactions
 
 import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.AppConfig
+import com.abyssaldev.abyss.framework.common.CommandExecutable
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandArgumentChoice
 import com.abyssaldev.abyss.framework.interactions.models.Interaction
 import com.abyssaldev.abyss.framework.interactions.subcommands.InteractionSubcommand
@@ -88,7 +89,7 @@ class InteractionController: Loggable {
         }
         val commandSubcommandsOrSubcommandGroups = command.options.filter { it is InteractionSubcommand || it is InteractionSubcommandGroup }
 
-        var executable: InteractionExecutable = command
+        var executable: CommandExecutable<InteractionCommandRequest> = command
         var arguments: Array<InteractionCommandArgumentChoice> = data.options ?: emptyArray()
         if (commandSubcommandsOrSubcommandGroups.any()) {
             data.options!!.forEach {

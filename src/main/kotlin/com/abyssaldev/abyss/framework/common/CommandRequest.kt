@@ -12,7 +12,7 @@ abstract class CommandRequest {
     abstract val member: Member?
     abstract val user: User
     abstract val jda: JDA
-    internal abstract val rawArgs: HashMap<String, String>
+    internal abstract val rawArgs: List<String>
     open val args: ArgumentSet by lazy { ArgumentSet(rawArgs, this) }
 }
 

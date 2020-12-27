@@ -6,9 +6,9 @@ import net.dv8tion.jda.api.entities.Role
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.User
 
-open class ArgumentSet(internal val argSet: HashMap<String, String>, internal open val request: CommandRequest) {
+open class ArgumentSet(internal val argSet: List<String>, internal open val request: CommandRequest) {
     fun ordinal(position: Int): ArgumentValue? {
-        val str = argSet.entries.toList().getOrNull(position)?.value
+        val str = argSet.getOrNull(position)
         return if (str != null) {
             ArgumentValue(str, request)
         } else {
@@ -16,12 +16,12 @@ open class ArgumentSet(internal val argSet: HashMap<String, String>, internal op
         }
     }
 
-    class Named(argSet: HashMap<String, String>, override val request: InteractionCommandRequest) : ArgumentSet(
-        argSet,
+    class Named(val argSetNamed: HashMap<String, String>, override val request: InteractionCommandRequest) : ArgumentSet(
+        argSetNamed.values.toList(),
         request
     ) {
         fun named(name: String): ArgumentValue.Named {
-            return ArgumentValue.Named(argSet[name]!!, request)
+            return ArgumentValue.Named(argSetNamed[name]!!, request)
         }
     }
 

@@ -9,7 +9,15 @@ class GatewayCommandRequest(
     override val channel: TextChannel,
     override val member: Member?,
     override val user: User,
-    override val rawArgs: HashMap<String, String>,
+    override val rawArgs: List<String>,
     override val jda: JDA,
     val message: Message
-): CommandRequest() {}
+): CommandRequest() {
+    val botUser: SelfUser by lazy {
+        jda.selfUser
+    }
+
+    val botMember: Member? by lazy {
+        guild?.selfMember
+    }
+}

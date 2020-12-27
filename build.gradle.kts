@@ -1,5 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.21"
@@ -24,7 +24,6 @@ val jdaVersion = "4.2.0_223"
 val kotlinVersion = "1.4.21"
 val bouncyCastleVersion = "1.67"
 val logbackVersion = "1.3.0-alpha5"
-val jdaUtilitiesVersion = "3.0.5"
 
 dependencies {
     implementation(kotlin("stdlib"))
@@ -40,7 +39,6 @@ dependencies {
     implementation("net.dv8tion:JDA:$jdaVersion")
     implementation("org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion")
     implementation("org.apache.commons:commons-lang3:3.11")
-    implementation("com.jagrosh:jda-utilities:$jdaUtilitiesVersion")
 }
 
 application {

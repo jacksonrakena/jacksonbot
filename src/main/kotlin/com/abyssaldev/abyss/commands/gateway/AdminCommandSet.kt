@@ -1,12 +1,15 @@
 package com.abyssaldev.abyss.commands.gateway
 
 import com.abyssaldev.abyss.AbyssEngine
+import com.abyssaldev.abyss.framework.gateway.GatewayCommand
+import com.abyssaldev.abyss.framework.gateway.GatewayCommandRequest
+import com.abyssaldev.abyss.util.respondSuccess
 import com.abyssaldev.abyss.util.write
-import com.jagrosh.jdautilities.command.Command
-import com.jagrosh.jdautilities.command.CommandEvent
+import net.dv8tion.jda.api.MessageBuilder
+import kotlin.reflect.jvm.jvmName
 
-class AdminCommandSet: Command() {
-    val actions = mapOf<String, CommandEvent.(List<String>) -> String>(
+class AdminCommandSet: GatewayCommand() {
+    private val actions = mapOf<String, GatewayCommandRequest.(List<String>) -> String>(
         "exec-db" to {
             "Database not connected."
         },
@@ -20,34 +23,37 @@ class AdminCommandSet: Command() {
             val command = AbyssEngine.instance.interactions.getAllCommands().filter { c ->
                 c::class.simpleName == it[0]
             }[0]
-            "`${command::class.simpleName}`: ```json\n" + AbyssEngine.jsonEngine.write(command.toJsonMap()) + "```"
+            "`${command::class.jvmName}`: ```json\n" + AbyssEngine.jsonEngine.write(command.toJsonMap()) + "```"
+        },
+        "dump-gateway-json" to {
+            val command = AbyssEngine.instance.gateway.commands.firstOrNull { c ->
+                c::class.simpleName == it[0]
+            }
+            if (command == null) {"Unknown gateway command."}
+            else { "`${command::class.jvmName}`: ```json\n" + AbyssEngine.jsonEngine.write(command) + "```" }
         }
     )
 
+    override val name = "admin"
+    override val description = "Provides administrative functions."
+
     init {
-        name = "admin"
-        hidden = true
-        help = "The administrator command set."
-        ownerCommand = true
+        this.isBotOwnerRestricted = true
     }
 
-    override fun execute(event: CommandEvent?) {
-        if (event == null) return
-        if (event.args.isNullOrEmpty()) {
-            return event.replySuccess("Available: `${actions.keys.joinToString(", ")}`")
+    override suspend fun invoke(call: GatewayCommandRequest): MessageBuilder = respond {
+        val actionName = call.args.ordinal(0)?.string
+        if (actionName.isNullOrEmpty()) {
+            return@respond respondSuccess("Available: `${actions.keys.joinToString(", ")}`")
         }
-        val args = event.args.split(" ")
-        if (!actions.containsKey(args[0])) {
-            return event.replySuccess("Available: `${actions.keys.joinToString(", ")}`")
-        }
-        val action = actions[args[0]]
-            ?: return event.replySuccess("Available: `${actions.keys.joinToString(", ")}`")
+        val action = actions[actionName]
+            ?: return@respond respondSuccess("Available: `${actions.keys.joinToString(", ")}`")
 
         val startTime = System.currentTimeMillis()
-        val response = action.invoke(event, args.drop(1))
+        val response = action.invoke(call, call.args.argSet.drop(1))
         val time = System.currentTimeMillis() - startTime
 
-        val message = "Executed action `${args[0]}` in `${time}`ms.\n${response}"
-        event.replySuccess(message)
+        val message = "Executed action `${actionName}` in `${time}`ms.\n${response}"
+        return@respond respondSuccess(message)
     }
 }

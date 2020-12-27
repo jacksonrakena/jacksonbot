@@ -1,10 +1,11 @@
 package com.abyssaldev.abyss.framework.interactions
 
+import com.abyssaldev.abyss.framework.common.CommandExecutable
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandOption
 import net.dv8tion.jda.api.MessageBuilder
 import java.util.*
 
-abstract class InteractionCommand: InteractionBase, InteractionExecutable {
+abstract class InteractionCommand: InteractionBase, CommandExecutable<InteractionCommandRequest> {
     open val options: Array<InteractionCommandOption> = emptyArray()
 
     override suspend fun invoke(call: InteractionCommandRequest): MessageBuilder?

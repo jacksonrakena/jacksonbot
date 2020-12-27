@@ -2,9 +2,9 @@ package com.abyssaldev.abyss
 
 import com.abyssaldev.abyss.commands.interactions.*
 import com.abyssaldev.abyss.framework.gateway.GatewayController
-import com.abyssaldev.abyss.http.IndexRouting.Companion.indexRouting
 import com.abyssaldev.abyss.framework.interactions.InteractionController
 import com.abyssaldev.abyss.framework.interactions.http.DiscordInteractionRouting.Companion.discordInteractionRouting
+import com.abyssaldev.abyss.http.IndexRouting.Companion.indexRouting
 import com.abyssaldev.abyss.util.Loggable
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -40,6 +40,7 @@ class AbyssEngine private constructor() : Loggable {
         val jsonEngine = ObjectMapper().apply {
             // Ensure that JSON deserialization doesn't fail if we haven't mapped all the properties
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
         }
 
         // JDA-Utilities annoys me sometimes

@@ -1,17 +1,13 @@
-package com.abyssaldev.abyss.framework.interactions
+package com.abyssaldev.abyss.framework.common
 
 import com.abyssaldev.abyss.AppConfig
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 
-interface InteractionExecutable {
-    /**
-     * Runs checks on an interaction request to determine whether this command can be executed in the current
-     * context. Should return `null` if the command can be executed, or a [String] containing the reason why it cannot.
-     */
-    fun canInvoke(call: InteractionCommandRequest): String? = ""
+interface CommandExecutable<T: CommandRequest> : CommandBase {
+    fun canInvoke(call: T): String? = ""
 
-    suspend fun invoke(call: InteractionCommandRequest): MessageBuilder?
+    suspend fun invoke(call: T): MessageBuilder?
 
     fun respond(responder: MessageBuilder.() -> Unit): MessageBuilder {
         val builder = MessageBuilder()
