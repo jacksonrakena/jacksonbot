@@ -23,14 +23,14 @@ The project is broken down into the following domains:
 - 📜 `com.abyssaldev.abyss.persistence` This package contains Abyss' persistence logic, including its database connections.
 
 **Gateway**  
-- 🪐 `com.abyssaldev.abyss.gateway` This handles Abyss' behaviour over the WebSocket gateway, including voice and traditional commands.
-- 🔊 `com.abyssaldev.abyss.gateway.voice` This contains Abyss' experimental music playing logic.
+- 🪐 `com.abyssaldev.abyss.framework.gateway` This handles Abyss' behaviour over the WebSocket gateway, including voice and traditional commands.
+- 🔊 `com.abyssaldev.abyss.framework.gateway.voice` This contains Abyss' experimental music playing logic.
   
 **Interactions & Commands**
-- 🤝 `com.abyssaldev.abyss.interactions` This handles Abyss' interactions (also known as "slash commands"), handled over REST.  
-- ⚙ `com.abyssaldev.abyss.interactions.framework` This package contains the logic for processing interactions and interactive commands.
-- 🎫 `com.abyssaldev.abyss.interactions.commands` This package contains Abyss' stock commands and their logic.  
-- 🧼 `com.abyssaldev.abyss.interactions.http` This package contains the Ktor routes and facilities to process Discord POST requests.
+- 🤝 `com.abyssaldev.abyss.framework.interactions` This handles Abyss' interactions (also known as "slash commands"), handled over REST.  
+- ⚙ `com.abyssaldev.abyss.framework.interactions.framework` This package contains the logic for processing interactions and interactive commands.
+- 🎫 `com.abyssaldev.abyss.commands.interactions.commands` This package contains Abyss' stock commands and their logic.  
+- 🧼 `com.abyssaldev.abyss.framework.interactions.http` This package contains the Ktor routes and facilities to process Discord POST requests.
   
 ### 🖋 Copyright
 Copyright (c) 2018-2021 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  

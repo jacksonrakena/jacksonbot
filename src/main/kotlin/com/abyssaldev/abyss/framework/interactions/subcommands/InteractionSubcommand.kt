@@ -1,0 +1,24 @@
+package com.abyssaldev.abyss.framework.interactions.subcommands
+
+import com.abyssaldev.abyss.framework.interactions.InteractionExecutable
+import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandArgument
+import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandArgumentType
+import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandOption
+import java.util.*
+
+abstract class InteractionSubcommand: InteractionCommandOption, InteractionExecutable {
+    override val type: InteractionCommandArgumentType = InteractionCommandArgumentType.Subcommand
+    abstract val options: Array<InteractionCommandArgument>
+
+    override fun toJsonMap(): HashMap<String, Any> {
+        val hashMapInit = hashMapOf<String, Any>(
+            "name" to name,
+            "description" to description,
+            "type" to type.raw
+        )
+        if (options.any()) {
+            hashMapInit["options"] = options.toJsonArray()
+        }
+        return hashMapInit
+    }
+}

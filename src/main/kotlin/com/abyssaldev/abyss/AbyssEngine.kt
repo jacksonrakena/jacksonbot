@@ -1,10 +1,10 @@
 package com.abyssaldev.abyss
 
-import com.abyssaldev.abyss.gateway.GatewayController
+import com.abyssaldev.abyss.commands.interactions.*
+import com.abyssaldev.abyss.framework.gateway.GatewayController
 import com.abyssaldev.abyss.http.IndexRouting.Companion.indexRouting
-import com.abyssaldev.abyss.interactions.InteractionController
-import com.abyssaldev.abyss.interactions.commands.*
-import com.abyssaldev.abyss.interactions.http.DiscordInteractionRouting.Companion.discordInteractionRouting
+import com.abyssaldev.abyss.framework.interactions.InteractionController
+import com.abyssaldev.abyss.framework.interactions.http.DiscordInteractionRouting.Companion.discordInteractionRouting
 import com.abyssaldev.abyss.util.Loggable
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper

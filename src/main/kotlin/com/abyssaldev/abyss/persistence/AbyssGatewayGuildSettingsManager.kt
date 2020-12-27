@@ -1,6 +1,6 @@
 package com.abyssaldev.abyss.persistence
 
-import com.abyssaldev.abyss.gateway.GatewayGuildSettingsManager
+import com.abyssaldev.abyss.framework.gateway.GatewayGuildSettingsManager
 import net.dv8tion.jda.api.entities.Guild
 
 class AbyssGatewayGuildSettingsManager : GatewayGuildSettingsManager<GatewayGuildSettings> {
