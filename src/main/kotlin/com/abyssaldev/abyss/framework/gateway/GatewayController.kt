@@ -33,11 +33,11 @@ class GatewayController: Loggable, ListenerAdapter() {
     }
 
     private fun handleMissingRequiredUserPermissions(call: GatewayCommandRequest, permissions: EnumSet<Permission>) {
-        call.channel.trySendMessage(MessageBuilder().apply { respondError("To run this command, you need these permissions: ${permissions.map { "`${it.name}`" }.joinToString(", ") }")}.build())
+        call.channel.trySendMessage(MessageBuilder().apply { respondError("To run this command, you need these permissions: ${permissions.map { "`${it.name}`" }.joinToString(", ")}")}.build())
     }
 
     private fun handleMissingRequiredBotPermissions(call: GatewayCommandRequest, permissions: EnumSet<Permission>) {
-        call.channel.trySendMessage(MessageBuilder().apply { respondError("To run this command, I need these permissions: ${permissions.map { "`${it.name}`" }.joinToString(", ") }")}.build())
+        call.channel.trySendMessage(MessageBuilder().apply { respondError("To run this command, I need these permissions: ${permissions.map { "`${it.name}`" }.joinToString(", ")}")}.build())
     }
 
     override fun onMessageReceived(event: MessageReceivedEvent) {
