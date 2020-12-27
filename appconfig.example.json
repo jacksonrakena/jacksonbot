@@ -2,7 +2,8 @@
   "discord": {
     "botToken": "",
     "interactionsPublicKey": "",
-    "ownerId": 0
+    "ownerId": 0,
+    "gatewayPrefix": "/gw "
   },
   "web": {
     "port": 1566,

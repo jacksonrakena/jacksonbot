@@ -13,6 +13,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.util.pipeline.*
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 
@@ -28,6 +29,11 @@ class DiscordInteractionRouting : Loggable {
             )
         )
 
+        suspend fun ApplicationCall.respondFail(code: HttpStatusCode, message: String) {
+            AbyssEngine.instance.interactions.failedReceivedInteractionRequests++
+            return this.respond(code, message)
+        }
+
         fun Application.discordInteractionRouting() {
             routing {
                 // Handle troll requests
@@ -41,16 +47,16 @@ class DiscordInteractionRouting : Loggable {
                 post(AppConfig.instance.web.interactionsRoute) {
                     // Read Discord's encryption information and verify integrity
                     val discordPublicKey = AppConfig.instance.discord.interactionsPublicKey
-                    val signature = call.request.headers["X-Signature-Ed25519"] ?: return@post call.respond(
+                    val signature = call.request.headers["X-Signature-Ed25519"] ?: return@post call.respondFail(
                         HttpStatusCode.BadRequest, "Missing signature."
                     )
-                    val timestamp = call.request.headers["X-Signature-Timestamp"] ?: return@post call.respond(
+                    val timestamp = call.request.headers["X-Signature-Timestamp"] ?: return@post call.respondFail(
                         HttpStatusCode.BadRequest, "Missing timestamp."
                     )
                     val stringContent = try {
                         call.receiveText()
                     } catch (e: Exception) {
-                        return@post call.respond(
+                        return@post call.respondFail(
                             HttpStatusCode.BadRequest, "Invalid content."
                         )
                     }
@@ -59,11 +65,13 @@ class DiscordInteractionRouting : Loggable {
                     try {
                         if (!Ed25519Engine.verifyMessage(discordPublicKey, signature, timestamp, stringContent)) {
                             interactionLogger.warn("Received invalid request signature. Signature=${signature} Timestamp=${timestamp} Body=${stringContent}")
-                            return@post call.respond(HttpStatusCode.Unauthorized, "Invalid request signature.")
+                            return@post call.respondFail(HttpStatusCode.Unauthorized, "Invalid request signature.")
                         }
                     } catch (e: Throwable) {
-                        return@post call.respond(HttpStatusCode.Unauthorized, "An error occurred while validating the request signature.")
+                        return@post call.respondFail(HttpStatusCode.Unauthorized, "An error occurred while validating the request signature.")
                     }
+
+                    AbyssEngine.instance.interactions.successfulReceivedInteractionRequests++
 
                     // Read JSON data on another coroutine, because it could be quite big
                     val interaction: Interaction = try {

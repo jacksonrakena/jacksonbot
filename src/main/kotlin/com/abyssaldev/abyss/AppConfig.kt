@@ -31,6 +31,7 @@ class AppConfig {
         lateinit var botToken: String
         lateinit var interactionsPublicKey: String
         lateinit var ownerId: String
+        var gatewayPrefix: String = "/gw "
     }
 
     class AppConfigWeb {

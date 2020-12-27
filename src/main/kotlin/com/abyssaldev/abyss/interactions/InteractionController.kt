@@ -17,6 +17,8 @@ import io.ktor.http.*
 
 class InteractionController: Loggable {
     private val commands: ArrayList<InteractionCommand> = arrayListOf()
+    var successfulReceivedInteractionRequests = 0
+    var failedReceivedInteractionRequests = 0
 
     fun addCommand(command: InteractionCommand) {
         if (commands.any { it.name == command.name }) {
@@ -70,7 +72,7 @@ class InteractionController: Loggable {
     }
 
     suspend fun registerAllInteractions() {
-        logger.info("Registering all interactions for ${AbyssEngine.instance.discordEngine.selfUser.id}.")
+        logger.info("Registering all interactions for ${AbyssEngine.instance.discordEngine.selfUser}.")
         for (command in this.commands) {
             registerCommand(command)
         }

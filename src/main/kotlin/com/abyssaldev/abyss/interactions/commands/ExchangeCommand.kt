@@ -42,19 +42,17 @@ class ExchangeCommand : InteractionCommand() {
 
         val url = "https://v6.exchangerate-api.com/v6/${AppConfig.instance.keys.exchangeRateApiKey}/latest/${from}"
         val response = AbyssEngine.instance.httpClientEngine.get<ExchangeRateApiResponse>(url)
-        if (response.result != "success") return respond {
-            content("Unknown currency.")
-        }
-        if (!response.conversionRates.containsKey(to)) return respond {
-            content("Unknown currency.")
-        }
 
         return respond {
-            embed {
-                setTitle(":currency_exchange: Currency exchange")
-                appendDescriptionLine("${amount} **${response.originCurrency}** is ${(response.conversionRates[to]!!*amount) round 2} **${to}**")
-                setFooter("Exchange rate: 1 ${response.originCurrency} = ${response.conversionRates[to]} ${to}")
-                setTimestamp(Instant.now())
+            if ((response.result != "success") or !response.conversionRates.containsKey(to)) {
+                content("Unknown currency.")
+            } else {
+                embed {
+                    setTitle(":currency_exchange: Currency exchange")
+                    appendDescriptionLine("${amount} **${response.originCurrency}** is ${(response.conversionRates[to]!!*amount) round 2} **${to}**")
+                    setFooter("Exchange rate: 1 ${response.originCurrency} = ${response.conversionRates[to]} ${to}")
+                    setTimestamp(Instant.now())
+                }
             }
         }
     }
