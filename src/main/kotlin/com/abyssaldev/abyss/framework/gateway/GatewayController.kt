@@ -45,7 +45,7 @@ class GatewayController: Loggable, ListenerAdapter() {
                     invoke = member,
                     parentModule = it
                 ))
-                logger.info("Registered gateway command ${annot.name} (from ${it::class.simpleName}")
+                logger.info("Registered gateway command ${annot.name} (from ${it::class.simpleName})")
             }
         }
     }

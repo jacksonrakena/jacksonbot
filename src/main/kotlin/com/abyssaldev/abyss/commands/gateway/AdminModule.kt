@@ -7,7 +7,12 @@ import com.abyssaldev.abyss.framework.gateway.GatewayCommandRequest
 import com.abyssaldev.abyss.framework.gateway.reflect.GatewayCommand
 import com.abyssaldev.abyss.util.respondSuccess
 import com.abyssaldev.abyss.util.write
+import io.ktor.client.features.*
+import io.ktor.client.request.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.MessageBuilder
+import java.time.Instant
 import kotlin.reflect.jvm.jvmName
 
 @Name("Admin")
@@ -49,5 +54,38 @@ class AdminModule: CommandModule() {
 
         val message = "Executed action `${actionName}` in `${time}`ms.\n${response}"
         return@respond respondSuccess(message)
+    }
+
+    @GatewayCommand(
+        name = "ping",
+        description = "Pong."
+    )
+    fun pingCommand(call: GatewayCommandRequest) {
+        val message = StringBuilder().apply {
+            appendLine(":handshake: **Gateway:** ${AbyssEngine.instance.discordEngine.gatewayPing}ms")
+        }
+        val initial = message.toString()
+
+        val startTime = System.currentTimeMillis()
+        call.channel.sendMessage("Pinging...").queue {
+            val restSendTime = System.currentTimeMillis() - startTime
+            message.appendLine(":mailbox_with_mail: **REST:** ${restSendTime}ms")
+            GlobalScope.launch {
+                val editStartTime = System.currentTimeMillis()
+                AbyssEngine.instance.httpClientEngine.get<String>("http://google.com") {}
+                val editEndTime = System.currentTimeMillis() - editStartTime
+                message.appendLine(":globe_with_meridians: **Internet - Google:** ${editEndTime}ms")
+                val acsStartTime = System.currentTimeMillis()
+                AbyssEngine.instance.httpClientEngine.get<String>("https://live.abyssaldev.com/api/v1/hello") {}
+                message.appendLine(":blue_heart: **Internet - Abyssal Services:** ${(System.currentTimeMillis() - acsStartTime)}ms")
+                it.delete().queue()
+                it.channel.sendMessage(respondEmbed {
+                    setTitle("Pong!")
+                    setDescription(message.toString())
+                    setTimestamp(Instant.now())
+                }.apply { setContent("") }.build()).queue()
+
+            }
+        }
     }
 }
