@@ -1,5 +1,6 @@
 package com.abyssaldev.abyss
 
+import com.abyssaldev.abyss.commands.gateway.AdminModule
 import com.abyssaldev.abyss.commands.interactions.*
 import com.abyssaldev.abyss.framework.gateway.GatewayController
 import com.abyssaldev.abyss.framework.interactions.InteractionController
@@ -120,6 +121,11 @@ class AbyssEngine private constructor() : Loggable {
                 DiceCommand(),
                 ExchangeCommand()
             )
+
+            gateway.addModules(listOf(
+                AdminModule()
+            ))
+            gateway.addCommandsAutomatically()
         }
         logger.info("Listening for Discord interactions at http://${httpServerEngine.environment.connectors[0].host}:${httpServerEngine.environment.connectors[0].port}${AppConfig.instance.web.interactionsRoute}")
         logger.info("Added all commands to registration queue.")

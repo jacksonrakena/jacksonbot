@@ -39,6 +39,7 @@ dependencies {
     implementation("net.dv8tion:JDA:$jdaVersion")
     implementation("org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion")
     implementation("org.apache.commons:commons-lang3:3.11")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
 }
 
 application {

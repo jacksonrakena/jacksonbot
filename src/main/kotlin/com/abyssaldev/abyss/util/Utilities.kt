@@ -72,3 +72,6 @@ fun MessageBuilder.respondError(content: String) {
     this.setContent(":x: ${content}")
 }
 
+inline fun <reified T> List<Annotation>.getAnnotation(): T? {
+    return this.filterIsInstance<T>().firstOrNull()
+}

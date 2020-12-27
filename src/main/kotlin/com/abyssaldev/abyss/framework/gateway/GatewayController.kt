@@ -1,8 +1,10 @@
 package com.abyssaldev.abyss.framework.gateway
 
 import com.abyssaldev.abyss.AppConfig
-import com.abyssaldev.abyss.commands.gateway.AdminCommandSet
+import com.abyssaldev.abyss.framework.common.CommandModule
+import com.abyssaldev.abyss.framework.gateway.reflect.GatewayCommand
 import com.abyssaldev.abyss.util.Loggable
+import com.abyssaldev.abyss.util.getAnnotation
 import com.abyssaldev.abyss.util.respondError
 import com.abyssaldev.abyss.util.trySendMessage
 import kotlinx.coroutines.Dispatchers
@@ -14,14 +16,38 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import java.util.*
+import kotlin.reflect.full.memberFunctions
 
 class GatewayController: Loggable, ListenerAdapter() {
-    val commands = listOf(
-        AdminCommandSet()
-    )
+    private val modules = mutableListOf<CommandModule>()
+    private val commands = mutableListOf<GatewayCommandInternal>()
 
     fun applyListeners(jdaBuilder: JDABuilder) {
         jdaBuilder.addEventListeners(this, GatewayReadyListenerAdapter())
+    }
+
+    fun addModules(modules: List<CommandModule>) {
+        this.modules.addAll(modules)
+    }
+
+    fun addCommandsAutomatically() {
+        logger.info("Searching modules for available gateway commands.")
+        modules.forEach {
+            it::class.memberFunctions.forEach { member ->
+                val annot = member.annotations.getAnnotation<GatewayCommand>() ?: return
+                commands.add(GatewayCommandInternal(
+                    name = annot.name,
+                    description = annot.description,
+                    isBotOwnerRestricted = annot.isOwnerRestricted,
+                    requiredBotPermissions = EnumSet.noneOf(Permission::class.java)!!,
+                    requiredUserPermissions = EnumSet.noneOf(Permission::class.java)!!,
+                    requiredRole = annot.requiredRole,
+                    invoke = member,
+                    parentModule = it
+                ))
+                logger.info("Registered gateway command ${annot.name} (from ${it::class.simpleName}")
+            }
+        }
     }
 
     private fun handleOwnerOnlyCommandError(call: GatewayCommandRequest) {
@@ -65,7 +91,7 @@ class GatewayController: Loggable, ListenerAdapter() {
 
         if (request.member != null) {
             // Required role check
-            if (!command.requiredRole.isNullOrEmpty() && request.member.roles.none { it.id == command.requiredRole }) {
+            if (command.requiredRole.isNotEmpty() && request.member.roles.none { it.id == command.requiredRole }) {
                 return handleMissingRequiredRole(request, command.requiredRole!!)
             }
 
@@ -88,7 +114,7 @@ class GatewayController: Loggable, ListenerAdapter() {
                 return
             }
             val message = command.invoke(request)
-            request.channel.trySendMessage(message.build())
+            if (message != null) request.channel.trySendMessage(message.build())
         } catch (e: Throwable) {
             logger.error("Error thrown while processing gateway command ${command.name}", e)
             request.channel.trySendMessage( "There was an internal error running that command. Try again later.")
