@@ -1,17 +1,33 @@
 package com.abyssaldev.abyss
 
+import com.abyssaldev.abyss.util.Loggable
 import com.abyssaldev.abyss.util.parseHex
 import com.abyssaldev.abyss.util.read
+import com.abyssaldev.abyss.util.write
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.awt.Color
 import java.io.File
 
-class AppConfig {
+class AppConfig: Loggable {
     companion object {
-        val instance: AppConfig by lazy {
-            AbyssEngine.jsonEngine.read(File("appconfig.json"))
+        val file: File by lazy {
+            File("appconfig.json")
         }
+        val instance: AppConfig by lazy {
+            AbyssEngine.jsonEngine.read<AppConfig>(file).apply {
+                this.logger.info("Created AppConfig instance from appconfig.json.")
+            }
+        }
+    }
+
+    @JsonIgnore
+    fun writeToDisk() {
+        if (!file.canWrite()) {
+            return logger.info("Attempted to write config to disk, but file is not writable.")
+        }
+        file.writeText(AbyssEngine.jsonEngine.write(this, true))
+        logger.info("Wrote appconfig.json to disk.")
     }
 
     var discord: AppConfigDiscord = AppConfigDiscord()
@@ -22,6 +38,7 @@ class AppConfig {
     @JsonProperty("command_scopes")
     var commandScopes: HashMap<String, String> = HashMap()
 
+    @JsonIgnore
     fun determineCommandScope(name: String): String? {
         if (!commandScopes["all"].isNullOrEmpty()) return commandScopes["all"]!!
         return commandScopes[name]

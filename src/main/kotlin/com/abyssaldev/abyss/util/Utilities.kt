@@ -1,6 +1,7 @@
 package com.abyssaldev.abyss.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageChannel
 import org.jetbrains.annotations.Contract
@@ -44,8 +45,12 @@ inline fun <reified T> ObjectMapper.read(value: File): T {
     return readValue(value, T::class.java)
 }
 
-fun <T> ObjectMapper.write(value: T): String {
-    return writeValueAsString(value)
+fun <T> ObjectMapper.write(value: T, indentOutput: Boolean = false): String {
+    var writer = this.writer()
+    if (indentOutput) {
+        writer = writer.with(SerializationFeature.INDENT_OUTPUT)
+    }
+    return writer.writeValueAsString(value)
 }
 
 infix fun Double.round(decimals: Int): Double {
@@ -53,3 +58,4 @@ infix fun Double.round(decimals: Int): Double {
     repeat(decimals) { multiplier *= 10 }
     return round(this * multiplier) / multiplier
 }
+

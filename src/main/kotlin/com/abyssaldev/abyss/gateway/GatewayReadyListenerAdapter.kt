@@ -1,6 +1,7 @@
 package com.abyssaldev.abyss.gateway
 
 import com.abyssaldev.abyss.AbyssEngine
+import com.abyssaldev.abyss.AppConfig
 import com.abyssaldev.abyss.util.Loggable
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -12,6 +13,7 @@ class GatewayReadyListenerAdapter: ListenerAdapter(), Loggable {
         logger.info("Received Discord READY signal. Connected as ${event.jda.selfUser}")
         GlobalScope.launch {
             AbyssEngine.instance.interactions.registerAllInteractions()
+            AppConfig.instance.writeToDisk()
         }
     }
 }
