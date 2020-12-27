@@ -6,84 +6,48 @@ import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
 
 class AdminCommandSet: Command() {
+    val actions = mapOf<String, CommandEvent.(List<String>) -> String>(
+        "exec-db" to {
+            "Database not connected."
+        },
+        "debug-interactions" to {
+            "Successful (POST): ${AbyssEngine.instance.interactions.successfulReceivedInteractionRequests}, failed (POST): ${AbyssEngine.instance.interactions.failedReceivedInteractionRequests}"
+        },
+        "generate-invite" to {
+            "<https://discord.com/api/oauth2/authorize?client_id=${AbyssEngine.instance.discordEngine.selfUser.id}&permissions=0&scope=bot%20applications.commands>"
+        },
+        "dump-interaction-json" to {
+            val command = AbyssEngine.instance.interactions.getAllCommands().filter { c ->
+                c::class.simpleName == it[0]
+            }[0]
+            "`${command::class.simpleName}`: ```json\n" + AbyssEngine.jsonEngine.write(command.toJsonMap()) + "```"
+        }
+    )
+
     init {
         name = "admin"
         hidden = true
         help = "The administrator command set."
-        children = arrayOf(
-            DebugPrintCommand(),
-            GenerateInviteLinkCommand(),
-            DumpInteractionJsonCommand(),
-            DumpInteractionInfoCommand(),
-            ExecuteDatabaseCommand()
-        )
         ownerCommand = true
     }
 
     override fun execute(event: CommandEvent?) {
-        event?.replySuccess("Available: `${children.map { it.name }.joinToString(", ")}`")
-    }
-
-    class ExecuteDatabaseCommand : Command() {
-        init {
-            name = "exec-db"
-            help = "Executes a database command."
-            ownerCommand = true
+        if (event == null) return
+        if (event.args.isNullOrEmpty()) {
+            return event.replySuccess("Available: `${actions.keys.joinToString(", ")}`")
         }
-
-        override fun execute(event: CommandEvent?) {
-            event?.replyError("Database not connected.")
+        val args = event.args.split(" ")
+        if (!actions.containsKey(args[0])) {
+            return event.replySuccess("Available: `${actions.keys.joinToString(", ")}`")
         }
-    }
+        val action = actions[args[0]]
+            ?: return event.replySuccess("Available: `${actions.keys.joinToString(", ")}`")
 
-    class DumpInteractionInfoCommand: Command() {
-        init {
-            name = "debug-interactions"
-            help = "Prints interactions debug information."
-            ownerCommand = true
-        }
+        val startTime = System.currentTimeMillis()
+        val response = action.invoke(event, args.drop(1))
+        val time = System.currentTimeMillis() - startTime
 
-        override fun execute(event: CommandEvent?) {
-            event?.replySuccess("Successful (POST): ${AbyssEngine.instance.interactions.successfulReceivedInteractionRequests}, failed (POST): ${AbyssEngine.instance.interactions.failedReceivedInteractionRequests}")
-        }
-    }
-
-    class DebugPrintCommand : Command() {
-        init {
-            name = "debug"
-            help = "Prints debug information."
-            ownerCommand = true
-        }
-
-        override fun execute(event: CommandEvent?) {
-            event?.replySuccess("Debug")
-        }
-    }
-
-    class GenerateInviteLinkCommand : Command() {
-        init {
-            name = "generate-invite"
-            help = "Generates an invite link for this bot instance."
-            ownerCommand = true
-        }
-
-        override fun execute(event: CommandEvent?) {
-            event?.replySuccess("<https://discord.com/api/oauth2/authorize?client_id=${AbyssEngine.instance.discordEngine.selfUser.id}&permissions=0&scope=bot%20applications.commands>")
-        }
-    }
-
-    class DumpInteractionJsonCommand : Command() {
-        init {
-            name = "dump-interaction-json"
-            help = "Dumps the JSON for an interaction."
-            ownerCommand = true
-        }
-
-        override fun execute(event: CommandEvent?) {
-            val command = AbyssEngine.instance.interactions.getAllCommands().filter {
-                it::class.simpleName == event?.args
-            }[0]
-            event?.replySuccess("`${command::class.simpleName}`: ```json\n" + AbyssEngine.jsonEngine.write(command.toJsonMap()) + "```")
-        }
+        val message = "Executed action `${args[0]}` in `${time}`ms.\n${response}"
+        event.replySuccess(message)
     }
 }
