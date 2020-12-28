@@ -1,12 +1,13 @@
 # 💚 Abyss
-A Discord bot, capable of both interactions (slash-commands) and gateway commands   
+A Discord bot, capable of both interactions (slash-commands) and gateway commands.  
+Command handling is built on top of the [Abyssal Command Engine](https://github.com/abyssal/command-engine).  
 Gateway handling is built with [JDA](https://github.com/DV8FromTheWorld/JDA) and the interactions server utilises [Ktor](https://github.com/ktorio/ktor) (on [Netty](https://ktor.io/docs/netty.html))
 
 <img src="https://i.imgur.com/DF1ZIs2.png" height="150" />
 
 | Prefix | Developer | Runtime | Library | Version | Platform | Invite |
 |-|-|-|-|-|-|-|
-| / | [Abyssal](https://github.com/abyssal) | JRE 1.8 | Custom & [JDA](https://github.com/DV8FromTheWorld/JDA) | 16.1 | Gradle | [Add me](https://abyss.abyssaldev.com/invite)
+| / | [Abyssal](https://github.com/abyssal) | JRE 1.8 | [ACE](https://github.com/abyssal/command-engine) & [JDA](https://github.com/DV8FromTheWorld/JDA) | 16.1 | Gradle | [Add me](https://abyss.abyssaldev.com/invite)
   
 ### 👮‍ Requirements
 - A [Discord bot application](https://discordapp.com/developers/applications/) with registered user and token (app -> Bot -> Add Bot)
