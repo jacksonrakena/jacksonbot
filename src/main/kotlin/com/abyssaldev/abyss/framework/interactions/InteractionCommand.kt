@@ -9,7 +9,7 @@ import java.util.*
 abstract class InteractionCommand: InteractionBase, CommandExecutable<InteractionCommandRequest>, Responder {
     open val options: Array<InteractionCommandOption> = emptyArray()
 
-    override suspend fun invoke(call: InteractionCommandRequest): MessageBuilder?
+    override suspend fun invoke(call: InteractionCommandRequest, rawArgs: List<Any>): MessageBuilder?
         = respond("There was an error processing your subcommand.")
 
     override fun toJsonMap(): HashMap<String, Any> = hashMapOf(

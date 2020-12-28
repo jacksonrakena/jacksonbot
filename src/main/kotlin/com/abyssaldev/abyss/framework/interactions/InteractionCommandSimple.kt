@@ -8,5 +8,5 @@ class InteractionCommandSimple(override val name: String,
                                override val options: Array<InteractionCommandOption>,
                                val onInvoke: InteractionCommandRequest.() -> MessageBuilder
 ) : InteractionCommand() {
-    override suspend fun invoke(call: InteractionCommandRequest): MessageBuilder = onInvoke(call)
+    override suspend fun invoke(call: InteractionCommandRequest, rawArgs: List<Any>): MessageBuilder = onInvoke(call)
 }

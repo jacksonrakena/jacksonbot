@@ -39,7 +39,7 @@ class ExchangeCommand : InteractionCommand() {
 
     val rateMap: HashMap<String, TimedCacheable.Suspended<ExchangeRateApiResponse>> = hashMapOf()
 
-    override suspend fun invoke(call: InteractionCommandRequest): MessageBuilder {
+    override suspend fun invoke(call: InteractionCommandRequest, rawArgs: List<Any>): MessageBuilder {
         val amount = call.args.named("amount").integer
         val from = call.args.named("from").string.toUpperCase()
         val to = call.args.named("to").string.toUpperCase()

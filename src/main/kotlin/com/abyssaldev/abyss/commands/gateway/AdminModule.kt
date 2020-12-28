@@ -1,12 +1,12 @@
 package com.abyssaldev.abyss.commands.gateway
 
 import com.abyssaldev.abyss.AbyssEngine
-import com.abyssaldev.abyss.framework.gateway.GatewayCommandRequest
 import com.abyssaldev.abyss.util.respondSuccess
 import com.abyssaldev.abyss.util.write
 import com.abyssaldev.abyssal_command_engine.framework.common.CommandModule
 import com.abyssaldev.abyssal_command_engine.framework.common.reflect.Name
-import com.abyssaldev.abyssal_command_engine.framework.gateway.reflect.GatewayCommand
+import com.abyssaldev.abyssal_command_engine.framework.gateway.GatewayCommandRequest
+import com.abyssaldev.abyssal_command_engine.framework.gateway.command.GatewayCommand
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.GlobalScope
@@ -36,15 +36,21 @@ class AdminModule: CommandModule() {
     )
 
     @GatewayCommand(
-        name = "admin",
-        description = "Provides administrative functions.",
-        isOwnerRestricted = true
+        name = "test",
+        description = "Test."
     )
-    fun invoke(call: GatewayCommandRequest): MessageBuilder = respond {
-        val actionName = call.args.ordinal(0)?.string
-        if (actionName.isNullOrEmpty()) {
+    fun invoke(call: GatewayCommandRequest, hello: String, world: Int) = respond {
+        setContent("hello=${hello} world=${world}")
+    }
+
+    @GatewayCommand(
+        name = "admin",
+        description = "Provides administrative functions."
+    )
+    fun invoke(call: GatewayCommandRequest, actionName: String): MessageBuilder = respond {
+        /*if (actionName.isNullOrEmpty()) {
             return@respond respondSuccess("Available: `${actions.keys.joinToString(", ")}`")
-        }
+        }*/
         val action = actions[actionName]
             ?: return@respond respondSuccess("Available: `${actions.keys.joinToString(", ")}`")
 

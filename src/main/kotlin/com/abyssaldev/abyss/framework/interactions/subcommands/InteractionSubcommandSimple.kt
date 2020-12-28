@@ -10,5 +10,5 @@ class InteractionSubcommandSimple(override val name: String,
                                   override val options: Array<InteractionCommandArgument>,
                                   val onInvoke: InteractionCommandRequest.() -> MessageBuilder
 ) : InteractionSubcommand(), JsonHashable {
-    override suspend fun invoke(call: InteractionCommandRequest): MessageBuilder = onInvoke(call)
+    override suspend fun invoke(call: InteractionCommandRequest, rawArgs: List<Any>): MessageBuilder = onInvoke(call)
 }
