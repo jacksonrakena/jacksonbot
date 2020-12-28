@@ -23,12 +23,10 @@ The project is broken down into the following domains:
 **Persistence**
 - 📜 `com.abyssaldev.abyss.persistence` This package contains Abyss' persistence logic, including its database connections.
 
-**Gateway, Interactions, and Commands**  
-- 🪐 `com.abyssaldev.abyss.framework.common` This package contains base classes for Abyss' command parsing and execution logic.
+**Commands**  
+- 🪐 `com.abyssaldev.abyss.commands.gateway` This package contains Abyss' default gateway (`/gw`) command set.
 - 🤝 `com.abyssaldev.abyss.framework.interactions` This handles Abyss' interactions (also known as "slash commands"), handled over REST.  
   - `com.abyssaldev.abyss.commands.interactions` This package contains Abyss' default interactions set.
-- 🌀 `com.abyssaldev.abyss.framework.gateway` This handles Abyss' traditional commands, served over the WebSocket.
-  - `com.abyssaldev.abyss.commands.gateway` This package contains Abyss' default command set.
   
 ### 🖋 Copyright
 Copyright (c) 2018-2021 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
