@@ -1,8 +1,8 @@
 package com.abyssaldev.abyss.framework.interactions
 
-import com.abyssaldev.abyss.framework.common.ArgumentSet
-import com.abyssaldev.abyss.framework.common.CommandRequest
 import com.abyssaldev.abyss.framework.interactions.models.Interaction
+import com.abyssaldev.abyssal_command_engine.framework.common.ArgumentSet
+import com.abyssaldev.abyssal_command_engine.framework.common.CommandRequest
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
@@ -20,6 +20,10 @@ class InteractionCommandRequest(
 ) : CommandRequest() {
     override val args: ArgumentSet.Named by lazy {
         ArgumentSet.Named(rawArgsNamed, this)
+    }
+
+    override val botMember: Member by lazy {
+        guild.getMemberById(user.id)!!
     }
 
     companion object {

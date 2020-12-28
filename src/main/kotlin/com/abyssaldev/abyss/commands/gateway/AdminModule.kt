@@ -1,12 +1,12 @@
 package com.abyssaldev.abyss.commands.gateway
 
 import com.abyssaldev.abyss.AbyssEngine
-import com.abyssaldev.abyss.framework.common.CommandModule
-import com.abyssaldev.abyss.framework.common.reflect.Name
 import com.abyssaldev.abyss.framework.gateway.GatewayCommandRequest
-import com.abyssaldev.abyss.framework.gateway.reflect.GatewayCommand
 import com.abyssaldev.abyss.util.respondSuccess
 import com.abyssaldev.abyss.util.write
+import com.abyssaldev.abyssal_command_engine.framework.common.CommandModule
+import com.abyssaldev.abyssal_command_engine.framework.common.reflect.Name
+import com.abyssaldev.abyssal_command_engine.framework.gateway.reflect.GatewayCommand
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.GlobalScope
@@ -49,7 +49,7 @@ class AdminModule: CommandModule() {
             ?: return@respond respondSuccess("Available: `${actions.keys.joinToString(", ")}`")
 
         val startTime = System.currentTimeMillis()
-        val response = action.invoke(call, call.args.argSet.drop(1))
+        val response = action.invoke(call, call.args.asList().drop(1))
         val time = System.currentTimeMillis() - startTime
 
         val message = "Executed action `${actionName}` in `${time}`ms.\n${response}"

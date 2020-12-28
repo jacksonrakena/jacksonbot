@@ -2,11 +2,12 @@ package com.abyssaldev.abyss
 
 import com.abyssaldev.abyss.commands.gateway.AdminModule
 import com.abyssaldev.abyss.commands.interactions.*
-import com.abyssaldev.abyss.framework.gateway.GatewayController
 import com.abyssaldev.abyss.framework.interactions.InteractionController
 import com.abyssaldev.abyss.framework.interactions.http.DiscordInteractionRouting.Companion.discordInteractionRouting
 import com.abyssaldev.abyss.http.IndexRouting.Companion.indexRouting
 import com.abyssaldev.abyss.util.Loggable
+import com.abyssaldev.abyssal_command_engine.framework.gateway.CommandEngine
+import com.abyssaldev.abyssal_command_engine.framework.gateway.prefix.StaticPrefixStrategy
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -52,7 +53,7 @@ class AbyssEngine private constructor() : Loggable {
     val interactions: InteractionController = InteractionController()
 
     // Handles gateway (WebSocket) messages and commands
-    val gateway: GatewayController = GatewayController()
+    val commandEngine: CommandEngine
 
     // HTTP server for Discord interactions and web API/control panel
     val httpServerEngine: NettyApplicationEngine
@@ -89,13 +90,19 @@ class AbyssEngine private constructor() : Loggable {
             }
         }
 
+        commandEngine = CommandEngine.Builder().apply {
+            setPrefixStrategy(StaticPrefixStrategy(AppConfig.instance.discord.gatewayPrefix))
+            setOwnerId(AppConfig.instance.discord.ownerId)
+            addModules(AdminModule())
+        }.build()
+
         discordEngineBuilder = JDABuilder
             .createDefault(AppConfig.instance.discord.botToken, EnumSet.allOf(GatewayIntent::class.java))
             .apply {
                 setActivity(globalActivity)
                 setMemberCachePolicy(MemberCachePolicy.ALL)
                 setChunkingFilter(ChunkingFilter.ALL)
-                gateway.applyListeners(this)
+                addEventListeners(commandEngine, DiscordReadyListenerAdapter())
             }
 
         Runtime.getRuntime().addShutdownHook(Thread {
@@ -121,11 +128,6 @@ class AbyssEngine private constructor() : Loggable {
                 DiceCommand(),
                 ExchangeCommand()
             )
-
-            gateway.addModules(listOf(
-                AdminModule()
-            ))
-            gateway.addCommandsAutomatically()
         }
         logger.info("Listening for Discord interactions at http://${httpServerEngine.environment.connectors[0].host}:${httpServerEngine.environment.connectors[0].port}${AppConfig.instance.web.interactionsRoute}")
         logger.info("Added all commands to registration queue.")

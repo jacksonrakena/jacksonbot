@@ -2,7 +2,6 @@ package com.abyssaldev.abyss.framework.interactions
 
 import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.AppConfig
-import com.abyssaldev.abyss.framework.common.CommandExecutable
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandArgumentChoice
 import com.abyssaldev.abyss.framework.interactions.models.Interaction
 import com.abyssaldev.abyss.framework.interactions.subcommands.InteractionSubcommand
@@ -10,6 +9,7 @@ import com.abyssaldev.abyss.framework.interactions.subcommands.InteractionSubcom
 import com.abyssaldev.abyss.util.Loggable
 import com.abyssaldev.abyss.util.trySendMessage
 import com.abyssaldev.abyss.util.write
+import com.abyssaldev.abyssal_command_engine.framework.common.CommandExecutable
 import io.ktor.client.request.*
 import io.ktor.http.*
 

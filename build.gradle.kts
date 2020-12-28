@@ -28,10 +28,6 @@ val logbackVersion = "1.3.0-alpha5"
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-apache:$ktorVersion")
-    implementation("io.ktor:ktor-client-json:$ktorVersion")
-    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
@@ -40,6 +36,14 @@ dependencies {
     implementation("org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion")
     implementation("org.apache.commons:commons-lang3:3.11")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    implementation("org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion")
+
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    implementation("io.ktor:ktor-client-json:$ktorVersion")
+    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
+
+    implementation(fileTree("libs"))
 }
 
 application {
