@@ -1,8 +1,8 @@
 package com.abyssaldev.abyss.framework.interactions
 
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandOption
-import com.abyssaldev.abyssal_command_engine.framework.common.CommandExecutable
-import com.abyssaldev.abyssal_command_engine.framework.common.Responder
+import com.abyssaldev.commands.framework.common.CommandExecutable
+import com.abyssaldev.commands.framework.common.Responder
 import net.dv8tion.jda.api.MessageBuilder
 import java.util.*
 

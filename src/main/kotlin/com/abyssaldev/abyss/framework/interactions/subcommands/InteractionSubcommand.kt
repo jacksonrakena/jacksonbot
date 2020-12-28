@@ -4,7 +4,7 @@ import com.abyssaldev.abyss.framework.interactions.InteractionCommandRequest
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandArgument
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandArgumentType
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandOption
-import com.abyssaldev.abyssal_command_engine.framework.common.CommandExecutable
+import com.abyssaldev.commands.framework.common.CommandExecutable
 import java.util.*
 
 abstract class InteractionSubcommand: InteractionCommandOption, CommandExecutable<InteractionCommandRequest> {

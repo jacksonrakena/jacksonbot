@@ -3,10 +3,10 @@ package com.abyssaldev.abyss.commands.gateway
 import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.util.respondSuccess
 import com.abyssaldev.abyss.util.write
-import com.abyssaldev.abyssal_command_engine.framework.common.CommandModule
-import com.abyssaldev.abyssal_command_engine.framework.common.reflect.Name
-import com.abyssaldev.abyssal_command_engine.framework.gateway.GatewayCommandRequest
-import com.abyssaldev.abyssal_command_engine.framework.gateway.command.GatewayCommand
+import com.abyssaldev.commands.framework.common.CommandModule
+import com.abyssaldev.commands.framework.common.reflect.Name
+import com.abyssaldev.commands.framework.gateway.GatewayCommandRequest
+import com.abyssaldev.commands.framework.gateway.command.GatewayCommand
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.GlobalScope
