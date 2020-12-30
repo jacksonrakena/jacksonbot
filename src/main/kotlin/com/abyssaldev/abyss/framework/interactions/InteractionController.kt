@@ -9,7 +9,7 @@ import com.abyssaldev.abyss.framework.interactions.subcommands.InteractionSubcom
 import com.abyssaldev.abyss.util.Loggable
 import com.abyssaldev.abyss.util.trySendMessage
 import com.abyssaldev.abyss.util.write
-import com.abyssaldev.commands.framework.common.CommandExecutable
+import com.abyssaldev.commands.common.CommandExecutable
 import io.ktor.client.request.*
 import io.ktor.http.*
 

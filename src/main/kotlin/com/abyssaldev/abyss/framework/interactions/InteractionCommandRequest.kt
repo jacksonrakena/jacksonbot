@@ -1,8 +1,8 @@
 package com.abyssaldev.abyss.framework.interactions
 
 import com.abyssaldev.abyss.framework.interactions.models.Interaction
-import com.abyssaldev.commands.framework.common.ArgumentSet
-import com.abyssaldev.commands.framework.common.CommandRequest
+import com.abyssaldev.commands.common.ArgumentSet
+import com.abyssaldev.commands.common.CommandRequest
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member

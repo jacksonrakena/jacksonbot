@@ -3,15 +3,18 @@ package com.abyssaldev.abyss.commands.gateway
 import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.util.respondSuccess
 import com.abyssaldev.abyss.util.write
-import com.abyssaldev.commands.framework.common.CommandModule
-import com.abyssaldev.commands.framework.common.reflect.Name
-import com.abyssaldev.commands.framework.gateway.GatewayCommandRequest
-import com.abyssaldev.commands.framework.gateway.command.GatewayCommand
+import com.abyssaldev.commands.common.CommandModule
+import com.abyssaldev.commands.common.reflect.Name
+import com.abyssaldev.commands.gateway.GatewayCommandRequest
+import com.abyssaldev.commands.gateway.command.GatewayCommand
+import com.abyssaldev.commands.gateway.contracts.ArgumentContract
+import com.abyssaldev.commands.gateway.contracts.impl.DefaultArgumentContracts
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.MessageBuilder
+import net.dv8tion.jda.api.entities.Member
 import java.time.Instant
 import kotlin.reflect.jvm.jvmName
 
@@ -32,6 +35,9 @@ class AdminModule: CommandModule() {
                 c::class.simpleName == it[0]
             }[0]
             "`${command::class.jvmName}`: ```json\n" + AbyssEngine.jsonEngine.write(command.toJsonMap()) + "```"
+        },
+        "throwex" to {
+            throw Error("Yeet.")
         }
     )
 
@@ -39,7 +45,7 @@ class AdminModule: CommandModule() {
         name = "test",
         description = "Test."
     )
-    fun invoke(call: GatewayCommandRequest, hello: String, world: Int) = respond {
+    fun invoke(call: GatewayCommandRequest, @ArgumentContract(DefaultArgumentContracts.NOT_CALLER) hello: Member, world: Int) = respond {
         setContent("hello=${hello} world=${world}")
     }
 
