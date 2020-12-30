@@ -16,6 +16,13 @@ class IndexRouting {
                     )
                 }
 
+                get("/discord") {
+                    return@get call.respondRedirect(
+                        "https://discord.gg/KACyc4XS7X",
+                        permanent = false
+                    )
+                }
+
                 get("/") {
                     return@get call.respondRedirect(
                         "https://github.com/abyssal/abyss",
