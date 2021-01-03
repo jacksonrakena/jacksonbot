@@ -6,7 +6,7 @@ import com.abyssaldev.abyss.framework.interactions.InteractionController
 import com.abyssaldev.abyss.framework.interactions.http.DiscordInteractionRouting.Companion.discordInteractionRouting
 import com.abyssaldev.abyss.http.IndexRouting.Companion.indexRouting
 import com.abyssaldev.abyss.util.Loggable
-import com.abyssaldev.commands.gateway.CommandEngine
+import com.abyssaldev.commands.CommandEngine
 import com.abyssaldev.commands.gateway.prefix.StaticPrefixStrategy
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper

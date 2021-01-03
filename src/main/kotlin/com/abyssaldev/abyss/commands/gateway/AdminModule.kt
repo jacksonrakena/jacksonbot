@@ -61,7 +61,7 @@ class AdminModule: CommandModule() {
             ?: return@respond respondSuccess("Available: `${actions.keys.joinToString(", ")}`")
 
         val startTime = System.currentTimeMillis()
-        val response = action.invoke(call, call.args.asList().drop(1))
+        val response = action.invoke(call, call.rawArgs.drop(1))
         val time = System.currentTimeMillis() - startTime
 
         val message = "Executed action `${actionName}` in `${time}`ms.\n${response}"
