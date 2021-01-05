@@ -4,6 +4,7 @@ import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.AppConfig
 import com.abyssaldev.abyss.framework.interactions.InteractionCommand
 import com.abyssaldev.abyss.framework.interactions.InteractionCommandRequest
+import com.abyssaldev.abyss.framework.interactions.InteractionCommandResponse
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandArgument
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandArgumentType
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandOption
@@ -11,7 +12,6 @@ import com.abyssaldev.abyss.util.TimedCacheable
 import com.abyssaldev.abyss.util.round
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.ktor.client.request.*
-import net.dv8tion.jda.api.MessageBuilder
 import java.time.Duration
 import java.time.Instant
 
@@ -39,8 +39,8 @@ class ExchangeCommand : InteractionCommand() {
 
     val rateMap: HashMap<String, TimedCacheable.Suspended<ExchangeRateApiResponse>> = hashMapOf()
 
-    override suspend fun invoke(call: InteractionCommandRequest, rawArgs: List<Any>): MessageBuilder {
-        val amount = call.args.named("amount").integer
+    override suspend fun invoke(call: InteractionCommandRequest, rawArgs: List<Any>): InteractionCommandResponse {
+        val amount = call.args.named("amount").integer!!
         val from = call.args.named("from").string.toUpperCase()
         val to = call.args.named("to").string.toUpperCase()
 

@@ -9,7 +9,7 @@ import com.abyssaldev.abyss.framework.interactions.subcommands.InteractionSubcom
 import com.abyssaldev.abyss.util.Loggable
 import com.abyssaldev.abyss.util.trySendMessage
 import com.abyssaldev.abyss.util.write
-import com.abyssaldev.commands.common.CommandExecutable
+import com.abyssaldev.rowi.core.CommandExecutable
 import io.ktor.client.request.*
 import io.ktor.http.*
 
@@ -113,7 +113,7 @@ class InteractionController: Loggable {
             )
             val message = executable.invoke(interactionRequest, listOf())
             if (message != null) {
-                AbyssEngine.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage(message.build())
+                AbyssEngine.instance.discordEngine.getTextChannelById(channelId)?.trySendMessage((message as InteractionCommandResponse).message.build())
             }
         } catch (e: Throwable) {
             logger.error("Error thrown while processing ${if (executable is InteractionSubcommand) { "sub" } else {""}}command ${command.name}", e)

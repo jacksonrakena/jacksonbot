@@ -2,10 +2,10 @@ package com.abyssaldev.abyss.commands.interactions
 
 import com.abyssaldev.abyss.framework.interactions.InteractionCommand
 import com.abyssaldev.abyss.framework.interactions.InteractionCommandRequest
+import com.abyssaldev.abyss.framework.interactions.InteractionCommandResponse
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandArgument
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandArgumentType
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandOption
-import net.dv8tion.jda.api.MessageBuilder
 import kotlin.random.Random
 
 class DiceCommand : InteractionCommand() {
@@ -27,9 +27,9 @@ class DiceCommand : InteractionCommand() {
         )
     )
 
-    override suspend fun invoke(call: InteractionCommandRequest, rawArgs: List<Any>): MessageBuilder = respond {
-        val sides = call.args.named("number_of_sides").integer
-        val count = call.args.named("number_of_dice").integer
+    override suspend fun invoke(call: InteractionCommandRequest, rawArgs: List<Any>): InteractionCommandResponse = respond {
+        val sides = call.args.named("number_of_sides").integer!!
+        val count = call.args.named("number_of_dice").integer!!
 
         if (sides <= 1 || count > 30 || count < 1 || sides > 30) {
             appendLine("I can only roll 1-30 dice, each with 2-30 sides.")

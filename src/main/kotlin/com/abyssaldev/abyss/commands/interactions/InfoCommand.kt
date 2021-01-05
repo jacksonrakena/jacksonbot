@@ -5,6 +5,8 @@ import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandA
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandArgumentType
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandOption
 import com.abyssaldev.abyss.framework.interactions.subcommands.InteractionSubcommandSimple
+import com.abyssaldev.rowi.jda.role
+import com.abyssaldev.rowi.jda.user
 
 class InfoCommand : InteractionCommand() {
     override val name = "info"

@@ -3,7 +3,7 @@ package com.abyssaldev.abyss.commands.interactions
 import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.framework.interactions.InteractionCommand
 import com.abyssaldev.abyss.framework.interactions.InteractionCommandRequest
-import net.dv8tion.jda.api.MessageBuilder
+import com.abyssaldev.abyss.framework.interactions.InteractionCommandResponse
 import org.apache.commons.lang3.time.DurationFormatUtils
 import java.lang.management.ManagementFactory
 
@@ -11,7 +11,7 @@ class AboutCommand : InteractionCommand() {
     override val name = "about"
     override val description: String = "Shows some information about me."
 
-    override suspend fun invoke(call: InteractionCommandRequest, rawArgs: List<Any>): MessageBuilder = respondEmbed {
+    override suspend fun invoke(call: InteractionCommandRequest, rawArgs: List<Any>): InteractionCommandResponse = respondEmbed {
         setTitle("About")
         appendDescriptionLine("I'm Abyss, and I'm running on a new Discord platform: 'slash commands'.")
         appendDescriptionLine("What this means is that you can see my commands on your screen by typing `/`.")

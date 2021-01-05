@@ -7,13 +7,13 @@ import com.abyssaldev.rowi.core.contracts.ArgumentContract
 import com.abyssaldev.rowi.core.reflect.Command
 import com.abyssaldev.rowi.core.reflect.Name
 import com.abyssaldev.rowi.jda.JdaCommandRequest
+import com.abyssaldev.rowi.jda.JdaCommandResponse
 import com.abyssaldev.rowi.jda.JdaModule
 import com.abyssaldev.rowi.jda.impl.NotCallerContract
-import io.ktor.client.features.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import net.dv8tion.jda.api.MessageBuilder
+import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Member
 import java.time.Instant
 import kotlin.reflect.jvm.jvmName
@@ -53,19 +53,17 @@ class AdminModule: JdaModule() {
         name = "admin",
         description = "Provides administrative functions."
     )
-    fun invoke(call: JdaCommandRequest, actionName: String): MessageBuilder = respond {
-        /*if (actionName.isNullOrEmpty()) {
-            return@respond respondSuccess("Available: `${actions.keys.joinToString(", ")}`")
-        }*/
-        val action = actions[actionName]
-            ?: return@respond respondSuccess("Available: `${actions.keys.joinToString(", ")}`")
+    fun invoke(call: JdaCommandRequest, actionName: String): JdaCommandResponse = respond {
+        if (actions.containsKey(actionName)) {
+            val action = actions[actionName]!!
+            val startTime = System.currentTimeMillis()
+            val response = action.invoke(call, call.rawArgs.drop(1))
+            val time = System.currentTimeMillis() - startTime
 
-        val startTime = System.currentTimeMillis()
-        val response = action.invoke(call, call.rawArgs.drop(1))
-        val time = System.currentTimeMillis() - startTime
-
-        val message = "Executed action `${actionName}` in `${time}`ms.\n${response}"
-        return@respond respondSuccess(message)
+            respondSuccess("Executed action `${actionName}` in `${time}`ms.\n${response}")
+        } else {
+            respondSuccess("Available: `${actions.keys.joinToString(", ")}`")
+        }
     }
 
     @Command(
@@ -91,12 +89,11 @@ class AdminModule: JdaModule() {
                 AbyssEngine.instance.httpClientEngine.get<String>("https://live.abyssaldev.com/api/v1/hello") {}
                 message.appendLine(":blue_heart: **Internet - Abyssal Services:** ${(System.currentTimeMillis() - acsStartTime)}ms")
                 it.delete().queue()
-                it.channel.sendMessage(respondEmbed {
+                it.channel.sendMessage(EmbedBuilder().apply {
                     setTitle("Pong!")
                     setDescription(message.toString())
                     setTimestamp(Instant.now())
-                }.apply { setContent("") }.build()).queue()
-
+                }.build()).queue()
             }
         }
     }
