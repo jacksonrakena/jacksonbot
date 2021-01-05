@@ -3,6 +3,8 @@ package com.abyssaldev.abyss.framework.interactions
 import com.abyssaldev.abyss.framework.interactions.arguments.InteractionCommandOption
 import com.abyssaldev.commands.common.CommandExecutable
 import com.abyssaldev.commands.common.Responder
+import com.abyssaldev.rowi.core.CommandExecutable
+import com.abyssaldev.rowi.jda.Responder
 import net.dv8tion.jda.api.MessageBuilder
 import java.util.*
 

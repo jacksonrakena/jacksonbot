@@ -2,9 +2,9 @@ package com.abyssaldev.abyss
 
 import com.abyssaldev.abyss.requests.AbyssCommandRequest
 import com.abyssaldev.abyss.util.Loggable
-import com.abyssaldev.commands.gateway.results.CommandExceptionResult
-import com.abyssaldev.commands.gateway.results.CommandNotFoundResult
-import com.abyssaldev.commands.gateway.results.NotEnoughParametersResult
+import com.abyssaldev.rowi.core.results.CommandExceptionResult
+import com.abyssaldev.rowi.core.results.CommandNotFoundResult
+import com.abyssaldev.rowi.core.results.NotEnoughParametersResult
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.events.ReadyEvent

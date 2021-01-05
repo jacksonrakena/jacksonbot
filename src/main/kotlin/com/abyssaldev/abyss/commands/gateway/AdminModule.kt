@@ -3,12 +3,12 @@ package com.abyssaldev.abyss.commands.gateway
 import com.abyssaldev.abyss.AbyssEngine
 import com.abyssaldev.abyss.util.respondSuccess
 import com.abyssaldev.abyss.util.write
-import com.abyssaldev.commands.common.CommandModule
-import com.abyssaldev.commands.common.reflect.Name
-import com.abyssaldev.commands.gateway.GatewayCommandRequest
-import com.abyssaldev.commands.gateway.command.GatewayCommand
-import com.abyssaldev.commands.gateway.contracts.ArgumentContract
-import com.abyssaldev.commands.gateway.contracts.impl.DefaultArgumentContracts
+import com.abyssaldev.rowi.core.contracts.ArgumentContract
+import com.abyssaldev.rowi.core.reflect.Command
+import com.abyssaldev.rowi.core.reflect.Name
+import com.abyssaldev.rowi.jda.JdaCommandRequest
+import com.abyssaldev.rowi.jda.JdaModule
+import com.abyssaldev.rowi.jda.impl.NotCallerContract
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.GlobalScope
@@ -19,8 +19,8 @@ import java.time.Instant
 import kotlin.reflect.jvm.jvmName
 
 @Name("Admin")
-class AdminModule: CommandModule() {
-    private val actions = mapOf<String, GatewayCommandRequest.(List<String>) -> String>(
+class AdminModule: JdaModule() {
+    private val actions = mapOf<String, JdaCommandRequest.(List<String>) -> String>(
         "exec-db" to {
             "Database not connected."
         },
@@ -41,19 +41,19 @@ class AdminModule: CommandModule() {
         }
     )
 
-    @GatewayCommand(
+    @Command(
         name = "test",
         description = "Test."
     )
-    fun invoke(call: GatewayCommandRequest, @ArgumentContract(DefaultArgumentContracts.NOT_CALLER) hello: Member, world: Int) = respond {
+    fun invoke(call: JdaCommandRequest, @ArgumentContract(NotCallerContract.id) hello: Member, world: Int) = respond {
         setContent("hello=${hello} world=${world}")
     }
 
-    @GatewayCommand(
+    @Command(
         name = "admin",
         description = "Provides administrative functions."
     )
-    fun invoke(call: GatewayCommandRequest, actionName: String): MessageBuilder = respond {
+    fun invoke(call: JdaCommandRequest, actionName: String): MessageBuilder = respond {
         /*if (actionName.isNullOrEmpty()) {
             return@respond respondSuccess("Available: `${actions.keys.joinToString(", ")}`")
         }*/
@@ -68,11 +68,11 @@ class AdminModule: CommandModule() {
         return@respond respondSuccess(message)
     }
 
-    @GatewayCommand(
+    @Command(
         name = "ping",
         description = "Pong."
     )
-    fun pingCommand(call: GatewayCommandRequest) {
+    fun pingCommand(call: JdaCommandRequest) {
         val message = StringBuilder().apply {
             appendLine(":handshake: **Gateway:** ${AbyssEngine.instance.discordEngine.gatewayPing}ms")
         }

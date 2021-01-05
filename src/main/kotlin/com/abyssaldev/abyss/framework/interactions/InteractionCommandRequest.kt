@@ -1,8 +1,8 @@
 package com.abyssaldev.abyss.framework.interactions
 
 import com.abyssaldev.abyss.framework.interactions.models.Interaction
-import com.abyssaldev.commands.common.ArgumentSet
-import com.abyssaldev.commands.common.CommandRequest
+import com.abyssaldev.rowi.core.ArgumentSet
+import com.abyssaldev.rowi.core.CommandRequest
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
@@ -10,19 +10,21 @@ import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.User
 
 class InteractionCommandRequest(
-    override val guild: Guild,
-    override val channel: TextChannel,
-    override val member: Member,
-    override val user: User,
+    val guild: Guild,
+    val channel: TextChannel,
+    val member: Member,
+    val user: User,
     override val rawArgs: List<String>,
-    override val jda: JDA,
-    val rawArgsNamed: HashMap<String, String>
+    val jda: JDA,
+    val rawArgsNamed: HashMap<String, String>,
+    override val flags: MutableList<String> = mutableListOf(),
+    override var rawString: String = ""
 ) : CommandRequest() {
-    override val args: ArgumentSet.Named by lazy {
+    val args: ArgumentSet.Named by lazy {
         ArgumentSet.Named(rawArgsNamed, this)
     }
 
-    override val botMember: Member by lazy {
+    val botMember: Member by lazy {
         guild.getMemberById(user.id)!!
     }
 

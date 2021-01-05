@@ -1,7 +1,7 @@
 package com.abyssaldev.abyss.framework.interactions
 
 import com.abyssaldev.abyss.util.JsonHashable
-import com.abyssaldev.commands.common.CommandBase
+import com.abyssaldev.rowi.core.CommandBase
 import com.fasterxml.jackson.annotation.JsonIgnore
 
 interface InteractionBase: CommandBase, JsonHashable {

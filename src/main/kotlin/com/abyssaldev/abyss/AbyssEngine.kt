@@ -6,7 +6,8 @@ import com.abyssaldev.abyss.framework.interactions.InteractionController
 import com.abyssaldev.abyss.framework.interactions.http.DiscordInteractionRouting.Companion.discordInteractionRouting
 import com.abyssaldev.abyss.http.IndexRouting.Companion.indexRouting
 import com.abyssaldev.abyss.util.Loggable
-import com.abyssaldev.commands.CommandEngine
+import com.abyssaldev.rowi.core.CommandEngine
+import com.abyssaldev.rowi.jda.RowiJdaIntegration
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -93,8 +94,8 @@ class AbyssEngine private constructor() : Loggable {
         }
 
         commandEngine = CommandEngine.Builder().apply {
-            setOwnerId(AppConfig.instance.discord.ownerId)
             addModules(AdminModule())
+            install<RowiJdaIntegration>()
         }.build()
 
         discordEngineBuilder = JDABuilder
