@@ -7,7 +7,6 @@ import com.abyssaldev.abyss.framework.interactions.http.DiscordInteractionRoutin
 import com.abyssaldev.abyss.http.IndexRouting.Companion.indexRouting
 import com.abyssaldev.abyss.util.Loggable
 import com.abyssaldev.commands.CommandEngine
-import com.abyssaldev.commands.gateway.prefix.StaticPrefixStrategy
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -61,6 +60,9 @@ class AbyssEngine private constructor() : Loggable {
     // HTTP client for Discord interactions and some commands
     val httpClientEngine: HttpClient
 
+    // Discord event listener
+    val listenerAdapter = AbyssListenerAdapter(this)
+
     // Discord engine for gateway presence
     lateinit var discordEngine: JDA
     private val discordEngineBuilder: JDABuilder
@@ -91,7 +93,6 @@ class AbyssEngine private constructor() : Loggable {
         }
 
         commandEngine = CommandEngine.Builder().apply {
-            setPrefixStrategy(StaticPrefixStrategy(AppConfig.instance.discord.gatewayPrefix))
             setOwnerId(AppConfig.instance.discord.ownerId)
             addModules(AdminModule())
         }.build()
@@ -102,7 +103,7 @@ class AbyssEngine private constructor() : Loggable {
                 setActivity(globalActivity)
                 setMemberCachePolicy(MemberCachePolicy.ALL)
                 setChunkingFilter(ChunkingFilter.ALL)
-                addEventListeners(commandEngine, DiscordReadyListenerAdapter())
+                addEventListeners(listenerAdapter)
             }
 
         Runtime.getRuntime().addShutdownHook(Thread {

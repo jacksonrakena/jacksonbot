@@ -5,7 +5,6 @@ import com.abyssaldev.abyss.util.respondSuccess
 import com.abyssaldev.abyss.util.write
 import com.abyssaldev.commands.common.CommandModule
 import com.abyssaldev.commands.common.reflect.Name
-import com.abyssaldev.commands.common.reflect.Remainder
 import com.abyssaldev.commands.gateway.GatewayCommandRequest
 import com.abyssaldev.commands.gateway.command.GatewayCommand
 import com.abyssaldev.commands.gateway.contracts.ArgumentContract
@@ -41,19 +40,6 @@ class AdminModule: CommandModule() {
             throw Error("Yeet.")
         }
     )
-
-    @GatewayCommand(
-        name = "runas",
-        description = "Runs a command string as a user."
-    )
-    suspend fun runAsUser(call: GatewayCommandRequest, @ArgumentContract(DefaultArgumentContracts.NOT_CALLER) runAs: Member, @Remainder content: String): MessageBuilder {
-        val timeStart = System.currentTimeMillis()
-        val result = AbyssEngine.instance.commandEngine.execute(
-            content,
-            GatewayCommandRequest(call.guild, call.channel, runAs, runAs.user, call.jda, call.message)
-        )
-        return respond("Returned `${result.javaClass.name}` in `${System.currentTimeMillis() - timeStart}`ms.\n${result.reason ?: ""}")
-    }
 
     @GatewayCommand(
         name = "test",
