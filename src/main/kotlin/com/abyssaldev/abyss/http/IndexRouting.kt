@@ -2,6 +2,7 @@ package com.abyssaldev.abyss.http
 
 import com.abyssaldev.abyss.AbyssEngine
 import io.ktor.application.*
+import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 
@@ -28,6 +29,12 @@ class IndexRouting {
                         "https://github.com/abyssal/abyss",
                         permanent = false
                     )
+                }
+
+                get("/teapot") {
+                    return@get call.respond(HttpStatusCode(418, "I'm a teapot"), hashMapOf(
+                        "message" to "I'm a teapot."
+                    ))
                 }
             }
         }

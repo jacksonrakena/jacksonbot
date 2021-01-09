@@ -1,6 +1,7 @@
 package com.abyssaldev.abyss
 
 import com.abyssaldev.abyss.commands.gateway.AdminModule
+import com.abyssaldev.abyss.commands.gateway.UtilModule
 import com.abyssaldev.abyss.commands.interactions.*
 import com.abyssaldev.abyss.framework.interactions.InteractionController
 import com.abyssaldev.abyss.framework.interactions.http.DiscordInteractionRouting.Companion.discordInteractionRouting
@@ -94,7 +95,7 @@ class AbyssEngine private constructor() : Loggable {
         }
 
         commandEngine = CommandEngine.Builder().apply {
-            addModules(AdminModule())
+            addModules(AdminModule(), UtilModule())
             install<RowiJdaIntegration>()
         }.build()
 
