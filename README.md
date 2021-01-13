@@ -1,7 +1,8 @@
 # 💚 Abyss
 A Discord bot, capable of both interactions (slash-commands) and gateway commands.  
-Command handling is built on top of the [Abyssal Command Engine](https://github.com/abyssal/command-engine).  
-Gateway handling is built with [JDA](https://github.com/DV8FromTheWorld/JDA) and the interactions server utilises [Ktor](https://github.com/ktorio/ktor) (on [Netty](https://ktor.io/docs/netty.html))
+Command handling is built on top of the [Rowi & Rowi-JDA](https://github.com/abyssal/rowi).  
+Gateway handling is built with [JDA](https://github.com/DV8FromTheWorld/JDA) and the interactions server utilises [Ktor](https://github.com/ktorio/ktor) (on [Netty](https://ktor.io/docs/netty.html))  
+Mesh communication is powered by [Pixie](https://github.com/abyssal/pixie).
 
 <img src="https://i.imgur.com/DF1ZIs2.png" height="150" />
 
