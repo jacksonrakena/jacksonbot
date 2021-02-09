@@ -24,8 +24,8 @@ class AboutCommand : InteractionCommand() {
         )
         addField("Version", "16.1.0 (Production)", true)
         addField("Runtime", "JRE ${System.getProperty("java.version")}/Kotlin ${KotlinVersion.CURRENT}", true)
-        addField("Add me", "https://abyss.abyssaldev.com/invite", true)
-        addField("Source & Issue Tracker", "https://abyss.abyssaldev.com/", true)
+        addField("Add me", "https://bot.abyssal.gg/invite", true)
+        addField("Source & Issue Tracker", "https://bot.abyssal.gg/", true)
         setFooter("© 2021 - An Abyssal production", AbyssEngine.instance.discordEngine.selfUser.effectiveAvatarUrl)
     }
 }
