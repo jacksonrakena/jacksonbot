@@ -5,5 +5,16 @@
 *.iml
 *.ipr
 *.iws
+bin/
+obj/
 appconfig.json
 abyss_update
+abyss_restart
+abyssctl
+lamentctl
+lament
+lament_update
+lament_restart
+lamentconfig.json
+lamentsettings.json
+lament.json
