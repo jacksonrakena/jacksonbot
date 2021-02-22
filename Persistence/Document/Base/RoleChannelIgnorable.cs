@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Disqord;
-using Lament.Extensions;
 
 namespace Lament.Persistence.Document
 {
@@ -12,12 +11,12 @@ namespace Lament.Persistence.Document
         
         public IEnumerable<CachedTextChannel> GetIgnoredChannels(CachedGuild guild)
         {
-            return IgnoredChannels.ToSnowflakes().Select(guild.GetTextChannel);
+            return IgnoredChannels.Select(channelUlong => guild.GetTextChannel(channelUlong));
         }
 
         public IEnumerable<CachedRole> GetIgnoredRoles(CachedGuild guild)
         {
-            return IgnoredRoles.ToSnowflakes().Select(guild.GetRole);
+            return IgnoredRoles.Select(roleUlong => guild.GetRole(roleUlong));
         }
     }
 }
