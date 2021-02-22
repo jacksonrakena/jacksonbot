@@ -7,5 +7,7 @@ namespace Lament
         public const string DEFAULT_RUNTIME_ENVIRONMENT = "Development";
 
         public const string CONFIGURATION_FILENAME = "lament.appsettings.json";
+
+        public const string DEFAULT_GUILD_MESSAGE_PREFIX = "++";
     }
 }

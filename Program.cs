@@ -1,7 +1,16 @@
 ﻿using System;
+using Disqord;
+using Disqord.Bot;
+using Disqord.Bot.Prefixes;
+using Lament.Discord;
+using Lament.Persistence;
+using Lament.Persistence.Relational;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Qmmands;
 using Serilog;
 using Serilog.Events;
 
@@ -59,7 +68,25 @@ namespace Lament
 
         private static void ConfigureServices(HostBuilderContext builderContext, IServiceCollection serviceCollection)
         {
-            
+            serviceCollection
+                .AddMemoryCache()
+                .AddDbContext<LamentPersistenceContext>(options =>
+                {
+                    options.UseNpgsql(builderContext.Configuration.GetConnectionString("Database"));
+                })
+                .AddSingleton<IPrefixProvider, LamentPrefixProvider>()
+                .AddSingleton(services => new DiscordBotConfiguration
+                {
+                    ProviderFactory = (_) => services,
+                    CommandServiceConfiguration = new CommandServiceConfiguration
+                    {
+                        IgnoresExtraArguments = true,
+                        SeparatorRequirement = SeparatorRequirement.SeparatorOrWhitespace
+                    }
+                })
+                .AddHostedService<LamentServiceHost>()
+                .AddSingleton<LamentDiscordBot>()
+                .Add(ServiceDescriptor.Singleton(typeof(DiscordBot), typeof(LamentDiscordBot)));
         }
     }
 }
