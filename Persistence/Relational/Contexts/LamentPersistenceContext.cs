@@ -14,12 +14,12 @@ namespace Lament.Persistence.Relational
 
         public LamentPersistenceContext(DbContextOptions<LamentPersistenceContext> options) : base(options)
         {
-
+            
         }
 
         public async Task<TJsonObject> GetJsonObjectAsync<TJsonObject>(
             Func<LamentPersistenceContext, DbSet<JsonRow<TJsonObject>>> accessor, ulong guildId) 
-            where TJsonObject : JsonRootObject<TJsonObject>
+            where TJsonObject : JsonRootObject<TJsonObject>, new()
         {
             var row = accessor(this);
             var rowResult = await row.FindAsync(guildId);
@@ -32,13 +32,16 @@ namespace Lament.Persistence.Relational
         
         public async Task<TJsonObject> ModifyJsonObjectAsync<TJsonObject>(
             Func<LamentPersistenceContext, DbSet<JsonRow<TJsonObject>>> accessor, ulong guildId, Action<TJsonObject> modifier) 
-            where TJsonObject : JsonRootObject<TJsonObject>
+            where TJsonObject : JsonRootObject<TJsonObject>, new()
         {
             var row = accessor(this);
             var rowResult = await row.FindAsync(guildId);
             if (rowResult == null)
             {
-                rowResult = new JsonRow<TJsonObject>();
+                rowResult = new JsonRow<TJsonObject>
+                {
+                    GuildId = guildId
+                };
                 row.Add(rowResult);
             }
 
