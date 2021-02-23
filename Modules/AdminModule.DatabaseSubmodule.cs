@@ -1,7 +1,9 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Disqord.Bot;
+using Lament.Discord;
 using Lament.Persistence.Document;
 using Lament.Persistence.Relational;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +22,7 @@ namespace Lament.Modules
                 _database = database;
             }
             
-            [Command("dumpconfig")]
+            [Command("dumpconfig", "getconfig")]
             [GuildOnly]
             public async Task DumpGuildConfig()
             {
@@ -32,13 +34,34 @@ namespace Lament.Modules
             [GuildOnly]
             public async Task SetGuildConfig([Remainder] string content)
             {
+                GuildConfig newData;
+                try
+                {
+                    newData = JsonSerializer.Deserialize<GuildConfig>(content);
+                    if (newData == null)
+                    {
+                        await ReplyAsync("Invalid data.");
+                        return;
+                    }
+                }
+                catch (Exception)
+                {
+                    await ReplyAsync("Invalid data.");
+                    return;
+                }
+
+                if (Context.Flags.HasFlag(RuntimeFlags.DryRun))
+                {
+                    await ReplyAsync("Running dry, no data changes made. Data model valid.");
+                    return;
+                }
+
                 var guild = await _database.ModifyJsonObjectAsync(d => d.GuildConfigurations, Context.Guild.Id, data =>
                 {
-                    var newData = JsonSerializer.Deserialize<GuildConfig>(content);
                     data.Prefixes = newData.Prefixes;
                     data.Starboard = newData.Starboard;
                 });
-                await ReplyAsync("Updated.");
+                await ReplyAsync($"Updated document `GuildConfigurations:{Context.Guild.Id}:0`");
             }
 
             [Command("state", "status", "stat", "info")]

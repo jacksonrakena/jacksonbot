@@ -29,7 +29,6 @@ namespace Lament.Modules
             var initial = await Context.Channel.SendMessageAsync("Pinging...").ConfigureAwait(false);
             var restTime = sw.ElapsedMilliseconds.ToString();
 
-
             async Task Handler(MessageReceivedEventArgs emsg)
             {
                 var msg = emsg.Message;
