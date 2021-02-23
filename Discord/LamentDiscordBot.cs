@@ -34,5 +34,10 @@ namespace Lament.Discord
         {
             return new LamentCommandContext(this, prefix, message, _services.CreateScope(), flags);
         }
+
+        public override string ToString()
+        {
+            return CurrentUser.ToString();
+        }
     }
 }

@@ -7,6 +7,7 @@ namespace Lament.Discord
     {
         None,
         DryRun,
-        Verbose
+        Verbose,
+        RunAsOther
     }
 }

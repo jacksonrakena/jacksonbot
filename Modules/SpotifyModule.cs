@@ -21,7 +21,7 @@ namespace Lament.Modules
             _spotify = spotify;
         }
 
-        [Command("track")]
+        [Command("track", "spotify", "sp")]
         [Description("Searches the Spotify database for a song.")]
         [RunMode(RunMode.Parallel)]
         public async Task TrackAsync(

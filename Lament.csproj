@@ -10,6 +10,8 @@
       <PackageReference Include="AbyssalSpotify" Version="1.0.1-20200107.1" />
       <PackageReference Include="Disqord.Bot" Version="1.0.0-nightly-00082" />
       <PackageReference Include="Humanizer.Core" Version="2.8.26" />
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" />
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.8.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.3">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,6 +26,7 @@
       <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
       <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
       <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+      <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
     </ItemGroup>
 
     <ItemGroup>

@@ -7,6 +7,7 @@ using Lament.Discord;
 using Lament.Logging;
 using Lament.Persistence;
 using Lament.Persistence.Relational;
+using Lament.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
@@ -93,9 +94,9 @@ namespace Lament
                     },
                     Logger = services.GetRequiredService<DisqordLogger>()
                 })
+                .AddSingleton<HelpService>()
                 .AddHostedService<LamentServiceHost>()
-                .AddSingleton<LamentDiscordBot>()
-                .Add(ServiceDescriptor.Singleton(typeof(DiscordBot), typeof(LamentDiscordBot)));
+                .AddSingleton<LamentDiscordBot>();
         }
     }
 }
