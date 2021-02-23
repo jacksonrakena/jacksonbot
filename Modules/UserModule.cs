@@ -98,21 +98,21 @@ namespace Lament.Modules
         [CommandCooldown(1, 30, CooldownMeasure.Seconds, CooldownType.User)]
         [RunMode(RunMode.Parallel)]
         public async Task Command_ResizeImageAsync(
-            [Name("Image_URL")] [Description("The URL of the image to resize.")]
+            [Name("Image URL")] [Description("The URL of the image to resize.")]
             Uri url,
             [Name("Width")] [Description("The width to resize to.")] [Range(1, 500, true, true)]
             int width,
             [Name("Height")] [Description("The height to resize to.")] [Range(1, 500, true, true)]
             int height)
         {
-            var isGif = url.ToString().EndsWith("gif");
-            using var inStream = await new HttpClient().GetStreamAsync(url).ConfigureAwait(false);
-            var outStream = new MemoryStream();
+            var isGif = new FileInfo(url.AbsolutePath).Extension == ".gif";
+            await using var inStream = await new HttpClient().GetStreamAsync(url).ConfigureAwait(false);
+            await using var outStream = new MemoryStream();
             try
             {
                 using var img = SixLabors.ImageSharp.Image.Load(inStream);
                 img.Mutate(a => a.Resize(new Size(width, height), new BicubicResampler(), false));
-                img.Save(outStream, isGif ? (IImageEncoder)new GifEncoder() : new PngEncoder());
+                await img.SaveAsync(outStream, isGif ? (IImageEncoder)new GifEncoder() : new PngEncoder());
                 outStream.Position = 0;
                 await Context.Channel.SendMessageAsync(new LocalAttachment(outStream, $"resized.{(isGif ? "gif" : "png")}"));
             }
