@@ -14,7 +14,15 @@ namespace Lament.Persistence.Relational
 
         public LamentPersistenceContext(DbContextOptions<LamentPersistenceContext> options) : base(options)
         {
-            
+        }
+
+        public LamentPersistenceContext()
+        {
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseNpgsql("Server=localhost;Database=lament;Username=lament;Password=lament123");
         }
 
         public async Task<TJsonObject> GetJsonObjectAsync<TJsonObject>(
@@ -24,7 +32,7 @@ namespace Lament.Persistence.Relational
             var row = accessor(this);
             var rowResult = await row.FindAsync(guildId);
             if (rowResult != null) return rowResult.Data;
-            rowResult = new JsonRow<TJsonObject>();
+            rowResult = new JsonRow<TJsonObject> {GuildId = guildId};
             row.Add(rowResult);
             await SaveChangesAsync();
             return rowResult.Data;

@@ -1,15 +1,19 @@
 ﻿using System;
+using AbyssalSpotify;
 using Disqord;
 using Disqord.Bot;
 using Disqord.Bot.Prefixes;
 using Lament.Discord;
+using Lament.Logging;
 using Lament.Persistence;
 using Lament.Persistence.Relational;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Qmmands;
 using Serilog;
 using Serilog.Events;
@@ -20,16 +24,8 @@ namespace Lament
     {
         public static int Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .CreateLogger();
-
             try
             {
-                Log.Information("Lament runtime starting");
                 BuildLamentHost(args).Run();
                 return 0;
             }
@@ -44,15 +40,22 @@ namespace Lament
             }
         }
 
-        private static IHost BuildLamentHost(string[] runtimeArgs)
+        public static IHost BuildLamentHost(string[] runtimeArgs)
         {
             var hostBuilder = new HostBuilder();
             hostBuilder.UseSystemd();
-            hostBuilder.UseSerilog();
             hostBuilder.ConfigureAppConfiguration(appConfigure =>
             {
                 appConfigure.AddJsonFile(Constants.CONFIGURATION_FILENAME);
                 appConfigure.AddEnvironmentVariables(Constants.ENVIRONMENT_VARIABLE_PREFIX);
+            });
+            hostBuilder.ConfigureLogging((hostContext, logging) =>
+            {
+                Log.Logger = new LoggerConfiguration()
+                    .ReadFrom.Configuration(hostContext.Configuration)
+                    .CreateLogger();
+                logging.ClearProviders();
+                logging.AddSerilog();
             });
             var environment = Environment.GetEnvironmentVariable(Constants.ENVIRONMENT_VARNAME);
             if (environment == null)
@@ -62,18 +65,22 @@ namespace Lament
             }
             hostBuilder.UseEnvironment(environment);
             hostBuilder.ConfigureServices(ConfigureServices);
-            
+
             return hostBuilder.Build();
         }
 
-        private static void ConfigureServices(HostBuilderContext builderContext, IServiceCollection serviceCollection)
+        public static void ConfigureServices(HostBuilderContext builderContext, IServiceCollection serviceCollection)
         {
+            var secrets = builderContext.Configuration.GetSection("Secrets");
+            var spotify = secrets.GetSection("Spotify");
             serviceCollection
                 .AddMemoryCache()
                 .AddDbContext<LamentPersistenceContext>(options =>
                 {
                     options.UseNpgsql(builderContext.Configuration.GetConnectionString("Database"));
                 })
+                .AddSingleton<DisqordLogger>()
+                .AddSingleton(SpotifyClient.FromClientCredentials(spotify["ClientId"], spotify["ClientSecret"]))
                 .AddSingleton<IPrefixProvider, LamentPrefixProvider>()
                 .AddSingleton(services => new DiscordBotConfiguration
                 {
@@ -81,8 +88,10 @@ namespace Lament
                     CommandServiceConfiguration = new CommandServiceConfiguration
                     {
                         IgnoresExtraArguments = true,
-                        SeparatorRequirement = SeparatorRequirement.SeparatorOrWhitespace
-                    }
+                        SeparatorRequirement = SeparatorRequirement.SeparatorOrWhitespace,
+                        CooldownBucketKeyGenerator = CooldownBucketKeyGenerators.Default
+                    },
+                    Logger = services.GetRequiredService<DisqordLogger>()
                 })
                 .AddHostedService<LamentServiceHost>()
                 .AddSingleton<LamentDiscordBot>()

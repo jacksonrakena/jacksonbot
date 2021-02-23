@@ -11,24 +11,21 @@ namespace Lament.Persistence
 {
     public class LamentPrefixProvider : IPrefixProvider
     {
-        private readonly LamentPersistenceContext _lifetimePersistenceContext;
+        private readonly IServiceProvider _services;
 
         private readonly IEnumerable<IPrefix> _dmPrefixSet = new[]
             {new StringPrefix(Constants.DEFAULT_GUILD_MESSAGE_PREFIX)};
         public LamentPrefixProvider(IServiceProvider services)
         {
-            _lifetimePersistenceContext = services.GetRequiredService<LamentPersistenceContext>();
+            _services = services;
         }
 
         public async ValueTask<IEnumerable<IPrefix>> GetPrefixesAsync(CachedUserMessage message)
         {
             if (message.Guild == null) return _dmPrefixSet;
-            var record = await _lifetimePersistenceContext.GetJsonObjectAsync(d => d.GuildConfigurations, message.Guild.Id);
-            return record.Prefixes.Select<string, IPrefix>(d =>
-            {
-                if (d == "::mention") return MentionPrefix.Instance;
-                return new StringPrefix(d);
-            });
+            using var scope = _services.CreateScope();
+            var record = await scope.ServiceProvider.GetRequiredService<LamentPersistenceContext>().GetJsonObjectAsync(d => d.GuildConfigurations, message.Guild.Id);
+            return record.Prefixes.Select<string, IPrefix>(d => new StringPrefix(d)).Append(MentionPrefix.Instance);
         }
     }
 }

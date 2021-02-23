@@ -1,3 +1,5 @@
+using System;
+
 namespace Lament
 {
     public static class Constants
@@ -8,6 +10,8 @@ namespace Lament
 
         public const string CONFIGURATION_FILENAME = "lament.appsettings.json";
 
-        public const string DEFAULT_GUILD_MESSAGE_PREFIX = "++";
+        public const string DEFAULT_GUILD_MESSAGE_PREFIX = "lm ";
+
+        public static Guid SessionId = Guid.NewGuid();
     }
 }

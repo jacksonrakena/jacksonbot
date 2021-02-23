@@ -5,6 +5,7 @@ using Disqord.Bot;
 using Disqord.Bot.Prefixes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Qmmands;
 
 namespace Lament.Discord
@@ -12,26 +13,26 @@ namespace Lament.Discord
     public class LamentDiscordBot : DiscordBot
     {
         private readonly IServiceProvider _services;
+        private readonly ILogger<LamentDiscordBot> _logger;
         
         public LamentDiscordBot(IServiceProvider services) 
             : base(
             TokenType.Bot, 
-            services.GetRequiredService<IConfiguration>().GetSection("Secrets")["Discord"],
+            services.GetRequiredService<IConfiguration>().GetSection("Secrets").GetSection("Discord")["Token"],
             services.GetRequiredService<IPrefixProvider>(),
             services.GetRequiredService<DiscordBotConfiguration>())
         {
             _services = services;
+            _logger = services.GetRequiredService<ILogger<LamentDiscordBot>>();
         }
         protected override ValueTask<DiscordCommandContext> GetCommandContextAsync(CachedUserMessage message, IPrefix prefix)
         {
-            return new(new LamentCommandContext(this, prefix, message, _services.CreateScope()));
+            return new(CreateContext(message, prefix, RuntimeFlags.None));
         }
 
-        protected override ValueTask AfterExecutedAsync(IResult result, DiscordCommandContext ctx0)
+        public DiscordCommandContext CreateContext(CachedUserMessage message, IPrefix prefix, RuntimeFlags flags)
         {
-            var context = (LamentCommandContext) ctx0;
-            context.ServiceScope.Dispose();
-            return base.AfterExecutedAsync(result, context);
+            return new LamentCommandContext(this, prefix, message, _services.CreateScope(), flags);
         }
     }
 }

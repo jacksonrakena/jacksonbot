@@ -9,6 +9,10 @@
     "Secrets": {
         "Discord": {
             "Token": ""
+        },
+        "Spotify": {
+            "ClientId": "",
+            "ClientSecret": ""
         }
     }
 }
