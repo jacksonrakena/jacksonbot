@@ -1,11 +1,21 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Abyssal.Common;
 using Disqord;
 using Lament.Discord;
 using Lament.Extensions;
 using Lament.Helpers;
 using Qmmands;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Gif;
+using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Processors.Transforms;
+using Color = Disqord.Color;
 
 namespace Lament.Modules
 {
@@ -81,6 +91,36 @@ namespace Lament.Modules
                     $"**Hex:** {color}\n**Red:** {color.R}\n**Green:** {color.G}\n**Blue:** {color.B}")
                 .WithImageUrl("attachment://role.png")
                 .Build()).ConfigureAwait(false);
+        }
+        
+        [Command("resize")]
+        [Description("Resizes an image from a URL to specified dimensions.")]
+        [CommandCooldown(1, 30, CooldownMeasure.Seconds, CooldownType.User)]
+        [RunMode(RunMode.Parallel)]
+        public async Task Command_ResizeImageAsync(
+            [Name("Image_URL")] [Description("The URL of the image to resize.")]
+            Uri url,
+            [Name("Width")] [Description("The width to resize to.")] [Range(1, 500, true, true)]
+            int width,
+            [Name("Height")] [Description("The height to resize to.")] [Range(1, 500, true, true)]
+            int height)
+        {
+            var isGif = url.ToString().EndsWith("gif");
+            using var inStream = await new HttpClient().GetStreamAsync(url).ConfigureAwait(false);
+            var outStream = new MemoryStream();
+            try
+            {
+                using var img = SixLabors.ImageSharp.Image.Load(inStream);
+                img.Mutate(a => a.Resize(new Size(width, height), new BicubicResampler(), false));
+                img.Save(outStream, isGif ? (IImageEncoder)new GifEncoder() : new PngEncoder());
+                outStream.Position = 0;
+                await Context.Channel.SendMessageAsync(new LocalAttachment(outStream, $"resized.{(isGif ? "gif" : "png")}"));
+            }
+            catch (NotSupportedException)
+            {
+                await ReplyAsync(
+                    "The provided image is in a bad format! Available formats are PNG, JPEG, BMP or GIF!");
+            }
         }
     }
 }

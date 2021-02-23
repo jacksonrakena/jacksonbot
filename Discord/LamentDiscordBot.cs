@@ -39,5 +39,14 @@ namespace Lament.Discord
         {
             return CurrentUser.ToString();
         }
+
+        protected override async ValueTask AfterExecutedAsync(IResult result, DiscordCommandContext ctx0)
+        {
+            var context = (LamentCommandContext) ctx0;
+            if (!result.IsSuccessful && !(result is CommandNotFoundResult))
+            {
+                await context.Channel.SendMessageAsync(result.ToString());
+            }
+        }
     }
 }

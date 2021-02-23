@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Disqord.Events;
 using Lament.Discord;
+using Lament.Parsers;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Qmmands;
@@ -25,6 +26,7 @@ namespace Lament
             var modules = _bot.AddModules(Assembly.GetExecutingAssembly());
             _logger.LogInformation("Registered {0} modules and {1} commands.", modules.Count, modules.SelectMany(d => d.Commands).Count());
             _logger.LogInformation("Service host starting");
+            _bot.AddTypeParser(new UriTypeParser());
             _bot.RunAsync(cancellationToken);
             _bot.Ready += Ready;
             _bot.CommandExecutionFailed += CommandExecutionFailed;

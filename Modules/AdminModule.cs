@@ -39,6 +39,20 @@ namespace Lament.Modules
             ctx.Member = member;
             await _bot.ExecuteAsync(inputString, ctx);
         }
+
+        [Command("parse")]
+        public async Task TestTypeParser(string typeParser, [Remainder] string value)
+        {
+            var result = await ScriptingHelper.EvaluateScriptAsync($"Context.Bot.GetTypeParser<{typeParser}>().ParseAsync(null, \"{value}\", Context).GetAwaiter().GetResult().Value",
+                new EvaluationHelper(Context));
+            if (!result.IsSuccess || result.ReturnValue == null)
+            {
+                await ReplyAsync("Couldn't find a type parser for that.");
+                return;
+            }
+
+            await ReplyAsync(result.ReturnValue.ToString());
+        }
         
         [Command("eval")]
         [RunMode(RunMode.Parallel)]
