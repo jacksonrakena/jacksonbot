@@ -15,7 +15,7 @@ using Qmmands;
 namespace Lament.Modules
 {
     [Group("admin")]
-    [RequireUser(255950165200994307)]
+    [BotOwnerOnly]
     public partial class AdminModule : LamentModuleBase
     {
         private readonly LamentDiscordBot _bot;
