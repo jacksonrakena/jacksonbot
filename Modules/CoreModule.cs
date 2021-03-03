@@ -16,6 +16,7 @@ namespace Lament.Modules
     public class CoreModule : LamentModuleBase
     {
         [Command("ping")]
+        [RunMode(RunMode.Parallel)]
         [Description("Benchmarks the connection to the Discord servers.")]
         [CommandCooldown(1, 3, CooldownMeasure.Seconds, CooldownType.User)]
         [GuildOnly]
