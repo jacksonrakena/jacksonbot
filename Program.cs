@@ -1,4 +1,5 @@
 ﻿using System;
+using Abyssal.Common;
 using AbyssalSpotify;
 using Disqord;
 using Disqord.Bot;
@@ -94,6 +95,7 @@ namespace Lament
                     },
                     Logger = services.GetRequiredService<DisqordLogger>()
                 })
+                .AddSingleton<IActionScheduler, ActionScheduler>()
                 .AddSingleton<HelpService>()
                 .AddHostedService<LamentServiceHost>()
                 .AddSingleton<LamentDiscordBot>();
