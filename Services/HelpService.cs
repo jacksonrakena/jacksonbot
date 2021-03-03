@@ -68,14 +68,10 @@ namespace Lament.Services
                 embed.AddField("Cooldowns", string.Join("\n", cd.Select(c => $"{((CooldownType)c.BucketType).GetPerName()} - {c.Amount} usage{(c.Amount == 1 ? "" : "s")} per {c.Per.Humanize()}")));
             }
 
-            var checks = command.Checks.Concat(command.Module.Checks).ToList();
+            var checks = CommandUtilities.EnumerateAllChecks(command).ToList();
             if (checks.Count > 0)
             {
-                var newChecks = new List<string>();
-
-                foreach (var check in checks) newChecks.Add(await FormatCheck(check, context).ConfigureAwait(false));
-
-                embed.AddField("Checks", string.Join("\n", newChecks));
+                embed.AddField("Checks", string.Join("\n", await Task.WhenAll(checks.Select(check => FormatCheckAsync(check, context)))));
             }
 
             if (command.Parameters.Count != 0) embed.WithFooter("You can use quotes to encapsulate inputs that are more than one word long.",
@@ -84,14 +80,14 @@ namespace Lament.Services
             return embed;
         }
 
-        private async Task<string> FormatCheck(CheckAttribute cba, DiscordCommandContext context)
+        private static async Task<string> FormatCheckAsync(CheckAttribute cba, DiscordCommandContext context)
         {
             var result = await cba.CheckAsync(context);
             var message = GetCheckFriendlyMessage(context, cba);
-            return $"- {(result.IsSuccessful ? ":white_check_mark:" : ":negative_squared_cross_mark:")} {message}";
+            return $"- {(result.IsSuccessful ? ":white_check_mark:" : ":red_circle:")} {message}";
         }
 
-        public static string GetCheckFriendlyMessage(DiscordCommandContext context, CheckAttribute cba)
+        private static string GetCheckFriendlyMessage(DiscordCommandContext context, CheckAttribute cba)
         {
             string? message = null;
 
@@ -122,7 +118,7 @@ namespace Lament.Services
                     message = $"You have to be the server owner.";
                     break;
                 case BotOwnerOnlyAttribute _:
-                    message = $"PrettyBot staff only.";
+                    message = $"Lament staff only.";
                     break;
                 case RequireMemberAttribute rma:
                     message = $"Your ID must be {rma.Id}.";
