@@ -40,7 +40,7 @@ namespace Lament.Modules
                 .Build());
         }
         
-        [Command("colour", "color")]
+        [Command("hex")]
         [Description("Parses a color.")]
         [RunMode(RunMode.Parallel)]
         public async Task Command_ReadColourAsync([Name("Color")] Color color)
