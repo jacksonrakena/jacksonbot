@@ -4,6 +4,7 @@ using Qmmands;
 
 namespace Lament.Modules
 {
+    [Description("This command has been disabled.")]
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class DisabledAttribute : CheckAttribute
     {

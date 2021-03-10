@@ -89,8 +89,7 @@ namespace Lament.Services
 
         private static string GetCheckFriendlyMessage(DiscordCommandContext context, CheckAttribute cba)
         {
-            string? message = null;
-
+            var message = cba.GetType().GetCustomAttribute<DescriptionAttribute>()?.Value;
             switch (cba)
             {
                 case RequireBotGuildPermissionsAttribute rbgp:
