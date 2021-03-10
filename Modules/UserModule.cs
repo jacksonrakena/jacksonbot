@@ -50,7 +50,7 @@ namespace Lament.Modules
                 .WithColor(color)
                 .WithTitle("Color")
                 .WithDescription(
-                    $"**Hex:** {role.Color}\n**Red:** {color.R}\n**Green:** {color.G}\n**Blue:** {color.B}")
+                    $"**Hex:** {color}\n**Red:** {color.R}\n**Green:** {color.G}\n**Blue:** {color.B}")
                 .WithImageUrl("attachment://role.png")
                 .Build()).ConfigureAwait(false);
         }
