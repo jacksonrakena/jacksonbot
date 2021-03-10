@@ -55,10 +55,10 @@ namespace Lament.Services
                 var channel = _bot.GetGuildChannel(reminder.ChannelId) as CachedTextChannel;
                 var member = channel.Guild.GetMember(reminder.CreatorId);
                 if (member == null) return;
-                var embed = new LocalEmbedBuilder().WithColor(Color.LightPink).WithTitle("Reminder").WithDescription(reminder.Description + "\n\n" + Markdown.Link("Click to jump!", Discord.MessageJumpLink(reminder.GuildId, reminder.ChannelId, reminder.MessageId)));
+                var embed = new LocalEmbedBuilder().WithColor(Color.LightPink).WithTitle("Reminder").WithDescription(reminder.Text + "\n\n" + Markdown.Link("Click to jump!", Disqord.Discord.MessageJumpLink(reminder.GuildId, reminder.ChannelId, reminder.MessageId)));
                 embed.WithFooter("Reminder set at");
                 embed.WithTimestamp(reminder.CreatedAt);
-                await channel.SendMessageAsync(member.Mention, embed: embed.Build(), mentions: new LocalMentionsBuilder().WithUserIds(reminder.Creator).Build());
+                await channel.SendMessageAsync(member.Mention, embed: embed.Build(), mentions: new LocalMentionsBuilder().WithUserIds(reminder.CreatorId).Build());
             });
         }
     }

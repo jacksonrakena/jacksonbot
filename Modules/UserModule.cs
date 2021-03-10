@@ -93,6 +93,7 @@ namespace Lament.Modules
                 .Build()).ConfigureAwait(false);
         }
         
+        [Disabled]
         [Command("resize")]
         [Description("Resizes an image from a URL to specified dimensions.")]
         [CommandCooldown(1, 30, CooldownMeasure.Seconds, CooldownType.User)]
@@ -107,6 +108,7 @@ namespace Lament.Modules
         {
             var isGif = new FileInfo(url.AbsolutePath).Extension == ".gif";
             await using var inStream = await new HttpClient().GetStreamAsync(url).ConfigureAwait(false);
+            
             await using var outStream = new MemoryStream();
             try
             {

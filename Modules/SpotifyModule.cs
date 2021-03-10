@@ -6,6 +6,7 @@ using Qmmands;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Lament.Helpers;
 
 namespace Lament.Modules
 {

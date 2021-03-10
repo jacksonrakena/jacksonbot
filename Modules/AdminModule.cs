@@ -14,7 +14,7 @@ using Qmmands;
 
 namespace Lament.Modules
 {
-    [Group("admin")]
+    [Name("Admin")]
     [BotOwnerOnly]
     public partial class AdminModule : LamentModuleBase
     {
