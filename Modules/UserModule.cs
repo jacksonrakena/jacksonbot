@@ -41,6 +41,21 @@ namespace Lament.Modules
         }
         
         [Command("colour", "color")]
+        [Description("Parses a color.")]
+        [RunMode(RunMode.Parallel)]
+        public async Task Command_ReadColourAsync([Name("Color")] Color color)
+        {
+            await using var outStream = ImageHelper.CreateColourImage(new Rgba32(color.R, color.G, color.B), 200, 200);
+            await Context.Channel.SendMessageAsync(new LocalAttachment(outStream, "role.png"), null, embed: new LocalEmbedBuilder()
+                .WithColor(color)
+                .WithTitle("Color")
+                .WithDescription(
+                    $"**Hex:** {role.Color}\n**Red:** {color.R}\n**Green:** {color.G}\n**Blue:** {color.B}")
+                .WithImageUrl("attachment://role.png")
+                .Build()).ConfigureAwait(false);
+        }
+        
+        [Command("colour", "color")]
         [Description("Grabs the colour of a role.")]
         [RunMode(RunMode.Parallel)]
         public async Task Command_GetColourFromRoleAsync(
