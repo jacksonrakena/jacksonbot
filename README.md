@@ -1,6 +1,6 @@
 # 👨🏻‍🔧 The Overseer
 A Discord-focused, multi-platform chat and administration bot for the communities you love.
-Built on top of [Disqord](https://github.com/Quahu/Disqord] and [Qmmands](https://github.com/Quahu/Qmmands).
+Built on top of [Disqord](https://github.com/Quahu/Disqord) and [Qmmands](https://github.com/Quahu/Qmmands).
 Mesh communication is powered by [Pixie](https://github.com/jacksonrakena/pixie).
 
 <img src="https://i.imgur.com/DF1ZIs2.png" height="150" />
