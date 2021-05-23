@@ -1,0 +1,22 @@
+{
+  "name": "overseer",
+  "version": "18.0.0",
+  "description": "A multi-platform chat and administration bot for the communities you love. ",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jacksonrakena/overseer.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "jacksonrakena",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^2.23.0"
+  },
+  "devDependencies": {
+    "prisma": "^2.23.0"
+  }
+}

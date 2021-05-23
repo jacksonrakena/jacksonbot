@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://overseer:overseer@localhost:5432/overseer"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model StarredMessage {
+  @@map(name: "starredMessages")
+
+  messageId String @id
+  channelId String
+  authorId String
+  starCount Int
+  displayMessageId String
+  displayChannelId String
+}
+
+model Transaction {
+  id Int @id @default(autoincrement())
+  amount Int
+  date DateTime
+  comment String?
+  payee UserAccount @relation(name: "payee", fields: [payeeId], references: [id])
+  payeeId Int
+  type TransactionType
+
+  payer UserAccount @relation(name: "payer", fields: [payerId], references: [id])
+  payerId Int
+  @@map(name: "allTransactions")
+}
+
+enum TransactionType {
+  CB_OUT_MODERATOR_ADJUSTMENT
+  CB_OUT_BOT_ADMIN_ADJUSTMENT
+  USER_TO_USER
+  CB_IN_USER_PAYMENT
+}
+
+model XpChangeEvent {
+  @@map(name: "xpChangeEvents")
+  id Int @id @default(autoincrement())
+  amount Int
+  type XpChangeType
+  userId Int
+  user UserAccount @relation(fields: [userId], references: [id])
+}
+
+enum XpChangeType {
+  MANUAL_ADJUSTMENT
+  TYPING
+  DAILY
+  EVENT
+}
+
+model UserAccount {
+  id Int @id @default(autoincrement())
+  comment String?
+  userId String
+  guildId String
+  moneyOutTransactions Transaction[] @relation(name: "payer")
+  moneyInTransactions Transaction[] @relation(name: "payee")
+  balance Int @default(0)
+  xpBalance Int @default(0)
+  xpChangeEvents XpChangeEvent[]
+
+  @@map(name: "userAccounts")
+  @@unique([userId, guildId])
+}
+
+model GuildProfile {
+  @@map(name: "guildProfiles")
+  id String @id
+  prefixes GuildPrefix[]
+  starboardChannelId String
+  starboardThreshold Int @default(3)
+}
+
+model GuildPrefix {
+  id Int @id @default(autoincrement())
+  guild GuildProfile @relation(fields: [guildId], references: [id])
+  guildId String
+  prefix String
+}
