@@ -1,13 +1,22 @@
-A Discord-focused, multi-platform chat and administration bot for the communities you love.  
-Built on top of [Disqord](https://github.com/Quahu/Disqord) and [Qmmands](https://github.com/Quahu/Qmmands).  
-Mesh communication is powered by [Pixie](https://github.com/jacksonrakena/pixie).
+<div align="center">
+  <h1>Abyss</h1>
+A Discord-focused, multi-platform chat and administration bot for the communities you love. <br />
+Built on top of <a href="https://github.com/Quahu/Disqord">Disqord</a> and <a href="https://github.com/Quahu/Qmmands">Qmmands</a>. <br /> 
 
-<img src="https://i.imgur.com/DF1ZIs2.png" height="150" />
-
-| Prefix | Developer | Runtime | Library | Version | Platform | Invite |
-|-|-|-|-|-|-|-|
-| // | [Abyssal](https://github.com/jacksonrakena) | JRE 1.8 | [Disqord](https://github.com/Quahu/Disqord)  | 18.1 | .NET | Not yet
+<br />
+<br />
   
+| Prefix | Developer |  Library | Version | Platform |
+|-|-|-|-|-|
+| // | [Abyssal](https://github.com/jacksonrakena) | [Disqord](https://github.com/Quahu/Disqord)  | 19 | .NET |
+
+<br />
+</div>
+  
+### Requirements
+*Who am I kidding? You're not gonna run this anyway.*
 - A [Discord bot application](https://discordapp.com/developers/applications/) with registered user and token (app -> Bot -> Add Bot)
+- .NET 5.0 Runtime (SDK for building) or newer
+- PostgreSQL (tested with 13.1)
  
-Copyright (c) 2018-2021 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
+Copyright &copy; 2015-2021 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
