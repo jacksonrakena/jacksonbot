@@ -35,7 +35,6 @@ namespace Abyss.Services
         {
             var embed = new LocalEmbed
             {
-                Title = "Command information",
                 Description = $"{Markdown.Code(command.FullAliases.First())}: {command.Description ?? "No description provided."}",
                 Color = Color.Pink,
             };
@@ -52,9 +51,11 @@ namespace Abyss.Services
 
             if (command.CustomArgumentParserType == null)
             {
-                var cExecString = $"{context.Prefix}{command.FullAliases.First()} {string.Join(" ", command.Parameters.Select(a => $"{(a.IsOptional ? "[" : "{")}{a.Name}{(a.IsOptional ? "]" : "}")}"))}";
-                embed.AddField("Usage", cExecString);
+                var cExecString =
+                    $"{context.Prefix}{command.FullAliases.First()} {string.Join(" ", command.Parameters.Select(a => $"{(a.IsOptional ? "[" : "{")}{a.Name}{(a.IsOptional ? "]" : "}")}"))}";
+                embed.Title = cExecString;
             }
+            else embed.Title = "Command information";
 
             var cd = command.Cooldowns;
             if (cd.Count > 0)
