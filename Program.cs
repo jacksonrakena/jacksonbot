@@ -53,7 +53,7 @@ namespace Abyss
             var environment = Environment.GetEnvironmentVariable(Constants.ENVIRONMENT_VARNAME);
             if (environment == null)
             {
-                Console.WriteLine(string.Format("{1} variable not set. Defaulting to {0}", Constants.DEFAULT_RUNTIME_ENVIRONMENT, Constants.ENVIRONMENT_VARNAME));
+                Console.WriteLine("{1} variable not set. Defaulting to {0}", Constants.DEFAULT_RUNTIME_ENVIRONMENT, Constants.ENVIRONMENT_VARNAME);
                 environment = Constants.DEFAULT_RUNTIME_ENVIRONMENT;
             }
 

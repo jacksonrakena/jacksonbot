@@ -37,10 +37,10 @@ namespace Abyss.Modules
                 new EvaluationHelper(Context));
             if (!result.IsSuccess || result.ReturnValue == null)
             {
-                return Response("Couldn't find a type parser for that.");
+                return Reply("Couldn't find a type parser for that.");
             }
 
-            return Response(result.ReturnValue.ToString());
+            return Reply(result.ReturnValue.ToString());
         }
         
         [Command("eval")]
@@ -113,7 +113,7 @@ namespace Abyss.Modules
                     var footerString =
                         $"{(result.CompilationTime != -1 ? $"Compilation time: {result.CompilationTime}ms" : "")} {(result.ExecutionTime != -1 ? $"| Execution time: {result.ExecutionTime}ms" : "")}";
 
-                    return Response(new LocalEmbed()
+                    return Reply(new LocalEmbed()
                         .WithTitle("Scripting Result")
                         .WithDescription(result.ReturnValue != null
                             ? "Type: `" + result.ReturnValue.GetType().Name + "`"
@@ -123,7 +123,7 @@ namespace Abyss.Modules
                         .WithFooter(footerString, Context.CurrentMember.GetAvatarUrl()));
                 }
 
-                return Response(stringRep);
+                return Reply(stringRep);
             }
 
             var embed = new LocalEmbed
@@ -154,7 +154,7 @@ namespace Abyss.Modules
 
             if (result.Exception != null)
                 embed.AddField("Exception", $"``{result.Exception.GetType().Name}``: ``{result.Exception.Message}``");
-            return Response(embed);
+            return Reply(embed);
         }
         
         private static string FormatEnumMember(Enum value)

@@ -25,7 +25,7 @@ namespace Abyss.Modules
             public async Task<DiscordCommandResult> DumpGuildConfig()
             {
                 var guild = await _database.GetJsonObjectAsync(d => d.GuildConfigurations, Context.Guild.Id);
-                return Response($"Showing document `GuildConfigurations:{Context.Guild.Id}:0` \n```json\n" + JsonSerializer.Serialize(guild) + "```");
+                return Reply($"Showing document `GuildConfigurations:{Context.Guild.Id}:0` \n```json\n" + JsonSerializer.Serialize(guild) + "```");
             }
 
             [Command("setconfig")]
@@ -37,12 +37,12 @@ namespace Abyss.Modules
                     newData = JsonSerializer.Deserialize<GuildConfig>(content);
                     if (newData == null)
                     {
-                        return Response("Invalid data.");
+                        return Reply("Invalid data.");
                     }
                 }
                 catch (Exception)
                 {
-                    return Response("Invalid data.");
+                    return Reply("Invalid data.");
                 }
 
                 var guild = await _database.ModifyJsonObjectAsync(d => d.GuildConfigurations, Context.Guild.Id, data =>
@@ -50,14 +50,14 @@ namespace Abyss.Modules
                     data.Prefixes = newData.Prefixes;
                     data.Starboard = newData.Starboard;
                 });
-                return Response($"Updated document `GuildConfigurations:{Context.Guild.Id}:0`");
+                return Reply($"Updated document `GuildConfigurations:{Context.Guild.Id}:0`");
             }
 
             [Command("state", "status", "stat", "info")]
             public async Task<DiscordCommandResult> GetDatabaseInformation()
             {
                 var database = _database.Database;
-                return Response(new StringBuilder()
+                return Reply(new StringBuilder()
                     .AppendLine($"**Driver:** {_database.Database.ProviderName} (Relational: {_database.Database.IsRelational()})")
                     .AppendLine($"**Auto-transactions enabled:** {database.AutoTransactionsEnabled}")
                     .AppendLine("A database connection is not currently active.")

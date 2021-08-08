@@ -24,7 +24,7 @@ namespace Abyss.Modules
         public async Task<DiscordCommandResult> Session()
         {
             var app = await Context.Bot.FetchCurrentApplicationAsync();
-            return Response(new LocalEmbed()
+            return Reply(new LocalEmbed()
                 .WithColor(Color.LightCyan)
                 .WithAuthor("Abyss", Context.Bot.CurrentUser.GetAvatarUrl())
                 .WithDescription(
@@ -41,10 +41,10 @@ namespace Abyss.Modules
             var search = Context.Bot.Commands.FindCommands(query).ToList();
             if (search.Count == 0)
             {
-                return Response($"No command or command group found for `{query}`.");
+                return Reply($"No command or command group found for `{query}`.");
             }
 
-            return Response(await _help.CreateCommandEmbedAsync(search[0].Command, Context));
+            return Reply(await _help.CreateCommandEmbedAsync(search[0].Command, Context));
         }
 
         [Command("help", "commands")]
@@ -81,7 +81,7 @@ namespace Abyss.Modules
             if (commands.Count != 0)
                 embed.AddField("Commands", string.Join(", ", commands));
 
-            return Response(embed);
+            return Reply(embed);
         }
     }
 }

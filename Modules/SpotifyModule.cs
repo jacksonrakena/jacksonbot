@@ -96,7 +96,7 @@ namespace Abyss.Modules
                 }
                 catch (Exception)
                 {
-                    return Response("An error occurred while searching for the album.");
+                    return Reply("An error occurred while searching for the album.");
                 }
             }
 
