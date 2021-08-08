@@ -100,13 +100,14 @@ namespace Abyss.Modules
                 }
             }
 
+            var artist = await album.Artists[0].GetFullEntityAsync();
             var embed = new LocalEmbed
             {
                 Color = Color.LightGreen,
                 Author = new LocalEmbedAuthor
                 {
                     Name = album.Artists.Select(a => a.Name).Humanize(),
-                    IconUrl = album.Images.FirstOrDefault()?.Url,
+                    IconUrl = artist.Images.Any() ? artist.Images[0].Url : album.Images.FirstOrDefault()?.Url,
                     Url = album.Artists.FirstOrDefault()?.Id.Url
                 },
                 Title = album.Name,
