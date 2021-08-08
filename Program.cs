@@ -75,6 +75,7 @@ namespace Abyss
                 })
                 .AddSingleton(SpotifyClient.FromClientCredentials(spotify["ClientId"], spotify["ClientSecret"]))
                 .AddSingleton<IActionScheduler, ActionScheduler>()
+                .AddSingleton<ReminderService>()
                 .AddSingleton<HelpService>();
         }
     }

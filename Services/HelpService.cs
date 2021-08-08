@@ -36,7 +36,7 @@ namespace Abyss.Services
             var embed = new LocalEmbed
             {
                 Description = $"{Markdown.Code(command.FullAliases.First())}: {command.Description ?? "No description provided."}",
-                Color = Color.Pink,
+                Color = Constants.Theme,
             };
             if (command.Remarks != null) embed.Description += " " + command.Remarks;
 

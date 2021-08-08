@@ -1,4 +1,5 @@
 using System;
+using Disqord;
 
 namespace Abyss
 {
@@ -11,6 +12,8 @@ namespace Abyss
         public const string CONFIGURATION_FILENAME = "abyss.appsettings.json";
 
         public const string DEFAULT_GUILD_MESSAGE_PREFIX = "a.";
+
+        public static Color Theme = Color.LightCyan;
 
         public static Guid SessionId = Guid.NewGuid();
     }

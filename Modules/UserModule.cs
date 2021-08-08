@@ -21,7 +21,7 @@ namespace Abyss.Modules
             target ??= Context.Author as CachedMember;
             return Reply(new LocalEmbed()
                 .WithAuthor(target)
-                .WithColor(Color.LightCyan)
+                .WithColor(Constants.Theme)
                 .WithImageUrl(target.GetAvatarUrl())
                 .WithDescription($"**Formats:** {UrlHelper.CreateMarkdownUrl("128", target.GetAvatarUrl(size: 128))} | " +
                                  $"{UrlHelper.CreateMarkdownUrl("256", target.GetAvatarUrl(size: 256))} | " +

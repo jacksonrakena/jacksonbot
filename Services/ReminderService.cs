@@ -4,6 +4,8 @@ using Abyssal.Common;
 using Disqord;
 using Abyss.Persistence.Relational;
 using Disqord.Bot;
+using Disqord.Extensions.Interactivity.Menus;
+using Disqord.Extensions.Interactivity.Menus.Paged;
 using Disqord.Gateway;
 using Disqord.Rest;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,10 +59,16 @@ namespace Abyss.Services
                 var channel = _bot.GetChannel(reminder.GuildId, reminder.ChannelId) as ITextChannel;
                 var member = _bot.GetMember(channel!.GuildId, reminder.CreatorId);
                 if (member == null) return;
-                var embed = new LocalEmbed().WithColor(Color.LightPink).WithTitle("Reminder").WithDescription(reminder.Text + "\n\n" + Markdown.Link("Click to jump!", Disqord.Discord.MessageJumpLink(reminder.GuildId, reminder.ChannelId, reminder.MessageId)));
-                embed.WithFooter("Reminder set at");
-                embed.WithTimestamp(reminder.CreatedAt);
-                await channel.SendMessageAsync(new LocalMessage().WithContent(member.Mention).WithEmbeds(embed));
+                var embed = new LocalEmbed()
+                    .WithColor(Constants.Theme)
+                    .WithTitle("Reminder")
+                    .WithDescription(reminder.Text + "\n\n" + $"This reminder was set at {Markdown.Timestamp(reminder.CreatedAt, Markdown.TimestampFormat.ShortDateTime)}.");
+                
+                await channel.SendMessageAsync(new LocalMessage()
+                    .WithContent(member.Mention)
+                    .WithEmbeds(embed)
+                    .WithReference(new LocalMessageReference().WithChannelId(reminder.ChannelId).WithMessageId(reminder.MessageId).WithGuildId(reminder.GuildId))
+                );
             });
         }
     }

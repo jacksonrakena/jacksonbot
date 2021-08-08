@@ -25,7 +25,7 @@ namespace Abyss.Modules
         {
             var app = await Context.Bot.FetchCurrentApplicationAsync();
             return Reply(new LocalEmbed()
-                .WithColor(Color.LightCyan)
+                .WithColor(Constants.Theme)
                 .WithAuthor("Abyss", Context.Bot.CurrentUser.GetAvatarUrl())
                 .WithDescription(
                     $"Logged in as **{Context.Bot.CurrentUser}**")
@@ -63,7 +63,7 @@ namespace Abyss.Modules
 
             var prefix = Context.Prefix;
 
-            var embed = new LocalEmbed { Color = Color.LightCyan };
+            var embed = new LocalEmbed { Color = Constants.Theme };
 
             embed.WithTitle("Commands");
 

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Disqord;
 using Disqord.Bot;
+using Disqord.Extensions.Interactivity.Menus;
+using Disqord.Extensions.Interactivity.Menus.Paged;
 using Disqord.Gateway;
 using Disqord.Rest;
 using Microsoft.Extensions.Logging;
@@ -16,7 +19,7 @@ namespace Abyss.Modules
     public class CoreModule : DiscordGuildModuleBase
     {
         public ILogger<CoreModule> Logger { get; set; }
-        
+
         [Command("ping")]
         [Description("Benchmarks the connection to the Discord servers.")]
         [Cooldown(1, 3, CooldownMeasure.Seconds, CooldownBucketType.User)]
@@ -26,8 +29,10 @@ namespace Abyss.Modules
             {
                 return;
             }
+
             var sw = Stopwatch.StartNew();
-            var initial = await Context.Channel.SendMessageAsync(new LocalMessage().WithContent("Pinging...")).ConfigureAwait(false);
+            var initial = await Context.Channel.SendMessageAsync(new LocalMessage().WithContent("Pinging..."))
+                .ConfigureAwait(false);
             var restTime = sw.ElapsedMilliseconds.ToString();
 
             async ValueTask Handler(object sender, MessageReceivedEventArgs emsg)
@@ -55,7 +60,7 @@ namespace Abyss.Modules
                                 .WithTitle("Pong!")
                                 .WithTimestamp(DateTime.Now)
                                 .WithDescription(sb.ToString())
-                                .WithColor(Color.Pink)
+                                .WithColor(Constants.Theme)
                         };
                     });
                     sw.Stop();
@@ -64,6 +69,7 @@ namespace Abyss.Modules
                 {
                     Logger.LogError(e, "Error occurred during ping handler");
                 }
+
                 Context.Bot.MessageReceived -= Handler;
             }
 
