@@ -1,9 +1,9 @@
 ﻿using System;
-using Lament.Persistence.Document;
+using Abyss.Persistence.Document;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace Lament.Migrations
+namespace Abyss.Migrations
 {
     public partial class Initial : Migration
     {

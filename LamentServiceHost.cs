@@ -1,22 +1,11 @@
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Disqord.Events;
-using Lament.Discord;
-using Lament.Parsers;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Qmmands;
-
-namespace Lament
+namespace Abyss
 {
-    public class LamentServiceHost: IHostedService
+    public class AbyssServiceHost
     {
-        private readonly LamentDiscordBot _bot;
-        private readonly ILogger<LamentServiceHost> _logger;
+        /*private readonly AbyssDiscordBot _bot;
+        private readonly ILogger<AbyssServiceHost> _logger;
         
-        public LamentServiceHost(LamentDiscordBot bot, ILogger<LamentServiceHost> logger)
+        public AbyssServiceHost(AbyssDiscordBot bot, ILogger<AbyssServiceHost> logger)
         {
             _bot = bot;
             _logger = logger;
@@ -36,13 +25,13 @@ namespace Lament
 
         private async Task CommandExecuted(CommandExecutedEventArgs e)
         {
-            var context = (LamentCommandContext) e.Context;
+            var context = (AbyssCommandContext) e.Context;
             if (context.Command.RunMode != RunMode.Parallel) context.ServiceScope.Dispose();
         }
 
         private async Task CommandExecutionFailed(CommandExecutionFailedEventArgs e)
         {
-            var context = (LamentCommandContext) e.Context;
+            var context = (AbyssCommandContext) e.Context;
             if (e.Result.Exception != null)
             {
                 _logger.LogError(e.Result.Exception, "Exception during {0}.", e.Context.Command.Name);
@@ -59,6 +48,6 @@ namespace Lament
         public async Task StopAsync(CancellationToken cancellationToken)
         {
             await _bot.StopAsync();
-        }
+        }*/
     }
 }

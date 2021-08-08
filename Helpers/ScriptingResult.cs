@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace Lament.Helpers
+namespace Abyss.Helpers
 {
     public sealed class ScriptingResult
     {

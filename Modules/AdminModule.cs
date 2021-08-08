@@ -1,64 +1,53 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Disqord;
 using Disqord.Bot;
-using Disqord.Bot.Prefixes;
-using Lament.Discord;
-using Lament.Helpers;
+using Abyss.Helpers;
 using Microsoft.CodeAnalysis;
 using Qmmands;
 
-namespace Lament.Modules
+namespace Abyss.Modules
 {
     [Name("Admin")]
-    [BotOwnerOnly]
-    public partial class AdminModule : LamentModuleBase
+    [RequireAuthor(255950165200994307)]
+    public partial class AdminModule : DiscordGuildModuleBase
     {
-        private readonly LamentDiscordBot _bot;
-        
-        public AdminModule(LamentDiscordBot bot)
-        {
-            _bot = bot;
-        }
-        
-        [Command("dryrun")]
+        /*[Command("dryrun")]
         public async Task DryrunFlag([Remainder] string inputString)
         {
             await _bot.ExecuteAsync(inputString,
                 _bot.CreateContext(Context.Message, Context.Prefix, RuntimeFlags.DryRun));
-        }
+        }*/
         
-        [Command("runas")]
+        /*[Command("runas")]
         public async Task RunAs(CachedMember member, [Remainder] string inputString)
         {
-            var ctx = (LamentCommandContext) _bot.CreateContext(Context.Message, Context.Prefix, RuntimeFlags.RunAsOther);
+            var ctx = (AbyssCommandContext) _bot.CreateContext(Context.Message as CachedUserMessage, Context.Prefix, RuntimeFlags.RunAsOther);
             ctx.Member = member;
             await _bot.ExecuteAsync(inputString, ctx);
-        }
+        }*/
 
         [Command("parse")]
-        public async Task TestTypeParser(string typeParser, [Remainder] string value)
+        public async Task<DiscordCommandResult> TestTypeParser(string typeParser, [Remainder] string value)
         {
             var result = await ScriptingHelper.EvaluateScriptAsync($"Context.Bot.GetTypeParser<{typeParser}>().ParseAsync(null, \"{value}\", Context).GetAwaiter().GetResult().Value",
                 new EvaluationHelper(Context));
             if (!result.IsSuccess || result.ReturnValue == null)
             {
-                await ReplyAsync("Couldn't find a type parser for that.");
-                return;
+                return Response("Couldn't find a type parser for that.");
             }
 
-            await ReplyAsync(result.ReturnValue.ToString());
+            return Response(result.ReturnValue.ToString());
         }
         
         [Command("eval")]
         [RunMode(RunMode.Parallel)]
         [Description("Evaluates a piece of C# code.")]
-        [RequireUser(255950165200994307)]
-        public async Task Command_EvaluateAsync(
+        [RequireAuthor(255950165200994307)]
+        public async Task<DiscordCommandResult> Command_EvaluateAsync(
             [Name("Code")] [Description("The code to execute.")] [Remainder]
             string script)
         {
@@ -124,23 +113,20 @@ namespace Lament.Modules
                     var footerString =
                         $"{(result.CompilationTime != -1 ? $"Compilation time: {result.CompilationTime}ms" : "")} {(result.ExecutionTime != -1 ? $"| Execution time: {result.ExecutionTime}ms" : "")}";
 
-                    await ReplyAsync(embed: new LocalEmbedBuilder()
+                    return Response(new LocalEmbed()
                         .WithTitle("Scripting Result")
                         .WithDescription(result.ReturnValue != null
                             ? "Type: `" + result.ReturnValue.GetType().Name + "`"
                             : "")
                         .AddField("Input", $"```cs\n{script}```")
                         .AddField("Output", stringRep)
-                        .WithFooter(footerString, Context.Guild.CurrentMember.GetAvatarUrl())
-                        .Build());
-                    return;
+                        .WithFooter(footerString, Context.CurrentMember.GetAvatarUrl()));
                 }
 
-                await ReplyAsync(stringRep);
-                return;
+                return Response(stringRep);
             }
 
-            var embed = new LocalEmbedBuilder
+            var embed = new LocalEmbed
             {
                 Title = "Scripting Result",
                 Description = $"Scripting failed during stage **{FormatEnumMember(result.FailedStage)}**"
@@ -168,7 +154,7 @@ namespace Lament.Modules
 
             if (result.Exception != null)
                 embed.AddField("Exception", $"``{result.Exception.GetType().Name}``: ``{result.Exception.Message}``");
-            await ReplyAsync(embed: embed.Build());
+            return Response(embed);
         }
         
         private static string FormatEnumMember(Enum value)

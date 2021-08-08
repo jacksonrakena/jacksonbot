@@ -1,4 +1,4 @@
-namespace Lament.Persistence.Document
+namespace Abyss.Persistence.Document
 {
     public abstract class JsonEnabledState
     {

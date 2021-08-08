@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Lament.Discord
+namespace Abyss.Discord
 {
     [Flags]
     public enum RuntimeFlags

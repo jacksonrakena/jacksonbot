@@ -2,37 +2,36 @@
 using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Disqord;
 using Disqord.Bot;
-using Disqord.Events;
-using Lament.Discord;
+using Abyss.Discord;
+using Disqord.Gateway;
+using Disqord.Rest;
 using Microsoft.Extensions.Logging;
 using Qmmands;
 
-namespace Lament.Modules
+namespace Abyss.Modules
 {
     [Name("Core")]
-    public class CoreModule : LamentModuleBase
+    public class CoreModule : DiscordGuildModuleBase
     {
         public ILogger<CoreModule> Logger { get; set; }
         
         [Command("ping")]
         [Description("Benchmarks the connection to the Discord servers.")]
-        [CommandCooldown(1, 3, CooldownMeasure.Seconds, CooldownType.User)]
-        [GuildOnly]
+        [Cooldown(1, 3, CooldownMeasure.Seconds, CooldownBucketType.User)]
         public async Task Command_PingAsync()
         {
-            if (!Context.BotMember.GetPermissionsFor(Context.Channel as CachedTextChannel).SendMessages)
+            if (!Context.CurrentMember.GetPermissions(Context.Channel as CachedTextChannel).SendMessages)
             {
                 return;
             }
             var sw = Stopwatch.StartNew();
-            var initial = await Context.Channel.SendMessageAsync("Pinging...").ConfigureAwait(false);
+            var initial = await Context.Channel.SendMessageAsync(new LocalMessage().WithContent("Pinging...")).ConfigureAwait(false);
             var restTime = sw.ElapsedMilliseconds.ToString();
 
-            async Task Handler(MessageReceivedEventArgs emsg)
+            async ValueTask Handler(object sender, MessageReceivedEventArgs emsg)
             {
                 try
                 {
@@ -51,17 +50,14 @@ namespace Lament.Modules
                             .AppendLine($":mailbox_with_mail: **REST:** {restTime}ms")
                             .AppendLine($":roller_coaster: **Round-trip:** {rtt}ms")
                             .AppendLine($":blue_heart: **Internet - Abyssal Live:** {httpSw.ElapsedMilliseconds}ms");
-                        if (Context.Bot.Latency != null)
-                            sb.AppendLine(
-                                $":handshake: **Gateway:** {(int) Context.Bot.Latency.Value.TotalMilliseconds}ms");
-                        m.Embed = new LocalEmbedBuilder()
-                            .WithTitle("Pong!")
-                            .WithTimestamp(DateTime.Now)
-                            .WithDescription(sb.ToString())
-                            .WithFooter($"Request {Context.RequestId}")
-                            .WithColor(Context.Color)
-                            .Build();
-
+                        m.Embeds = new[]
+                        {
+                            new LocalEmbed()
+                                .WithTitle("Pong!")
+                                .WithTimestamp(DateTime.Now)
+                                .WithDescription(sb.ToString())
+                                .WithColor(Color.Pink)
+                        };
                     });
                     sw.Stop();
                 }

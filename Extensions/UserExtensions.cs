@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Disqord;
+using Disqord.Gateway;
 
-namespace Lament.Extensions
+namespace Abyss.Extensions
 {
     /// <summary>
     ///     Extensions for dealing with Discord users.
@@ -39,9 +40,9 @@ namespace Lament.Extensions
         /// <param name="user">The user to check.</param>
         /// <param name="predicate">The predicate of which to use to filter the roles of the user.</param>
         /// <returns>The highest role of the user that matches a predicate.</returns>
-        public static CachedRole GetHighestRoleOrDefault(this CachedMember user, Func<CachedRole, bool>? predicate = null)
+        public static CachedRole GetHighestRoleOrDefault(this IMember user, Func<CachedRole, bool>? predicate = null)
         {
-            return user.Roles.Values.OrderByDescending(r => r.Position).FirstOrDefault(predicate ?? (d => true));
+            return user.GetRoles().Values.OrderByDescending(r => r.Position).FirstOrDefault(predicate ?? (d => true));
         }
 
         /// <summary>

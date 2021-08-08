@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Lament.Persistence.Document;
+using Abyss.Persistence.Document;
 
-namespace Lament.Persistence.Relational
+namespace Abyss.Persistence.Relational
 {
     public class JsonRow<TData> where TData : JsonRootObject<TData>, new()
     {

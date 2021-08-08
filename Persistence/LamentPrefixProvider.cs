@@ -1,21 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Disqord;
-using Disqord.Bot.Prefixes;
-using Lament.Persistence.Relational;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace Lament.Persistence
+namespace Abyss.Persistence
 {
-    public class LamentPrefixProvider : IPrefixProvider
+    public class AbyssPrefixProvider //: IPrefixProvider
     {
-        private readonly IServiceProvider _services;
+        /*private readonly IServiceProvider _services;
 
         private readonly IEnumerable<IPrefix> _dmPrefixSet = new[]
             {new StringPrefix(Constants.DEFAULT_GUILD_MESSAGE_PREFIX)};
-        public LamentPrefixProvider(IServiceProvider services)
+        public AbyssPrefixProvider(IServiceProvider services)
         {
             _services = services;
         }
@@ -24,8 +15,8 @@ namespace Lament.Persistence
         {
             if (message.Guild == null) return _dmPrefixSet;
             using var scope = _services.CreateScope();
-            var record = await scope.ServiceProvider.GetRequiredService<LamentPersistenceContext>().GetJsonObjectAsync(d => d.GuildConfigurations, message.Guild.Id);
-            return record.Prefixes.Select<string, IPrefix>(d => new StringPrefix(d)).Append(MentionPrefix.Instance);
-        }
+//            var record = await scope.ServiceProvider.GetRequiredService<AbyssPersistenceContext>().GetJsonObjectAsync(d => d.GuildConfigurations, message.Guild.Id);
+            return new List<IPrefix> {new StringPrefix("a."), MentionPrefix.Instance};
+        }*/
     }
 }

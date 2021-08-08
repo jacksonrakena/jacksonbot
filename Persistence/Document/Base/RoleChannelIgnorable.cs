@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using Disqord;
+using Disqord.Gateway;
 
-namespace Lament.Persistence.Document
+namespace Abyss.Persistence.Document
 {
     public abstract class RoleChannelIgnorable : JsonEnabledState
     {
@@ -11,12 +11,12 @@ namespace Lament.Persistence.Document
         
         public IEnumerable<CachedTextChannel> GetIgnoredChannels(CachedGuild guild)
         {
-            return IgnoredChannels.Select(channelUlong => guild.GetTextChannel(channelUlong));
+            return IgnoredChannels.Select(channelUlong => guild.GetChannel(channelUlong) as CachedTextChannel);
         }
 
         public IEnumerable<CachedRole> GetIgnoredRoles(CachedGuild guild)
         {
-            return IgnoredRoles.Select(roleUlong => guild.GetRole(roleUlong));
+            return IgnoredRoles.Select(roleUlong => guild.Roles[roleUlong] as CachedRole);
         }
     }
 }

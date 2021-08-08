@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Lament.Parsers
+namespace Abyss.Parsers
 {
     public class UriTypeParser : TypeParser<Uri>
     {
@@ -11,7 +11,7 @@ namespace Lament.Parsers
             value = value.Replace("<", "").Replace(">", "");
             return Uri.IsWellFormedUriString(value, UriKind.Absolute)
                 ? TypeParserResult<Uri>.Successful(new Uri(value))
-                : TypeParserResult<Uri>.Unsuccessful("Unknown URL.");
+                : TypeParserResult<Uri>.Failed("Unknown URL.");
         }
     }
 }

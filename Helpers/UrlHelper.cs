@@ -1,4 +1,4 @@
-namespace Lament.Helpers
+namespace Abyss.Helpers
 {
     public static class UrlHelper
     {

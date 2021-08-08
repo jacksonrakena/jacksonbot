@@ -4,44 +4,51 @@ using Qmmands;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Diagnostics;
-using Disqord.Events;
-using System.Text;
 using System;
-using Lament.Discord;
-using Lament.Services;
+using Abyss.Services;
+using Disqord.Rest;
 
-namespace Lament.Modules
+namespace Abyss.Modules
 {
     [Name("Help")]
-    public class HelpModule : LamentModuleBase
+    public class HelpModule : DiscordGuildModuleBase
     {
         private readonly HelpService _help;
-        private readonly LamentDiscordBot _bot;
 
-        public HelpModule(HelpService help, LamentDiscordBot bot)
+        public HelpModule(HelpService help)
         {
-            _bot = bot;
             _help = help;
         }
 
-        public async Task CommandSubroutine_HelpQueryAsync(string query)
+        [Command("about")]
+        public async Task<DiscordCommandResult> Session()
+        {
+            var app = await Context.Bot.FetchCurrentApplicationAsync();
+            return Response(new LocalEmbed()
+                .WithColor(Color.LightCyan)
+                .WithDescription(
+                    $"Abyss 17 logged in as **{Context.Bot.CurrentUser}** ({Context.Bot.CurrentUser.Id}), " +
+                    $"owned by **{app.Owner}** ({app.Owner.Id})")
+                .WithTimestamp(DateTimeOffset.Now)
+                .WithFooter("Session " + Constants.SessionId));
+        }
+
+        public async Task<DiscordCommandResult> CommandSubroutine_HelpQueryAsync(string query)
         {
             // Search for command
-            var search = _bot.FindCommands(query).ToList();
+            var search = Context.Bot.Commands.FindCommands(query).ToList();
             if (search.Count == 0)
             {
-                await ReplyAsync($"No command or command group found for `{query}`.");
-                return;
+                return Response($"No command or command group found for `{query}`.");
             }
 
-            await ReplyAsync(embed: (await _help.CreateCommandEmbedAsync(search[0].Command, Context)).Build());
+            return Response(await _help.CreateCommandEmbedAsync(search[0].Command, Context));
         }
 
         [Command("help", "commands")]
         [Description(
             "Retrieves a list of commands that you can use, or, if a command or module is provided, displays information on that command or module.")]
-        public async Task Command_ListCommandsAsync(
+        public async Task<DiscordCommandResult> Command_ListCommandsAsync(
             [Name("Query")]
             [Description("The command or module to view, or nothing to see a list of commands.")]
             [Remainder]
@@ -49,13 +56,12 @@ namespace Lament.Modules
         {
             if (query != null)
             {
-                await CommandSubroutine_HelpQueryAsync(query);
-                return;
+                return await CommandSubroutine_HelpQueryAsync(query);
             }
 
             var prefix = Context.Prefix;
 
-            var embed = new LocalEmbedBuilder { Color = Context.Color };
+            var embed = new LocalEmbed { Color = Color.LightCyan };
 
             embed.WithTitle("Commands");
 
@@ -63,7 +69,7 @@ namespace Lament.Modules
                 $"You can use `{prefix}help <command/group>` for more details on a command or group.");
 
             var commands = new List<string>();
-            foreach (var command in _bot.GetAllCommands())
+            foreach (var command in Context.Bot.Commands.GetAllCommands())
             {
                 if (!await HelpService.CanShowCommandAsync(Context, command)) continue;
                 var format = HelpService.FormatCommandShort(command);
@@ -73,7 +79,7 @@ namespace Lament.Modules
             if (commands.Count != 0)
                 embed.AddField("Commands", string.Join(", ", commands));
 
-            await ReplyAsync(embed: embed.Build());
+            return Response(embed);
         }
     }
 }

@@ -4,18 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Disqord;
 using Disqord.Bot;
+using Disqord.Gateway;
 
-namespace Lament.Helpers
+namespace Abyss.Helpers
 {
     public class EvaluationHelper
     {
-        public EvaluationHelper(DiscordCommandContext context)
+        public EvaluationHelper(DiscordGuildCommandContext context)
         {
             Context = context;
         }
-        public DiscordCommandContext Context { get; }
+        public DiscordGuildCommandContext Context { get; }
         public static string InspectMethods(object obj)
         {
             var type = obj as Type ?? obj.GetType();
@@ -202,29 +202,29 @@ namespace Lament.Helpers
 
         public CachedMember User(ulong id)
         {
-            return Context.Guild.Members[id];
+            return Context.Guild.Members[id] as CachedMember;
         }
 
         public CachedMember User(string username)
         {
-            return Context.Guild.Members.Values.FirstOrDefault(a => a.Name.Equals(username, StringComparison.OrdinalIgnoreCase) || (a.Nick != null && a.Nick.Equals(username, StringComparison.OrdinalIgnoreCase)));
+            return Context.Guild.Members.Values.OfType<CachedMember>().FirstOrDefault(a => a.Name.Equals(username, StringComparison.OrdinalIgnoreCase) || (a.Nick != null && a.Nick.Equals(username, StringComparison.OrdinalIgnoreCase)));
         }
 
         public CachedTextChannel TextChannel(ulong id)
         {
-            return Context.Guild.GetTextChannel(id);
+            return Context.Guild.GetChannel(id) as CachedTextChannel;
         }
 
         public CachedTextChannel TextChannel(string name)
         {
-            return Context.Guild.TextChannels.Values.FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            return Context.Guild.GetChannels().Values.OfType<CachedTextChannel>().FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 
-        public CachedUserMessage? Message(ulong id)
+        /*public CachedUserMessage? Message(ulong id)
         {
-            return Context.Channel.GetMessage(id);
+            return (Context.Channel as CachedTextChannel).Message(id);
         }
 
-        public CachedUserMessage? Message(string id) => Message(ulong.Parse(id));
+        public CachedUserMessage? Message(string id) => Message(ulong.Parse(id));*/
     }
 }

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Lament.Persistence.Document
+namespace Abyss.Persistence.Document
 {
     public class GuildConfig : JsonRootObject<GuildConfig>
     {

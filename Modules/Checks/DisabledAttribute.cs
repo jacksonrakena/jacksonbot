@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Qmmands;
 
-namespace Lament.Modules
+namespace Abyss.Modules
 {
     [Description("This command has been disabled.")]
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
@@ -10,7 +10,7 @@ namespace Lament.Modules
     {
         public override ValueTask<CheckResult> CheckAsync(CommandContext context)
         {
-            return CheckResult.Unsuccessful("This command is disabled.");
+            return CheckResult.Failed("This command is disabled.");
         }
     }
 }

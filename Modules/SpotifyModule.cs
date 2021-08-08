@@ -1,19 +1,9 @@
-﻿using Abyssal.Common;
-using AbyssalSpotify;
-using Disqord;
-using Humanizer;
-using Qmmands;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Lament.Helpers;
-
-namespace Lament.Modules
+﻿namespace Abyss.Modules
 {
-    [Name("Spotify")]
+    /*[Name("Spotify")]
     [Description(
         "Commands that relate to Spotify, a digital music service that gives you access to millions of songs.")]
-    public class SpotifyModule : LamentModuleBase
+    public class SpotifyModule : AbyssModuleBase
     {
         private readonly SpotifyClient _spotify;
 
@@ -172,5 +162,5 @@ namespace Lament.Modules
 
             return embed;
         }
-    }
+    }*/
 }

@@ -1,16 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace Lament.Persistence.Relational
+namespace Abyss.Persistence.Relational
 {
-    public class LamentDesignTimeFactory : IDesignTimeDbContextFactory<LamentPersistenceContext>
+    public class AbyssDesignTimeFactory : IDesignTimeDbContextFactory<AbyssPersistenceContext>
     {
-        public LamentPersistenceContext CreateDbContext(string[] args)
+        public AbyssPersistenceContext CreateDbContext(string[] args)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<LamentPersistenceContext>();
-            optionsBuilder.UseNpgsql(args[0]);
+            var optionsBuilder = new DbContextOptionsBuilder<AbyssPersistenceContext>();
+            optionsBuilder.UseNpgsql("Server=localhost;Database=abyss;Username=abyss;Password=abyss123;");
 
-            return new LamentPersistenceContext(optionsBuilder.Options);
+            return new AbyssPersistenceContext(optionsBuilder.Options);
         }
     }
 }

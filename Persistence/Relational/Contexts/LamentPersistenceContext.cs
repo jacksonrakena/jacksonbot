@@ -1,33 +1,31 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lament.Persistence.Document;
+using Abyss.Persistence.Document;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Lament.Persistence.Relational
+namespace Abyss.Persistence.Relational
 {
-    public class LamentPersistenceContext: DbContext
+    public class AbyssPersistenceContext: DbContext
     {
         public DbSet<JsonRow<GuildConfig>> GuildConfigurations { get; set; }
         
         public DbSet<Reminder> Reminders { get; set; }
 
-        public LamentPersistenceContext(DbContextOptions<LamentPersistenceContext> options) : base(options)
+        public AbyssPersistenceContext(DbContextOptions<AbyssPersistenceContext> options) : base(options)
         {
         }
 
-        public LamentPersistenceContext()
+        public AbyssPersistenceContext()
         {
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Server=localhost;Database=lament;Username=lament;Password=lament123");
+            optionsBuilder.UseNpgsql("Server=localhost;Database=abyss;Username=abyss;Password=abyss123");
         }
 
         public async Task<TJsonObject> GetJsonObjectAsync<TJsonObject>(
-            Func<LamentPersistenceContext, DbSet<JsonRow<TJsonObject>>> accessor, ulong guildId) 
+            Func<AbyssPersistenceContext, DbSet<JsonRow<TJsonObject>>> accessor, ulong guildId) 
             where TJsonObject : JsonRootObject<TJsonObject>, new()
         {
             var row = accessor(this);
@@ -40,7 +38,7 @@ namespace Lament.Persistence.Relational
         }
         
         public async Task<TJsonObject> ModifyJsonObjectAsync<TJsonObject>(
-            Func<LamentPersistenceContext, DbSet<JsonRow<TJsonObject>>> accessor, ulong guildId, Action<TJsonObject> modifier) 
+            Func<AbyssPersistenceContext, DbSet<JsonRow<TJsonObject>>> accessor, ulong guildId, Action<TJsonObject> modifier) 
             where TJsonObject : JsonRootObject<TJsonObject>, new()
         {
             var row = accessor(this);

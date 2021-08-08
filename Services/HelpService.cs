@@ -3,17 +3,12 @@ using Disqord;
 using Disqord.Bot;
 using Humanizer;
 using Qmmands;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using Lament.Discord;
-using Microsoft.Extensions.Configuration;
+using Abyss.Discord;
 
-namespace Lament.Services
+namespace Abyss.Services
 {
     public sealed class HelpService
     {
@@ -37,9 +32,9 @@ namespace Lament.Services
             return firstAlias != null ? Markdown.Bold(Markdown.Code(firstAlias)) : null;
         }
 
-        public async Task<LocalEmbedBuilder> CreateCommandEmbedAsync(Command command, DiscordCommandContext context)
+        public async Task<LocalEmbed> CreateCommandEmbedAsync(Command command, DiscordCommandContext context)
         {
-            var embed = new LocalEmbedBuilder
+            var embed = new LocalEmbed
             {
                 Title = "Command information",
                 Description = $"{Markdown.Code(command.FullAliases.First())}: {command.Description ?? "No description provided."}",
@@ -98,38 +93,33 @@ namespace Lament.Services
                 case RequireBotChannelPermissionsAttribute rbcp:
                     message = $"I require the channel permission {rbcp.Permissions.Humanize()}.";
                     break;
-                case RequireMemberGuildPermissionsAttribute rmgp:
+                case RequireAuthorGuildPermissionsAttribute rmgp:
                     message = $"You need the guild permission {rmgp.Permissions.Humanize()}.";
                     break;
-                case RequireMemberChannelPermissionsAttribute rmcp:
+                case RequireAuthorChannelPermissionsAttribute rmcp:
                     message = $"You need the channel permission {rmcp.Permissions.Humanize()}.";
                     break;
                 case RequireBotRoleAttribute rbra:
                     message = $"I need the role with ID {rbra.Id}.";
                     break;
                 case RequireGuildAttribute rga:
-                    message = $"We must be in the server with ID {rga.Id}.";
+                    if (rga.Id == null) message = "We must be in a Discord server, not a DM.";
+                    else message = $"We must be in the server with ID {rga.Id}.";
                     break;
-                case RequireRoleAttribute rra:
+                case RequireAuthorRoleAttribute rra:
                     message = $"You must have the role with ID {rra.Id}.";
                     break;
-                case GuildOwnerOnlyAttribute _:
+                case RequireGuildOwnerAttribute _:
                     message = $"You have to be the server owner.";
                     break;
-                case BotOwnerOnlyAttribute _:
-                    message = $"Lament staff only.";
+                case RequireBotOwnerAttribute _:
+                    message = $"Abyss staff only.";
                     break;
-                case RequireMemberAttribute rma:
+                case RequireAuthorAttribute rma:
                     message = $"Your ID must be {rma.Id}.";
                     break;
                 case RequireNsfwAttribute _:
                     message = $"The current channel must be marked as not safe for work.";
-                    break;
-                case RequireUserAttribute rua:
-                    message = $"Your ID must be {rua.Id}.";
-                    break;
-                case GuildOnlyAttribute _:
-                    message = $"We must be in a Discord server, not a DM.";
                     break;
             }
 

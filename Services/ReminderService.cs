@@ -2,19 +2,21 @@ using System;
 using System.Threading.Tasks;
 using Abyssal.Common;
 using Disqord;
-using Lament.Discord;
-using Lament.Persistence.Relational;
+using Abyss.Persistence.Relational;
+using Disqord.Bot;
+using Disqord.Gateway;
+using Disqord.Rest;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Lament.Services
+namespace Abyss.Services
 {
     public class ReminderService
     {
         private readonly IActionScheduler _actionScheduler;
         private readonly IServiceProvider _services;
-        private readonly LamentDiscordBot _bot;
+        private readonly DiscordBot _bot;
     
-        public ReminderService(IActionScheduler actionScheduler, IServiceProvider services, LamentDiscordBot bot)
+        public ReminderService(IActionScheduler actionScheduler, IServiceProvider services, DiscordBot bot)
         {
             _actionScheduler = actionScheduler;
             _bot = bot;
@@ -34,7 +36,7 @@ namespace Lament.Services
                 CreatedAt = DateTimeOffset.Now
             };
             using var scope = _services.CreateScope();
-            using var context = scope.ServiceProvider.GetRequiredService<LamentPersistenceContext>();
+            using var context = scope.ServiceProvider.GetRequiredService<AbyssPersistenceContext>();
             context.Reminders.Add(reminder);
             await context.SaveChangesAsync();
 
@@ -49,16 +51,16 @@ namespace Lament.Services
             _actionScheduler.Schedule(due, async () =>
             {
                 using var scope = _services.CreateScope();
-                await using var context = scope.ServiceProvider.GetRequiredService<LamentPersistenceContext>();
+                await using var context = scope.ServiceProvider.GetRequiredService<AbyssPersistenceContext>();
                 context.Reminders.Remove(reminder);
                 await context.SaveChangesAsync();
-                var channel = _bot.GetGuildChannel(reminder.ChannelId) as CachedTextChannel;
-                var member = channel.Guild.GetMember(reminder.CreatorId);
+                var channel = _bot.GetChannel(reminder.GuildId, reminder.ChannelId) as ITextChannel;
+                var member = _bot.GetMember(channel!.GuildId, reminder.CreatorId);
                 if (member == null) return;
-                var embed = new LocalEmbedBuilder().WithColor(Color.LightPink).WithTitle("Reminder").WithDescription(reminder.Text + "\n\n" + Markdown.Link("Click to jump!", Disqord.Discord.MessageJumpLink(reminder.GuildId, reminder.ChannelId, reminder.MessageId)));
+                var embed = new LocalEmbed().WithColor(Color.LightPink).WithTitle("Reminder").WithDescription(reminder.Text + "\n\n" + Markdown.Link("Click to jump!", Disqord.Discord.MessageJumpLink(reminder.GuildId, reminder.ChannelId, reminder.MessageId)));
                 embed.WithFooter("Reminder set at");
                 embed.WithTimestamp(reminder.CreatedAt);
-                await channel.SendMessageAsync(member.Mention, embed: embed.Build(), mentions: new LocalMentionsBuilder().WithUserIds(reminder.CreatorId).Build());
+                await channel.SendMessageAsync(new LocalMessage().WithContent(member.Mention).WithEmbeds(embed));
             });
         }
     }

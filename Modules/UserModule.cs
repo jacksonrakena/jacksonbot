@@ -1,143 +1,119 @@
-﻿using System;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Abyssal.Common;
+﻿using System.Threading.Tasks;
 using Disqord;
-using Lament.Discord;
-using Lament.Extensions;
-using Lament.Helpers;
+using Abyss.Extensions;
+using Abyss.Helpers;
+using Disqord.Bot;
+using Disqord.Gateway;
 using Qmmands;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats;
-using SixLabors.ImageSharp.Formats.Gif;
-using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using Color = Disqord.Color;
 
-namespace Lament.Modules
+namespace Abyss.Modules
 {
-    public class UserModule : LamentModuleBase
+    public class UserModule : DiscordGuildModuleBase
     {
         [Command("avatar", "av", "a", "pic", "pfp")]
         [Description("Grabs the avatar for a user.")]
-        public async Task GetAvatarAsync(
+        public async Task<DiscordCommandResult> GetAvatarAsync(
             [Name("User")]
             [Description("The user who you wish to get the avatar for.")]
             CachedMember target = null)
         {
-            target ??= Context.Member;
-            await ReplyAsync(embed: new LocalEmbedBuilder()
+            target ??= Context.Author as CachedMember;
+            return Response(new LocalEmbed()
                 .WithAuthor(target)
-                .WithColor(Context.Color)
+                .WithColor(Color.LightCyan)
                 .WithImageUrl(target.GetAvatarUrl())
-                .WithDescription($"{UrlHelper.CreateMarkdownUrl("128", target.GetAvatarUrl(size: 128))} | " +
+                .WithDescription($"**Formats:** {UrlHelper.CreateMarkdownUrl("128", target.GetAvatarUrl(size: 128))} | " +
                                  $"{UrlHelper.CreateMarkdownUrl("256", target.GetAvatarUrl(size: 256))} | " +
                                  $"{UrlHelper.CreateMarkdownUrl("1024", target.GetAvatarUrl(size: 1024))} | " +
-                                 $"{UrlHelper.CreateMarkdownUrl("2048", target.GetAvatarUrl(size: 2048))}")
-                .Build());
+                                 $"{UrlHelper.CreateMarkdownUrl("2048", target.GetAvatarUrl(size: 2048))}"));
         }
         
         [Command("hex")]
         [Description("Parses a color.")]
         [RunMode(RunMode.Parallel)]
-        public async Task Command_ReadColourAsync([Name("Color")] Color color)
+        public async Task<DiscordCommandResult> Command_ReadColourAsync([Name("Color")] Color color)
         {
             await using var outStream = ImageHelper.CreateColourImage(new Rgba32(color.R, color.G, color.B), 200, 200);
-            await Context.Channel.SendMessageAsync(new LocalAttachment(outStream, "role.png"), null, embed: new LocalEmbedBuilder()
-                .WithColor(color)
-                .WithTitle("Color")
-                .WithDescription(
-                    $"**Hex:** {color}\n**Red:** {color.R}\n**Green:** {color.G}\n**Blue:** {color.B}")
-                .WithImageUrl("attachment://role.png")
-                .Build()).ConfigureAwait(false);
+            return Response(new LocalMessage
+            {
+                Attachments = new[] {new LocalAttachment(outStream, "role.png")},
+                Embeds = new[]
+                {
+                    new LocalEmbed()
+                        .WithColor(color)
+                        .WithTitle("Color")
+                        .WithDescription(
+                            $"**Hex:** {color}\n**Red:** {color.R}\n**Green:** {color.G}\n**Blue:** {color.B}")
+                        .WithImageUrl("attachment://role.png")
+                }
+            });
         }
         
         [Command("colour", "color")]
         [Description("Grabs the colour of a role.")]
         [RunMode(RunMode.Parallel)]
-        public async Task Command_GetColourFromRoleAsync(
+        public async Task<DiscordCommandResult> Command_GetColourFromRoleAsync(
             [Name("Role")] [Description("The role you wish to view the colour of.")] [Remainder]
-            CachedRole role)
+            IRole role)
         {
             if (role.Color == null || role.Color.Value == 0)
             {
-                await ReplyAsync("That role doesn't have a colour.");
-                return;
+                return Response("That role doesn't have a colour.");
             }
 
             await using var outStream = ImageHelper.CreateColourImage(new Rgba32(role.Color.Value.R, role.Color.Value.G, role.Color.Value.B), 200, 200);
-            await Context.Channel.SendMessageAsync(new LocalAttachment(outStream, "role.png"), null, embed: new LocalEmbedBuilder()
-                .WithColor(role.Color)
-                .WithTitle("Color")
-                .WithDescription(
-                    $"**Hex:** {role.Color}\n**Red:** {role.Color.Value.R}\n**Green:** {role.Color.Value.G}\n**Blue:** {role.Color.Value.B}")
-                .WithImageUrl("attachment://role.png")
-                .Build()).ConfigureAwait(false);
+
+            return Response(new LocalMessage
+            {
+                Attachments = new[] {new LocalAttachment(outStream, "role.png")},
+                Embeds = new[]
+                {
+                    new LocalEmbed()
+                        .WithColor(role.Color)
+                        .WithTitle("Color")
+                        .WithDescription(
+                            $"**Hex:** {role.Color}\n**Red:** {role.Color.Value.R}\n**Green:** {role.Color.Value.G}\n**Blue:** {role.Color.Value.B}")
+                        .WithImageUrl("attachment://role.png")
+                }
+            });
         }
 
         [Command("colour", "color")]
         [Description("Grabs the colour of a user.")]
         [RunMode(RunMode.Parallel)]
-        public async Task Command_GetColourFromUserAsync(
+        public async Task<DiscordCommandResult> Command_GetColourFromUserAsync(
             [Name("User")] [Description("The user you wish to view the colour of.")] [Remainder]
-            CachedMember user)
+            IMember user)
         {
             var r = user.GetHighestRoleOrDefault(a => a.Color != null && a.Color.Value.RawValue != 0);
             if (r == null)
             {
-                await ReplyAsync("That user doesn't have a coloured role.");
-                return;
+                return Response("That user doesn't have a coloured role.");
             }
-            await Command_GetColourFromRoleAsync(r);
+            return await Command_GetColourFromRoleAsync(r);
         }
 
         [Command("colour", "color")]
         [Description("Shows a hex value as a color.")]
-        public async Task Colour(Color color)
+        public async Task<DiscordCommandResult> Colour(Color color)
         {
             await using var outStream = ImageHelper.CreateColourImage(new Rgba32(color.R, color.G, color.B), 200, 200);
-            await Context.Channel.SendMessageAsync(new LocalAttachment(outStream, "role.png"), null, embed: new LocalEmbedBuilder()
-                .WithColor(color)
-                .WithTitle("Color")
-                .WithDescription(
-                    $"**Hex:** {color}\n**Red:** {color.R}\n**Green:** {color.G}\n**Blue:** {color.B}")
-                .WithImageUrl("attachment://role.png")
-                .Build()).ConfigureAwait(false);
-        }
-        
-        [Disabled]
-        [Command("resize")]
-        [Description("Resizes an image from a URL to specified dimensions.")]
-        [CommandCooldown(1, 30, CooldownMeasure.Seconds, CooldownType.User)]
-        [RunMode(RunMode.Parallel)]
-        public async Task Command_ResizeImageAsync(
-            [Name("Image URL")] [Description("The URL of the image to resize.")]
-            Uri url,
-            [Name("Width")] [Description("The width to resize to.")] [Range(1, 500, true, true)]
-            int width,
-            [Name("Height")] [Description("The height to resize to.")] [Range(1, 500, true, true)]
-            int height)
-        {
-            var isGif = new FileInfo(url.AbsolutePath).Extension == ".gif";
-            await using var inStream = await new HttpClient().GetStreamAsync(url).ConfigureAwait(false);
-            
-            await using var outStream = new MemoryStream();
-            try
+
+            return Response(new LocalMessage
             {
-                using var img = SixLabors.ImageSharp.Image.Load(inStream);
-                img.Mutate(a => a.Resize(new Size(width, height), new BicubicResampler(), false));
-                await img.SaveAsync(outStream, isGif ? (IImageEncoder)new GifEncoder() : new PngEncoder());
-                outStream.Position = 0;
-                await Context.Channel.SendMessageAsync(new LocalAttachment(outStream, $"resized.{(isGif ? "gif" : "png")}"));
-            }
-            catch (NotSupportedException)
-            {
-                await ReplyAsync(
-                    "The provided image is in a bad format! Available formats are PNG, JPEG, BMP or GIF!");
-            }
+                Attachments = new[] {new LocalAttachment(outStream, "role.png")},
+                Embeds = new[]
+                {
+                    new LocalEmbed()
+                        .WithColor(color)
+                        .WithTitle("Color")
+                        .WithDescription(
+                            $"**Hex:** {color}\n**Red:** {color.R}\n**Green:** {color.G}\n**Blue:** {color.B}")
+                        .WithImageUrl("attachment://role.png")
+                }
+            });
         }
     }
 }

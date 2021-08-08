@@ -1,9 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Disqord;
 
-namespace Lament.Persistence.Relational
+namespace Abyss.Persistence.Relational
 {
     public class Reminder
     {

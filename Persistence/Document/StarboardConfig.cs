@@ -1,11 +1,11 @@
-using Disqord;
+using Disqord.Gateway;
 
-namespace Lament.Persistence.Document
+namespace Abyss.Persistence.Document
 {
     public class StarboardConfig: RoleChannelIgnorable
     {
         public ulong StarboardChannel { get; set; } = 0;
 
-        public CachedTextChannel GetStarboardChannel(CachedGuild guild) => guild.GetTextChannel(StarboardChannel);
+        public CachedTextChannel GetStarboardChannel(CachedGuild guild) => guild.GetChannel(StarboardChannel) as CachedTextChannel;
     }
 }
