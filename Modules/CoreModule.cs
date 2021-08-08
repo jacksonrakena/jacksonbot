@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Disqord;
 using Disqord.Bot;
-using Abyss.Discord;
 using Disqord.Gateway;
 using Disqord.Rest;
 using Microsoft.Extensions.Logging;

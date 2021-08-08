@@ -6,7 +6,6 @@ using Qmmands;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Abyss.Discord;
 
 namespace Abyss.Services
 {
@@ -60,7 +59,7 @@ namespace Abyss.Services
             var cd = command.Cooldowns;
             if (cd.Count > 0)
             {
-                embed.AddField("Cooldowns", string.Join("\n", cd.Select(c => $"{((CooldownType)c.BucketType).GetPerName()} - {c.Amount} usage{(c.Amount == 1 ? "" : "s")} per {c.Per.Humanize()}")));
+                embed.AddField("Cooldowns", string.Join("\n", cd.Select(c => $"{c.Amount} usage{(c.Amount == 1 ? "" : "s")} per {c.Per.Humanize()}, per {c.BucketType}")));
             }
 
             var checks = CommandUtilities.EnumerateAllChecks(command).ToList();
