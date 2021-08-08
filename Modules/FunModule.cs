@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Abyss.Extensions;
 using Disqord;
 using Disqord.Bot;
 using Disqord.Extensions.Interactivity.Menus.Paged;
@@ -9,18 +10,18 @@ using Qmmands;
 
 namespace Abyss.Modules
 {
-    public class FunModule : DiscordModuleBase
+    public class FunModule : AbyssModuleBase
     {
         [Command("cat")]
         [Description("Meow.")]
         [Cooldown(1, 5, CooldownMeasure.Seconds, CooldownBucketType.User)]
         public async Task<DiscordCommandResult> Command_GetCatPictureAsync()
         {
-            return Pages(new InfiniteHttpPageProvider());
+            return Pages(new CatPageProvider());
         }
     }
 
-    public class InfiniteHttpPageProvider : PageProvider
+    public class CatPageProvider : InfinitePageProvider
     {
         public override async ValueTask<Page> GetPageAsync(PagedViewBase view)
         {

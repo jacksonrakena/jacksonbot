@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Abyss.Extensions;
 using Disqord;
 using Disqord.Bot;
 using Disqord.Extensions.Interactivity.Menus;
@@ -10,7 +11,7 @@ using Qmmands;
 
 namespace Abyss.Modules
 {
-    public class RandomModule: DiscordModuleBase
+    public class RandomModule: AbyssModuleBase
     {
         public class DiceRollView : ViewBase
         {
