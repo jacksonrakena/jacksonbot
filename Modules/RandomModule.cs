@@ -31,7 +31,7 @@ namespace Abyss.Modules
             public ValueTask Reroll(ButtonEventArgs e)
             {
                 TemplateMessage.Content = Evaluate(_dice);
-                ReportChanges(); // The template message's properties aren't tracked, so we have to report them.
+                ReportChanges();
                 return default;
             }
 
@@ -40,7 +40,7 @@ namespace Abyss.Modules
             {
                 _dice += "+" + _dice;
                 TemplateMessage.Content = Evaluate(_dice);
-                ReportChanges(); // The template message's properties aren't tracked, so we have to report them.
+                ReportChanges();
                 return default;
             }
         }
