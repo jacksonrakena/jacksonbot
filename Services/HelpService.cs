@@ -59,7 +59,7 @@ namespace Abyss.Services
             var cd = command.Cooldowns;
             if (cd.Count > 0)
             {
-                embed.AddField("Cooldowns", string.Join("\n", cd.Select(c => $"{c.Amount} usage{(c.Amount == 1 ? "" : "s")} per {c.Per.Humanize()}, per {c.BucketType}")));
+                embed.AddField("Cooldowns", string.Join("\n", cd.Select(c => $"{c.Amount} usage{(c.Amount == 1 ? "" : "s")} every {c.Per.Humanize()}, per {c.BucketType.ToString().ToLower()}")));
             }
 
             var checks = CommandUtilities.EnumerateAllChecks(command).ToList();

@@ -5,7 +5,6 @@ using Abyss.Helpers;
 using Disqord.Bot;
 using Disqord.Gateway;
 using Qmmands;
-using SixLabors.ImageSharp.PixelFormats;
 using Color = Disqord.Color;
 
 namespace Abyss.Modules
@@ -20,7 +19,7 @@ namespace Abyss.Modules
             CachedMember target = null)
         {
             target ??= Context.Author as CachedMember;
-            return Response(new LocalEmbed()
+            return Reply(new LocalEmbed()
                 .WithAuthor(target)
                 .WithColor(Color.LightCyan)
                 .WithImageUrl(target.GetAvatarUrl())
@@ -32,13 +31,12 @@ namespace Abyss.Modules
         
         [Command("hex")]
         [Description("Parses a color.")]
+        [Cooldown(1, 3, CooldownMeasure.Seconds, CooldownBucketType.User)]
         [RunMode(RunMode.Parallel)]
         public async Task<DiscordCommandResult> Command_ReadColourAsync([Name("Color")] Color color)
         {
-            await using var outStream = ImageHelper.CreateColourImage(new Rgba32(color.R, color.G, color.B), 200, 200);
-            return Response(new LocalMessage
+            return Reply(new LocalMessage
             {
-                Attachments = new[] {new LocalAttachment(outStream, "role.png")},
                 Embeds = new[]
                 {
                     new LocalEmbed()
@@ -46,7 +44,7 @@ namespace Abyss.Modules
                         .WithTitle("Color")
                         .WithDescription(
                             $"**Hex:** {color}\n**Red:** {color.R}\n**Green:** {color.G}\n**Blue:** {color.B}")
-                        .WithImageUrl("attachment://role.png")
+                        .WithImageUrl($"https://singlecolorimage.com/get/{color.ToString()[1..]}/200x200")
                 }
             });
         }
@@ -60,14 +58,10 @@ namespace Abyss.Modules
         {
             if (role.Color == null || role.Color.Value == 0)
             {
-                return Response("That role doesn't have a colour.");
+                return Reply("That role doesn't have a colour.");
             }
-
-            await using var outStream = ImageHelper.CreateColourImage(new Rgba32(role.Color.Value.R, role.Color.Value.G, role.Color.Value.B), 200, 200);
-
-            return Response(new LocalMessage
+            return Reply(new LocalMessage
             {
-                Attachments = new[] {new LocalAttachment(outStream, "role.png")},
                 Embeds = new[]
                 {
                     new LocalEmbed()
@@ -75,7 +69,7 @@ namespace Abyss.Modules
                         .WithTitle("Color")
                         .WithDescription(
                             $"**Hex:** {role.Color}\n**Red:** {role.Color.Value.R}\n**Green:** {role.Color.Value.G}\n**Blue:** {role.Color.Value.B}")
-                        .WithImageUrl("attachment://role.png")
+                        .WithImageUrl($"https://singlecolorimage.com/get/{role.Color.ToString()?[1..]}/200x200")
                 }
             });
         }
@@ -90,7 +84,7 @@ namespace Abyss.Modules
             var r = user.GetHighestRoleOrDefault(a => a.Color != null && a.Color.Value.RawValue != 0);
             if (r == null)
             {
-                return Response("That user doesn't have a coloured role.");
+                return Reply("That user doesn't have a coloured role.");
             }
             return await Command_GetColourFromRoleAsync(r);
         }
@@ -99,11 +93,8 @@ namespace Abyss.Modules
         [Description("Shows a hex value as a color.")]
         public async Task<DiscordCommandResult> Colour(Color color)
         {
-            await using var outStream = ImageHelper.CreateColourImage(new Rgba32(color.R, color.G, color.B), 200, 200);
-
-            return Response(new LocalMessage
+            return Reply(new LocalMessage
             {
-                Attachments = new[] {new LocalAttachment(outStream, "role.png")},
                 Embeds = new[]
                 {
                     new LocalEmbed()
@@ -111,7 +102,7 @@ namespace Abyss.Modules
                         .WithTitle("Color")
                         .WithDescription(
                             $"**Hex:** {color}\n**Red:** {color.R}\n**Green:** {color.G}\n**Blue:** {color.B}")
-                        .WithImageUrl("attachment://role.png")
+                        .WithImageUrl($"https://singlecolorimage.com/get/{color.ToString()[1..]}/200x200")
                 }
             });
         }

@@ -6,6 +6,7 @@ using Abyss.Persistence.Relational;
 using Abyss.Services;
 using Disqord.Bot;
 using Disqord.Bot.Hosting;
+using Disqord.Gateway;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +38,7 @@ namespace Abyss
             hostBuilder.ConfigureDiscordBot<Abyss>((host, bot) =>
             {
                 bot.Token = host.Configuration.GetSection("Secrets").GetSection("Discord")["Token"];
+                bot.Intents = GatewayIntents.All;
             });
             hostBuilder.UseSystemd();
             hostBuilder.ConfigureAppConfiguration(appConfigure =>
