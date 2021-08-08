@@ -120,8 +120,9 @@ namespace Abyss.Modules
             };
 
             var tracks = album.Tracks.Items;
-            var size = 0;
 
+            var size = 0;
+            var tracksCount = 0;
             var tracksOutput = tracks.Select((track, len) =>
             {
                 string text;
@@ -134,6 +135,11 @@ namespace Abyss.Modules
                         $"{len+1} - {UrlHelper.CreateMarkdownUrl(track.Name, track.Id.Url)} by {track.Artists.Select(ab => ab.Name).Humanize()}";
 
                 return text;
+            }).TakeWhile(d =>
+            {
+                size += d.Length;
+                tracksCount += 1;
+                return size < 3900 && tracksCount <= 10;
             }).ToList();
 
             if (tracksOutput.Count != tracks.Length)
