@@ -10,7 +10,7 @@ namespace Abyss
 
         public const string CONFIGURATION_FILENAME = "abyss.appsettings.json";
 
-        public const string DEFAULT_GUILD_MESSAGE_PREFIX = "lm ";
+        public const string DEFAULT_GUILD_MESSAGE_PREFIX = "a.";
 
         public static Guid SessionId = Guid.NewGuid();
     }

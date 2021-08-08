@@ -1,8 +1,10 @@
 ﻿using System;
+using Abyss.Persistence;
 using Abyssal.Common;
 using AbyssalSpotify;
 using Abyss.Persistence.Relational;
 using Abyss.Services;
+using Disqord.Bot;
 using Disqord.Bot.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -31,10 +33,10 @@ namespace Abyss
         public static IHost BuildAbyssHost(string[] runtimeArgs)
         {
             var hostBuilder = new HostBuilder();
-            hostBuilder.ConfigureDiscordBot((host, bot) =>
+            hostBuilder.ConfigureServices(ConfigureServices);
+            hostBuilder.ConfigureDiscordBot<Abyss>((host, bot) =>
             {
-                bot.Token = "Njc5OTI1OTY3MTUzOTIyMDU1.Xk4cZg.HIbQPmav8RgaNvfIqEkmTWezYhk";
-                bot.Prefixes = new[] {"a."};
+                bot.Token = host.Configuration.GetSection("Secrets").GetSection("Discord")["Token"];
             });
             hostBuilder.UseSystemd();
             hostBuilder.ConfigureAppConfiguration(appConfigure =>
@@ -52,8 +54,8 @@ namespace Abyss
                 Console.WriteLine(string.Format("{1} variable not set. Defaulting to {0}", Constants.DEFAULT_RUNTIME_ENVIRONMENT, Constants.ENVIRONMENT_VARNAME));
                 environment = Constants.DEFAULT_RUNTIME_ENVIRONMENT;
             }
+
             hostBuilder.UseEnvironment(environment);
-            hostBuilder.ConfigureServices(ConfigureServices);
 
             return hostBuilder.Build();
         }
@@ -64,6 +66,7 @@ namespace Abyss
             var spotify = secrets.GetSection("Spotify");
             serviceCollection
                 .AddMemoryCache()
+                .AddSingleton<IPrefixProvider, AbyssPrefixProvider>()
                 .AddDbContext<AbyssPersistenceContext>(options =>
                 {
                     options.UseNpgsql(builderContext.Configuration.GetConnectionString("Database"));

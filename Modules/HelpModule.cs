@@ -26,9 +26,11 @@ namespace Abyss.Modules
             var app = await Context.Bot.FetchCurrentApplicationAsync();
             return Response(new LocalEmbed()
                 .WithColor(Color.LightCyan)
+                .WithAuthor("Abyss", Context.Bot.CurrentUser.GetAvatarUrl())
                 .WithDescription(
-                    $"Abyss 17 logged in as **{Context.Bot.CurrentUser}** ({Context.Bot.CurrentUser.Id}), " +
-                    $"owned by **{app.Owner}** ({app.Owner.Id})")
+                    $"Logged in as **{Context.Bot.CurrentUser}**")
+                .AddField("Owner",$"**{app.Owner}**", true)
+                .AddField("Version", "19.1.0-dev", true)
                 .WithTimestamp(DateTimeOffset.Now)
                 .WithFooter("Session " + Constants.SessionId));
         }
