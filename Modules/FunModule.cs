@@ -70,7 +70,7 @@ namespace Abyss.Modules
         public async Task OwoAsync()
         {
             var random = new Random();
-            var n = 2;
+            var n = 1;
             while (random.NextDouble() < (double)1 / (double)n)
             {
                 await Response($"owo (1/{n})");
