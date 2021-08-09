@@ -23,6 +23,8 @@ namespace Abyss.Interactions.Blackjack
                 if (_databaseLazy == null)
                 {
                     _databaseLazy = (Menu.Interactivity.Client as DiscordBotBase).Services
+                        .CreateScope()
+                        .ServiceProvider
                         .GetRequiredService<AbyssPersistenceContext>();
                 }
 
