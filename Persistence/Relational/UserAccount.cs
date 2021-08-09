@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,6 +15,8 @@ namespace Abyss.Persistence.Relational
         public int ColorG { get; set; }
         public int ColorB { get; set; }
         public string BadgesString { get; set; }
+        public DateTimeOffset? FirstInteraction { get; set; }
+        public DateTimeOffset? LatestInteraction { get; set; }
 
         [NotMapped]
         public string[] Badges

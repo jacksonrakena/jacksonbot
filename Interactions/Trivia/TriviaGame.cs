@@ -28,6 +28,14 @@ namespace Abyss.Interactions.Trivia
         private string _selectedCategory;
         private readonly ulong _authorId;
         
+        private AbyssPersistenceContext _database
+        {
+            get
+            {
+                return (Menu.Interactivity.Client as DiscordBotBase).Services.GetRequiredService<AbyssPersistenceContext>();
+            }
+        }
+        
         public TriviaGame(List<LocalSelectionComponentOption> categories, ulong authorId) : base(
             new LocalMessage().WithEmbeds(new LocalEmbed().WithColor(Constants.Theme)
                 .WithDescription("Welcome to the Abyss trivia minigame. Select your category, or click 'All' to play random questions."))
@@ -36,10 +44,13 @@ namespace Abyss.Interactions.Trivia
             _authorId = authorId;
             AddComponent(new SelectionViewComponent(async e =>
             {
+                var record = await _database.GetTriviaRecordAsync(_authorId);
+                record.VoteForCategory(e.SelectedOptions[0].Value, e.SelectedOptions[0].Label);
+                await _database.SaveChangesAsync();
                 _selectedCategory = e.SelectedOptions[0].Value;
                 if (_selectedCategory == "-1") _selectedCategory = null;
                 _questions = await TriviaData.GetQuestionsAsync(_selectedCategory);
-                SelectNewQuestion();
+                await SelectNewQuestion();
             })
             {
                 Placeholder = "Select a category",
@@ -54,10 +65,10 @@ namespace Abyss.Interactions.Trivia
             _currentQuestionIndex = -1;
             _incorrectAnswers = 0;
             _correctAnswers = 0;
-            SelectNewQuestion();
+            await SelectNewQuestion();
         }
 
-        private void SelectNewQuestion(string message = null)
+        private async Task SelectNewQuestion(string message = null)
         {
             ClearComponents();
             _currentQuestionIndex++;
@@ -69,6 +80,12 @@ namespace Abyss.Interactions.Trivia
                 ClearComponents();
                 AddComponent(new ButtonViewComponent(Reset) { Label = "Play again" });
                 ReportChanges();
+                var record = await _database.GetTriviaRecordAsync(_authorId);
+                record.CorrectAnswers += _correctAnswers;
+                record.IncorrectAnswers += _incorrectAnswers;
+                record.TotalMatches++;
+                await _database.SaveChangesAsync();
+
                 return;
             }
             _currentQuestion = _questions.ElementAt(_currentQuestionIndex);
@@ -105,12 +122,12 @@ namespace Abyss.Interactions.Trivia
                 var user = await db.GetUserAccountsAsync(_authorId);
                 user.Coins += 5;
                 await db.SaveChangesAsync();
-                SelectNewQuestion("Correct! You've gained 5 coins.");
+                await SelectNewQuestion("Correct! You've gained 5 coins.");
             }
             else
             {
                 _incorrectAnswers++;
-                SelectNewQuestion($"Incorrect. The answer was **{_correctOption}**.");
+                await SelectNewQuestion($"Incorrect. The answer was **{_correctOption}**.");
             }
         }
 

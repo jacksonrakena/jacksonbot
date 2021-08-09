@@ -27,6 +27,7 @@ namespace Abyss
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 Console.WriteLine("Host terminated unexpectedly");
                 return 1;
             }

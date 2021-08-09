@@ -4,15 +4,17 @@ using Abyss.Persistence.Document;
 using Abyss.Persistence.Relational;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Abyss.Migrations
 {
     [DbContext(typeof(AbyssPersistenceContext))]
-    partial class AbyssPersistenceContextModelSnapshot : ModelSnapshot
+    [Migration("20210809115941_AddTriviaRecording")]
+    partial class AddTriviaRecording
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -177,12 +179,6 @@ namespace Abyss.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
-
-                    b.Property<DateTimeOffset?>("FirstInteraction")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("LatestInteraction")
-                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Abyss.Persistence.Document;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ namespace Abyss.Persistence.Relational
 {
     public class AbyssPersistenceContext: DbContext
     {
+        public DbSet<TriviaRecord> TriviaRecords { get; set; }
         public DbSet<JsonRow<GuildConfig>> GuildConfigurations { get; set; }
         public DbSet<UserAccount> UserAccounts { get; set; }
         public DbSet<BlackjackGameRecord> BlackjackGames { get; set; }
@@ -24,6 +26,25 @@ namespace Abyss.Persistence.Relational
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql("Server=localhost;Database=abyss;Username=abyss;Password=abyss123");
+        }
+
+        public async Task<TriviaRecord> GetTriviaRecordAsync(ulong userId)
+        {
+            var record = await TriviaRecords.Include(c => c.CategoryVoteRecords).FirstOrDefaultAsync(u => u.UserId == userId);
+            if (record == null)
+            {
+                record = new TriviaRecord
+                {
+                    CorrectAnswers = 0,
+                    IncorrectAnswers = 0,
+                    TotalMatches = 0,
+                    UserId = userId,
+                    CategoryVoteRecords = new()
+                };
+                TriviaRecords.Add(record);
+                await SaveChangesAsync();
+            }
+            return record;
         }
 
         public async Task<bool> SubtractCurrencyAsync(ulong user, decimal amount)
@@ -83,6 +104,7 @@ namespace Abyss.Persistence.Relational
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<BlackjackGameRecord>().Property(d => d.Result).HasConversion<string>();
+            modelBuilder.Entity<TriviaRecord>().HasMany(d => d.CategoryVoteRecords).WithOne(d => d.TriviaRecord);
             base.OnModelCreating(modelBuilder);
         }
 
