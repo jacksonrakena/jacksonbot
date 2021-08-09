@@ -33,9 +33,9 @@ namespace Abyss.Modules
             var url = _pages[view.CurrentPageIndex];
             if (url == null)
             {
-                using var response = await new HttpClient().GetAsync("http://aws.random.cat/meow");
-                url = JToken.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false))
-                    .Value<string>("file");
+                using var response = await new HttpClient().GetAsync("https://api.thecatapi.com/v1/images/search?size=full");
+                url = JToken.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false))[0]
+                    .Value<string>("url");
                 _pages[view.CurrentPageIndex] = url;
             }
             return new Page().WithEmbeds(new LocalEmbed()
