@@ -14,11 +14,19 @@ namespace Abyss.Interactions.Blackjack
         private BlackjackSharedDeck _deck = new BlackjackSharedDeck();
         private readonly decimal _playerInitialBet;
 
+        private AbyssPersistenceContext _databaseLazy;
+
         private AbyssPersistenceContext _database
         {
             get
             {
-                return (Menu.Interactivity.Client as DiscordBotBase).Services.GetRequiredService<AbyssPersistenceContext>();
+                if (_databaseLazy == null)
+                {
+                    _databaseLazy = (Menu.Interactivity.Client as DiscordBotBase).Services
+                        .GetRequiredService<AbyssPersistenceContext>();
+                }
+
+                return _databaseLazy;
             }
         }
 
