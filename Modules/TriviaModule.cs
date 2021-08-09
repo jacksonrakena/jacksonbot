@@ -47,6 +47,7 @@ namespace Abyss.Modules
             _currentQuestionIndex = -1;
             _incorrectAnswers = 0;
             _correctAnswers = 0;
+            SelectNewQuestion();
             return default;
         }
 
