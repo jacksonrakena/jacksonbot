@@ -18,6 +18,6 @@ Built on top of <a href="https://github.com/Quahu/Disqord">Disqord</a> and <a hr
 - A [Discord bot application](https://discordapp.com/developers/applications/) with registered user and token (app -> Bot -> Add Bot)
 - .NET 5.0 Runtime (SDK for building) or newer
 - PostgreSQL (tested with 13.1)
-    - Username `abyss`, password `abyss123`, empty `abyss` database (run `dotnet ef database update` to migrate) [configurable]
+    - Username `abyss`, password `abyss123`, empty `abyss` database (databases are migrated automatically) [configurable]
  
 Copyright &copy; 2015-2021 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
