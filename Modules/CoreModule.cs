@@ -92,12 +92,12 @@ namespace Abyss.Modules
 
             embed.WithDescription(
                 $"You can use `{prefix}help <command/group>` for more details on a command or group.");
-
-            var modules = Context.Bot.Commands.TopLevelModules;
-            foreach (var module in Context.Bot.Commands.GetAllModules())
+            
+            foreach (var module in Context.Bot.Commands.TopLevelModules)
             {
                 var commands = new List<string>();
-                foreach (var command in module.Commands)
+                var submoduleCommands = module.Submodules.SelectMany(d => d.Commands);
+                foreach (var command in module.Commands.Concat(submoduleCommands))
                 {
                     if (!await HelpService.CanShowCommandAsync(Context, command)) continue;
                     var format = HelpService.FormatCommandShort(command);

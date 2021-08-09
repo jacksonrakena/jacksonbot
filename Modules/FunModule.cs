@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Abyss.Extensions;
 using Disqord;
 using Disqord.Bot;
+using Disqord.Extensions.Interactivity.Menus;
 using Disqord.Extensions.Interactivity.Menus.Paged;
 using Newtonsoft.Json.Linq;
 using Qmmands;
@@ -11,7 +12,7 @@ using Qmmands;
 namespace Abyss.Modules
 {
     [Name("Fun")]
-    public class FunModule : AbyssModuleBase
+    public partial class FunModule : AbyssModuleBase
     {
         [Command("cat")]
         [Description("Meow.")]
@@ -19,6 +20,79 @@ namespace Abyss.Modules
         public async Task<DiscordCommandResult> Command_GetCatPictureAsync()
         {
             return Pages(new CatPageProvider(this));
+        }
+        
+        public class DiceRollView : ViewBase
+        {
+            private string _dice;
+
+            private static string Evaluate(string data)
+            {
+                return $"I rolled {DiceExpression.Evaluate(data)} on a **{data}** die.";
+            }
+            
+            public DiceRollView(string dice) : base(new LocalMessage().WithContent(Evaluate(dice)))
+            {
+                _dice = dice;
+            }
+            
+            [Button(Label="Re-roll", Style = LocalButtonComponentStyle.Success)]
+            public ValueTask Reroll(ButtonEventArgs e)
+            {
+                TemplateMessage.Content = Evaluate(_dice);
+                ReportChanges();
+                return default;
+            }
+
+            [Button(Label = "Double", Style = LocalButtonComponentStyle.Secondary)]
+            public ValueTask Double(ButtonEventArgs e)
+            {
+                _dice += "+" + _dice;
+                TemplateMessage.Content = Evaluate(_dice);
+                ReportChanges();
+                return default;
+            }
+
+            [Button(Label = "d20", Style = LocalButtonComponentStyle.Danger)]
+            public ValueTask D20(ButtonEventArgs e)
+            {
+                _dice = "d20";
+                TemplateMessage.Content = Evaluate(_dice);
+                RemoveComponent(e.Button);
+                ReportChanges();
+                return default;
+            }
+        }
+        
+        [Command("roll", "dice")]
+        [Remarks("This command also supports complex dice types, like `d20+d18+4`.")]
+        [Description("Rolls a dice of the supplied size.")]
+        public async Task<DiscordCommandResult> Command_DiceRollAsync(
+            [Name("Dice")]
+            [Description("The dice configuration to use. It can be simple, like `6`, or complex, like `d20+d18+4`.")]
+            string dice, [Name("Number of Dice")]
+            [Description("The number of dice to roll.")]
+            [Range(1, 100)]
+            int numberOfDice = 1)
+        {
+            if (!dice.Contains("d") && int.TryParse(dice, out var diceParsed))
+            {
+                if (diceParsed < 1)
+                {
+                    return Reply("Your dice roll must be 1 or above!");
+                }
+
+                return View(new DiceRollView("d" + dice));
+            } 
+
+            try
+            {
+                return View(new DiceRollView(dice));
+            }
+            catch (ArgumentException)
+            {
+                return Reply("Invalid dice!");
+            }
         }
     }
 

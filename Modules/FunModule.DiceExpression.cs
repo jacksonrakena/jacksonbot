@@ -2,91 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Abyss.Extensions;
-using Disqord;
-using Disqord.Bot;
-using Disqord.Extensions.Interactivity.Menus;
-using Qmmands;
 
 namespace Abyss.Modules
 {
-    [Name("Utilities")]
-    public class RandomModule: AbyssModuleBase
+    public partial class FunModule
     {
-        public class DiceRollView : ViewBase
-        {
-            private string _dice;
-
-            private static string Evaluate(string data)
-            {
-                return $"I rolled {DiceExpression.Evaluate(data)} on a **{data}** die.";
-            }
-            
-            public DiceRollView(string dice) : base(new LocalMessage().WithContent(Evaluate(dice)))
-            {
-                _dice = dice;
-            }
-            
-            [Button(Label="Re-roll", Style = LocalButtonComponentStyle.Success)]
-            public ValueTask Reroll(ButtonEventArgs e)
-            {
-                TemplateMessage.Content = Evaluate(_dice);
-                ReportChanges();
-                return default;
-            }
-
-            [Button(Label = "Double", Style = LocalButtonComponentStyle.Secondary)]
-            public ValueTask Double(ButtonEventArgs e)
-            {
-                _dice += "+" + _dice;
-                TemplateMessage.Content = Evaluate(_dice);
-                ReportChanges();
-                return default;
-            }
-
-            [Button(Label = "d20", Style = LocalButtonComponentStyle.Danger)]
-            public ValueTask D20(ButtonEventArgs e)
-            {
-                _dice = "d20";
-                TemplateMessage.Content = Evaluate(_dice);
-                RemoveComponent(e.Button);
-                ReportChanges();
-                return default;
-            }
-        }
-        
-        [Command("roll", "dice")]
-        [Remarks("This command also supports complex dice types, like `d20+d18+4`.")]
-        [Description("Rolls a dice of the supplied size.")]
-        public async Task<DiscordCommandResult> Command_DiceRollAsync(
-            [Name("Dice")]
-            [Description("The dice configuration to use. It can be simple, like `6`, or complex, like `d20+d18+4`.")]
-            string dice, [Name("Number of Dice")]
-            [Description("The number of dice to roll.")]
-            [Range(1, 100)]
-            int numberOfDice = 1)
-        {
-            if (!dice.Contains("d") && int.TryParse(dice, out var diceParsed))
-            {
-                if (diceParsed < 1)
-                {
-                    return Reply("Your dice roll must be 1 or above!");
-                }
-
-                return View(new DiceRollView("d" + dice));
-            } 
-
-            try
-            {
-                return View(new DiceRollView(dice));
-            }
-            catch (ArgumentException)
-            {
-                return Reply("Invalid dice!");
-            }
-        }
-        
         private class DiceExpression
         {
             private static readonly Regex NumberToken = new Regex("^[0-9]+$");
@@ -113,7 +33,7 @@ namespace Abyss.Modules
                 if (tokens.Length % 2 != 0)
                 {
                     throw new ArgumentException(
-                       "The given dice expression was not in an expected format: even after normalization, it contained an odd number of tokens.");
+                        "The given dice expression was not in an expected format: even after normalization, it contained an odd number of tokens.");
                 }
 
                 // Parse operator-then-operand pairs into nodes.
@@ -162,15 +82,15 @@ namespace Abyss.Modules
                     var number = numberNodes.Sum(pair => pair.Key * pair.Value.Evaluate());
                     var diceTypes = diceRollNodes.Select(node => ((DiceRollNode) node.Value).DiceType).Distinct();
                     var normalizedDiceRollNodes = from type in diceTypes
-                                                  let numDiceOfThisType = diceRollNodes
-                                                      .Where(node => ((DiceRollNode) node.Value).DiceType == type).Sum(node =>
-                                                          node.Key * ((DiceRollNode) node.Value).NumberOfDice)
-                                                  where numDiceOfThisType != 0
-                                                  let multiplicand = numDiceOfThisType > 0 ? +1 : -1
-                                                  let absNumDice = Math.Abs(numDiceOfThisType)
-                                                  orderby multiplicand descending, type descending
-                                                  select new KeyValuePair<int, IDiceExpressionNode>(multiplicand,
-                                                      new DiceRollNode(absNumDice, type));
+                        let numDiceOfThisType = diceRollNodes
+                            .Where(node => ((DiceRollNode) node.Value).DiceType == type).Sum(node =>
+                                node.Key * ((DiceRollNode) node.Value).NumberOfDice)
+                        where numDiceOfThisType != 0
+                        let multiplicand = numDiceOfThisType > 0 ? +1 : -1
+                        let absNumDice = Math.Abs(numDiceOfThisType)
+                        orderby multiplicand descending, type descending
+                        select new KeyValuePair<int, IDiceExpressionNode>(multiplicand,
+                            new DiceRollNode(absNumDice, type));
 
                     _nodes = (number == 0
                             ? normalizedDiceRollNodes
