@@ -55,10 +55,16 @@ namespace Abyss.Interactions.Blackjack
 
         public void UpdateMessage(string message)
         {
-            TemplateMessage.Embeds[0].Description = $"{message}" +
+            TemplateMessage.Embeds[0].Description = message;
+            TemplateMessage.Embeds[0].Fields = new List<LocalEmbedField>
+            {
+                new LocalEmbedField { Name = "Dealer", Value = $"{string.Join(", ", _dealerCards)} ({_dealerValue})", IsInline = true},
+                new LocalEmbedField { Name = "You", Value = $"{string.Join(", ", _playerCards)} ({_currentValue})", IsInline = true}
+            };
+            /*TemplateMessage.Embeds[0].Description = $"{message}" +
                                                     $"\n\n" +
                                                     $"Dealer: {string.Join(", ", _dealerCards)} ({_dealerValue})\n" +
-                                                    $"You: {string.Join(", ", _playerCards)} ({_currentValue})";
+                                                    $"You: {string.Join(", ", _playerCards)} ({_currentValue})";*/
             ReportChanges();
         }
 
