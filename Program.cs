@@ -56,7 +56,8 @@ namespace Abyss
             });
             hostBuilder.ConfigureLogging((hostContext, logging) =>
             {
-                logging.AddConsole();    
+                logging.AddConsole();
+                logging.AddConfiguration(hostContext.Configuration.GetSection("Logging"));
             });
             var environment = Environment.GetEnvironmentVariable(Constants.ENVIRONMENT_VARNAME);
             if (environment == null)
