@@ -77,7 +77,7 @@ namespace Abyss.Persistence.Relational
                 await ModifyJsonObjectAsync(d => d.GuildConfigurations, guildId, e =>
                 {
                     e.Prefixes = new List<string> {_configuration.GetSection("Options")["DefaultPrefix"]};
-                }
+                });
             }
 
             return config;
