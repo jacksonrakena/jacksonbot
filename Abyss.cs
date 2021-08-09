@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Abyss.Parsers;
@@ -35,6 +36,17 @@ namespace Abyss
         {
             Commands.AddTypeParser(new UriTypeParser());
             return base.AddTypeParsersAsync(cancellationToken);
+        }
+
+        protected override void MutateModule(ModuleBuilder moduleBuilder)
+        {
+            foreach (var command in moduleBuilder.Commands
+                .Where(command => command.Parameters.Count > 0 && !command.Parameters[^1].IsMultiple))
+            {
+                command.Parameters[^1].IsRemainder = true;
+            }
+
+            base.MutateModule(moduleBuilder);
         }
 
         protected override async ValueTask AddModulesAsync(CancellationToken cancellationToken = new CancellationToken())
