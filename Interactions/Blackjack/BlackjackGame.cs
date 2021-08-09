@@ -35,6 +35,7 @@ namespace Abyss.Interactions.Blackjack
                     )
             )
         {
+            _playerInitialBet = bet;
             Reset();
         }
 
