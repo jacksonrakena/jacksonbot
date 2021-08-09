@@ -66,11 +66,12 @@ namespace Abyss.Modules
         }
 
         [Command("owo")]
+        [Cooldown(1, 5, CooldownMeasure.Seconds, CooldownBucketType.User)]
         public async Task OwoAsync()
         {
             var random = new Random();
             var n = 1;
-            while (random.Next() > 1 / n)
+            while (random.NextDouble() > (double)1 / n)
             {
                 await Response($"owo (1/{n})");
                 n *= 2;
