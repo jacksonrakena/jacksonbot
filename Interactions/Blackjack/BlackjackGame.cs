@@ -140,7 +140,8 @@ namespace Abyss.Interactions.Blackjack
                 PlayerFinalBet = _playerCurrentBet,
                 PlayerInitialBet = _playerInitialBet,
                 DidPlayerDoubleDown = _playerDoubleDowned,
-                PlayerBalanceAfterGame = account.Coins
+                PlayerBalanceAfterGame = account.Coins,
+                PlayerBalanceBeforeGame = account.Coins - userAccountModification
             };
 
             _database.BlackjackGames.Add(record);
