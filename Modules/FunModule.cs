@@ -6,6 +6,7 @@ using Disqord;
 using Disqord.Bot;
 using Disqord.Extensions.Interactivity.Menus;
 using Disqord.Extensions.Interactivity.Menus.Paged;
+using Disqord.Rest;
 using Newtonsoft.Json.Linq;
 using Qmmands;
 
@@ -61,6 +62,18 @@ namespace Abyss.Modules
                 RemoveComponent(e.Button);
                 ReportChanges();
                 return default;
+            }
+        }
+
+        [Command("owo")]
+        public async Task OwoAsync()
+        {
+            var random = new Random();
+            var n = 1;
+            while (random.Next() > 1 / n)
+            {
+                await Response($"owo (1/{n})");
+                n *= 2;
             }
         }
         
