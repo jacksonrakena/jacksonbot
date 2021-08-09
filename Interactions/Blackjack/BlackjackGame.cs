@@ -112,6 +112,17 @@ namespace Abyss.Interactions.Blackjack
                     throw new ArgumentOutOfRangeException(nameof(result), result, null);
             }
 
+            if (userAccountModification > 0)
+            {
+                TemplateMessage.Embeds[0].Color = Color.LightGreen;
+            }
+
+            if (userAccountModification > 0)
+            {
+                TemplateMessage.Embeds[0].Color = Color.Red;
+            }
+            ReportChanges();
+
             var account = await _database.GetUserAccountsAsync(_playerId);
             if (userAccountModification != 0)
             {
