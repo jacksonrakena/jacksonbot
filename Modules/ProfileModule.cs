@@ -32,7 +32,7 @@ namespace Abyss.Modules
             if (profile.LatestInteraction != null)
                 embed.AddField("Latest interaction", Markdown.Timestamp(profile.LatestInteraction.Value, Constants.TIMESTAMP_FORMAT));
 
-            if (profile.Badges.Length > 0)
+            if (profile.BadgesString.Length > 0)
             {
                 embed.AddField("Badges", string.Join(", ", profile.Badges));
             }
