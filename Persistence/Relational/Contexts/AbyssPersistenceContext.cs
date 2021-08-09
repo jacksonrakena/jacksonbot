@@ -11,6 +11,7 @@ namespace Abyss.Persistence.Relational
     {
         public DbSet<JsonRow<GuildConfig>> GuildConfigurations { get; set; }
         public DbSet<UserAccount> UserAccounts { get; set; }
+        public DbSet<BlackjackGameRecord> BlackjackGames { get; set; }
         private readonly IConfiguration _configuration;
         
         public DbSet<Reminder> Reminders { get; set; }
@@ -23,6 +24,15 @@ namespace Abyss.Persistence.Relational
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql("Server=localhost;Database=abyss;Username=abyss;Password=abyss123");
+        }
+
+        public async Task<bool> SubtractCurrencyAsync(ulong user, decimal amount)
+        {
+            var account = await GetUserAccountsAsync(user);
+            if ((account.Coins - amount) < 0) return false;
+            account.Coins -= amount;
+            await SaveChangesAsync();
+            return true;
         }
 
         public async Task<TJsonObject> GetJsonObjectAsync<TJsonObject>(
@@ -68,6 +78,12 @@ namespace Abyss.Persistence.Relational
             }
 
             return account;
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<BlackjackGameRecord>().Property(d => d.Result).HasConversion<string>();
+            base.OnModelCreating(modelBuilder);
         }
 
         public async Task<TJsonObject> ModifyJsonObjectAsync<TJsonObject>(

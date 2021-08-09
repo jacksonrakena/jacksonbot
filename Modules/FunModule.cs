@@ -10,6 +10,7 @@ using Qmmands;
 
 namespace Abyss.Modules
 {
+    [Name("Fun")]
     public class FunModule : AbyssModuleBase
     {
         [Command("cat")]

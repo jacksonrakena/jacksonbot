@@ -9,6 +9,7 @@ using Qmmands;
 
 namespace Abyss.Modules
 {
+    [Name("Server")]
     public class ServerModule : AbyssModuleBase
     {
         [Group("prefixes", "prefix", "pfix", "prefixs")]

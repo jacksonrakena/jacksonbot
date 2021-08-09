@@ -9,6 +9,7 @@ using Color = Disqord.Color;
 
 namespace Abyss.Modules
 {
+    [Name("User")]
     public class UserModule : AbyssGuildModuleBase
     {
         [Command("avatar", "av", "a", "pic", "pfp")]

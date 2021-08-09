@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Abyss.Attributes;
 using Abyss.Persistence.Relational;
 using Disqord;
 using Disqord.Bot;
@@ -11,8 +12,24 @@ using Qmmands;
 
 namespace Abyss.Modules
 {
+    [Name("Currency")]
     public class EconomyModule : AbyssModuleBase
     {
+        [Command("send")]
+        [EconomicImpact(EconomicImpactType.UserCoinNeutral)]
+        public async Task<DiscordCommandResult> SendMoneyAsync(IMember user, decimal amount)
+        {
+            var db = Context.Services.GetRequiredService<AbyssPersistenceContext>();
+            if (!await db.SubtractCurrencyAsync(Context.Author.Id, amount))
+            {
+                return Reply("You don't have enough money!");
+            }
+
+            var target = await db.GetUserAccountsAsync(user.Id);
+            target.Coins += amount;
+            await db.SaveChangesAsync();
+            return Reply($"Gave {amount} :coin: to {user.Mention}.");
+        }
         [Command("top")]
         public async Task<DiscordCommandResult> TopAsync()
         {

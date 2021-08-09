@@ -11,6 +11,7 @@ using Qmmands;
 
 namespace Abyss.Modules
 {
+    [Name("Utilities")]
     public class RandomModule: AbyssModuleBase
     {
         public class DiceRollView : ViewBase

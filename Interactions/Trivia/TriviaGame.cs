@@ -1,64 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Abyss.Modules;
 using Abyss.Persistence.Relational;
 using Abyssal.Common;
 using Disqord;
 using Disqord.Bot;
 using Disqord.Extensions.Interactivity.Menus;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Linq;
-using Qmmands;
 
-namespace Abyss.Modules
+namespace Abyss.Interactions.Trivia
 {
-    public class TriviaQuestionSet
-    {
-        public string Question { get; set; }
-        public string CorrectAnswer { get; set; }
-        public string Answer1 { get; set; }
-        public string Answer2 { get; set; }
-        public string Category { get; set; }
-        public string Difficulty { get; set; }
-    }
-
-    public class TriviaGameSelector : ViewBase
-    {
-        public static async Task<List<LocalSelectionComponentOption>> GetCategoriesAsync()
-        {
-            var url = "https://opentdb.com/api_category.php";
-            var http = new HttpClient();
-            var response = JToken.Parse(await http.GetStringAsync(url))["trivia_categories"];
-            return response
-                .Select(d => new LocalSelectionComponentOption(d.Value<string>("name"), d.Value<string>("id")))
-                .Prepend(new LocalSelectionComponentOption("All", "-1"))
-                .ToList();
-        }
-        
-        public TriviaGameSelector(List<LocalSelectionComponentOption> categories) : base(
-            new LocalMessage().WithContent("Welcome to the Abyss trivia game. Choose your category.")
-            )
-        {
-            AddComponent(new SelectionViewComponent(e =>
-            {
-                return default;
-            })
-            {
-                Placeholder = "Select a category",
-                Options = categories
-            });
-            ReportChanges();
-        }
-    }
-
     public class TriviaGame : ViewBase
     {
-        private List<TriviaQuestionSet> _questions;
+        private List<TriviaQuestion> _questions;
 
-        private TriviaQuestionSet _currentQuestion = null;
+        private TriviaQuestion _currentQuestion = null;
         private int _incorrectAnswers;
         private int _correctAnswers;
         private int _currentQuestionIndex = -1;
@@ -79,7 +38,7 @@ namespace Abyss.Modules
             {
                 _selectedCategory = e.SelectedOptions[0].Value;
                 if (_selectedCategory == "-1") _selectedCategory = null;
-                _questions = await TriviaModule.DownloadQuestionsAsync(_selectedCategory);
+                _questions = await TriviaData.GetQuestionsAsync(_selectedCategory);
                 SelectNewQuestion();
             })
             {
@@ -91,7 +50,7 @@ namespace Abyss.Modules
 
         private async ValueTask Reset(ButtonEventArgs e)
         {
-            _questions = await TriviaModule.DownloadQuestionsAsync(_selectedCategory);
+            _questions = await TriviaData.GetQuestionsAsync(_selectedCategory);
             _currentQuestionIndex = -1;
             _incorrectAnswers = 0;
             _correctAnswers = 0;
@@ -168,41 +127,6 @@ namespace Abyss.Modules
         public ValueTask SelectC(ButtonEventArgs e)
         {
             return ValidateOption(_optionC, e);
-        }
-    }
-    
-    [Group("trivia")]
-    public class TriviaModule : AbyssModuleBase
-    {
-        
-        public static async Task<List<TriviaQuestionSet>> DownloadQuestionsAsync(string category = null)
-        {
-            var http = new HttpClient();
-            var url = "https://opentdb.com/api.php?amount=10&type=multiple&encode=url3986";
-            if (category != null)
-            {
-                url += "&category=" + category;
-            }
-            var response = JToken.Parse(await http.GetStringAsync(url))["results"];
-            var questions = response.Where(d => d.Value<string>("type") == "multiple").Select(c =>
-            {
-                return new TriviaQuestionSet
-                {
-                    Answer1 = System.Web.HttpUtility.UrlDecode(c["incorrect_answers"][0].Value<string>()),
-                    Answer2 = System.Web.HttpUtility.UrlDecode(c["incorrect_answers"][1].Value<string>()),
-                    CorrectAnswer = System.Web.HttpUtility.UrlDecode(c.Value<string>("correct_answer")),
-                    Category = System.Web.HttpUtility.UrlDecode(c.Value<string>("category")),
-                    Question = System.Web.HttpUtility.UrlDecode(c.Value<string>("question")),
-                    Difficulty = System.Web.HttpUtility.UrlDecode(c.Value<string>("difficulty"))
-                };
-            }).ToList();
-            return questions;
-        }
-
-        [Command]
-        public async Task<DiscordCommandResult> TriviaGame(string difficulty = null)
-        {
-            return View(new TriviaGame(await TriviaGameSelector.GetCategoriesAsync(), Context.Author.Id));
         }
     }
 }

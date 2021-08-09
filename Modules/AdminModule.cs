@@ -6,30 +6,42 @@ using System.Threading.Tasks;
 using Disqord;
 using Disqord.Bot;
 using Abyss.Helpers;
+using Abyss.Persistence.Relational;
 using Disqord.Gateway;
+using HumanDateParser;
 using Microsoft.CodeAnalysis;
 using Qmmands;
 
 namespace Abyss.Modules
 {
     [Name("Admin")]
-    [RequireAuthor(255950165200994307)]
+    [RequireBotOwner]
     public partial class AdminModule : DiscordGuildModuleBase
     {
-        /*[Command("dryrun")]
-        public async Task DryrunFlag([Remainder] string inputString)
+        public AbyssPersistenceContext Database { get; set; }
+        [Command("give")]
+        public async Task<DiscordCommandResult> Give(IMember member, decimal value)
         {
-            await _bot.ExecuteAsync(inputString,
-                _bot.CreateContext(Context.Message, Context.Prefix, RuntimeFlags.DryRun));
-        }*/
-        
-        /*[Command("runas")]
-        public async Task RunAs(CachedMember member, [Remainder] string inputString)
+            var record = await Database.GetUserAccountsAsync(member.Id);
+            record.Coins += value;
+            await Database.SaveChangesAsync();
+            return Reply($"Done. {member} now has {record.Coins} :coin: coins.");
+        }
+        [Command("timeinspect")]
+        [Description("Provides information about a relative date.")]
+        public async Task<DiscordCommandResult> InspectTimeAsync(string time)
         {
-            var ctx = (AbyssCommandContext) _bot.CreateContext(Context.Message as CachedUserMessage, Context.Prefix, RuntimeFlags.RunAsOther);
-            ctx.Member = member;
-            await _bot.ExecuteAsync(inputString, ctx);
-        }*/
+            try
+            {
+                var offset = HumanDateParser.HumanDateParser.ParseDetailed(time);
+                return Reply(
+                    $"**{offset.Result}** ({(offset.Result - DateTimeOffset.Now)} from now)\n{string.Join(", ", offset.Tokens.Select(d => "`" + d.ToString() + "`"))}");
+            }
+            catch (ParseException)
+            {
+                return Reply("Invalid time. Try a time like `14h`, or `3d`.");
+            }
+        }
 
         [Command("servers")]
         public async Task<DiscordCommandResult> Servers()
@@ -39,19 +51,6 @@ namespace Abyss.Modules
                          $"{string.Join("\n", Bot.GetGuilds().Values.Select(g => $"- {g.Name} ({g.MemberCount})"))}");
         }
 
-        [Command("parse")]
-        public async Task<DiscordCommandResult> TestTypeParser(string typeParser, [Remainder] string value)
-        {
-            var result = await ScriptingHelper.EvaluateScriptAsync($"Context.Bot.GetTypeParser<{typeParser}>().ParseAsync(null, \"{value}\", Context).GetAwaiter().GetResult().Value",
-                new EvaluationHelper(Context));
-            if (!result.IsSuccess || result.ReturnValue == null)
-            {
-                return Reply("Couldn't find a type parser for that.");
-            }
-
-            return Reply(result.ReturnValue.ToString());
-        }
-        
         [Command("eval")]
         [RunMode(RunMode.Parallel)]
         [Description("Evaluates a piece of C# code.")]
