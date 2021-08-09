@@ -148,6 +148,7 @@ namespace Abyss.Interactions.Blackjack
                 Adjustment = userAccountModification,
                 DidPlayerDoubleDown = _playerDoubleDowned,
                 PlayerBalanceAfterGame = account.Coins,
+                DateGameFinish = DateTimeOffset.Now,
                 PlayerBalanceBeforeGame = account.Coins - userAccountModification
             };
 

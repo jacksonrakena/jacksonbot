@@ -11,6 +11,7 @@ namespace Abyss.Persistence.Relational
         public Guid Id { get; set; }
         
         public ulong PlayerId { get; set; }
+        public DateTimeOffset DateGameFinish { get; set; }
         
         public ulong ChannelId { get; set; }
         
