@@ -49,7 +49,7 @@ namespace Abyss.Modules
                 .WithDescription(
                     $"Logged in as **{Context.Bot.CurrentUser}**")
                 .AddField("Owner",$"**{app.Owner}**", true)
-                .AddField("Version", "19.1.0-dev", true)
+                .AddField("Version", "19.2.0-dev", true)
                 .AddField("Started", Markdown.Timestamp(Process.GetCurrentProcess().StartTime, Constants.TIMESTAMP_FORMAT), true)
                 .AddField("Commands", Context.Bot.Commands.GetAllCommands().Count, true)
                 .AddField("Cached servers", Context.Bot.GetGuilds().Count, true)

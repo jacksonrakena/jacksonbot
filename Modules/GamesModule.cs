@@ -33,7 +33,7 @@ namespace Abyss.Modules
             public async Task<DiscordCommandResult> TriviaStats()
             {
                 var triviaRecord = await Database.TriviaRecords.Include(d => d.CategoryVoteRecords).FirstOrDefaultAsync(d => d.UserId == (ulong) Context.Author.Id);
-                if (triviaRecord == null)
+                if (triviaRecord == null || triviaRecord.CorrectAnswers == 0 || triviaRecord.IncorrectAnswers == 0)
                     return Reply("You don't have any trivia statistics, yet. Try playing some games!");
                 //var triviaRecord = await Database.GetTriviaRecordAsync(Context.Author.Id);
                 var totalQuestionsAnswered = triviaRecord.CorrectAnswers + triviaRecord.IncorrectAnswers;
