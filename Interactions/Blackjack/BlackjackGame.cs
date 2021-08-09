@@ -218,6 +218,12 @@ namespace Abyss.Interactions.Blackjack
                             await FinishGame(BlackjackGameResult.DealerWinCount);
                             return;
                         }
+
+                        if (DealerValue == PlayerValue)
+                        {
+                            await FinishGame(BlackjackGameResult.Push);
+                            return;
+                        }
                         
                         await FinishGame(BlackjackGameResult.PlayerWinCount);
                         return;
