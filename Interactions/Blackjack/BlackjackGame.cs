@@ -84,7 +84,7 @@ namespace Abyss.Interactions.Blackjack
                 case BlackjackGameResult.PlayerBust:
                     UpdateMessage($"You busted on {_currentValue}! You lose {_playerCurrentBet} :coin: coins.");
                     TemplateMessage.Embeds[0].Color = Color.Red;
-                    userAccountModification = -_playerCurrentBet;
+                    userAccountModification = 0-_playerCurrentBet;
                     break;
                 case BlackjackGameResult.DealerBust:
                     UpdateMessage($"Dealer busted on {_dealerValue}! You win {_playerCurrentBet} :coin: coins.");
@@ -139,6 +139,7 @@ namespace Abyss.Interactions.Blackjack
                 PlayerId = _playerId,
                 PlayerFinalBet = _playerCurrentBet,
                 PlayerInitialBet = _playerInitialBet,
+                Adjustment = userAccountModification,
                 DidPlayerDoubleDown = _playerDoubleDowned,
                 PlayerBalanceAfterGame = account.Coins,
                 PlayerBalanceBeforeGame = account.Coins - userAccountModification

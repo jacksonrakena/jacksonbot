@@ -19,6 +19,7 @@ namespace Abyss.Persistence.Relational
         
         public decimal PlayerInitialBet { get; set; }
         public decimal PlayerFinalBet { get; set; }
+        public decimal Adjustment { get; set; }
         public decimal PlayerBalanceBeforeGame { get; set; }
         public decimal PlayerBalanceAfterGame { get; set; }
         public string PlayerCards { get; set; }
