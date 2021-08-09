@@ -4,10 +4,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Abyss.Persistence.Relational;
 using Abyssal.Common;
 using Disqord;
 using Disqord.Bot;
 using Disqord.Extensions.Interactivity.Menus;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
 using Qmmands;
 
@@ -65,12 +67,14 @@ namespace Abyss.Modules
         private string _optionB;
         private string _optionC;
         private string _selectedCategory;
+        private readonly ulong _authorId;
         
-        public TriviaGame(List<LocalSelectionComponentOption> categories) : base(
+        public TriviaGame(List<LocalSelectionComponentOption> categories, ulong authorId) : base(
             new LocalMessage().WithEmbeds(new LocalEmbed().WithColor(Constants.Theme)
                 .WithDescription("Welcome to the Abyss trivia minigame. Select your category, or click 'All' to play random questions."))
         )
         {
+            _authorId = authorId;
             AddComponent(new SelectionViewComponent(async e =>
             {
                 _selectedCategory = e.SelectedOptions[0].Value;
@@ -132,46 +136,38 @@ namespace Abyss.Modules
             ReportChanges();
         }
 
-        private void ValidateOption(string optionSelected)
+        private async ValueTask ValidateOption(string optionSelected, ButtonEventArgs e)
         {
             if (optionSelected == _correctOption)
             {
                 _correctAnswers++;
-                SelectNewQuestion("Correct!");
+
+                var db = ((DiscordBot) Menu.Client).Services.GetRequiredService<AbyssPersistenceContext>();
+                var user = await db.GetUserAccountsAsync(_authorId);
+                user.Coins += 5;
+                await db.SaveChangesAsync();
+                SelectNewQuestion("Correct! You've gained 5 coins.");
             }
             else
             {
                 _incorrectAnswers++;
                 SelectNewQuestion($"Incorrect. The answer was **{_correctOption}**.");
-                /*TemplateMessage.WithContent($"Incorrect. The answer was **{_correctOption}**. Play again?").WithEmbeds(new List<LocalEmbed>());
-                ClearComponents();
-                AddComponent(new ButtonViewComponent(e =>
-                {
-                    ClearComponents();
-                    SelectNewQuestion();
-                    return default;
-                })
-                {
-                    Label = "Yes",
-                    Style = LocalButtonComponentStyle.Success
-                });
-                ReportChanges();*/
             }
         }
 
-        public async ValueTask SelectA(ButtonEventArgs e)
+        public ValueTask SelectA(ButtonEventArgs e)
         {
-            ValidateOption(_optionA);
+            return ValidateOption(_optionA, e);
         }
         
-        public async ValueTask SelectB(ButtonEventArgs e)
+        public ValueTask SelectB(ButtonEventArgs e)
         {
-            ValidateOption(_optionB);
+            return ValidateOption(_optionB, e);
         }
         
-        public async ValueTask SelectC(ButtonEventArgs e)
+        public ValueTask SelectC(ButtonEventArgs e)
         {
-            ValidateOption(_optionC);
+            return ValidateOption(_optionC, e);
         }
     }
     
@@ -206,7 +202,7 @@ namespace Abyss.Modules
         [Command]
         public async Task<DiscordCommandResult> TriviaGame(string difficulty = null)
         {
-            return View(new TriviaGame(await TriviaGameSelector.GetCategoriesAsync()));
+            return View(new TriviaGame(await TriviaGameSelector.GetCategoriesAsync(), Context.Author.Id));
         }
     }
 }

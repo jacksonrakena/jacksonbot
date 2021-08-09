@@ -10,6 +10,7 @@ namespace Abyss.Persistence.Relational
     public class AbyssPersistenceContext: DbContext
     {
         public DbSet<JsonRow<GuildConfig>> GuildConfigurations { get; set; }
+        public DbSet<UserAccount> UserAccounts { get; set; }
         private readonly IConfiguration _configuration;
         
         public DbSet<Reminder> Reminders { get; set; }
@@ -47,7 +48,28 @@ namespace Abyss.Persistence.Relational
 
             return config;
         }
-        
+
+        public async Task<UserAccount> GetUserAccountsAsync(ulong userId)
+        {
+            var account = await UserAccounts.FindAsync(userId);
+            if (account == null)
+            {
+                account = UserAccounts.Add(new UserAccount
+                {
+                    Badges = Array.Empty<string>(),
+                    Coins = 0,
+                    Description = "",
+                    Id = userId,
+                    ColorB = 0,
+                    ColorG = 0,
+                    ColorR = 0
+                }).Entity;
+                await SaveChangesAsync();
+            }
+
+            return account;
+        }
+
         public async Task<TJsonObject> ModifyJsonObjectAsync<TJsonObject>(
             Func<AbyssPersistenceContext, DbSet<JsonRow<TJsonObject>>> accessor, ulong guildId, Action<TJsonObject> modifier) 
             where TJsonObject : JsonRootObject<TJsonObject>, new()
