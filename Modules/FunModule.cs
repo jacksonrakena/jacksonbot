@@ -70,10 +70,7 @@ namespace Abyss.Modules
         public async Task<DiscordCommandResult> Command_DiceRollAsync(
             [Name("Dice")]
             [Description("The dice configuration to use. It can be simple, like `6`, or complex, like `d20+d18+4`.")]
-            string dice, [Name("Number of Dice")]
-            [Description("The number of dice to roll.")]
-            [Range(1, 100)]
-            int numberOfDice = 1)
+            string dice)
         {
             if (!dice.Contains("d") && int.TryParse(dice, out var diceParsed))
             {

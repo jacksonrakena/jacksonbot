@@ -12,6 +12,7 @@ namespace Abyss.Attributes
         }
     }
 
+    [Flags]
     public enum EconomicImpactType
     {
         /// <summary>

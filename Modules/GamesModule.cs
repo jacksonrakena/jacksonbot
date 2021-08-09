@@ -62,7 +62,11 @@ namespace Abyss.Modules
             [Command]
             [Description("Play the classic card game and win big.")]
             [EconomicImpact(EconomicImpactType.UserGainCoins | EconomicImpactType.UserSpendCoins)]
-            public async Task<DiscordCommandResult> Blackjack(decimal bet)
+            public async Task<DiscordCommandResult> Blackjack(
+                [Name("Bet")]
+                [Description("Your initial bet. Blackjack pays 3-to-2, so if you win, you win your bet, and if you get" +
+                             "a natural blackjack you win double.")]
+                decimal bet)
             {
                 if (bet <= 0) return Reply("You have to bet a real number.");
                 var account = await Database.GetUserAccountsAsync(Context.Author.Id);
