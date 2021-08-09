@@ -23,9 +23,38 @@ namespace Abyss.Modules
         public string Difficulty { get; set; }
     }
 
+    public class TriviaGameSelector : ViewBase
+    {
+        public static async Task<List<LocalSelectionComponentOption>> GetCategoriesAsync()
+        {
+            var url = "https://opentdb.com/api_category.php";
+            var http = new HttpClient();
+            var response = JToken.Parse(await http.GetStringAsync(url))["trivia_categories"];
+            return response
+                .Select(d => new LocalSelectionComponentOption(d.Value<string>("name"), d.Value<string>("id")))
+                .Prepend(new LocalSelectionComponentOption("All", "-1"))
+                .ToList();
+        }
+        
+        public TriviaGameSelector(List<LocalSelectionComponentOption> categories) : base(
+            new LocalMessage().WithContent("Welcome to the Abyss trivia game. Choose your category.")
+            )
+        {
+            AddComponent(new SelectionViewComponent(e =>
+            {
+                return default;
+            })
+            {
+                Placeholder = "Select a category",
+                Options = categories
+            });
+            ReportChanges();
+        }
+    }
+
     public class TriviaGame : ViewBase
     {
-        private readonly List<TriviaQuestionSet> _questions;
+        private List<TriviaQuestionSet> _questions;
 
         private TriviaQuestionSet _currentQuestion = null;
         private int _incorrectAnswers;
@@ -35,20 +64,34 @@ namespace Abyss.Modules
         private string _optionA;
         private string _optionB;
         private string _optionC;
+        private string _selectedCategory;
         
-        public TriviaGame(List<TriviaQuestionSet> questions) : base(new LocalMessage().WithContent("Loading trivia game..."))
+        public TriviaGame(List<LocalSelectionComponentOption> categories) : base(
+            new LocalMessage().WithEmbeds(new LocalEmbed().WithColor(Constants.Theme)
+                .WithDescription("Welcome to the Abyss trivia minigame. Select your category, or click 'All' to play random questions."))
+        )
         {
-            _questions = questions;
-            SelectNewQuestion();
+            AddComponent(new SelectionViewComponent(async e =>
+            {
+                _selectedCategory = e.SelectedOptions[0].Value;
+                if (_selectedCategory == "-1") _selectedCategory = null;
+                _questions = await TriviaModule.DownloadQuestionsAsync(_selectedCategory);
+                SelectNewQuestion();
+            })
+            {
+                Placeholder = "Select a category",
+                Options = categories
+            });
+            ReportChanges();
         }
 
-        private ValueTask Reset(ButtonEventArgs e)
+        private async ValueTask Reset(ButtonEventArgs e)
         {
+            _questions = await TriviaModule.DownloadQuestionsAsync(_selectedCategory);
             _currentQuestionIndex = -1;
             _incorrectAnswers = 0;
             _correctAnswers = 0;
             SelectNewQuestion();
-            return default;
         }
 
         private void SelectNewQuestion(string message = null)
@@ -135,14 +178,14 @@ namespace Abyss.Modules
     [Group("trivia")]
     public class TriviaModule : AbyssModuleBase
     {
-        [Command]
-        public async Task<DiscordCommandResult> TriviaGame(string difficulty = null)
+        
+        public static async Task<List<TriviaQuestionSet>> DownloadQuestionsAsync(string category = null)
         {
             var http = new HttpClient();
             var url = "https://opentdb.com/api.php?amount=10&type=multiple&encode=url3986";
-            if (difficulty != null)
+            if (category != null)
             {
-                url += "&difficulty=" + difficulty;
+                url += "&category=" + category;
             }
             var response = JToken.Parse(await http.GetStringAsync(url))["results"];
             var questions = response.Where(d => d.Value<string>("type") == "multiple").Select(c =>
@@ -157,7 +200,13 @@ namespace Abyss.Modules
                     Difficulty = System.Web.HttpUtility.UrlDecode(c.Value<string>("difficulty"))
                 };
             }).ToList();
-            return View(new TriviaGame(questions));
+            return questions;
+        }
+
+        [Command]
+        public async Task<DiscordCommandResult> TriviaGame(string difficulty = null)
+        {
+            return View(new TriviaGame(await TriviaGameSelector.GetCategoriesAsync()));
         }
     }
 }
