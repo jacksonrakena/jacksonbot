@@ -74,8 +74,10 @@ namespace Abyss.Persistence.Relational
             var config = await GetJsonObjectAsync(d => d.GuildConfigurations, guildId);
             if (config.Prefixes == null)
             {
-                config.Prefixes = new List<string> {_configuration.GetSection("Options")["DefaultPrefix"]};
-                await SaveChangesAsync();
+                await ModifyJsonObjectAsync(d => d.GuildConfigurations, guildId, e =>
+                {
+                    e.Prefixes = new List<string> {_configuration.GetSection("Options")["DefaultPrefix"]};
+                }
             }
 
             return config;
