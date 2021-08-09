@@ -13,6 +13,8 @@ namespace Abyss.Modules
     {
         public AbyssPersistenceContext Database { get; set; }
         
+        [Command("profile")]
+        [Description("Look at your profile.")]
         public async Task<DiscordCommandResult> Profile(IMember member = null)
         {
             member ??= Context.Author;
