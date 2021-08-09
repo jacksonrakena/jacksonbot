@@ -75,6 +75,7 @@ namespace Abyss.Persistence.Relational
             if (config.Prefixes == null)
             {
                 config.Prefixes = new List<string> {_configuration.GetSection("Options")["DefaultPrefix"]};
+                await SaveChangesAsync();
             }
 
             return config;
