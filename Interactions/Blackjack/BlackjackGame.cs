@@ -138,11 +138,7 @@ namespace Abyss.Interactions.Blackjack
             ReportChanges();
 
             var account = await _database.GetUserAccountsAsync(_playerId);
-            if (userAccountModification != 0)
-            {
-                account.Coins += userAccountModification;
-                await _database.SaveChangesAsync();
-            }
+            var initialCoins = account.Coins;
 
             var record = new BlackjackGameRecord
             {
@@ -155,10 +151,16 @@ namespace Abyss.Interactions.Blackjack
                 PlayerInitialBet = _playerInitialBet,
                 Adjustment = userAccountModification,
                 DidPlayerDoubleDown = _playerDoubleDowned,
-                PlayerBalanceAfterGame = account.Coins,
+                PlayerBalanceAfterGame = account.Coins+userAccountModification,
                 DateGameFinish = DateTimeOffset.Now,
-                PlayerBalanceBeforeGame = account.Coins - userAccountModification
+                PlayerBalanceBeforeGame = initialCoins
             };
+            
+            if (userAccountModification != 0)
+            {
+                account.Coins += userAccountModification;
+                await _database.SaveChangesAsync();
+            }
 
             _database.BlackjackGames.Add(record);
             await _database.SaveChangesAsync();
