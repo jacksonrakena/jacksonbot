@@ -115,7 +115,7 @@ namespace Abyss.Interactions.Blackjack
             var account = await _database.GetUserAccountsAsync(_playerId);
             if (userAccountModification != 0)
             {
-                account.Coins -= userAccountModification;
+                account.Coins += userAccountModification;
                 await _database.SaveChangesAsync();
             }
 
