@@ -71,7 +71,7 @@ namespace Abyss.Modules
         {
             var random = new Random();
             var n = 2;
-            while (random.NextDouble() > (double)1 / n)
+            while (random.NextDouble() < (double)1 / (double)n)
             {
                 await Response($"owo (1/{n})");
                 n *= 2;
