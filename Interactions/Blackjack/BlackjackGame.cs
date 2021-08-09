@@ -52,7 +52,7 @@ namespace Abyss.Interactions.Blackjack
                 Label = "Ready",
                 Style = LocalButtonComponentStyle.Success
             });
-            TemplateMessage.Content = "";
+            TemplateMessage.Content = null;
             TemplateMessage.Embeds[0] = new LocalEmbed()
                 .WithTitle("Abyss Blackjack")
                 .WithDescription(
