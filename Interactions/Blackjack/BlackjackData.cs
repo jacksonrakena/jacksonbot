@@ -37,6 +37,7 @@ namespace Abyss.Interactions.Blackjack
     public class BlackjackSharedDeck
     {
         private List<BlackjackCard> _cards = new List<BlackjackCard>();
+        private readonly Random random = new Random();
 
         public BlackjackSharedDeck()
         {
@@ -51,9 +52,8 @@ namespace Abyss.Interactions.Blackjack
 
         public BlackjackCard DrawRandom()
         {
-            var card = _cards.Random();
+            var card = _cards.Random(random);
             _cards.Remove(card);
-            Console.WriteLine($"{card} REMOVED, {_cards.Count} REMAIN");
             return card;
         }
     }

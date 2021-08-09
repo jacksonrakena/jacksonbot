@@ -73,18 +73,18 @@ namespace Abyss.Interactions.Blackjack
                 case BlackjackGameResult.DealerWinCount:
                     UpdateMessage(
                         $"Dealer wins! Dealer had {_dealerValue} to your {_currentValue}. You lose {_playerCurrentBet} :coin: coins.");
-                    userAccountModification = 0 - _playerCurrentBet;
+                    userAccountModification = -_playerCurrentBet;
                     TemplateMessage.Embeds[0].Color = Color.Red;
                     break;
                 case BlackjackGameResult.PlayerWinCount:
                     UpdateMessage(
                         $"You win! {_currentValue} to dealers' {_dealerValue}. You win {_playerCurrentBet * 2} :coin: coins.");
-                    userAccountModification = 0 + _playerCurrentBet;
+                    userAccountModification = +_playerCurrentBet;
                     break;
                 case BlackjackGameResult.PlayerBust:
                     UpdateMessage($"You busted on {_currentValue}! You lose {_playerCurrentBet} :coin: coins.");
                     TemplateMessage.Embeds[0].Color = Color.Red;
-                    userAccountModification = 0 - _playerCurrentBet;
+                    userAccountModification = -_playerCurrentBet;
                     break;
                 case BlackjackGameResult.DealerBust:
                     UpdateMessage($"Dealer busted on {_dealerValue}! You win {_playerCurrentBet} :coin: coins.");
@@ -92,21 +92,21 @@ namespace Abyss.Interactions.Blackjack
                     break;
                 case BlackjackGameResult.DealerBlackjack:
                     UpdateMessage($"Dealer blackjack with {_dealerCards.Count} cards. You lose {_playerCurrentBet} :coin: coins.");
-                    userAccountModification = 0 - _playerCurrentBet;
+                    userAccountModification = -_playerCurrentBet;
                     TemplateMessage.Embeds[0].Color = Color.Red;
                     break;
                 case BlackjackGameResult.PlayerBlackjack:
                     UpdateMessage($"Blackjack with {_playerCards.Count} cards! You win {_playerCurrentBet} :coin: coins.");
-                    userAccountModification = 0 + _playerCurrentBet;
+                    userAccountModification = +_playerCurrentBet;
                     break;
                 case BlackjackGameResult.DealerBlackjackNatural:
                     UpdateMessage($"Dealer got a natural blackjack. You lose {_playerCurrentBet} :coin: coins.");
-                    userAccountModification = 0 - _playerCurrentBet;
+                    userAccountModification = -_playerCurrentBet;
                     TemplateMessage.Embeds[0].Color = Color.Red;
                     break;
                 case BlackjackGameResult.PlayerBlackjackNatural:
                     UpdateMessage($"Natural blackjack! You win {_playerCurrentBet + (_playerCurrentBet * (decimal)1.5)} :coin: coins.");
-                    userAccountModification = 0 + _playerCurrentBet + _playerCurrentBet * (decimal) 1.5;
+                    userAccountModification = +_playerCurrentBet + _playerCurrentBet * (decimal) 1.5;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(result), result, null);
