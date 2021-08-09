@@ -17,12 +17,17 @@ namespace Abyss.Modules
         [Cooldown(1, 5, CooldownMeasure.Seconds, CooldownBucketType.User)]
         public async Task<DiscordCommandResult> Command_GetCatPictureAsync()
         {
-            return Pages(new CatPageProvider());
+            return Pages(new CatPageProvider(this));
         }
     }
 
     public class CatPageProvider : InfinitePageProvider
     {
+        private readonly AbyssModuleBase _caller;
+        public CatPageProvider(AbyssModuleBase caller)
+        {
+            _caller = caller;
+        }
         public override async ValueTask<Page> GetPageAsync(PagedViewBase view)
         {
             var url = _pages[view.CurrentPageIndex];
@@ -35,7 +40,7 @@ namespace Abyss.Modules
             }
             return new Page().WithEmbeds(new LocalEmbed()
                 .WithTitle("Enjoy your random cat.")
-                .WithColor(Constants.Theme)
+                .WithColor(_caller.GetColor())
                 .WithImageUrl(url)
             ); 
         }

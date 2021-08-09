@@ -5,13 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using System.Diagnostics;
 using Abyss.Services;
+using Disqord.Gateway;
 using Disqord.Rest;
 
 namespace Abyss.Modules
 {
     [Name("Help")]
-    public class HelpModule : DiscordGuildModuleBase
+    public class HelpModule : AbyssGuildModuleBase
     {
         private readonly HelpService _help;
 
@@ -25,12 +27,16 @@ namespace Abyss.Modules
         {
             var app = await Context.Bot.FetchCurrentApplicationAsync();
             return Reply(new LocalEmbed()
-                .WithColor(Constants.Theme)
+                .WithColor(GetColor())
                 .WithAuthor("Abyss", Context.Bot.CurrentUser.GetAvatarUrl())
                 .WithDescription(
                     $"Logged in as **{Context.Bot.CurrentUser}**")
                 .AddField("Owner",$"**{app.Owner}**", true)
                 .AddField("Version", "19.1.0-dev", true)
+                .AddField("Started", Markdown.Timestamp(Process.GetCurrentProcess().StartTime, Constants.TIMESTAMP_FORMAT), true)
+                .AddField("Commands", Context.Bot.Commands.GetAllCommands().Count, true)
+                .AddField("Cached servers", Context.Bot.GetGuilds().Count, true)
+                .AddField("Cached users", Context.Bot.GetGuilds().Sum(d => d.Value.MemberCount), true)
                 .WithTimestamp(DateTimeOffset.Now)
                 .WithFooter("Session " + Constants.SessionId));
         }
@@ -63,7 +69,7 @@ namespace Abyss.Modules
 
             var prefix = Context.Prefix;
 
-            var embed = new LocalEmbed { Color = Constants.Theme };
+            var embed = new LocalEmbed { Color = GetColor() };
 
             embed.WithTitle("Commands");
 

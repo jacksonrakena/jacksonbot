@@ -14,5 +14,8 @@
             "ClientId": "",
             "ClientSecret": ""
         }
+    },
+    "Options": {
+        "DefaultPrefix": ""
     }
 }

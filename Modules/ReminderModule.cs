@@ -13,11 +13,11 @@ using Disqord.Gateway;
 namespace Abyss.Modules
 {
     [Name("Scheduling")]
-    public class ReminderModule : DiscordGuildModuleBase
+    public class ReminderModule : AbyssGuildModuleBase
     {
         [Group("remindme", "remind", "reminders")]
         [Description("Reminder control.")]
-        public class RemindSubmodule : DiscordGuildModuleBase
+        public class RemindSubmodule : AbyssGuildModuleBase
         {
             public RemindSubmodule(ReminderService reminder, AbyssPersistenceContext dbContext)
             {
@@ -27,23 +27,28 @@ namespace Abyss.Modules
             private readonly ReminderService _reminders;
             private readonly AbyssPersistenceContext _dbContext;
 
-            /*[Command("", "list", "all")]
-            public async Task RemindersAsync()
+            [Command("", "list", "all")]
+            public async Task<DiscordCommandResult> RemindersAsync()
             {
                 string Map(Reminder r)
                 {
-                    return new StringBuilder().AppendLine($"**{r.Text}** (ID {r.Id})").AppendLine($"- Due {r.DueAt}").AppendLine($"- Created {r.CreatedAt}").AppendLine($"- In {(Context.Guild.GetChannel(r.ChannelId) as CachedTextChannel)?.Mention}").ToString();
+                    return new StringBuilder()
+                        .AppendLine($"**{r.Text}** (ID {r.Id})")
+                        .AppendLine($"- Due {Markdown.Timestamp(r.DueAt, Constants.TIMESTAMP_FORMAT)}")
+                        .AppendLine($"- Created {Markdown.Timestamp(r.CreatedAt, Constants.TIMESTAMP_FORMAT)}")
+                        .AppendLine($"- In {(Context.Guild.GetChannel(r.ChannelId) as CachedTextChannel)?.Mention}").ToString();
                 }
-                var gsr = await _reminders.ListRemindersInGuildFromUserAsync(Context.Guild.Id, Context.User.Id);
-                await ReplyAsync(embed: 
-                    new LocalEmbedBuilder()
-                        .WithColor(Color.LightPink)
+
+                var gsr = _dbContext.Reminders.Where(d =>
+                    d.CreatorId == (ulong) Context.Author.Id && d.GuildId == (ulong) Context.Guild.Id);
+                return Reply(
+                    new LocalEmbed()
+                        .WithColor(GetColor())
                         .WithAuthor("Your reminders in " + Context.Guild.Name, Context.Guild.GetIconUrl())
                         .WithDescription(string.Join("\n", gsr.Select(Map)))
                         .WithFooter("Start a reminder with 'remindme 14h {message}'.")
-                        .Build()
                 );
-            }*/
+            }
 
             [Command]
             [Description("Starts a reminder.")]
@@ -64,7 +69,7 @@ namespace Abyss.Modules
                         Context.Message.Id, Context.Author.Id, description, offset);
                     return Reply(
                         new LocalEmbed()
-                            .WithColor(Constants.Theme)
+                            .WithColor(GetColor())
                             .WithTitle("Reminder created")
                             .WithDescription(
                                 $"I'll remind you at {Markdown.Timestamp(offset, Markdown.TimestampFormat.ShortDateTime)} of \"{description}\" in this channel.")

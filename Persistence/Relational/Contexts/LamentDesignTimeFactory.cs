@@ -10,7 +10,7 @@ namespace Abyss.Persistence.Relational
             var optionsBuilder = new DbContextOptionsBuilder<AbyssPersistenceContext>();
             optionsBuilder.UseNpgsql("Server=localhost;Database=abyss;Username=abyss;Password=abyss123;");
 
-            return new AbyssPersistenceContext(optionsBuilder.Options);
+            return new AbyssPersistenceContext(optionsBuilder.Options, null);
         }
     }
 }

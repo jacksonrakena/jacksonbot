@@ -43,6 +43,16 @@ namespace Abyss.Modules
                 ReportChanges();
                 return default;
             }
+
+            [Button(Label = "d20", Style = LocalButtonComponentStyle.Danger)]
+            public ValueTask D20(ButtonEventArgs e)
+            {
+                _dice = "d20";
+                TemplateMessage.Content = Evaluate(_dice);
+                RemoveComponent(e.Button);
+                ReportChanges();
+                return default;
+            }
         }
         
         [Command("roll", "dice")]

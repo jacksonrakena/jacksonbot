@@ -1,22 +1,22 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Abyss.Persistence.Document;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Abyss.Persistence.Relational
 {
     public class AbyssPersistenceContext: DbContext
     {
         public DbSet<JsonRow<GuildConfig>> GuildConfigurations { get; set; }
+        private readonly IConfiguration _configuration;
         
         public DbSet<Reminder> Reminders { get; set; }
 
-        public AbyssPersistenceContext(DbContextOptions<AbyssPersistenceContext> options) : base(options)
+        public AbyssPersistenceContext(DbContextOptions<AbyssPersistenceContext> options, IConfiguration config) : base(options)
         {
-        }
-
-        public AbyssPersistenceContext()
-        {
+            _configuration = config;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -35,6 +35,17 @@ namespace Abyss.Persistence.Relational
             row.Add(rowResult);
             await SaveChangesAsync();
             return rowResult.Data;
+        }
+
+        public async Task<GuildConfig> GetGuildConfigAsync(ulong guildId)
+        {
+            var config = await GetJsonObjectAsync(d => d.GuildConfigurations, guildId);
+            if (config.Prefixes == null)
+            {
+                config.Prefixes = new List<string> {_configuration.GetSection("Options")["DefaultPrefix"]};
+            }
+
+            return config;
         }
         
         public async Task<TJsonObject> ModifyJsonObjectAsync<TJsonObject>(

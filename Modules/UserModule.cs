@@ -9,7 +9,7 @@ using Color = Disqord.Color;
 
 namespace Abyss.Modules
 {
-    public class UserModule : DiscordGuildModuleBase
+    public class UserModule : AbyssGuildModuleBase
     {
         [Command("avatar", "av", "a", "pic", "pfp")]
         [Description("Grabs the avatar for a user.")]
@@ -21,8 +21,8 @@ namespace Abyss.Modules
             target ??= Context.Author as CachedMember;
             return Reply(new LocalEmbed()
                 .WithAuthor(target)
-                .WithColor(Constants.Theme)
-                .WithImageUrl(target.GetAvatarUrl())
+                .WithColor(GetColor())
+                .WithImageUrl(target.GetAvatarUrl(size:1024))
                 .WithDescription($"**Formats:** {UrlHelper.CreateMarkdownUrl("128", target.GetAvatarUrl(size: 128))} | " +
                                  $"{UrlHelper.CreateMarkdownUrl("256", target.GetAvatarUrl(size: 256))} | " +
                                  $"{UrlHelper.CreateMarkdownUrl("1024", target.GetAvatarUrl(size: 1024))} | " +

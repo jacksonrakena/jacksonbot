@@ -16,7 +16,7 @@ using Qmmands;
 namespace Abyss.Modules
 {
     [Name("Core")]
-    public class CoreModule : DiscordGuildModuleBase
+    public class CoreModule : AbyssGuildModuleBase
     {
         public ILogger<CoreModule> Logger { get; set; }
 
@@ -60,7 +60,7 @@ namespace Abyss.Modules
                                 .WithTitle("Pong!")
                                 .WithTimestamp(DateTime.Now)
                                 .WithDescription(sb.ToString())
-                                .WithColor(Constants.Theme)
+                                .WithColor(GetColor())
                         };
                     });
                     sw.Stop();

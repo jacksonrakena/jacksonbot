@@ -4,6 +4,7 @@ using Abyssal.Common;
 using AbyssalSpotify;
 using Abyss.Persistence.Relational;
 using Abyss.Services;
+using Disqord;
 using Disqord.Bot;
 using Disqord.Bot.Hosting;
 using Disqord.Gateway;
@@ -39,6 +40,12 @@ namespace Abyss
             {
                 bot.Token = host.Configuration.GetSection("Secrets").GetSection("Discord")["Token"];
                 bot.Intents = GatewayIntents.All;
+                bot.Status = UserStatus.Online;
+                bot.ReadyEventDelayMode = ReadyEventDelayMode.None;
+                bot.Activities = new[]
+                {
+                    new LocalActivity("grindset, kings", ActivityType.Playing)
+                };
             });
             hostBuilder.UseSystemd();
             hostBuilder.ConfigureAppConfiguration(appConfigure =>

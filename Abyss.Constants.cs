@@ -13,7 +13,9 @@ namespace Abyss
 
         public const string DEFAULT_GUILD_MESSAGE_PREFIX = "a.";
 
-        public static Color Theme = Color.LightCyan;
+        public const Markdown.TimestampFormat TIMESTAMP_FORMAT = Markdown.TimestampFormat.ShortDateTime;
+
+        public static Color Theme = new Color(170, 110, 110);
 
         public static Guid SessionId = Guid.NewGuid();
     }

@@ -24,7 +24,7 @@ namespace Abyss.Modules
             [Command("dumpconfig", "getconfig")]
             public async Task<DiscordCommandResult> DumpGuildConfig()
             {
-                var guild = await _database.GetJsonObjectAsync(d => d.GuildConfigurations, Context.Guild.Id);
+                var guild = await _database.GetGuildConfigAsync(Context.Guild.Id);
                 return Reply($"Showing document `GuildConfigurations:{Context.Guild.Id}:0` \n```json\n" + JsonSerializer.Serialize(guild) + "```");
             }
 
@@ -51,17 +51,6 @@ namespace Abyss.Modules
                     data.Starboard = newData.Starboard;
                 });
                 return Reply($"Updated document `GuildConfigurations:{Context.Guild.Id}:0`");
-            }
-
-            [Command("state", "status", "stat", "info")]
-            public async Task<DiscordCommandResult> GetDatabaseInformation()
-            {
-                var database = _database.Database;
-                return Reply(new StringBuilder()
-                    .AppendLine($"**Driver:** {_database.Database.ProviderName} (Relational: {_database.Database.IsRelational()})")
-                    .AppendLine($"**Auto-transactions enabled:** {database.AutoTransactionsEnabled}")
-                    .AppendLine("A database connection is not currently active.")
-                    .ToString());
             }
         }
     }

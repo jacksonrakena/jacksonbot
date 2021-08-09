@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Disqord;
 using Disqord.Bot;
 using Abyss.Helpers;
+using Disqord.Gateway;
 using Microsoft.CodeAnalysis;
 using Qmmands;
 
@@ -29,6 +30,14 @@ namespace Abyss.Modules
             ctx.Member = member;
             await _bot.ExecuteAsync(inputString, ctx);
         }*/
+
+        [Command("servers")]
+        public async Task<DiscordCommandResult> Servers()
+        {
+            return Reply($"**List of all cached servers as of {Markdown.Timestamp(DateTimeOffset.Now, Markdown.TimestampFormat.ShortDateTime)}**" +
+                         $"\n\n" +
+                         $"{string.Join("\n", Bot.GetGuilds().Values.Select(g => $"- {g.Name} ({g.MemberCount})"))}");
+        }
 
         [Command("parse")]
         public async Task<DiscordCommandResult> TestTypeParser(string typeParser, [Remainder] string value)

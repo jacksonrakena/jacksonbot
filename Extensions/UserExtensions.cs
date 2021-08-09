@@ -17,7 +17,7 @@ namespace Abyss.Extensions
         /// <returns>The highest role colour of the specified user, or the default embed colour.</returns>
         public static Color GetHighestRoleColourOrDefault(this IUser normalUser)
         {
-            if (!(normalUser is CachedMember user)) return Constants.Theme;
+            if (normalUser is not CachedMember user) return Constants.Theme;
             var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color != null && r.Color.Value.RawValue != 0);
             return orderedRoles?.Color ?? Constants.Theme;
         }
