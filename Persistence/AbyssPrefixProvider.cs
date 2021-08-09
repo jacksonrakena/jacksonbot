@@ -14,7 +14,7 @@ namespace Abyss.Persistence
         private readonly IServiceProvider _services;
 
         private readonly IEnumerable<IPrefix> _dmPrefixSet = new[]
-            {new StringPrefix(Constants.DEFAULT_GUILD_MESSAGE_PREFIX)};
+            {new StringPrefix("a.")};
         public AbyssPrefixProvider(IServiceProvider services)
         {
             _services = services;
@@ -26,7 +26,6 @@ namespace Abyss.Persistence
             using var scope = _services.CreateScope();
             var record = await scope.ServiceProvider.GetRequiredService<AbyssPersistenceContext>().GetGuildConfigAsync((ulong) message.GuildId);
             return record.Prefixes.Select<string, IPrefix>(d => new StringPrefix(d))
-                .Append(new StringPrefix(Constants.DEFAULT_GUILD_MESSAGE_PREFIX))
                 .Append(new MentionPrefix(message.GetGatewayClient().CurrentUser.Id));
         }
     }

@@ -11,7 +11,6 @@ namespace Abyss
 
         public const string CONFIGURATION_FILENAME = "abyss.appsettings.json";
 
-        public const string DEFAULT_GUILD_MESSAGE_PREFIX = "a.";
 
         public const Markdown.TimestampFormat TIMESTAMP_FORMAT = Markdown.TimestampFormat.ShortDateTime;
 
