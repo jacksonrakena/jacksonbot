@@ -117,7 +117,7 @@ namespace Abyss.Interactions.Blackjack
                 TemplateMessage.Embeds[0].Color = Color.LightGreen;
             }
 
-            if (userAccountModification > 0)
+            if (userAccountModification < 0)
             {
                 TemplateMessage.Embeds[0].Color = Color.Red;
             }
