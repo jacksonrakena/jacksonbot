@@ -11,6 +11,12 @@ namespace Abyss.Interactions.Blackjack
 
         public BlackjackSharedDeck()
         {
+            Reset();
+        }
+
+        public void Reset()
+        {
+            _cards.Clear();
             foreach (var en in Enum.GetValues<BlackjackCard>())
             {
                 _cards.Add(en);

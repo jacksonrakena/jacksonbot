@@ -35,13 +35,30 @@ namespace Abyss.Interactions.Blackjack
                     )
             )
         {
-            _playerInitialBet = bet;
-            _playerCurrentBet = bet;
+            Reset();
+        }
+
+        private void Reset()
+        {
+            _playerCurrentBet = _playerInitialBet;
+            _playerCards.Clear();
+            _dealerCards.Clear();
+            _showingSecondCard = false;
+            _playerDoubleDowned = false;
+            _deck.Reset();
+            ClearComponents();
             AddComponent(new ButtonViewComponent(PlayerReady)
             {
                 Label = "Ready",
                 Style = LocalButtonComponentStyle.Success
             });
+            TemplateMessage.Content = "";
+            TemplateMessage.Embeds[0] = new LocalEmbed()
+                .WithTitle("Abyss Blackjack")
+                .WithDescription(
+                    $"Welcome to the table. You're betting {_playerInitialBet} :coin:. Are you ready to play?")
+                .WithFooter("3 TO 2 - DEALER MUST DRAW ON 16 AND STAND ON 17");
+            ReportChanges();
         }
 
         private void UpdateMessage(string message)
@@ -143,6 +160,12 @@ namespace Abyss.Interactions.Blackjack
 
             _database.BlackjackGames.Add(record);
             await _database.SaveChangesAsync();
+            
+            AddComponent(new ButtonViewComponent(async e => Reset())
+            {
+                Label = "Play again",
+                Style = LocalButtonComponentStyle.Primary
+            });
         }
 
         private async Task Recalculate()

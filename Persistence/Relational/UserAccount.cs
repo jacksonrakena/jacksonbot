@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Disqord;
 
 namespace Abyss.Persistence.Relational
 {
@@ -17,6 +18,9 @@ namespace Abyss.Persistence.Relational
         public string BadgesString { get; set; }
         public DateTimeOffset? FirstInteraction { get; set; }
         public DateTimeOffset? LatestInteraction { get; set; }
+
+        [NotMapped]
+        public Color? Color => ColorB != 0 && ColorG != 0 && ColorR != 0 ? new Color(ColorR, ColorG, ColorB) : null;
 
         [NotMapped]
         public string[] Badges
