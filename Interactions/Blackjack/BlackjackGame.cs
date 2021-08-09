@@ -5,44 +5,27 @@ using Abyss.Persistence.Relational;
 using Disqord;
 using Disqord.Bot;
 using Disqord.Extensions.Interactivity.Menus;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Abyss.Interactions.Blackjack
 {
-    public class BlackjackGame : ViewBase
+    public class BlackjackGame : AbyssSinglePlayerGameBase
     {
-        private BlackjackSharedDeck _deck = new BlackjackSharedDeck();
+        private readonly BlackjackSharedDeck _deck = new();
+        
+        private readonly List<BlackjackCard> _playerCards = new();
+        private readonly List<BlackjackCard> _dealerCards = new();
+        
         private readonly decimal _playerInitialBet;
-
-        private AbyssPersistenceContext _databaseLazy;
-
-        private AbyssPersistenceContext _database
-        {
-            get
-            {
-                if (_databaseLazy == null)
-                {
-                    _databaseLazy = (Menu.Interactivity.Client as DiscordBotBase).Services
-                        .CreateScope()
-                        .ServiceProvider
-                        .GetRequiredService<AbyssPersistenceContext>();
-                }
-
-                return _databaseLazy;
-            }
-        }
-
-        private int _dealerValue =>
-            BlackjackData.CalculateValueOfHand(_dealerCards);
-        private bool _showingSecondCard = false;
-        private readonly ulong _playerId;
-        private readonly ulong _channelId;
-        private bool _playerDoubleDowned = false;
-        private List<BlackjackCard> _playerCards = new List<BlackjackCard>();
-        private List<BlackjackCard> _dealerCards = new List<BlackjackCard>();
         private decimal _playerCurrentBet;
-        private int _currentValue => BlackjackData.CalculateValueOfHand(_playerCards);
-        public BlackjackGame(decimal bet, ulong channelId, ulong playerId) : base(
+
+        private int DealerValue =>
+            BlackjackData.CalculateValueOfHand(_dealerCards);
+        private int PlayerValue => BlackjackData.CalculateValueOfHand(_playerCards);
+        
+        private bool _showingSecondCard;
+        private bool _playerDoubleDowned;
+        
+        public BlackjackGame(decimal bet, DiscordCommandContext context) : base(context, 
             new LocalMessage()
                 .WithEmbeds(
                     new LocalEmbed()
@@ -52,8 +35,6 @@ namespace Abyss.Interactions.Blackjack
                     )
             )
         {
-            _playerId = playerId;
-            _channelId = channelId;
             _playerInitialBet = bet;
             _playerCurrentBet = bet;
             AddComponent(new ButtonViewComponent(PlayerReady)
@@ -63,22 +44,18 @@ namespace Abyss.Interactions.Blackjack
             });
         }
 
-        public void UpdateMessage(string message)
+        private void UpdateMessage(string message)
         {
             TemplateMessage.Embeds[0].Description = message;
             TemplateMessage.Embeds[0].Fields = new List<LocalEmbedField>
             {
-                new LocalEmbedField { Name = "Dealer", Value = $"{string.Join(", ", _dealerCards)} ({_dealerValue})", IsInline = true},
-                new LocalEmbedField { Name = "You", Value = $"{string.Join(", ", _playerCards)} ({_currentValue})", IsInline = true}
+                new() { Name = "Dealer", Value = $"{string.Join(", ", _dealerCards)} ({DealerValue})", IsInline = true},
+                new() { Name = "You", Value = $"{string.Join(", ", _playerCards)} ({PlayerValue})", IsInline = true}
             };
-            /*TemplateMessage.Embeds[0].Description = $"{message}" +
-                                                    $"\n\n" +
-                                                    $"Dealer: {string.Join(", ", _dealerCards)} ({_dealerValue})\n" +
-                                                    $"You: {string.Join(", ", _playerCards)} ({_currentValue})";*/
             ReportChanges();
         }
 
-        public async Task FinishGame(BlackjackGameResult result)
+        private async Task FinishGame(BlackjackGameResult result)
         {
             decimal userAccountModification = 0;
             switch (result)
@@ -88,22 +65,22 @@ namespace Abyss.Interactions.Blackjack
                     break;
                 case BlackjackGameResult.DealerWinCount:
                     UpdateMessage(
-                        $"Dealer wins! Dealer had {_dealerValue} to your {_currentValue}. You lose {_playerCurrentBet} :coin: coins.");
+                        $"Dealer wins! Dealer had {DealerValue} to your {PlayerValue}. You lose {_playerCurrentBet} :coin: coins.");
                     userAccountModification = -_playerCurrentBet;
                     TemplateMessage.Embeds[0].Color = Color.Red;
                     break;
                 case BlackjackGameResult.PlayerWinCount:
                     UpdateMessage(
-                        $"You win! {_currentValue} to dealers' {_dealerValue}. You win {_playerCurrentBet * 2} :coin: coins.");
+                        $"You win! {PlayerValue} to dealers' {DealerValue}. You win {_playerCurrentBet * 2} :coin: coins.");
                     userAccountModification = +_playerCurrentBet;
                     break;
                 case BlackjackGameResult.PlayerBust:
-                    UpdateMessage($"You busted on {_currentValue}! You lose {_playerCurrentBet} :coin: coins.");
+                    UpdateMessage($"You busted on {PlayerValue}! You lose {_playerCurrentBet} :coin: coins.");
                     TemplateMessage.Embeds[0].Color = Color.Red;
                     userAccountModification = 0-_playerCurrentBet;
                     break;
                 case BlackjackGameResult.DealerBust:
-                    UpdateMessage($"Dealer busted on {_dealerValue}! You win {_playerCurrentBet} :coin: coins.");
+                    UpdateMessage($"Dealer busted on {DealerValue}! You win {_playerCurrentBet} :coin: coins.");
                     userAccountModification = 0 + _playerCurrentBet;
                     break;
                 case BlackjackGameResult.DealerBlackjack:
@@ -139,16 +116,16 @@ namespace Abyss.Interactions.Blackjack
             }
             ReportChanges();
 
-            var account = await _database.GetUserAccountsAsync(_playerId);
+            var account = await _database.GetUserAccountsAsync(PlayerId);
             var initialCoins = account.Coins;
 
             var record = new BlackjackGameRecord
             {
                 Result = result,
-                ChannelId = _channelId,
+                ChannelId = ChannelId,
                 PlayerCards = string.Join(" ", _playerCards),
                 DealerCards = string.Join(" ", _dealerCards),
-                PlayerId = _playerId,
+                PlayerId = PlayerId,
                 PlayerFinalBet = _playerCurrentBet,
                 PlayerInitialBet = _playerInitialBet,
                 Adjustment = userAccountModification,
@@ -168,65 +145,56 @@ namespace Abyss.Interactions.Blackjack
             await _database.SaveChangesAsync();
         }
 
-        public async Task Recalculate()
+        private async Task Recalculate()
         {
             TemplateMessage.Embeds[0].Footer.Text = $"Current bet: {_playerCurrentBet}";
             ClearComponents();
             var value = BlackjackData.CalculateValueOfHand(_playerCards);
-            if (value > 21)
+            switch (value)
             {
-                await FinishGame(BlackjackGameResult.PlayerBust);
-                return;
-            }
-
-            if (value == 21)
-            {
-                if (_playerCards.Count == 2)
-                {
+                case > 21:
+                    await FinishGame(BlackjackGameResult.PlayerBust);
+                    return;
+                case 21 when _playerCards.Count == 2:
                     await FinishGame(BlackjackGameResult.PlayerBlackjackNatural);
                     return;
-                }
-                await FinishGame(BlackjackGameResult.PlayerBlackjack);
-                return;
+                case 21:
+                    await FinishGame(BlackjackGameResult.PlayerBlackjack);
+                    return;
             }
 
             if (_showingSecondCard)
             {
-                if (_dealerValue > 21)
+                switch (DealerValue)
                 {
-                    // Dealer bust
-                    await FinishGame(BlackjackGameResult.DealerBust);
-                    return;
-                }
-
-                if (_dealerValue == 21)
-                {
-                    if (_currentValue == 21)
+                    case > 21:
+                        // Dealer bust
+                        await FinishGame(BlackjackGameResult.DealerBust);
+                        return;
+                    case 21:
                     {
-                        await FinishGame(BlackjackGameResult.Push);
-                    }
+                        if (PlayerValue == 21)
+                        {
+                            await FinishGame(BlackjackGameResult.Push);
+                        }
 
-                    await FinishGame(_dealerCards.Count == 2
-                        ? BlackjackGameResult.DealerBlackjackNatural
-                        : BlackjackGameResult.DealerBlackjack);
-                    return;
-                }
-
-                if (_dealerValue < 17)
-                {
-                    _dealerCards.Add(_deck.DrawRandom());
-                    await Recalculate();
-                    return;
-                }
-                else
-                {
-                    if (_dealerValue > _currentValue)
-                    {
-                        await FinishGame(BlackjackGameResult.DealerWinCount);
+                        await FinishGame(_dealerCards.Count == 2
+                            ? BlackjackGameResult.DealerBlackjackNatural
+                            : BlackjackGameResult.DealerBlackjack);
                         return;
                     }
-                    else
+                    case < 17:
+                        _dealerCards.Add(_deck.DrawRandom());
+                        await Recalculate();
+                        return;
+                    default:
                     {
+                        if (DealerValue > PlayerValue)
+                        {
+                            await FinishGame(BlackjackGameResult.DealerWinCount);
+                            return;
+                        }
+                        
                         await FinishGame(BlackjackGameResult.PlayerWinCount);
                         return;
                     }
@@ -256,7 +224,7 @@ namespace Abyss.Interactions.Blackjack
             ReportChanges();
         }
 
-        public async ValueTask PlayerReady(ButtonEventArgs e)
+        private async ValueTask PlayerReady(ButtonEventArgs e)
         {
             ClearComponents();
             _dealerCards.Add(_deck.DrawRandom());
@@ -266,21 +234,21 @@ namespace Abyss.Interactions.Blackjack
             await Recalculate();
         }
 
-        public async ValueTask Hit(ButtonEventArgs e)
+        private async ValueTask Hit(ButtonEventArgs e)
         {
             _playerCards.Add(_deck.DrawRandom());
             await Recalculate();
         }
 
-        public async ValueTask Stand(ButtonEventArgs e)
+        private async ValueTask Stand(ButtonEventArgs e)
         {
             _showingSecondCard = true;
             await Recalculate();
         }
-        
-        public async ValueTask DoubleDown(ButtonEventArgs e)
+
+        private async ValueTask DoubleDown(ButtonEventArgs e)
         {
-            var account = await _database.GetUserAccountsAsync(_playerId);
+            var account = await _database.GetUserAccountsAsync(PlayerId);
             if (account.Coins < _playerCurrentBet * 2)
             {
                 TemplateMessage.Embeds[0].Description = "You don't have enough money to double down.";

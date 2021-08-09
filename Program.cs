@@ -37,6 +37,11 @@ namespace Abyss
         {
             var hostBuilder = new HostBuilder();
             hostBuilder.ConfigureServices(ConfigureServices);
+            hostBuilder.UseDefaultServiceProvider(x =>
+            {
+                x.ValidateScopes = true;
+                x.ValidateOnBuild = true;
+            });
             hostBuilder.ConfigureDiscordBot<Abyss>((host, bot) =>
             {
                 bot.Token = host.Configuration.GetSection("Secrets").GetSection("Discord")["Token"];

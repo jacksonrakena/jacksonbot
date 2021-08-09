@@ -25,7 +25,7 @@ namespace Abyss.Modules
             [EconomicImpact(EconomicImpactType.UserGainCoins)]
             public async Task<DiscordCommandResult> TriviaGame()
             {
-                return View(new TriviaGame(await TriviaData.GetCategoriesAsync(), Context.Author.Id));
+                return View(new TriviaGame(await TriviaData.GetCategoriesAsync(), Context));
             }
             
             [Command("stats")]
@@ -71,7 +71,7 @@ namespace Abyss.Modules
                 if (bet <= 0) return Reply("You have to bet a real number.");
                 var account = await Database.GetUserAccountsAsync(Context.Author.Id);
                 if (bet > account.Coins) return Reply("You don't have enough coins.");
-                return View(new BlackjackGame(bet, Context.ChannelId, Context.Author.Id));
+                return View(new BlackjackGame(bet, Context));
             }
 
             [Command("stats")]

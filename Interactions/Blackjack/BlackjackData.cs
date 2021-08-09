@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Abyssal.Common;
 
 namespace Abyss.Interactions.Blackjack
 {
@@ -31,30 +29,6 @@ namespace Abyss.Interactions.Blackjack
             if (remainingHandValue + 1 == 21 && (aceCount == 1)) return 21;
             if (remainingHandValue + 11 == 21 && (aceCount == 1)) return 21;
             return remainingHandValue + 1;
-        }
-    }
-
-    public class BlackjackSharedDeck
-    {
-        private List<BlackjackCard> _cards = new List<BlackjackCard>();
-        private readonly Random random = new Random();
-
-        public BlackjackSharedDeck()
-        {
-            foreach (var en in Enum.GetValues<BlackjackCard>())
-            {
-                _cards.Add(en);
-                _cards.Add(en);
-                _cards.Add(en);
-                _cards.Add(en);
-            }
-        }
-
-        public BlackjackCard DrawRandom()
-        {
-            var card = _cards.Random(random);
-            _cards.Remove(card);
-            return card;
         }
     }
 

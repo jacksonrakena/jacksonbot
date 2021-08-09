@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Abyss.Interactions.Trivia
 {
-    public class TriviaGame : ViewBase
+    public class TriviaGame : AbyssSinglePlayerGameBase
     {
         private List<TriviaQuestion> _questions;
 
@@ -26,25 +26,15 @@ namespace Abyss.Interactions.Trivia
         private string _optionB;
         private string _optionC;
         private string _selectedCategory;
-        private readonly ulong _authorId;
         
-        private AbyssPersistenceContext _database
-        {
-            get
-            {
-                return (Menu.Interactivity.Client as DiscordBotBase).Services.GetRequiredService<AbyssPersistenceContext>();
-            }
-        }
-        
-        public TriviaGame(List<LocalSelectionComponentOption> categories, ulong authorId) : base(
+        public TriviaGame(List<LocalSelectionComponentOption> categories, DiscordCommandContext context) : base(context,
             new LocalMessage().WithEmbeds(new LocalEmbed().WithColor(Constants.Theme)
                 .WithDescription("Welcome to the Abyss trivia minigame. Select your category, or click 'All' to play random questions."))
         )
         {
-            _authorId = authorId;
             AddComponent(new SelectionViewComponent(async e =>
             {
-                var record = await _database.GetTriviaRecordAsync(_authorId);
+                var record = await _database.GetTriviaRecordAsync(PlayerId);
                 record.VoteForCategory(e.SelectedOptions[0].Value, e.SelectedOptions[0].Label);
                 await _database.SaveChangesAsync();
                 _selectedCategory = e.SelectedOptions[0].Value;
@@ -80,7 +70,7 @@ namespace Abyss.Interactions.Trivia
                 ClearComponents();
                 AddComponent(new ButtonViewComponent(Reset) { Label = "Play again" });
                 ReportChanges();
-                var record = await _database.GetTriviaRecordAsync(_authorId);
+                var record = await _database.GetTriviaRecordAsync(PlayerId);
                 record.CorrectAnswers += _correctAnswers;
                 record.IncorrectAnswers += _incorrectAnswers;
                 record.TotalMatches++;
@@ -119,7 +109,7 @@ namespace Abyss.Interactions.Trivia
                 _correctAnswers++;
 
                 var db = ((DiscordBot) Menu.Client).Services.GetRequiredService<AbyssPersistenceContext>();
-                var user = await db.GetUserAccountsAsync(_authorId);
+                var user = await db.GetUserAccountsAsync(PlayerId);
                 user.Coins += 5;
                 await db.SaveChangesAsync();
                 await SelectNewQuestion("Correct! You've gained 5 coins.");

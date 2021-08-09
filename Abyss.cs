@@ -16,15 +16,17 @@ namespace Abyss
 {
     public class Abyss : DiscordBot
     {
+        private readonly IServiceScope _scope;
         public Abyss(IOptions<DiscordBotConfiguration> options, ILogger<Abyss> logger, IServiceProvider services,
             DiscordClient client) : base(options, logger, services, client)
         {
             Commands.CommandExecuted += CommandExecutedAsync;
+            _scope = Services.CreateScope();
         }
 
         private async Task CommandExecutedAsync(CommandExecutedEventArgs e)
         {
-            var database = Services.GetRequiredService<AbyssPersistenceContext>();
+            var database = _scope.ServiceProvider.GetRequiredService<AbyssPersistenceContext>();
             var record = await database
                 .GetUserAccountsAsync((e.Context as DiscordCommandContext).Author.Id);
             record.LatestInteraction = DateTimeOffset.Now;
@@ -51,7 +53,7 @@ namespace Abyss
 
         protected override async ValueTask AddModulesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            await Services.GetRequiredService<AbyssPersistenceContext>().Database.MigrateAsync(cancellationToken);
+            await _scope.ServiceProvider.GetRequiredService<AbyssPersistenceContext>().Database.MigrateAsync(cancellationToken);
             await base.AddModulesAsync(cancellationToken);
         }
     }
