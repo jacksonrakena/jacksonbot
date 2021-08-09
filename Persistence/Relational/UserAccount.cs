@@ -20,7 +20,7 @@ namespace Abyss.Persistence.Relational
         public DateTimeOffset? LatestInteraction { get; set; }
 
         [NotMapped]
-        public Color? Color => ColorB != 0 && ColorG != 0 && ColorR != 0 ? new Color(ColorR, ColorG, ColorB) : null;
+        public Color? Color => ColorB != 0 && ColorG != 0 && ColorR != 0 ? new Color((byte) ColorR, (byte) ColorG, (byte) ColorB) : null;
 
         [NotMapped]
         public string[] Badges

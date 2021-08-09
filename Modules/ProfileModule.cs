@@ -23,7 +23,8 @@ namespace Abyss.Modules
             var embed = new LocalEmbed()
                 .WithColor(profile.Color)
                 .WithAuthor(member)
-                .WithDescription($"{member.Name}'s Abyss profile");
+                .WithDescription($"{member.Name}'s Abyss profile")
+                .WithThumbnailUrl(member.GetAvatarUrl(size: 1024));
 
             embed.AddField(":coin: Coins", profile.Coins, true);
             if (profile.FirstInteraction != null)
