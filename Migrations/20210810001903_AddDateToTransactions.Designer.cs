@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Abyss.Migrations
 {
-    [DbContext(typeof(AbyssPersistenceContext))]
+    [DbContext(typeof(AbyssDatabaseContext))]
     [Migration("20210810001903_AddDateToTransactions")]
     partial class AddDateToTransactions
     {

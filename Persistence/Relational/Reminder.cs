@@ -4,7 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Abyss.Persistence.Relational
 {
-    public class Reminder
+    [Table("reminders")]
+    public class Reminder : RelationalRootObject
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }

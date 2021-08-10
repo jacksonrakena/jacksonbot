@@ -14,13 +14,13 @@ namespace Abyss.Modules
     {
         [Group("prefixes", "prefix", "pfix", "prefixs")]
         [Description("Shows all prefixes.")]
-        public class PrefixSubmodule : AbyssGuildModuleBase
+        public class PrefixSubmodule : AbyssModuleBase
         {
-            public PrefixSubmodule(AbyssPersistenceContext database)
+            public PrefixSubmodule(AbyssDatabaseContext database)
             {
                 _database = database;
             }
-            private readonly AbyssPersistenceContext _database;
+            private readonly AbyssDatabaseContext _database;
 
             [Command]
             public async Task<DiscordCommandResult> PrefixesAsync()
@@ -29,7 +29,7 @@ namespace Abyss.Modules
                 var gsr = await _database.GetGuildConfigAsync(Context.GuildId);
                 return Reply(
                     new LocalEmbed()
-                        .WithColor(GetColor())
+                        .WithColor(Color)
                         .WithAuthor("Prefixes for " + Context.Guild.Name, Context.Guild.GetIconUrl())
                         .WithDescription(string.Join("\n", gsr.Prefixes.Select(p => $"- `{p}`")))
                 );
@@ -47,7 +47,7 @@ namespace Abyss.Modules
                 });
                 return Reply( 
                     new LocalEmbed()
-                        .WithColor(GetColor())
+                        .WithColor(Color)
                         .WithDescription($"Added `{prefix}` to the prefixes for {Context.Guild.Name}.")
                 );
             }
@@ -61,7 +61,7 @@ namespace Abyss.Modules
                 var gsr = await _database.GetGuildConfigAsync(Context.Guild.Id);
                 if (!gsr.Prefixes.Contains(prefix))
                 {
-                    return Reply(new LocalEmbed().WithColor(GetColor()).WithDescription("That isn't a prefix."));
+                    return Reply(new LocalEmbed().WithColor(Color).WithDescription("That isn't a prefix."));
                 }
                 var gs = await _database.ModifyJsonObjectAsync(d => d.GuildConfigurations, Context.Guild.Id, d =>
                 {
@@ -69,7 +69,7 @@ namespace Abyss.Modules
                 });
                 return Reply(
                     new LocalEmbed()
-                        .WithColor(GetColor())
+                        .WithColor(Color)
                         .WithDescription($"Removed `{prefix}` from the prefixes for {Context.Guild.Name}.")
                 );
             }

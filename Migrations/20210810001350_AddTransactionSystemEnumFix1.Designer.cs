@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Abyss.Migrations
 {
-    [DbContext(typeof(AbyssPersistenceContext))]
+    [DbContext(typeof(AbyssDatabaseContext))]
     [Migration("20210810001350_AddTransactionSystemEnumFix1")]
     partial class AddTransactionSystemEnumFix1
     {

@@ -38,7 +38,7 @@ namespace Abyss.Services
                 CreatedAt = DateTimeOffset.Now
             };
             using var scope = _services.CreateScope();
-            using var context = scope.ServiceProvider.GetRequiredService<AbyssPersistenceContext>();
+            using var context = scope.ServiceProvider.GetRequiredService<AbyssDatabaseContext>();
             context.Reminders.Add(reminder);
             await context.SaveChangesAsync();
 
@@ -53,7 +53,7 @@ namespace Abyss.Services
             _actionScheduler.Schedule(due, async () =>
             {
                 using var scope = _services.CreateScope();
-                await using var context = scope.ServiceProvider.GetRequiredService<AbyssPersistenceContext>();
+                await using var context = scope.ServiceProvider.GetRequiredService<AbyssDatabaseContext>();
                 context.Reminders.Remove(reminder);
                 await context.SaveChangesAsync();
                 var channel = _bot.GetChannel(reminder.GuildId, reminder.ChannelId) as ITextChannel;

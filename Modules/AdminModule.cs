@@ -17,22 +17,22 @@ namespace Abyss.Modules
 {
     [Name("Admin")]
     [RequireBotOwner]
-    public partial class AdminModule : AbyssGuildModuleBase
+    public partial class AdminModule : AbyssModuleBase
     {
-        public AbyssPersistenceContext Database { get; set; }
+        public AbyssDatabaseContext Database { get; set; }
         [Command("create")]
         public async Task<DiscordCommandResult> Give(IMember member, decimal value)
         {
-            var txn = await _transactions.CreateTransactionFromSystem(value, member.Id,
+            var txn = await Transactions.CreateTransactionFromSystem(value, member.Id,
                 "Created by admin " + Context.Author, TransactionType.AdminGive);
-            var record = await Database.GetUserAccountsAsync(member.Id);
+            var record = await Database.GetUserAccountAsync(member.Id);
             return Reply($"Done. {member} now has {record.Coins} :coin: coins.");
         }
 
         [Command("txns")]
         public async Task<DiscordCommandResult> Admin_ViewTransactionsAsync(IMember member = null)
         {
-            var transactionList = await _transactions.GetLastTransactions(5, member?.Id);
+            var transactionList = await Transactions.GetLastTransactions(5, member?.Id);
             return Reply(string.Join("\n", transactionList.Select(t =>
             {
                 return $"[**{Markdown.Timestamp(t.Date, Constants.TIMESTAMP_FORMAT)}**] ({t.Type}) {(t.IsFromSystem ? "SYSTEM" : t.PayerId)} ({t.PayerBalanceBeforeTransaction}->{t.PayerBalanceAfterTransaction}) -> {(t.IsToSystem ? "SYSTEM" : t.PayeeId)} ({t.PayeeBalanceBeforeTransaction}->{t.PayeeBalanceAfterTransaction}) :coin: {t.Amount} - {t.Message} - {t.Source}";

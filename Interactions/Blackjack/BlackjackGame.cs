@@ -134,7 +134,7 @@ namespace Abyss.Interactions.Blackjack
             }
             ReportChanges();
 
-            var account = await _database.GetUserAccountsAsync(PlayerId);
+            var account = await _database.GetUserAccountAsync(PlayerId);
             var initialCoins = account.Coins;
 
             var record = new BlackjackGameRecord
@@ -285,7 +285,7 @@ namespace Abyss.Interactions.Blackjack
 
         private async ValueTask DoubleDown(ButtonEventArgs e)
         {
-            var account = await _database.GetUserAccountsAsync(PlayerId);
+            var account = await _database.GetUserAccountAsync(PlayerId);
             if (account.Coins < _playerCurrentBet * 2)
             {
                 TemplateMessage.Embeds[0].Description = "You don't have enough money to double down.";

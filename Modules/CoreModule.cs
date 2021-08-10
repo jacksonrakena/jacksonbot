@@ -20,7 +20,7 @@ using Qmmands;
 namespace Abyss.Modules
 {
     [Name("Core")]
-    public class CoreModule : AbyssGuildModuleBase
+    public class CoreModule : AbyssModuleBase
     {
         public ILogger<CoreModule> Logger { get; set; }
 
@@ -44,7 +44,7 @@ namespace Abyss.Modules
         {
             var app = await Context.Bot.FetchCurrentApplicationAsync();
             return Reply(new LocalEmbed()
-                .WithColor(GetColor())
+                .WithColor(Color)
                 .WithAuthor("Abyss", Context.Bot.CurrentUser.GetAvatarUrl())
                 .WithDescription(
                     $"Logged in as **{Context.Bot.CurrentUser}**")
@@ -82,7 +82,7 @@ namespace Abyss.Modules
         {
             return Reply(new LocalEmbed()
                 .WithAuthor("Welcome to the Abyss!", Context.Bot.CurrentUser.GetAvatarUrl(size: 1024))
-                .WithColor(GetColor())
+                .WithColor(Color)
                 .WithDescription("This is a short guide to get you up and running with all of Abyss' features. \n" +
                                  "If you just want to see available commands, type `a.commands`.")
                 .AddField("Earn some coins with Trivia", "`trivia`, `trivia stats`")
@@ -110,7 +110,7 @@ namespace Abyss.Modules
 
             var prefix = Context.Prefix;
 
-            var embed = new LocalEmbed { Color = GetColor() };
+            var embed = new LocalEmbed { Color = Color };
 
             embed.WithTitle("Commands");
 

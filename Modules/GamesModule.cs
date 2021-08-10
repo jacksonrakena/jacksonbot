@@ -15,9 +15,9 @@ using Qmmands;
 namespace Abyss.Modules
 {
     [Name("Games")]
-    public class GamesModule : AbyssGuildModuleBase
+    public class GamesModule : AbyssModuleBase
     {
-        public AbyssPersistenceContext Database { get; set; }
+        public AbyssDatabaseContext Database { get; set; }
 
         [Group("trivia")]
         public class TriviaSubmodule : GamesModule
@@ -45,7 +45,7 @@ namespace Abyss.Modules
                 return Reply(new LocalEmbed
                     {
                         Author = new LocalEmbedAuthor {Name = $"Trivia statistics for {Context.Author}"},
-                        Color = GetColor(),
+                        Color = Color,
                         ThumbnailUrl = Context.Author.GetAvatarUrl(size: 1024),
                         Timestamp = DateTimeOffset.Now
                     }
@@ -71,7 +71,7 @@ namespace Abyss.Modules
                 decimal bet)
             {
                 if (bet <= 0) return Reply("You have to bet a real number.");
-                var account = await Database.GetUserAccountsAsync(Context.Author.Id);
+                var account = await Database.GetUserAccountAsync(Context.Author.Id);
                 if (bet > account.Coins) return Reply("You don't have enough coins.");
                 return View(new BlackjackGame(bet, Context));
             }
@@ -108,7 +108,7 @@ namespace Abyss.Modules
                 return Reply(new LocalEmbed
                     {
                         Author = new LocalEmbedAuthor {Name = $"Blackjack statistics for {Context.Author}"},
-                        Color = GetColor(),
+                        Color = Color,
                         ThumbnailUrl = Context.Author.GetAvatarUrl(size: 1024),
                         Timestamp = DateTimeOffset.Now,
                         Description = $"{Context.Author} has {(isTotalLoser ? "lost" : "won")} a total of {(int)totalGameBalanceChange} :coin: coins from Blackjack."
@@ -127,7 +127,7 @@ namespace Abyss.Modules
         [Command("slots")]
         public async Task<DiscordCommandResult> Slots([Minimum(1)] decimal bet = 5)
         {
-            if (!await _transactions.CheckPlayerSufficientAmount(bet, Context.Author.Id))
+            if (!await Transactions.CheckPlayerSufficientAmount(bet, Context.Author.Id))
                 return Reply("You don't have enough :coin: coins.");
 
             return View(new SlotsGame(bet, Context));

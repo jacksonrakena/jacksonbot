@@ -5,27 +5,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Abyss.Persistence.Relational
 {
-    public class TransactionEngine
+    public class TransactionManager
     {
         public const ulong SystemAccountId = 0;
         public const decimal SystemAccountBalance = -1;
-        private readonly AbyssPersistenceContext _context;
+        private readonly AbyssDatabaseContext _context;
         
-        public TransactionEngine(AbyssPersistenceContext context)
+        public TransactionManager(AbyssDatabaseContext context)
         {
             _context = context;
         }
 
         public async Task<bool> CheckPlayerSufficientAmount(decimal amount, ulong accountId)
         {
-            var account = await _context.GetUserAccountsAsync(accountId);
+            var account = await _context.GetUserAccountAsync(accountId);
             return account.Coins >= amount;
         }
 
         public async Task<Transaction> CreateTransactionBetweenAccounts(decimal amount, ulong to, ulong from, string source)
         {
-            var toAccount = await _context.GetUserAccountsAsync(to);
-            var fromAccount = await _context.GetUserAccountsAsync(from);
+            var toAccount = await _context.GetUserAccountAsync(to);
+            var fromAccount = await _context.GetUserAccountAsync(from);
             
             var transaction = new Transaction
             {
@@ -61,7 +61,7 @@ namespace Abyss.Persistence.Relational
 
         public async Task<Transaction> CreateTransactionFromSystem(decimal amount, ulong to, string message, TransactionType type)
         {
-            var account = await _context.GetUserAccountsAsync(to);
+            var account = await _context.GetUserAccountAsync(to);
             var transaction = new Transaction
             {
                 Amount = amount,
@@ -92,14 +92,14 @@ namespace Abyss.Persistence.Relational
                 {
                     return false;
                 }
-                var account = await _context.GetUserAccountsAsync(transaction.PayerId);
+                var account = await _context.GetUserAccountAsync(transaction.PayerId);
                 account.Coins -= transaction.Amount;
             }
             
             // Add to payee
             if (!transaction.IsToSystem)
             {
-                var account = await _context.GetUserAccountsAsync(transaction.PayeeId);
+                var account = await _context.GetUserAccountAsync(transaction.PayeeId);
                 account.Coins += transaction.Amount;
             }
 
@@ -110,7 +110,7 @@ namespace Abyss.Persistence.Relational
 
         public async Task<Transaction> CreateTransactionToSystem(decimal amount, ulong from, string message, TransactionType type)
         {
-            var account = await _context.GetUserAccountsAsync(from);
+            var account = await _context.GetUserAccountAsync(from);
             var transaction = new Transaction
             {
                 Amount = amount,

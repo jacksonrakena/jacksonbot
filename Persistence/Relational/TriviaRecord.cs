@@ -5,7 +5,8 @@ using System.Linq;
 
 namespace Abyss.Persistence.Relational
 {
-    public class TriviaRecord
+    [Table("trivia_records")]
+    public class TriviaRecord : RelationalRootObject
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public ulong UserId { get; set; }
@@ -36,6 +37,7 @@ namespace Abyss.Persistence.Relational
         }
     }
 
+    [Table("trivia_category_votes")]
     public class TriviaCategoryVoteRecord
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]

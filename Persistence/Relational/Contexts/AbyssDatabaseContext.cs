@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Abyss.Persistence.Document;
@@ -8,20 +9,29 @@ using Microsoft.Extensions.Configuration;
 
 namespace Abyss.Persistence.Relational
 {
-    public class AbyssPersistenceContext: DbContext
+    public class AbyssDatabaseContext: DbContext
     {
         public DbSet<TriviaRecord> TriviaRecords { get; set; }
         public DbSet<JsonRow<GuildConfig>> GuildConfigurations { get; set; }
         public DbSet<UserAccount> UserAccounts { get; set; }
         public DbSet<BlackjackGameRecord> BlackjackGames { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
-        private readonly IConfiguration _configuration;
-        
         public DbSet<Reminder> Reminders { get; set; }
+        
+        private readonly IConfiguration _configuration;
 
-        public AbyssPersistenceContext(DbContextOptions<AbyssPersistenceContext> options, IConfiguration config) : base(options)
+        public AbyssDatabaseContext(DbContextOptions<AbyssDatabaseContext> options, IConfiguration config) : base(options)
         {
             _configuration = config;
+        }
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<JsonRow<GuildConfig>>().ToTable("guilds");
+            modelBuilder.Entity<BlackjackGameRecord>().Property(d => d.Result).HasConversion<string>();
+            modelBuilder.Entity<TriviaRecord>().HasMany(d => d.CategoryVoteRecords).WithOne(d => d.TriviaRecord);
+            modelBuilder.Entity<Transaction>().Property(d => d.Type).HasConversion<string>();
+            base.OnModelCreating(modelBuilder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -48,73 +58,51 @@ namespace Abyss.Persistence.Relational
             return record;
         }
 
-        public async Task<bool> SubtractCurrencyAsync(ulong user, decimal amount)
+        public async Task<TEntity> GetRelationalObjectAsync<TEntity>(Func<AbyssDatabaseContext, DbSet<TEntity>> accessor, object id) where TEntity : RelationalRootObject, new()
         {
-            var account = await GetUserAccountsAsync(user);
-            if ((account.Coins - amount) < 0) return false;
-            account.Coins -= amount;
+            var row = accessor(this);
+            var obj = await row.FindAsync(id);
+            if (obj != null) return obj;
+            
+            obj = new TEntity();
+            await obj.OnCreatingAsync();
+            row.Add(obj);
             await SaveChangesAsync();
-            return true;
+            
+            return obj;
         }
-
+        
         public async Task<TJsonObject> GetJsonObjectAsync<TJsonObject>(
-            Func<AbyssPersistenceContext, DbSet<JsonRow<TJsonObject>>> accessor, ulong guildId) 
+            Func<AbyssDatabaseContext, DbSet<JsonRow<TJsonObject>>> accessor, ulong guildId) 
             where TJsonObject : JsonRootObject<TJsonObject>, new()
         {
             var row = accessor(this);
             var rowResult = await row.FindAsync(guildId);
             if (rowResult != null) return rowResult.Data;
             rowResult = new JsonRow<TJsonObject> {GuildId = guildId};
+            await rowResult.Data.OnCreatingAsync(this, _configuration);
             row.Add(rowResult);
             await SaveChangesAsync();
             return rowResult.Data;
         }
 
-        public async Task<GuildConfig> GetGuildConfigAsync(ulong guildId)
+        public Task<GuildConfig> GetGuildConfigAsync(ulong guildId)
+            => GetJsonObjectAsync(d => d.GuildConfigurations, guildId);
+
+        public async Task<UserAccount> GetUserAccountAsync(ulong userId)
         {
-            var config = await GetJsonObjectAsync(d => d.GuildConfigurations, guildId);
-            if (config.Prefixes == null)
-            {
-                await ModifyJsonObjectAsync(d => d.GuildConfigurations, guildId, e =>
-                {
-                    e.Prefixes = new List<string> {_configuration.GetSection("Options")["DefaultPrefix"]};
-                });
-            }
+            var obj = await UserAccounts.FindAsync(userId);
+            if (obj != null) return obj;
 
-            return config;
-        }
-
-        public async Task<UserAccount> GetUserAccountsAsync(ulong userId)
-        {
-            var account = await UserAccounts.FindAsync(userId);
-            if (account == null)
-            {
-                account = UserAccounts.Add(new UserAccount
-                {
-                    Badges = Array.Empty<string>(),
-                    Coins = 0,
-                    Description = "",
-                    Id = userId,
-                    ColorB = 0,
-                    ColorG = 0,
-                    ColorR = 0
-                }).Entity;
-                await SaveChangesAsync();
-            }
-
-            return account;
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<BlackjackGameRecord>().Property(d => d.Result).HasConversion<string>();
-            modelBuilder.Entity<TriviaRecord>().HasMany(d => d.CategoryVoteRecords).WithOne(d => d.TriviaRecord);
-            modelBuilder.Entity<Transaction>().Property(d => d.Type).HasConversion<string>();
-            base.OnModelCreating(modelBuilder);
+            obj = new UserAccount {Id = userId};
+            UserAccounts.Add(obj);
+            await SaveChangesAsync();
+            
+            return obj;
         }
 
         public async Task<TJsonObject> ModifyJsonObjectAsync<TJsonObject>(
-            Func<AbyssPersistenceContext, DbSet<JsonRow<TJsonObject>>> accessor, ulong guildId, Action<TJsonObject> modifier) 
+            Func<AbyssDatabaseContext, DbSet<JsonRow<TJsonObject>>> accessor, ulong guildId, Action<TJsonObject> modifier) 
             where TJsonObject : JsonRootObject<TJsonObject>, new()
         {
             var row = accessor(this);

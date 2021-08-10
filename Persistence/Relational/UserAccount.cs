@@ -5,17 +5,18 @@ using Disqord;
 
 namespace Abyss.Persistence.Relational
 {
+    [Table("users")]
     public class UserAccount
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public ulong Id { get; set; }
-        
+
         public decimal Coins { get; set; }
-        
+
         public int ColorR { get; set; }
         public int ColorG { get; set; }
         public int ColorB { get; set; }
-        public string BadgesString { get; set; }
+        public string BadgesString { get; set; } = string.Empty;
         public DateTimeOffset? FirstInteraction { get; set; }
         public DateTimeOffset? LatestInteraction { get; set; }
 

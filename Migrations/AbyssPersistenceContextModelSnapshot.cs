@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Abyss.Migrations
 {
-    [DbContext(typeof(AbyssPersistenceContext))]
+    [DbContext(typeof(AbyssDatabaseContext))]
     partial class AbyssPersistenceContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -65,7 +65,7 @@ namespace Abyss.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BlackjackGames");
+                    b.ToTable("bj_games");
                 });
 
             modelBuilder.Entity("Abyss.Persistence.Relational.JsonRow<Abyss.Persistence.Document.GuildConfig>", b =>
@@ -78,7 +78,7 @@ namespace Abyss.Migrations
 
                     b.HasKey("GuildId");
 
-                    b.ToTable("GuildConfigurations");
+                    b.ToTable("guilds");
                 });
 
             modelBuilder.Entity("Abyss.Persistence.Relational.Reminder", b =>
@@ -112,7 +112,7 @@ namespace Abyss.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Reminders");
+                    b.ToTable("reminders");
                 });
 
             modelBuilder.Entity("Abyss.Persistence.Relational.Transaction", b =>
@@ -189,7 +189,7 @@ namespace Abyss.Migrations
 
                     b.HasIndex("TriviaRecordId");
 
-                    b.ToTable("TriviaCategoryVoteRecord");
+                    b.ToTable("trivia_category_votes");
                 });
 
             modelBuilder.Entity("Abyss.Persistence.Relational.TriviaRecord", b =>
@@ -208,7 +208,7 @@ namespace Abyss.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("TriviaRecords");
+                    b.ToTable("trivia_records");
                 });
 
             modelBuilder.Entity("Abyss.Persistence.Relational.UserAccount", b =>
@@ -243,7 +243,7 @@ namespace Abyss.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserAccounts");
+                    b.ToTable("users");
                 });
 
             modelBuilder.Entity("Abyss.Persistence.Relational.TriviaCategoryVoteRecord", b =>

@@ -15,16 +15,16 @@ namespace Abyss.Modules
     [Name("Reminders")]
     [Group("remind", "remindme", "reminders")]
     [Description("Reminder control.")]
-    public class ReminderModule : AbyssGuildModuleBase
+    public class ReminderModule : AbyssModuleBase
     {
-        public ReminderModule(ReminderService reminder, AbyssPersistenceContext dbContext)
+        public ReminderModule(ReminderService reminder, AbyssDatabaseContext dbContext)
         {
             _reminders = reminder;
             _dbContext = dbContext;
         }
 
         private readonly ReminderService _reminders;
-        private readonly AbyssPersistenceContext _dbContext;
+        private readonly AbyssDatabaseContext _dbContext;
 
         [Command("", "list", "all")]
         public async Task<DiscordCommandResult> RemindersAsync()
@@ -43,7 +43,7 @@ namespace Abyss.Modules
                 d.CreatorId == (ulong) Context.Author.Id && d.GuildId == (ulong) Context.Guild.Id);
             return Reply(
                 new LocalEmbed()
-                    .WithColor(GetColor())
+                    .WithColor(Color)
                     .WithAuthor("Your reminders in " + Context.Guild.Name, Context.Guild.GetIconUrl())
                     .WithDescription(string.Join("\n", gsr.Select(Map)))
                     .WithFooter("Start a reminder with 'remindme 14h {message}'.")
@@ -71,7 +71,7 @@ namespace Abyss.Modules
                     Context.Message.Id, Context.Author.Id, description, offset);
                 return Reply(
                     new LocalEmbed()
-                        .WithColor(GetColor())
+                        .WithColor(Color)
                         .WithTitle("Reminder created")
                         .WithDescription(
                             $"I'll remind you at {Markdown.Timestamp(offset, Markdown.TimestampFormat.ShortDateTime)} of \"{description}\" in this channel.")

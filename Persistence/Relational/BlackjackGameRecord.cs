@@ -5,7 +5,8 @@ using Abyss.Interactions.Blackjack;
 
 namespace Abyss.Persistence.Relational
 {
-    public class BlackjackGameRecord
+    [Table("bj_games")]
+    public class BlackjackGameRecord : RelationalRootObject
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }

@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Abyss.Migrations
 {
     [DbContext(typeof(AbyssDatabaseContext))]
-    [Migration("20210809130601_AddAdjustmentColumnBlackjackGame")]
-    partial class AddAdjustmentColumnBlackjackGame
+    [Migration("20210810110902_TableRenames2")]
+    partial class TableRenames2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,6 +33,9 @@ namespace Abyss.Migrations
 
                     b.Property<decimal>("ChannelId")
                         .HasColumnType("numeric(20,0)");
+
+                    b.Property<DateTimeOffset>("DateGameFinish")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DealerCards")
                         .HasColumnType("text");
@@ -64,7 +67,7 @@ namespace Abyss.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BlackjackGames");
+                    b.ToTable("bj_games");
                 });
 
             modelBuilder.Entity("Abyss.Persistence.Relational.JsonRow<Abyss.Persistence.Document.GuildConfig>", b =>
@@ -77,7 +80,7 @@ namespace Abyss.Migrations
 
                     b.HasKey("GuildId");
 
-                    b.ToTable("GuildConfigurations");
+                    b.ToTable("guilds");
                 });
 
             modelBuilder.Entity("Abyss.Persistence.Relational.Reminder", b =>
@@ -111,7 +114,58 @@ namespace Abyss.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Reminders");
+                    b.ToTable("reminders");
+                });
+
+            modelBuilder.Entity("Abyss.Persistence.Relational.Transaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTimeOffset>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsCurrencyCreated")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsCurrencyDestroyed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("PayeeBalanceAfterTransaction")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("PayeeBalanceBeforeTransaction")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("PayeeId")
+                        .HasColumnType("numeric(20,0)");
+
+                    b.Property<decimal>("PayerBalanceAfterTransaction")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("PayerBalanceBeforeTransaction")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("PayerId")
+                        .HasColumnType("numeric(20,0)");
+
+                    b.Property<string>("Source")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("transactions");
                 });
 
             modelBuilder.Entity("Abyss.Persistence.Relational.TriviaCategoryVoteRecord", b =>
@@ -137,7 +191,7 @@ namespace Abyss.Migrations
 
                     b.HasIndex("TriviaRecordId");
 
-                    b.ToTable("TriviaCategoryVoteRecord");
+                    b.ToTable("trivia_category_votes");
                 });
 
             modelBuilder.Entity("Abyss.Persistence.Relational.TriviaRecord", b =>
@@ -156,7 +210,7 @@ namespace Abyss.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("TriviaRecords");
+                    b.ToTable("trivia_records");
                 });
 
             modelBuilder.Entity("Abyss.Persistence.Relational.UserAccount", b =>
@@ -191,7 +245,7 @@ namespace Abyss.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserAccounts");
+                    b.ToTable("users");
                 });
 
             modelBuilder.Entity("Abyss.Persistence.Relational.TriviaCategoryVoteRecord", b =>

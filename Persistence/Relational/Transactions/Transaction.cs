@@ -28,8 +28,8 @@ namespace Abyss.Persistence.Relational
         
         public decimal Amount { get; set; }
 
-        [NotMapped] public bool IsFromSystem => PayerId == 0;
-        [NotMapped] public bool IsToSystem => PayeeId == 0;
+        [NotMapped] public bool IsFromSystem => PayerId == TransactionManager.SystemAccountId;
+        [NotMapped] public bool IsToSystem => PayeeId == TransactionManager.SystemAccountId;
     }
 
     public enum TransactionType

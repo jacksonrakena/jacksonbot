@@ -26,9 +26,9 @@ namespace Abyss
 
         private async Task CommandExecutedAsync(CommandExecutedEventArgs e)
         {
-            var database = _scope.ServiceProvider.GetRequiredService<AbyssPersistenceContext>();
+            var database = _scope.ServiceProvider.GetRequiredService<AbyssDatabaseContext>();
             var record = await database
-                .GetUserAccountsAsync((e.Context as DiscordCommandContext).Author.Id);
+                .GetUserAccountAsync((e.Context as DiscordCommandContext).Author.Id);
             record.LatestInteraction = DateTimeOffset.Now;
             record.FirstInteraction ??= DateTimeOffset.Now;
             await database.SaveChangesAsync();
@@ -53,7 +53,7 @@ namespace Abyss
 
         protected override async ValueTask AddModulesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            await _scope.ServiceProvider.GetRequiredService<AbyssPersistenceContext>().Database.MigrateAsync(cancellationToken);
+            await _scope.ServiceProvider.GetRequiredService<AbyssDatabaseContext>().Database.MigrateAsync(cancellationToken);
             await base.AddModulesAsync(cancellationToken);
         }
     }

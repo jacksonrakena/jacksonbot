@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Abyss.Extensions;
+using Abyss.Interactions;
 using Disqord;
 using Disqord.Bot;
 using Disqord.Extensions.Interactivity.Menus;
@@ -126,7 +127,7 @@ namespace Abyss.Modules
             }
             return new Page().WithEmbeds(new LocalEmbed()
                 .WithTitle("Enjoy your random cat.")
-                .WithColor(_caller.GetColor())
+                .WithColor(_caller.Color)
                 .WithImageUrl(url)
             ); 
         }

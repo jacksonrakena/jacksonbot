@@ -2,6 +2,7 @@ using System;
 
 namespace Abyss.Attributes
 {
+    [AttributeUsage(AttributeTargets.Method)]
     public class EconomicImpactAttribute : Attribute
     {
         public EconomicImpactType ImpactType { get; }

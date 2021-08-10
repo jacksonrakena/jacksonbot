@@ -17,22 +17,22 @@ namespace Abyss.Interactions
 
         private IServiceProvider _servicesLazy;
 
-        protected TransactionEngine _transactions => _transactionsLazy ??= _services.GetRequiredService<TransactionEngine>();
-        private TransactionEngine _transactionsLazy;
+        protected TransactionManager _transactions => _transactionsLazy ??= _services.GetRequiredService<TransactionManager>();
+        private TransactionManager _transactionsLazy;
         
-        protected AbyssPersistenceContext _database
+        protected AbyssDatabaseContext _database
         {
             get
             {
                 if (_databaseLazy == null)
                 {
-                    _databaseLazy = _services.GetRequiredService<AbyssPersistenceContext>();
+                    _databaseLazy = _services.GetRequiredService<AbyssDatabaseContext>();
                 }
 
                 return _databaseLazy;
             }
         }
-        private AbyssPersistenceContext _databaseLazy;
+        private AbyssDatabaseContext _databaseLazy;
         
         protected AbyssViewBase(LocalMessage templateMessage) : base(templateMessage)
         {

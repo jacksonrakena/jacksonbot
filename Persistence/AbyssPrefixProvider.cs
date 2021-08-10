@@ -24,7 +24,7 @@ namespace Abyss.Persistence
         {
             if (message.GuildId == null) return _dmPrefixSet;
             using var scope = _services.CreateScope();
-            var record = await scope.ServiceProvider.GetRequiredService<AbyssPersistenceContext>().GetGuildConfigAsync((ulong) message.GuildId);
+            var record = await scope.ServiceProvider.GetRequiredService<AbyssDatabaseContext>().GetGuildConfigAsync((ulong) message.GuildId);
             return record.Prefixes.Select<string, IPrefix>(d => new StringPrefix(d))
                 .Append(new MentionPrefix(message.GetGatewayClient().CurrentUser.Id));
         }

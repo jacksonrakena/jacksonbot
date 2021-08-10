@@ -15,13 +15,13 @@ using Qmmands;
 namespace Abyss.Modules
 {
     [Name("Currency")]
-    public class EconomyModule : AbyssGuildModuleBase
+    public class EconomyModule : AbyssModuleBase
     {
         [Command("bank")]
         public async Task<DiscordCommandResult> Bank()
         {
-            var profile = await _database.GetUserAccountsAsync(Context.Author.Id);
-            var transactionList = await _transactions.GetLastTransactions(2, Context.Author.Id);
+            var profile = await Database.GetUserAccountAsync(Context.Author.Id);
+            var transactionList = await Transactions.GetLastTransactions(2, Context.Author.Id);
             if (transactionList.Length == 0) return Reply("You don't have any records! Try playing some games.");
             var msg = new LocalMessage().WithContent($"__Bank of the Abyss - Showing last 2 transactions for **{Context.Author}**__");
             msg.Embeds = new List<LocalEmbed>();
@@ -42,7 +42,7 @@ namespace Abyss.Modules
                 var embed = new LocalEmbed
                 {
                     Color = color,
-                    Title = $"{(isIncome ? "Received from" : "Paid to")} {(otherParty == 0 ? "system" : Context.Bot.GetUser(otherParty))}"
+                    Title = $"{(isIncome ? "Received from" : "Paid to")} {(otherParty == TransactionManager.SystemAccountId ? "system" : Context.Bot.GetUser(otherParty))}"
                 };
                 embed.AddField("Date", Markdown.Timestamp(transaction.Date, Constants.TIMESTAMP_FORMAT), true);
                 embed.AddField("Amount", $"{transaction.Amount} :coin:", true);
@@ -61,7 +61,7 @@ namespace Abyss.Modules
         public async Task<DiscordCommandResult> SendMoneyAsync(IMember user, decimal amount)
         {
 
-            var txn = await _transactions.CreateTransactionBetweenAccounts(amount, user.Id, Context.Author.Id,
+            var txn = await Transactions.CreateTransactionBetweenAccounts(amount, user.Id, Context.Author.Id,
                 Context.Author.ToString());
             return Reply(txn == null ? 
                 "You don't have enough money!" : 
@@ -70,12 +70,12 @@ namespace Abyss.Modules
         [Command("top")]
         public async Task<DiscordCommandResult> TopAsync()
         {
-            var players = await Context.Services.GetRequiredService<AbyssPersistenceContext>().UserAccounts
+            var players = await Context.Services.GetRequiredService<AbyssDatabaseContext>().UserAccounts
                 .OrderByDescending(c => c.Coins).Take(5).ToListAsync();
 
             return Reply(new LocalEmbed()
                 .WithTitle($"Richest users, as of {Markdown.Timestamp(DateTimeOffset.Now)}")
-                .WithColor(GetColor())
+                .WithColor(Color)
                 .WithDescription(string.Join("\n", players.Select((c, pos) =>
                 {
                     return $"{pos + 1}) **{Context.Bot.GetUser(c.Id)}** - {c.Coins} coins";
@@ -86,8 +86,8 @@ namespace Abyss.Modules
         [Command("coins")]
         public async Task<DiscordCommandResult> CoinsAsync()
         {
-            var coins = await Context.Services.GetRequiredService<AbyssPersistenceContext>()
-                .GetUserAccountsAsync(Context.Author.Id);
+            var coins = await Context.Services.GetRequiredService<AbyssDatabaseContext>()
+                .GetUserAccountAsync(Context.Author.Id);
             return Reply($"You have {coins.Coins} :coin: coins. Play some games to earn more.");
         }
     }

@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Abyss.Migrations
 {
-    [DbContext(typeof(AbyssPersistenceContext))]
+    [DbContext(typeof(AbyssDatabaseContext))]
     [Migration("20210809115941_AddTriviaRecording")]
     partial class AddTriviaRecording
     {

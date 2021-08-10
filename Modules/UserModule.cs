@@ -10,7 +10,7 @@ using Color = Disqord.Color;
 namespace Abyss.Modules
 {
     [Name("User")]
-    public class UserModule : AbyssGuildModuleBase
+    public class UserModule : AbyssModuleBase
     {
         [Command("avatar", "av", "a", "pic", "pfp")]
         [Description("Grabs the avatar for a user.")]
@@ -22,7 +22,7 @@ namespace Abyss.Modules
             target ??= Context.Author as CachedMember;
             return Reply(new LocalEmbed()
                 .WithAuthor(target)
-                .WithColor(GetColor())
+                .WithColor(Color)
                 .WithImageUrl(target.GetAvatarUrl(size:1024))
                 .WithDescription($"**Formats:** {UrlHelper.CreateMarkdownUrl("128", target.GetAvatarUrl(size: 128))} | " +
                                  $"{UrlHelper.CreateMarkdownUrl("256", target.GetAvatarUrl(size: 256))} | " +

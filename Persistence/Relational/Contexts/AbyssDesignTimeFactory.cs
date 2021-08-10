@@ -3,14 +3,14 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace Abyss.Persistence.Relational
 {
-    public class AbyssDesignTimeFactory : IDesignTimeDbContextFactory<AbyssPersistenceContext>
+    public class AbyssDesignTimeFactory : IDesignTimeDbContextFactory<AbyssDatabaseContext>
     {
-        public AbyssPersistenceContext CreateDbContext(string[] args)
+        public AbyssDatabaseContext CreateDbContext(string[] args)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<AbyssPersistenceContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<AbyssDatabaseContext>();
             optionsBuilder.UseNpgsql("Server=localhost;Database=abyss;Username=abyss;Password=abyss123;");
 
-            return new AbyssPersistenceContext(optionsBuilder.Options, null);
+            return new AbyssDatabaseContext(optionsBuilder.Options, null);
         }
     }
 }
