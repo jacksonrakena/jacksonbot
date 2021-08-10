@@ -32,5 +32,7 @@ Built on top of <a href="https://github.com/Quahu/Disqord">Disqord</a> and <a hr
 - .NET 5.0 Runtime (SDK for building) or newer
 - PostgreSQL (tested with 13.1)
     - Username `abyss`, password `abyss123`, empty `abyss` database (databases are migrated automatically) [configurable]
- 
+
+You can use the `tools/abyss.service` file to run Abyss as a `systemd` service. 
+
 Copyright &copy; 2015-2021 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
