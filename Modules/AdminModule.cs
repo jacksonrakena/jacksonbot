@@ -35,7 +35,7 @@ namespace Abyss.Modules
             var transactionList = await _transactions.GetLastTransactions(5, member?.Id);
             return Reply(string.Join("\n", transactionList.Select(t =>
             {
-                return $"[**{t.Date}**] ({t.Type}) {(t.IsFromSystem ? "SYSTEM" : t.PayerId)} ({t.PayerBalanceBeforeTransaction}->{t.PayerBalanceAfterTransaction}) -> {(t.IsToSystem ? "SYSTEM" : t.PayeeId)} ({t.PayeeBalanceBeforeTransaction}->{t.PayeeBalanceAfterTransaction}) :coin: {t.Amount} - {t.Message} - {t.Source}";
+                return $"[**{Markdown.Timestamp(t.Date, Constants.TIMESTAMP_FORMAT)}**] ({t.Type}) {(t.IsFromSystem ? "SYSTEM" : t.PayerId)} ({t.PayerBalanceBeforeTransaction}->{t.PayerBalanceAfterTransaction}) -> {(t.IsToSystem ? "SYSTEM" : t.PayeeId)} ({t.PayeeBalanceBeforeTransaction}->{t.PayeeBalanceAfterTransaction}) :coin: {t.Amount} - {t.Message} - {t.Source}";
             })));
         }
         
