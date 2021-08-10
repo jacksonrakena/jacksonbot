@@ -82,6 +82,7 @@ namespace Abyss
             var spotify = secrets.GetSection("Spotify");
             serviceCollection
                 .AddMemoryCache()
+                .AddScoped<TransactionEngine>()
                 .AddSingleton<IPrefixProvider, AbyssPrefixProvider>()
                 .AddDbContext<AbyssPersistenceContext>(options =>
                 {

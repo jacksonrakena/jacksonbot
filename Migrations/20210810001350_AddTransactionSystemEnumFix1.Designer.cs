@@ -4,15 +4,17 @@ using Abyss.Persistence.Document;
 using Abyss.Persistence.Relational;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Abyss.Migrations
 {
     [DbContext(typeof(AbyssPersistenceContext))]
-    partial class AbyssPersistenceContextModelSnapshot : ModelSnapshot
+    [Migration("20210810001350_AddTransactionSystemEnumFix1")]
+    partial class AddTransactionSystemEnumFix1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,9 +125,6 @@ namespace Abyss.Migrations
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
-
-                    b.Property<DateTimeOffset>("Date")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsCurrencyCreated")
                         .HasColumnType("boolean");

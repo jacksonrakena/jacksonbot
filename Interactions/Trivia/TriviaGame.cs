@@ -108,10 +108,8 @@ namespace Abyss.Interactions.Trivia
             {
                 _correctAnswers++;
 
-                var db = ((DiscordBot) Menu.Client).Services.GetRequiredService<AbyssPersistenceContext>();
-                var user = await db.GetUserAccountsAsync(PlayerId);
-                user.Coins += 5;
-                await db.SaveChangesAsync();
+                await _transactions.CreateTransactionFromSystem(5, PlayerId, "Correct trivia answer",
+                    TransactionType.TriviaWin);
                 await SelectNewQuestion("Correct! You've gained 5 coins.");
             }
             else

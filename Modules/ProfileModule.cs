@@ -9,11 +9,24 @@ using Qmmands;
 namespace Abyss.Modules
 {
     [Name("Profile")]
+    [Group("profile")]
     public class ProfileModule : AbyssGuildModuleBase
     {
         public AbyssPersistenceContext Database { get; set; }
+
+        [Command("color", "colour", "c")]
+        [Description("Change your profile colour.")]
+        public async Task<DiscordCommandResult> ColorSet(Color color)
+        {
+            var profile = await Database.GetUserAccountsAsync(Context.Author.Id);
+            profile.ColorR = color.R;
+            profile.ColorG = color.G;
+            profile.ColorB = color.B;
+            await Database.SaveChangesAsync();
+            return Reply("Changed your color to " + color.ToString() + ".");
+        }
         
-        [Command("profile")]
+        [Command]
         [Description("Look at your profile.")]
         public async Task<DiscordCommandResult> Profile(IMember member = null)
         {
@@ -23,7 +36,6 @@ namespace Abyss.Modules
             var embed = new LocalEmbed()
                 .WithColor(profile.Color)
                 .WithAuthor(member)
-                .WithDescription($"{member.Name}'s Abyss profile")
                 .WithThumbnailUrl(member.GetAvatarUrl(size: 1024));
 
             embed.AddField(":coin: Coins", profile.Coins, true);

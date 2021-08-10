@@ -1,6 +1,9 @@
+using System;
 using Abyss.Extensions;
+using Abyss.Persistence.Relational;
 using Disqord;
 using Disqord.Bot;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Abyss.Modules
 {
@@ -15,6 +18,20 @@ namespace Abyss.Modules
         {
             return Context.CurrentMember.GetHighestRoleColourOrDefault();
         }
+        
+        protected IServiceProvider _services =>
+            _servicesLazy ??= Context.Bot.Services
+                .CreateScope()
+                .ServiceProvider;
+        
+
+        private IServiceProvider _servicesLazy;
+
+        protected TransactionEngine _transactions => _transactionsLazy ??= _services.GetRequiredService<TransactionEngine>();
+        private TransactionEngine _transactionsLazy;
+        
+        protected AbyssPersistenceContext _database => _databaseLazy ?? (_databaseLazy = _services.GetRequiredService<AbyssPersistenceContext>());
+        private AbyssPersistenceContext _databaseLazy;
     }
     
     public abstract class AbyssModuleBase : DiscordModuleBase

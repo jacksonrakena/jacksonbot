@@ -13,8 +13,12 @@ namespace Abyss.Interactions
             _servicesLazy ?? (_servicesLazy = (Menu.Interactivity.Client as DiscordBotBase).Services
                 .CreateScope()
                 .ServiceProvider);
+        
 
         private IServiceProvider _servicesLazy;
+
+        protected TransactionEngine _transactions => _transactionsLazy ??= _services.GetRequiredService<TransactionEngine>();
+        private TransactionEngine _transactionsLazy;
         
         protected AbyssPersistenceContext _database
         {

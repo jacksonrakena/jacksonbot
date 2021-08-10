@@ -9,6 +9,7 @@ using Abyss.Helpers;
 using Abyss.Persistence.Relational;
 using Disqord.Gateway;
 using HumanDateParser;
+using Humanizer;
 using Microsoft.CodeAnalysis;
 using Qmmands;
 
@@ -16,17 +17,28 @@ namespace Abyss.Modules
 {
     [Name("Admin")]
     [RequireBotOwner]
-    public partial class AdminModule : DiscordGuildModuleBase
+    public partial class AdminModule : AbyssGuildModuleBase
     {
         public AbyssPersistenceContext Database { get; set; }
-        [Command("give")]
+        [Command("create")]
         public async Task<DiscordCommandResult> Give(IMember member, decimal value)
         {
+            var txn = await _transactions.CreateTransactionFromSystem(value, member.Id,
+                "Created by admin " + Context.Author, TransactionType.AdminGive);
             var record = await Database.GetUserAccountsAsync(member.Id);
-            record.Coins += value;
-            await Database.SaveChangesAsync();
             return Reply($"Done. {member} now has {record.Coins} :coin: coins.");
         }
+
+        [Command("txns")]
+        public async Task<DiscordCommandResult> Admin_ViewTransactionsAsync(IMember member = null)
+        {
+            var transactionList = await _transactions.GetLastTransactions(5, member?.Id);
+            return Reply(string.Join("\n", transactionList.Select(t =>
+            {
+                return $"[**{t.Date}**] ({t.Type}) {(t.IsFromSystem ? "SYSTEM" : t.PayerId)} ({t.PayerBalanceBeforeTransaction}->{t.PayerBalanceAfterTransaction}) -> {(t.IsToSystem ? "SYSTEM" : t.PayeeId)} ({t.PayeeBalanceBeforeTransaction}->{t.PayeeBalanceAfterTransaction}) :coin: {t.Amount} - {t.Message} - {t.Source}";
+            })));
+        }
+        
         [Command("timeinspect")]
         [Description("Provides information about a relative date.")]
         public async Task<DiscordCommandResult> InspectTimeAsync(string time)

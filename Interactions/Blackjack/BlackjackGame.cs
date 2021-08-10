@@ -152,11 +152,17 @@ namespace Abyss.Interactions.Blackjack
                 DateGameFinish = DateTimeOffset.Now,
                 PlayerBalanceBeforeGame = initialCoins
             };
-            
-            if (userAccountModification != 0)
+
+            switch (userAccountModification)
             {
-                account.Coins += userAccountModification;
-                await _database.SaveChangesAsync();
+                case > 0:
+                    await _transactions.CreateTransactionFromSystem(userAccountModification, PlayerId, "Blackjack winnings",
+                        TransactionType.BlackjackWin);
+                    break;
+                case < 0:
+                    await _transactions.CreateTransactionToSystem(-userAccountModification, PlayerId, "Blackjack loss",
+                        TransactionType.BlackjackLoss);
+                    break;
             }
 
             _database.BlackjackGames.Add(record);

@@ -14,6 +14,7 @@ namespace Abyss.Persistence.Relational
         public DbSet<JsonRow<GuildConfig>> GuildConfigurations { get; set; }
         public DbSet<UserAccount> UserAccounts { get; set; }
         public DbSet<BlackjackGameRecord> BlackjackGames { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
         private readonly IConfiguration _configuration;
         
         public DbSet<Reminder> Reminders { get; set; }
@@ -108,6 +109,7 @@ namespace Abyss.Persistence.Relational
         {
             modelBuilder.Entity<BlackjackGameRecord>().Property(d => d.Result).HasConversion<string>();
             modelBuilder.Entity<TriviaRecord>().HasMany(d => d.CategoryVoteRecords).WithOne(d => d.TriviaRecord);
+            modelBuilder.Entity<Transaction>().Property(d => d.Type).HasConversion<string>();
             base.OnModelCreating(modelBuilder);
         }
 
