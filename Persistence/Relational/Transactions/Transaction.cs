@@ -39,6 +39,8 @@ namespace Abyss.Persistence.Relational
         TriviaWin,
         Transfer,
         Purchase,
-        AdminGive
+        AdminGive,
+        SlotsWin,
+        SlotsLoss
     }
 }

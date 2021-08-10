@@ -3,8 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abyss.Attributes;
 using Abyss.Interactions.Blackjack;
+using Abyss.Interactions.Slots;
 using Abyss.Interactions.Trivia;
 using Abyss.Persistence.Relational;
+using Abyssal.Common;
 using Disqord;
 using Disqord.Bot;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +15,7 @@ using Qmmands;
 namespace Abyss.Modules
 {
     [Name("Games")]
-    public class GamesModule : AbyssModuleBase
+    public class GamesModule : AbyssGuildModuleBase
     {
         public AbyssPersistenceContext Database { get; set; }
 
@@ -120,6 +122,15 @@ namespace Abyss.Modules
                     .AddField("Win rate", $"{(int) (((decimal) playerWon.Count/totalGames)*100)}%", true)
                 );
             }
+        }
+
+        [Command("slots")]
+        public async Task<DiscordCommandResult> Slots([Minimum(1)] decimal bet = 5)
+        {
+            if (!await _transactions.CheckPlayerSufficientAmount(bet, Context.Author.Id))
+                return Reply("You don't have enough :coin: coins.");
+
+            return View(new SlotsGame(bet, Context));
         }
     }
 }
