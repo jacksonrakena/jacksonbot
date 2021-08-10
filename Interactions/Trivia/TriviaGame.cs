@@ -21,6 +21,7 @@ namespace Abyss.Interactions.Trivia
         private int _incorrectAnswers;
         private int _correctAnswers;
         private int _currentQuestionIndex = -1;
+        private string _currentQuestionDifficulty;
         private string _correctOption = null;
         private string _optionA;
         private string _optionB;
@@ -80,6 +81,7 @@ namespace Abyss.Interactions.Trivia
             }
             _currentQuestion = _questions.ElementAt(_currentQuestionIndex);
             _correctOption = _currentQuestion.CorrectAnswer;
+            _currentQuestionDifficulty = _currentQuestion.Difficulty;
             var random = new Random();
             var allAnswers = new[] {_currentQuestion.CorrectAnswer, _currentQuestion.Answer1, _currentQuestion.Answer2};
             _optionA = allAnswers.Random(random);
@@ -108,9 +110,16 @@ namespace Abyss.Interactions.Trivia
             {
                 _correctAnswers++;
 
-                await _transactions.CreateTransactionFromSystem(5, PlayerId, "Correct trivia answer",
+                var coinCount = (_currentQuestionDifficulty) switch
+                {
+                    "easy" => 3,
+                    "medium" => 5,
+                    "hard" => 7,
+                    _ => 5
+                };
+                await _transactions.CreateTransactionFromSystem(coinCount, PlayerId, "Correct trivia answer",
                     TransactionType.TriviaWin);
-                await SelectNewQuestion("Correct! You've gained 5 coins.");
+                await SelectNewQuestion("Correct! You've gained " + coinCount + " coins.");
             }
             else
             {
