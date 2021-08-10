@@ -70,7 +70,25 @@ namespace Abyss.Modules
             return Reply(await _help.CreateCommandEmbedAsync(search[0].Command, Context));
         }
 
-        [Command("help", "commands")]
+        [Command("help")]
+        [Description("Welcome to Abyss.")]
+        public async Task<DiscordCommandResult> HelpAsync()
+        {
+            return Reply(new LocalEmbed()
+                .WithAuthor("Welcome to the Abyss!", Context.Bot.CurrentUser.GetAvatarUrl(size: 1024))
+                .WithColor(GetColor())
+                .WithDescription("This is a short guide to get you up and running with all of Abyss' features. \n" +
+                                 "If you just want to see available commands, type `a.commands`.")
+                .AddField("Earn some coins with Trivia", "`trivia`, `trivia stats`")
+                .AddField("...and gamble them away with Blackjack and Slots", "`blackjack <bet>`, `blackjack stats`, `slots`")
+                .AddField("Check your coin count, and take a look at your Abyss profile", "`coins`, `bank`, `send`, `profile`")
+                .AddField("And change your profile colour!", "`profile color #E4A0D2`")
+                .AddField("...or have some fun", "`cat`, `roll <dice>`")
+                .WithFooter("Abyss version 19.3 • Abyssal, 2021 • Developed with Disqorda", (await Context.Bot.FetchCurrentApplicationAsync()).Owner.GetAvatarUrl())
+            );
+        }
+
+        [Command("commands")]
         [Description(
             "Retrieves a list of commands that you can use, or, if a command or module is provided, displays information on that command or module.")]
         public async Task<DiscordCommandResult> Command_ListCommandsAsync(
