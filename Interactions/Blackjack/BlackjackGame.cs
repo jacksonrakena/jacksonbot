@@ -236,6 +236,7 @@ namespace Abyss.Interactions.Blackjack
                     }
                 }
             }
+
             TemplateMessage.Embeds[0].Description = $"Dealer's first card is {_dealerCards[0]}" +
                                                     "\n\n" +
                                                     $"Your cards are: {string.Join(", ", _playerCards)} ({BlackjackData.CalculateValueOfHand(_playerCards)})";
@@ -249,7 +250,7 @@ namespace Abyss.Interactions.Blackjack
                 Label = "Stand",
                 Style = LocalButtonComponentStyle.Secondary
             });
-            if (_playerCards.Count == 2)
+            if (_playerCards.Count == 2 && await _transactions.CheckPlayerSufficientAmount(_playerCurrentBet*2, PlayerId))
             {
                 AddComponent(new ButtonViewComponent(DoubleDown)
                 {
