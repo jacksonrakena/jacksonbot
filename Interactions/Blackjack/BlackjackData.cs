@@ -7,6 +7,7 @@ namespace Abyss.Interactions.Blackjack
     {
         public static int CalculateCardValue(BlackjackCard card)
         {
+            if (card is BlackjackCard.King or BlackjackCard.Queen or BlackjackCard.Jack) return 10;
             return (int) card;
         }
 
@@ -14,11 +15,11 @@ namespace Abyss.Interactions.Blackjack
         {
             if (hand.All(d => d != BlackjackCard.Ace))
             {
-                return hand.Sum(d => (int) d);
+                return hand.Sum(CalculateCardValue);
             }
 
             var remainingHand = hand.Where(d => d != BlackjackCard.Ace);
-            var remainingHandValue = remainingHand.Sum(d => (int) d);
+            var remainingHandValue = remainingHand.Sum(CalculateCardValue);
             var aceCount = hand.Count(d => d == BlackjackCard.Ace);
 
             if (remainingHandValue >= 21)
@@ -44,9 +45,9 @@ namespace Abyss.Interactions.Blackjack
         Eight = 8,
         Nine = 9,
         Ten = 10,
-        Jack = 10,
-        Queen = 10,
-        King = 10
+        Jack = 11,
+        Queen = 12,
+        King = 13
     }
     
     public enum Card
