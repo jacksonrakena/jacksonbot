@@ -70,6 +70,12 @@ namespace Abyss.Modules
             return Reply(await _help.CreateCommandEmbedAsync(search[0].Command, Context));
         }
 
+        [Command("support")]
+        public async Task<DiscordCommandResult> Support()
+        {
+            return Reply("You can join the Abyss support server at <https://discord.gg/KACyc4XS7X> for assistance.");
+        }
+
         [Command("help")]
         [Description("Welcome to Abyss.")]
         public async Task<DiscordCommandResult> HelpAsync()
@@ -84,7 +90,7 @@ namespace Abyss.Modules
                 .AddField("Check your coin count, and take a look at your Abyss profile", "`coins`, `bank`, `send`, `profile`")
                 .AddField("And change your profile colour!", "`profile color #E4A0D2`")
                 .AddField("...or have some fun", "`cat`, `roll <dice>`")
-                .WithFooter("Abyss version 19.3 • Abyssal, 2021 • Developed with Disqorda", (await Context.Bot.FetchCurrentApplicationAsync()).Owner.GetAvatarUrl())
+                .WithFooter("Abyss version 19.3 • Abyssal, 2021 • Developed with Disqord", (await Context.Bot.FetchCurrentApplicationAsync()).Owner.GetAvatarUrl())
             );
         }
 
