@@ -17,9 +17,7 @@ namespace Abyss.Extensions
         /// <returns>The highest role colour of the specified user, or the default embed colour.</returns>
         public static Color GetHighestRoleColourOrDefault(this IUser normalUser)
         {
-            if (normalUser is not CachedMember user) return Constants.Theme;
-            var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color != null && r.Color.Value.RawValue != 0);
-            return orderedRoles?.Color ?? Constants.Theme;
+            return GetHighestRoleColour(normalUser) ?? Constants.Theme;
         }
 
         /// <summary>
@@ -29,7 +27,7 @@ namespace Abyss.Extensions
         /// <returns>The colour of the user, or null.</returns>
         public static Color? GetHighestRoleColour(this IUser normalUser)
         {
-            if (!(normalUser is CachedMember user)) return null;
+            if (normalUser is not CachedMember user) return null;
             var orderedRoles = user.GetHighestRoleOrDefault(r => r.Color != null && r.Color.Value.RawValue != 0);
             return orderedRoles?.Color;
         }
@@ -43,17 +41,6 @@ namespace Abyss.Extensions
         public static IRole GetHighestRoleOrDefault(this IMember user, Func<IRole, bool>? predicate = null)
         {
             return user.GetRoles().Values.OrderByDescending(r => r.Position).FirstOrDefault(predicate ?? (d => true));
-        }
-
-        /// <summary>
-        ///     Formats a user.
-        /// </summary>
-        /// <param name="su">The user to format.</param>
-        /// <returns>The nickname (with username#discrim in brackets), or username#discriminator if the user does not have a nickname.</returns>
-        public static string Format(this IUser su)
-        {
-            if (su is not IMember sgu || sgu.Nick == null) return $"{su.Name}#{su.Discriminator}";
-            return $"{sgu.Nick} ({sgu.Name}#{sgu.Discriminator})";
         }
     }
 }

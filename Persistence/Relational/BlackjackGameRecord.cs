@@ -16,7 +16,6 @@ namespace Abyss.Persistence.Relational
         
         public ulong ChannelId { get; set; }
         
-        
         public BlackjackGameResult Result { get; set; }
         
         public decimal PlayerInitialBet { get; set; }

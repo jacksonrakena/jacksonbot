@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Threading.Tasks;
 using Abyss.Persistence.Document;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +10,7 @@ namespace Abyss.Persistence.Relational
     public class AbyssDatabaseContext: DbContext
     {
         public DbSet<TriviaRecord> TriviaRecords { get; set; }
-        public DbSet<JsonRow<GuildConfig>> GuildConfigurations { get; set; }
+        public DbSet<JsonGuildRecord<GuildConfig>> GuildConfigurations { get; set; }
         public DbSet<UserAccount> UserAccounts { get; set; }
         public DbSet<BlackjackGameRecord> BlackjackGames { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
@@ -27,34 +25,28 @@ namespace Abyss.Persistence.Relational
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<JsonRow<GuildConfig>>().ToTable("guilds");
+            modelBuilder.Entity<JsonGuildRecord<GuildConfig>>().ToTable("guilds");
             modelBuilder.Entity<BlackjackGameRecord>().Property(d => d.Result).HasConversion<string>();
             modelBuilder.Entity<TriviaRecord>().HasMany(d => d.CategoryVoteRecords).WithOne(d => d.TriviaRecord);
             modelBuilder.Entity<Transaction>().Property(d => d.Type).HasConversion<string>();
             base.OnModelCreating(modelBuilder);
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql("Server=localhost;Database=abyss;Username=abyss;Password=abyss123");
-        }
-
         public async Task<TriviaRecord> GetTriviaRecordAsync(ulong userId)
         {
             var record = await TriviaRecords.Include(c => c.CategoryVoteRecords).FirstOrDefaultAsync(u => u.UserId == userId);
-            if (record == null)
+            if (record != null) return record;
+            
+            record = new TriviaRecord
             {
-                record = new TriviaRecord
-                {
-                    CorrectAnswers = 0,
-                    IncorrectAnswers = 0,
-                    TotalMatches = 0,
-                    UserId = userId,
-                    CategoryVoteRecords = new()
-                };
-                TriviaRecords.Add(record);
-                await SaveChangesAsync();
-            }
+                CorrectAnswers = 0,
+                IncorrectAnswers = 0,
+                TotalMatches = 0,
+                UserId = userId,
+                CategoryVoteRecords = new List<TriviaCategoryVoteRecord>()
+            };
+            TriviaRecords.Add(record);
+            await SaveChangesAsync();
             return record;
         }
 
@@ -73,13 +65,13 @@ namespace Abyss.Persistence.Relational
         }
         
         public async Task<TJsonObject> GetJsonObjectAsync<TJsonObject>(
-            Func<AbyssDatabaseContext, DbSet<JsonRow<TJsonObject>>> accessor, ulong guildId) 
+            Func<AbyssDatabaseContext, DbSet<JsonGuildRecord<TJsonObject>>> accessor, ulong guildId) 
             where TJsonObject : JsonRootObject<TJsonObject>, new()
         {
             var row = accessor(this);
             var rowResult = await row.FindAsync(guildId);
             if (rowResult != null) return rowResult.Data;
-            rowResult = new JsonRow<TJsonObject> {GuildId = guildId};
+            rowResult = new JsonGuildRecord<TJsonObject> {GuildId = guildId};
             await rowResult.Data.OnCreatingAsync(this, _configuration);
             row.Add(rowResult);
             await SaveChangesAsync();
@@ -102,14 +94,14 @@ namespace Abyss.Persistence.Relational
         }
 
         public async Task<TJsonObject> ModifyJsonObjectAsync<TJsonObject>(
-            Func<AbyssDatabaseContext, DbSet<JsonRow<TJsonObject>>> accessor, ulong guildId, Action<TJsonObject> modifier) 
+            Func<AbyssDatabaseContext, DbSet<JsonGuildRecord<TJsonObject>>> accessor, ulong guildId, Action<TJsonObject> modifier) 
             where TJsonObject : JsonRootObject<TJsonObject>, new()
         {
             var row = accessor(this);
             var rowResult = await row.FindAsync(guildId);
             if (rowResult == null)
             {
-                rowResult = new JsonRow<TJsonObject>
+                rowResult = new JsonGuildRecord<TJsonObject>
                 {
                     GuildId = guildId
                 };

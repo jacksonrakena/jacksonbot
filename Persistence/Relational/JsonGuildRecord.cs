@@ -4,7 +4,7 @@ using Abyss.Persistence.Document;
 
 namespace Abyss.Persistence.Relational
 {
-    public class JsonRow<TData> : RelationalRootObject where TData : JsonRootObject<TData>, new()
+    public class JsonGuildRecord<TData> : RelationalRootObject where TData : JsonRootObject<TData>, new()
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public ulong GuildId { get; set; }
