@@ -3,10 +3,12 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Abyss.Extensions;
 using Disqord;
 using Disqord.Bot;
 using Abyss.Helpers;
 using Abyss.Persistence.Relational;
+using Disqord.Extensions.Interactivity.Menus.Paged;
 using Disqord.Gateway;
 using HumanDateParser;
 using Humanizer;
@@ -32,11 +34,11 @@ namespace Abyss.Modules
         [Command("txns")]
         public async Task<DiscordCommandResult> Admin_ViewTransactionsAsync(IMember member = null)
         {
-            var transactionList = await Transactions.GetLastTransactions(5, member?.Id);
-            return Reply(string.Join("\n", transactionList.Select(t =>
-            {
-                return $"[**{Markdown.Timestamp(t.Date, Constants.TIMESTAMP_FORMAT)}**] ({t.Type}) {(t.IsFromSystem ? "SYSTEM" : t.PayerId)} ({t.PayerBalanceBeforeTransaction}->{t.PayerBalanceAfterTransaction}) -> {(t.IsToSystem ? "SYSTEM" : t.PayeeId)} ({t.PayeeBalanceBeforeTransaction}->{t.PayeeBalanceAfterTransaction}) :coin: {t.Amount} - {t.Message} - {t.Source}";
-            })));
+            var transactionList = (await Transactions.GetLastTransactions(25, member?.Id))
+                .Chunk(5)
+                .Select(d => new Page().WithContent(string.Join("\n", d.Select(t => 
+                    $"[**{Markdown.Timestamp(t.Date, Constants.TIMESTAMP_FORMAT)}**] ({t.Type}) {(t.IsFromSystem ? "SYSTEM" : t.PayerId)} ({t.PayerBalanceBeforeTransaction}->{t.PayerBalanceAfterTransaction}) -> {(t.IsToSystem ? "SYSTEM" : t.PayeeId)} ({t.PayeeBalanceBeforeTransaction}->{t.PayeeBalanceAfterTransaction}) :coin: {t.Amount} - {t.Message} - {t.Source}"))));
+            return Pages(transactionList);
         }
         
         [Command("timeinspect")]
