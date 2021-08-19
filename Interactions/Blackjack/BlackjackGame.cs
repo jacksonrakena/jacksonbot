@@ -168,7 +168,18 @@ namespace Abyss.Interactions.Blackjack
             _database.BlackjackGames.Add(record);
             await _database.SaveChangesAsync();
             
-            AddComponent(new ButtonViewComponent(async e => Reset())
+            AddComponent(new ButtonViewComponent(async e =>
+            {
+                if (!await _transactions.CheckPlayerSufficientAmount(_playerInitialBet, PlayerId))
+                {
+                    TemplateMessage.Embeds[0] = new LocalEmbed().WithColor(Color.Red)
+                        .WithTitle("You don't have enough money to play again.").WithDescription("");
+                    ClearComponents();
+                    ReportChanges();
+                    return;
+                }
+                Reset();
+            })
             {
                 Label = "Play again",
                 Style = LocalButtonComponentStyle.Primary
