@@ -6,6 +6,7 @@ using Abyss.Parsers;
 using Abyss.Persistence.Relational;
 using Disqord;
 using Disqord.Bot;
+using Disqord.Gateway;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -22,10 +23,25 @@ namespace Abyss
         {
             Commands.CommandExecuted += CommandExecutedAsync;
             _scope = Services.CreateScope();
+            JoinedGuild += (_, _) => { UpdateGuildStatistics(); return ValueTask.CompletedTask;};
+            LeftGuild += (_, _) => { UpdateGuildStatistics(); return ValueTask.CompletedTask;};
+            Ready += (_, _) =>
+            {
+                UpdateGuildStatistics();
+                return ValueTask.CompletedTask;
+            };
+            GuildAvailable += (_, _) => { UpdateGuildStatistics(); return ValueTask.CompletedTask;};
+            GuildUnavailable += (_, _) => { UpdateGuildStatistics(); return ValueTask.CompletedTask;};
+        }
+
+        private void UpdateGuildStatistics()
+        {
+            AbyssStatistics.CachedGuilds.Set(this.GetGuilds().Count);
         }
 
         private async Task CommandExecutedAsync(CommandExecutedEventArgs e)
         {
+            AbyssStatistics.TotalCommandsExecuted.WithLabels(e.Result?.IsSuccessful.ToString() ?? "unknown").Inc();
             var database = _scope.ServiceProvider.GetRequiredService<AbyssDatabaseContext>();
             var record = await database
                 .GetUserAccountAsync((e.Context as DiscordCommandContext).Author.Id);

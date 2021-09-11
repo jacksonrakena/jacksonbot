@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Prometheus;
 
 namespace Abyss
 {
@@ -38,10 +39,12 @@ namespace Abyss
             {
                 d.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
             });
+            app.UseHttpMetrics();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapMetrics();
             });
         }
     }
