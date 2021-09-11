@@ -73,7 +73,7 @@ namespace Abyss.Modules
         [Command("support")]
         public async Task<DiscordCommandResult> Support()
         {
-            return Reply("You can join the Abyss support server at <https://discord.gg/KACyc4XS7X> for assistance.");
+            return Reply("You can join the Abyss support server at <https://support.abyssal.gg> for assistance.");
         }
 
         [Command("help")]
