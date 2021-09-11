@@ -8,6 +8,7 @@ using Disqord;
 using Disqord.Bot;
 using Disqord.Bot.Hosting;
 using Disqord.Gateway;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,7 +36,14 @@ namespace Abyss
 
         public static IHost BuildAbyssHost(string[] runtimeArgs)
         {
-            var hostBuilder = new HostBuilder();
+            var hostBuilder = Host.CreateDefaultBuilder(runtimeArgs).ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<WebStartup>();
+                webBuilder.ConfigureKestrel(kestrelOptions =>
+                {
+                    kestrelOptions.ListenAnyIP(int.Parse(Environment.GetEnvironmentVariable("PORT") ?? "20031"));
+                });
+            });
             hostBuilder.ConfigureServices(ConfigureServices);
             hostBuilder.UseDefaultServiceProvider(x =>
             {

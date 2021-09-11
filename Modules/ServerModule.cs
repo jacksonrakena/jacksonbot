@@ -25,7 +25,6 @@ namespace Abyss.Modules
             [Command]
             public async Task<DiscordCommandResult> PrefixesAsync()
             {
-                Console.WriteLine("sus");
                 var gsr = await _database.GetGuildConfigAsync(Context.GuildId);
                 return Reply(
                     new LocalEmbed()
