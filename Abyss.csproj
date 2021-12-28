@@ -14,6 +14,7 @@
       <PackageReference Include="AbyssalSpotify" Version="1.0.1-20200107.1" />
       <PackageReference Include="Disqord.Bot" Version="1.0.0-08102021-100" />
       <PackageReference Include="Humanizer.Core" Version="2.8.26" />
+      <PackageReference Include="IronPython" Version="3.4.0-alpha1" />
       <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" />
       <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.8.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.3">

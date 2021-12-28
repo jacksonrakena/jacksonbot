@@ -20,18 +20,7 @@ namespace Abyss.Interactions
         protected TransactionManager _transactions => _transactionsLazy ??= _services.GetRequiredService<TransactionManager>();
         private TransactionManager _transactionsLazy;
         
-        protected AbyssDatabaseContext _database
-        {
-            get
-            {
-                if (_databaseLazy == null)
-                {
-                    _databaseLazy = _services.GetRequiredService<AbyssDatabaseContext>();
-                }
-
-                return _databaseLazy;
-            }
-        }
+        protected AbyssDatabaseContext _database => _databaseLazy ??= _services.GetRequiredService<AbyssDatabaseContext>();
         private AbyssDatabaseContext _databaseLazy;
         
         protected AbyssViewBase(LocalMessage templateMessage) : base(templateMessage)

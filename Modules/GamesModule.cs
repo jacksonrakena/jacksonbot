@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abyss.Attributes;
 using Abyss.Interactions.Blackjack;
+using Abyss.Interactions.GameMenu;
 using Abyss.Interactions.Slots;
 using Abyss.Interactions.Trivia;
 using Abyss.Persistence.Relational;
@@ -19,6 +20,13 @@ namespace Abyss.Modules
     {
         public AbyssDatabaseContext Database { get; set; }
 
+        [Command("games")]
+        [Description("Select a game to play.")]
+        public async Task<DiscordCommandResult> GameSelector()
+        {
+            return View(new GameMenu(Context));
+        }
+        
         [Group("trivia")]
         public class TriviaSubmodule : GamesModule
         {

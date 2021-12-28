@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Abyss.Extensions;
 using Disqord;
@@ -12,11 +14,21 @@ using Disqord.Extensions.Interactivity.Menus.Paged;
 using Disqord.Gateway;
 using HumanDateParser;
 using Humanizer;
+using IronPython.Compiler;
+using IronPython.Hosting;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.Scripting.Hosting;
 using Qmmands;
+using JsonConverter = Newtonsoft.Json.JsonConverter;
 
 namespace Abyss.Modules
 {
+    public enum EvaluationLanguage
+    {
+        CS,
+        Py
+    }
     [Name("Admin")]
     [RequireBotOwner]
     public partial class AdminModule : AbyssModuleBase
@@ -70,10 +82,81 @@ namespace Abyss.Modules
         [Description("Evaluates a piece of C# code.")]
         [RequireAuthor(255950165200994307)]
         public async Task<DiscordCommandResult> Command_EvaluateAsync(
+            [Name("Language")] [Description("The language type.")] EvaluationLanguage lang,
             [Name("Code")] [Description("The code to execute.")] [Remainder]
             string script)
         {
-            var props = new EvaluationHelper(Context);
+            return lang switch
+            {
+                EvaluationLanguage.Py => await EvaluatePythonAsync(new EvaluationHelper(Context), script),
+                EvaluationLanguage.CS => await EvaluateCsAsync(new EvaluationHelper(Context), script),
+                _ => throw new ArgumentOutOfRangeException(nameof(lang), lang, null)
+            };
+        }
+
+        private async Task<DiscordCommandResult> EvaluatePythonAsync(EvaluationHelper context, string script)
+        {
+            var engine = Python.CreateEngine();
+            var scope =  engine.CreateScope();
+            scope.SetVariable("context", context);
+            var source = engine.CreateScriptSourceFromString(script);
+            CompiledCode compiled;
+            double compilationTime;
+            double runtimeTime;
+            try
+            {
+                var start = DateTimeOffset.Now;
+                compiled = source.Compile();
+                compilationTime = (DateTimeOffset.Now - start).TotalMilliseconds;
+            }
+            catch (Exception e)
+            {    
+                var embed = new LocalEmbed
+                {
+                    Title = "Scripting Result",
+                    Description = $"Scripting failed during stage **Compilation**"
+                };
+                embed.AddField("Input", $"```py\n{script}```");
+                embed.AddField("Exception", e.Message);
+                return Reply(embed);
+            }
+            
+            try
+            {
+                var start = DateTimeOffset.Now;
+                var result = compiled.Execute(scope);
+                runtimeTime = (DateTimeOffset.Now - start).TotalMilliseconds;
+                var output = (string) result.ToString();
+                try
+                {
+                    output = JsonSerializer.Serialize(result);
+                }
+                catch (Exception)
+                {
+                }
+
+                return Reply(new LocalEmbed()
+                    .WithTitle("Scripting Result")
+                    .AddField("Input", $"```py\n{script}```")
+                    .AddField("Output", $"```{output}```")
+                    .WithFooter($"Compilation: {compilationTime}ms | Execution: {runtimeTime}ms", Context.CurrentMember.GetAvatarUrl()));
+            }
+            catch (Exception e)
+            {    
+                var embed = new LocalEmbed
+                {
+                    Title = "Scripting Result",
+                    Description = $"Scripting failed during runtime"
+                };
+                embed.AddField("Input", $"```py\n{script}```");
+                embed.AddField("Exception", e.Message);
+                return Reply(embed);
+            }
+        }
+        
+        private async Task<DiscordCommandResult> EvaluateCsAsync(EvaluationHelper context, string script)
+        {
+            var props = context;
             var result = await ScriptingHelper.EvaluateScriptAsync(script, props).ConfigureAwait(false);
 
             var canUseEmbed = true;
