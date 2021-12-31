@@ -35,4 +35,4 @@ Built on top of <a href="https://github.com/Quahu/Disqord">Disqord</a> and <a hr
 
 You can use the `tools/abyss.service` file to run Abyss as a `systemd` service. 
 
-Copyright &copy; 2015-2021 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
+Copyright &copy; 2015-2022 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
