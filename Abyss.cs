@@ -39,7 +39,7 @@ namespace Abyss
             AbyssStatistics.CachedGuilds.Set(this.GetGuilds().Count);
         }
 
-        private async Task CommandExecutedAsync(CommandExecutedEventArgs e)
+        private async ValueTask CommandExecutedAsync(object sender, CommandExecutedEventArgs e)
         {
             AbyssStatistics.TotalCommandsExecuted.WithLabels(e.Result?.IsSuccessful.ToString() ?? "unknown").Inc();
             var database = _scope.ServiceProvider.GetRequiredService<AbyssDatabaseContext>();
