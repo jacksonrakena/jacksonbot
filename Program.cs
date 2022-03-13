@@ -21,6 +21,7 @@ namespace Abyss
     {
         public static int Main(string[] args)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             try
             {
                 BuildAbyssHost(args).Run();
