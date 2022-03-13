@@ -20,14 +20,23 @@ namespace Abyss.Modules
             CachedMember target = null)
         {
             target ??= Context.Author as CachedMember;
+         
+            var sizeString =
+                $"**Sizes:** {UrlHelper.CreateMarkdownUrl("128", target.GetAvatarUrl(size: 128))} | " +
+                $"{UrlHelper.CreateMarkdownUrl("256", target.GetAvatarUrl(size: 256))} | " +
+                $"{UrlHelper.CreateMarkdownUrl("1024", target.GetAvatarUrl(size: 1024))} | " +
+                $"{UrlHelper.CreateMarkdownUrl("2048", target.GetAvatarUrl(size: 2048))}";
+            var formatString =
+                $"**Formats:** {UrlHelper.CreateMarkdownUrl("PNG", target.GetAvatarUrl(CdnAssetFormat.Png))} | "
+                + $"{UrlHelper.CreateMarkdownUrl("JPG", target.GetAvatarUrl(CdnAssetFormat.Jpg))} | "
+                + $"{UrlHelper.CreateMarkdownUrl("WEBP", target.GetAvatarUrl(CdnAssetFormat.WebP))} | "
+                + $"{UrlHelper.CreateMarkdownUrl("GIF", target.GetAvatarUrl(CdnAssetFormat.Gif))}";
+            
             return Reply(new LocalEmbed()
                 .WithAuthor(target)
                 .WithColor(Color)
-                .WithImageUrl(target.GetAvatarUrl(size:1024))
-                .WithDescription($"**Formats:** {UrlHelper.CreateMarkdownUrl("128", target.GetAvatarUrl(size: 128))} | " +
-                                 $"{UrlHelper.CreateMarkdownUrl("256", target.GetAvatarUrl(size: 256))} | " +
-                                 $"{UrlHelper.CreateMarkdownUrl("1024", target.GetAvatarUrl(size: 1024))} | " +
-                                 $"{UrlHelper.CreateMarkdownUrl("2048", target.GetAvatarUrl(size: 2048))}"));
+                .WithImageUrl(target.GetAvatarUrl(CdnAssetFormat.Automatic, size: 1024))
+                .WithDescription($"{sizeString}\n{formatString}"));
         }
         
         [Command("hex")]
