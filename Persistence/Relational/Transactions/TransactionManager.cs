@@ -27,6 +27,8 @@ public class TransactionManager
         var toAccount = await _context.GetUserAccountAsync(to);
         var fromAccount = await _context.GetUserAccountAsync(from);
 
+        if (amount <= 0) return null;
+
         var transaction = new Transaction
         {
             Amount = amount,
