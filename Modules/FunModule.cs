@@ -91,7 +91,7 @@ public partial class FunModule : AbyssModuleBase
         stringBuilder.AppendLine("**These losers are playing League:**").AppendLine();
         foreach (var player in leaguePlayers)
         {
-            stringBuilder.AppendLine($" - **{player.Nick ?? player.Name}** (for {(int) (DateTimeOffset.Now - player.GetPresence().Activities.First(e => e.Name.Contains("League of Legends")).CreatedAt).TotalMinutes} minutes)");
+            stringBuilder.AppendLine($" - **{player.Nick ?? player.Name}** {(player.Nick != null ? $"({player.Name}) " : "")}(for {(int) (DateTimeOffset.Now - player.GetPresence().Activities.First(e => e.Name.Contains("League of Legends")).CreatedAt).TotalMinutes} minutes)");
         }
 
         return Response(stringBuilder.ToString());
