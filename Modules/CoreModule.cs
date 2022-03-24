@@ -47,7 +47,7 @@ public class CoreModule : AbyssModuleBase
             .WithColor(Color)
             .WithAuthor("Abyss", Context.Bot.CurrentUser.GetAvatarUrl())
             .WithDescription(
-                $"Logged in as **{Context.Bot.CurrentUser}**")
+                $"Abyss is a bot made by <@255950165200994307> for fun.")
             .AddField("Owner",$"**{app.Owner}**", true)
             .AddField("Version", "19.2.0-dev", true)
             .AddField("Started", Markdown.Timestamp(Process.GetCurrentProcess().StartTime, Constants.TIMESTAMP_FORMAT), true)
