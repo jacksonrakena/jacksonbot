@@ -1,19 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Abyss.Controllers
+namespace Abyss.Controllers;
+
+[Route("api")]
+public class IndexController: Controller
 {
-    [Route("api")]
-    public class IndexController: Controller
+    [HttpGet("status")]
+    public IActionResult Status()
     {
-        [HttpGet("status")]
-        public IActionResult Status()
+        return Json(new
         {
-            return Json(new
-            {
-                status = "ok",
-                Constants.SessionId,
-                Constants.VERSION
-            });
-        }
+            status = "ok",
+            Constants.SessionId,
+            Constants.VERSION
+        });
     }
 }

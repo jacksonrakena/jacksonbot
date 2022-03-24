@@ -1,16 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace Abyss.Persistence.Relational
-{
-    public class AbyssDesignTimeFactory : IDesignTimeDbContextFactory<AbyssDatabaseContext>
-    {
-        public AbyssDatabaseContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<AbyssDatabaseContext>();
-            optionsBuilder.UseNpgsql("Server=localhost;Database=abyss;Username=abyss;Password=abyss123;");
+namespace Abyss.Persistence.Relational;
 
-            return new AbyssDatabaseContext(optionsBuilder.Options, null);
-        }
+public class AbyssDesignTimeFactory : IDesignTimeDbContextFactory<AbyssDatabaseContext>
+{
+    public AbyssDatabaseContext CreateDbContext(string[] args)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<AbyssDatabaseContext>();
+        optionsBuilder.UseNpgsql("Server=localhost;Database=abyss;Username=abyss;Password=abyss123;");
+
+        return new AbyssDatabaseContext(optionsBuilder.Options, null, null);
     }
 }

@@ -1,20 +1,21 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Abyss.Persistence.Relational;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Abyss.Persistence.Document
+namespace Abyss.Persistence.Document;
+
+public class GuildConfig : IAsyncCreatable
 {
-    public class GuildConfig : JsonRootObject<GuildConfig>
-    {
-        public List<string> Prefixes { get; set; }
+    public List<string> Prefixes { get; set; }
 
-        public StarboardConfig Starboard { get; set; } = new();
+    public StarboardConfig Starboard { get; set; } = new();
         
-        public override ValueTask OnCreatingAsync(AbyssDatabaseContext context, IConfiguration configuration)
-        {
-            Prefixes = new List<string> {configuration.GetSection("Options")["DefaultPrefix"]};
-            return default;
-        }
+    public ValueTask OnCreatingAsync(IServiceProvider provider)
+    {
+        Prefixes = new List<string> {provider.GetRequiredService<IConfiguration>().GetSection("Options")["DefaultPrefix"]};
+        return default;
     }
 }

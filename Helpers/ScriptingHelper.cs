@@ -10,72 +10,71 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 
-namespace Abyss.Helpers
+namespace Abyss.Helpers;
+
+public enum ScriptStage
 {
-    public enum ScriptStage
+    Preprocessing,
+    Compilation,
+    Execution,
+    Postprocessing
+}
+
+public sealed class ScriptingHelper
+{
+    public static readonly IReadOnlyList<string> Imports = new ReadOnlyCollection<string>(new List<string>
     {
-        Preprocessing,
-        Compilation,
-        Execution,
-        Postprocessing
-    }
+        "System", "System.Math", "System.Linq", "System.Diagnostics", "System.Collections.Generic",
+        "Disqord", "Abyss", "Abyss.Modules", 
+        "Qmmands", "System.IO",
+        "Microsoft.Extensions.DependencyInjection", "System.Text", 
+        "System.Globalization", "System.Reflection"
+    });
 
-    public sealed class ScriptingHelper
+    public static async Task<ScriptingResult> EvaluateScriptAsync<T>(string code, T properties)
     {
-        public static readonly IReadOnlyList<string> Imports = new ReadOnlyCollection<string>(new List<string>
+        if (string.IsNullOrWhiteSpace(code))
         {
-            "System", "System.Math", "System.Linq", "System.Diagnostics", "System.Collections.Generic",
-            "Disqord", "Abyss", "Abyss.Modules", 
-            "Qmmands", "System.IO",
-            "Microsoft.Extensions.DependencyInjection", "System.Text", 
-            "System.Globalization", "System.Reflection"
-        });
+            return ScriptingResult.FromError(
+                new ArgumentException("code parameter cannot be empty, null or whitespace", nameof(code)),
+                ScriptStage.Preprocessing);
+        }
 
-        public static async Task<ScriptingResult> EvaluateScriptAsync<T>(string code, T properties)
+        var options = ScriptOptions.Default
+            .WithReferences(typeof(DiscordClient).Assembly, typeof(Program).Assembly, typeof(DiscordBot).Assembly)
+            .WithImports(Imports);
+
+        var script = CSharpScript.Create(code, options, typeof(T));
+
+        var compilationTimer = Stopwatch.StartNew();
+        var compilationDiagnostics = script.Compile();
+        compilationTimer.Stop();
+
+        if (compilationDiagnostics.Length > 0
+            && compilationDiagnostics.Any(a => a.Severity == DiagnosticSeverity.Error))
         {
-            if (string.IsNullOrWhiteSpace(code))
-            {
-                return ScriptingResult.FromError(
-                   new ArgumentException("code parameter cannot be empty, null or whitespace", nameof(code)),
-                   ScriptStage.Preprocessing);
-            }
+            return ScriptingResult.FromError(compilationDiagnostics, ScriptStage.Compilation,
+                compilationTime: compilationTimer.ElapsedMilliseconds);
+        }
 
-            var options = ScriptOptions.Default
-                .WithReferences(typeof(DiscordClient).Assembly, typeof(Program).Assembly, typeof(DiscordBot).Assembly)
-                .WithImports(Imports);
+        var executionTimer = new Stopwatch();
 
-            var script = CSharpScript.Create(code, options, typeof(T));
+        try
+        {
+            executionTimer.Start();
+            var executionResult = await script.RunAsync(properties).ConfigureAwait(false);
+            executionTimer.Stop();
+            var returnValue = executionResult.ReturnValue;
 
-            var compilationTimer = Stopwatch.StartNew();
-            var compilationDiagnostics = script.Compile();
-            compilationTimer.Stop();
+            GC.Collect();
 
-            if (compilationDiagnostics.Length > 0
-                && compilationDiagnostics.Any(a => a.Severity == DiagnosticSeverity.Error))
-            {
-                return ScriptingResult.FromError(compilationDiagnostics, ScriptStage.Compilation,
-                   compilationTime: compilationTimer.ElapsedMilliseconds);
-            }
-
-            var executionTimer = new Stopwatch();
-
-            try
-            {
-                executionTimer.Start();
-                var executionResult = await script.RunAsync(properties).ConfigureAwait(false);
-                executionTimer.Stop();
-                var returnValue = executionResult.ReturnValue;
-
-                GC.Collect();
-
-                return ScriptingResult.FromSuccess(returnValue, compilationTimer.ElapsedMilliseconds,
-                    executionTimer.ElapsedMilliseconds);
-            }
-            catch (Exception exception)
-            {
-                return ScriptingResult.FromError(exception, ScriptStage.Execution, compilationTimer.ElapsedMilliseconds,
-                    executionTimer.ElapsedMilliseconds);
-            }
+            return ScriptingResult.FromSuccess(returnValue, compilationTimer.ElapsedMilliseconds,
+                executionTimer.ElapsedMilliseconds);
+        }
+        catch (Exception exception)
+        {
+            return ScriptingResult.FromError(exception, ScriptStage.Execution, compilationTimer.ElapsedMilliseconds,
+                executionTimer.ElapsedMilliseconds);
         }
     }
 }

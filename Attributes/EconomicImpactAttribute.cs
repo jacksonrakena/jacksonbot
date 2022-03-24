@@ -1,34 +1,33 @@
 using System;
 
-namespace Abyss.Attributes
-{
-    [AttributeUsage(AttributeTargets.Method)]
-    public class EconomicImpactAttribute : Attribute
-    {
-        public EconomicImpactType ImpactType { get; }
-        
-        public EconomicImpactAttribute(EconomicImpactType type)
-        {
-            ImpactType = type;
-        }
-    }
+namespace Abyss.Attributes;
 
-    [Flags]
-    public enum EconomicImpactType
+[AttributeUsage(AttributeTargets.Method)]
+public class EconomicImpactAttribute : Attribute
+{
+    public EconomicImpactType ImpactType { get; }
+        
+    public EconomicImpactAttribute(EconomicImpactType type)
     {
-        /// <summary>
-        ///     Users can gain coins.
-        /// </summary>
-        UserGainCoins,
-        
-        /// <summary>
-        ///     Users can spend coins.
-        /// </summary>
-        UserSpendCoins,
-        
-        /// <summary>
-        ///     Users send coins to each other, or trade items of value (neutral effect on economy)
-        /// </summary>
-        UserCoinNeutral
+        ImpactType = type;
     }
+}
+
+[Flags]
+public enum EconomicImpactType
+{
+    /// <summary>
+    ///     Users can gain coins.
+    /// </summary>
+    UserGainCoins,
+        
+    /// <summary>
+    ///     Users can spend coins.
+    /// </summary>
+    UserSpendCoins,
+        
+    /// <summary>
+    ///     Users send coins to each other, or trade items of value (neutral effect on economy)
+    /// </summary>
+    UserCoinNeutral
 }

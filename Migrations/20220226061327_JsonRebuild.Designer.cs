@@ -4,6 +4,7 @@ using Abyss.Persistence.Document;
 using Abyss.Persistence.Relational;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Abyss.Migrations
 {
     [DbContext(typeof(AbyssDatabaseContext))]
-    partial class AbyssPersistenceContextModelSnapshot : ModelSnapshot
+    [Migration("20220226061327_JsonRebuild")]
+    partial class JsonRebuild
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,7 +73,7 @@ namespace Abyss.Migrations
                     b.ToTable("bj_games");
                 });
 
-            modelBuilder.Entity("Abyss.Persistence.Relational.DocumentRecord<ulong, Abyss.Persistence.Document.GuildConfig>", b =>
+            modelBuilder.Entity("Abyss.Persistence.Relational.JsonIdentifiableRecord<ulong, Abyss.Persistence.Document.GuildConfig>", b =>
                 {
                     b.Property<decimal>("Id")
                         .HasColumnType("numeric(20,0)");

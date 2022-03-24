@@ -1,15 +1,14 @@
-namespace Abyss.Interactions.Blackjack
+namespace Abyss.Interactions.Blackjack;
+
+public enum BlackjackGameResult
 {
-    public enum BlackjackGameResult
-    {
-        Push,
-        DealerWinCount,
-        PlayerWinCount,
-        PlayerBust,
-        DealerBust,
-        DealerBlackjack,
-        PlayerBlackjack,
-        DealerBlackjackNatural,
-        PlayerBlackjackNatural
-    }
+    Push,
+    DealerWinCount,
+    PlayerWinCount,
+    PlayerBust,
+    DealerBust,
+    DealerBlackjack,
+    PlayerBlackjack,
+    DealerBlackjackNatural,
+    PlayerBlackjackNatural
 }

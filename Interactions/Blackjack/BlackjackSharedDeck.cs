@@ -2,35 +2,34 @@ using System;
 using System.Collections.Generic;
 using Abyssal.Common;
 
-namespace Abyss.Interactions.Blackjack
+namespace Abyss.Interactions.Blackjack;
+
+public class BlackjackSharedDeck
 {
-    public class BlackjackSharedDeck
+    private List<BlackjackCard> _cards = new();
+    private readonly Random _random = new();
+
+    public BlackjackSharedDeck()
     {
-        private List<BlackjackCard> _cards = new();
-        private readonly Random _random = new();
+        Reset();
+    }
 
-        public BlackjackSharedDeck()
+    public void Reset()
+    {
+        _cards.Clear();
+        foreach (var en in Enum.GetValues<BlackjackCard>())
         {
-            Reset();
+            _cards.Add(en);
+            _cards.Add(en);
+            _cards.Add(en);
+            _cards.Add(en);
         }
+    }
 
-        public void Reset()
-        {
-            _cards.Clear();
-            foreach (var en in Enum.GetValues<BlackjackCard>())
-            {
-                _cards.Add(en);
-                _cards.Add(en);
-                _cards.Add(en);
-                _cards.Add(en);
-            }
-        }
-
-        public BlackjackCard DrawRandom()
-        {
-            var card = _cards.Random(_random);
-            _cards.Remove(card);
-            return card;
-        }
+    public BlackjackCard DrawRandom()
+    {
+        var card = _cards.Random(_random);
+        _cards.Remove(card);
+        return card;
     }
 }

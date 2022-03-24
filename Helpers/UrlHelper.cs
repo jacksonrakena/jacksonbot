@@ -1,10 +1,9 @@
-namespace Abyss.Helpers
+namespace Abyss.Helpers;
+
+public static class UrlHelper
 {
-    public static class UrlHelper
+    public static string CreateMarkdownUrl(string name, string url)
     {
-        public static string CreateMarkdownUrl(string name, string url)
-        {
-            return $"[{name}]({url})";
-        }
+        return $"[{name}]({url})";
     }
 }

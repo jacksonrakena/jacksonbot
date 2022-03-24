@@ -1,22 +1,21 @@
 using Disqord;
 using Disqord.Extensions.Interactivity.Menus.Paged;
 
-namespace Abyss.Interactions
-{
-    public class InfinitePageView : PagedView
-    {
-        public InfinitePageView(InfinitePageProvider pageProvider, LocalMessage templateMessage = null) : base(pageProvider, templateMessage)
-        {
-        }
+namespace Abyss.Interactions;
 
-        protected override void ApplyPageIndex(Page page)
-        {
-            // no-op
-        }
-    }
-    
-    public abstract class InfinitePageProvider : PageProvider
+public class InfinitePageView : PagedView
+{
+    public InfinitePageView(InfinitePageProvider pageProvider, LocalMessage templateMessage = null) : base(pageProvider, templateMessage)
     {
-        public override int PageCount => int.MaxValue;
     }
+
+    protected override void ApplyPageIndex(Page page)
+    {
+        // no-op
+    }
+}
+    
+public abstract class InfinitePageProvider : PageProvider
+{
+    public override int PageCount => int.MaxValue;
 }
