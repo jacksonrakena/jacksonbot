@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Abyss.Extensions;
 using Abyss.Interactions;
@@ -7,6 +9,7 @@ using Disqord;
 using Disqord.Bot;
 using Disqord.Extensions.Interactivity.Menus;
 using Disqord.Extensions.Interactivity.Menus.Paged;
+using Disqord.Gateway;
 using Disqord.Rest;
 using Newtonsoft.Json.Linq;
 using Qmmands;
@@ -77,6 +80,21 @@ public partial class FunModule : AbyssModuleBase
             await Response($"owo (1/{n})");
             n *= 2;
         }
+    }
+
+    [Command("losers")]
+    public async Task<DiscordCommandResult> LosersAsync()
+    {
+        var leaguePlayers = Context.Guild.GetMembers().Values
+            .Where(e => e.GetPresence()?.Activities.Any(e => e.Name.Contains("League of Legends")) ?? false);
+        var stringBuilder = new StringBuilder();
+        stringBuilder.AppendLine("**These losers are playing League:**").AppendLine();
+        foreach (var player in leaguePlayers)
+        {
+            stringBuilder.AppendLine($" - **{player.Nick ?? player.Name}** (for {(int) (DateTimeOffset.Now - player.GetPresence().Activities.First(e => e.Name.Contains("League of Legends")).CreatedAt).TotalMinutes} minutes)");
+        }
+
+        return Response(stringBuilder.ToString());
     }
         
     [Command("roll", "dice")]
