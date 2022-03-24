@@ -17,9 +17,9 @@ public class UserModule : AbyssModuleBase
     public async Task<DiscordCommandResult> GetAvatarAsync(
         [Name("User")]
         [Description("The user who you wish to get the avatar for.")]
-        CachedMember target = null)
+        IMember target = null)
     {
-        target ??= Context.Author as CachedMember;
+        target ??= Context.Author;
          
         var sizeString =
             $"**Sizes:** {UrlHelper.CreateMarkdownUrl("128", target.GetAvatarUrl(size: 128))} | " +
