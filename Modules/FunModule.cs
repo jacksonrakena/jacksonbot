@@ -82,11 +82,16 @@ public partial class FunModule : AbyssModuleBase
         }
     }
 
-    [Command("losers")]
+    [Command("losers", "league")]
+    [Description("Exposes players in this server playing League of Legends.")]
     public async Task<DiscordCommandResult> LosersAsync()
     {
         var leaguePlayers = Context.Guild.GetMembers().Values
-            .Where(e => e.GetPresence()?.Activities.Any(e => e.Name.Contains("League of Legends")) ?? false);
+            .Where(e => e.GetPresence()?.Activities.Any(e => e.Name.Contains("League of Legends")) ?? false).ToList();
+        if (leaguePlayers.Count == 0)
+        {
+            return Response("Nobody in this server is playing League of Legends.");
+        }
         var stringBuilder = new StringBuilder();
         stringBuilder.AppendLine("**These losers are playing League:**").AppendLine();
         foreach (var player in leaguePlayers)
