@@ -80,7 +80,8 @@ public partial class AdminModule : AbyssModuleBase
     [Command("eval")]
     [RunMode(RunMode.Parallel)]
     [Description("Evaluates a piece of C# code.")]
-    [RequireAuthor(255950165200994307)]
+    [RequireAuthor(255950165200994307, Group = "Admin")]
+    [RequireAuthor(952380738802688020, Group = "Admin")]
     public async Task<DiscordCommandResult> Command_EvaluateAsync(
         [Name("Language")] [Description("The language type.")] EvaluationLanguage lang,
         [Name("Code")] [Description("The code to execute.")] [Remainder]
