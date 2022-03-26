@@ -30,7 +30,8 @@ public enum EvaluationLanguage
     Py
 }
 [Name("Admin")]
-[RequireBotOwner]
+[RequireAuthor(255950165200994307, Group = "Admin")]
+[RequireAuthor(952380738802688020, Group = "Admin")]
 public partial class AdminModule : AbyssModuleBase
 {
     public AbyssDatabaseContext Database { get; set; }
