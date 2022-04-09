@@ -59,7 +59,7 @@ public static class Program
             bot.ReadyEventDelayMode = ReadyEventDelayMode.None;
             bot.Activities = new[]
             {
-                new LocalActivity("grindset, kings", ActivityType.Playing)
+                new LocalActivity("head empty", ActivityType.Playing)
             };
         });
         hostBuilder.UseSystemd();
