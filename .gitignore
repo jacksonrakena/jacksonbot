@@ -1,3 +1,4 @@
+
 .DS_Store
 /.gradle
 /.idea
@@ -13,7 +14,7 @@ abyss_update
 abyss_restart
 abyssctl
 abyssctl
-abyss
+#abyss
 abyss_update
 abyss_restart
 abyssconfig.json
