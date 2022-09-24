@@ -15,7 +15,7 @@ public static class Constants
 
     public const Markdown.TimestampFormat TIMESTAMP_FORMAT = Markdown.TimestampFormat.ShortDateTime;
 
-    public static Color Theme = new Color(170, 110, 110);
+    public static Color Theme => System.Drawing.Color.LightPink;
 
     public static Guid SessionId = Guid.NewGuid();
 }

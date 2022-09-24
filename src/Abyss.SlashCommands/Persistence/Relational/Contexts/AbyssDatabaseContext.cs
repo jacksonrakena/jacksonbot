@@ -76,7 +76,7 @@ public class AbyssDatabaseContext: DbContext
         _configuration = config;
         Services = provider;
     }
-        
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BlackjackGameRecord>().Property(d => d.Result).HasConversion<string>();

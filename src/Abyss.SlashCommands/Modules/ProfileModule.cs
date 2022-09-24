@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Abyss.Persistence.Relational;
+using Abyss.SlashCommands.Modules.Abstract;
 using Disqord;
 using Disqord.Bot;
 using Disqord.Bot.Commands.Application;
@@ -11,15 +12,8 @@ namespace Abyss.Modules;
 
 [Name("Profile")]
 [SlashGroup("profile")]
-public class ProfileModule : DiscordApplicationModuleBase
+public class ProfileModule : AbyssModuleBase
 {
-    public AbyssDatabaseContext Database { get; set; }
-
-    public ProfileModule(AbyssDatabaseContext database)
-    {
-        Database = database;
-    }
-
     [SlashCommand("color")]
     [Description("Change your profile colour.")]
     public async Task<DiscordInteractionResponseCommandResult> ColorSet(Color color)
@@ -33,7 +27,7 @@ public class ProfileModule : DiscordApplicationModuleBase
     }
         
     [SlashCommand("bio")]
-    [Description("Change your profile bio..")]
+    [Description("Change your profile bio.")]
     public async Task<DiscordInteractionResponseCommandResult> Description(string bio)
     {
         var profile = await Database.GetUserAccountAsync(Context.Author.Id);

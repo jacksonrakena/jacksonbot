@@ -13,8 +13,8 @@ public class GuildConfig : IAsyncCreatable
 
     public StarboardConfig Starboard { get; set; } = new();
 
-    public GuildFeatureMatrix Features { get; set; } = new();
-        
+    public Dictionary<GuildFeature, bool> Features { get; set; } = new();
+
     public ValueTask OnCreatingAsync(IServiceProvider provider)
     {
         Prefixes = new List<string> {provider.GetRequiredService<IConfiguration>().GetSection("Options")["DefaultPrefix"]};

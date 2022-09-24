@@ -10,3 +10,8 @@ public class GuildFeatureMatrix : RoleChannelIgnorable
     [DisplayName("touchgrass")]
     public bool TouchGrassEnabled { get; set; } = false;
 }
+
+public enum GuildFeature
+{
+    TouchGrass
+}
