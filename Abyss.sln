@@ -1,7 +1,5 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abyss.Legacy", "src\Abyss.Legacy\Abyss.Legacy.csproj", "{8748E98F-13A7-4AA4-B996-333A1D79ECB2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abyss", "src\Abyss\Abyss.csproj", "{4D729A36-1E6C-4E63-BE3E-44A585A0CA85}"
 EndProject
 Global
@@ -10,10 +8,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8748E98F-13A7-4AA4-B996-333A1D79ECB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8748E98F-13A7-4AA4-B996-333A1D79ECB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8748E98F-13A7-4AA4-B996-333A1D79ECB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8748E98F-13A7-4AA4-B996-333A1D79ECB2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4D729A36-1E6C-4E63-BE3E-44A585A0CA85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4D729A36-1E6C-4E63-BE3E-44A585A0CA85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D729A36-1E6C-4E63-BE3E-44A585A0CA85}.Release|Any CPU.ActiveCfg = Release|Any CPU

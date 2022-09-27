@@ -13,15 +13,14 @@ public abstract class AbyssViewBase : ViewBase
         _servicesLazy ?? (_servicesLazy = (Menu.Interactivity.Client as DiscordBotBase).Services
             .CreateScope()
             .ServiceProvider);
-        
 
     private IServiceProvider? _servicesLazy;
 
     protected TransactionManager _transactions => _transactionsLazy ??= _services.GetRequiredService<TransactionManager>();
-    private TransactionManager _transactionsLazy;
+    private TransactionManager? _transactionsLazy;
         
     protected AbyssDatabaseContext _database => _databaseLazy ??= _services.GetRequiredService<AbyssDatabaseContext>();
-    private AbyssDatabaseContext _databaseLazy;
+    private AbyssDatabaseContext? _databaseLazy;
 
     protected AbyssViewBase(Action<LocalMessageBase>? messageTemplate) : base(messageTemplate)
     {

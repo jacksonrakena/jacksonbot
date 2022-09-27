@@ -8,11 +8,21 @@ using Qmmands;
 
 namespace Abyss.Modules;
 
-[SlashGroup("stats")]
 public class Games_StatsModule : AbyssModuleBase
 {
-    [SlashCommand("blackjack")]
-    [Description("Look at your blackjack statistics.")]
+    public enum Game
+    {
+        Blackjack,
+        Trivia
+    }
+    
+    [SlashCommand("stats")]
+    [Description("Look at your game statistics.")]
+    public async Task<DiscordInteractionResponseCommandResult> Stats([Description("The game you would like to see your stats for.")] Game game)
+    {
+        return game == Game.Blackjack ? (await BlackjackStats()) : (await TriviaStats());
+    }
+
     public async Task<DiscordInteractionResponseCommandResult> BlackjackStats()
     {
         var gamesByUser =
@@ -57,9 +67,6 @@ public class Games_StatsModule : AbyssModuleBase
             .AddField("Win rate", $"{(int) (((decimal) playerWon.Count/totalGames)*100)}%", true)
         );
     }
-    
-    [SlashCommand("trivia")]
-    [Description("Look at your trivia statistics.")]
     public async Task<DiscordInteractionResponseCommandResult> TriviaStats()
     {
         var triviaRecord = await Database.TriviaRecords.Include(d => d.CategoryVoteRecords).FirstOrDefaultAsync(d => d.UserId == (ulong) Context.Author.Id);
