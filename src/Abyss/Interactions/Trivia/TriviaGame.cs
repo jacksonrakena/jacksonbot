@@ -28,10 +28,10 @@ public class TriviaGame : AbyssSinglePlayerGameBase
     private string _optionC;
     private string _selectedCategory;
 
-    public TriviaGame(List<LocalSelectionComponentOption> categories, IDiscordCommandContext context) : base(context,
+    public TriviaGame(IList<LocalSelectionComponentOption> categories, IDiscordCommandContext context) : base(context,
             (m) =>
             {
-                new LocalMessage().WithEmbeds(new LocalEmbed().WithColor(Constants.Theme)
+                m.WithEmbeds(new LocalEmbed().WithColor(Constants.Theme)
                     .WithDescription(
                         "Welcome to the Abyss trivia minigame. Select your category, or click 'All' to play random questions."));
             })
@@ -71,10 +71,11 @@ public class TriviaGame : AbyssSinglePlayerGameBase
         _currentQuestionIndex++;
         if (_currentQuestionIndex == _questions.Count)
         {
+            var player = await _database.GetUserAccountAsync(PlayerId);
             MessageTemplate = (e) =>
             {
                 e.WithContent(
-                        $"You've finished all the questions! You got **{_correctAnswers}** correct out of **{_correctAnswers + _incorrectAnswers}** questions.")
+                        $"You've finished all the questions! You got **{_correctAnswers}** correct out of **{_correctAnswers + _incorrectAnswers}** questions. You now have {player.Coins} :coin: coins.")
                     .WithEmbeds(new List<LocalEmbed>());
             };
             ClearComponents();
@@ -95,7 +96,7 @@ public class TriviaGame : AbyssSinglePlayerGameBase
         var allAnswers = new[] {_currentQuestion.CorrectAnswer, _currentQuestion.Answer1, _currentQuestion.Answer2};
         _optionA = allAnswers.Random(random);
         _optionB = allAnswers.Where(d => d != _optionA).ToArray().Random(random);
-        _optionC = allAnswers.Where(d => d != _optionA && d != _optionB).First();
+        _optionC = allAnswers.First(d => d != _optionA && d != _optionB);
 
         var content = new StringBuilder();
         content.AppendLine($"**A** - {_optionA}");

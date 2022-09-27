@@ -31,6 +31,7 @@ public class BlackjackGame : AbyssSinglePlayerGameBase
         e => e.WithEmbeds(
                 new LocalEmbed()
                     .WithTitle("Abyss Blackjack")
+                    .WithColor(Constants.Theme)
                     .WithDescription($"Welcome to the table. You're betting {bet} :coin:. Are you ready to play?")
                     .WithFooter("3 TO 2 - DEALER MUST DRAW ON 16 AND STAND ON 17")
             )
@@ -58,6 +59,7 @@ public class BlackjackGame : AbyssSinglePlayerGameBase
         {
             e.WithEmbeds(new LocalEmbed()
                 .WithTitle("Abyss Blackjack")
+                .WithColor(Constants.Theme)
                 .WithDescription(
                     $"Welcome to the table. You're betting {_playerInitialBet} :coin:. Are you ready to play?")
                 .WithFooter("3 TO 2 - DEALER MUST DRAW ON 16 AND STAND ON 17"));
@@ -65,11 +67,11 @@ public class BlackjackGame : AbyssSinglePlayerGameBase
         ReportChanges();
     }
 
-    private void UpdateMessage(string message)
+    private void UpdateMessage(string title, string message)
     {
         MessageTemplate = e =>
         {
-            e.AddEmbed(new LocalEmbed().WithDescription(message).WithFields(new List<LocalEmbedField>
+            e.AddEmbed(new LocalEmbed().WithTitle(title).WithDescription(message).WithColor(Constants.Theme).WithFields(new List<LocalEmbedField>
             {
                 new()
                 {
@@ -87,59 +89,50 @@ public class BlackjackGame : AbyssSinglePlayerGameBase
         switch (result)
         {
             case BlackjackGameResult.Push:
-                UpdateMessage("Push - you and the dealer both have 21. Bet returned.");
+                UpdateMessage("Push!" , "You and the dealer both have 21. Bet returned.");
                 break;
             case BlackjackGameResult.DealerWinCount:
                 UpdateMessage(
-                    $"Dealer wins! Dealer had {DealerValue} to your {PlayerValue}. You lose {_playerCurrentBet} :coin: coins.");
+                    $"Dealer wins!", $"Dealer had {DealerValue} to your {PlayerValue}. You lose {_playerCurrentBet} :coin: coins.");
                 userAccountModification = -_playerCurrentBet;
                 //TemplateMessage.Embeds[0].Color = Color.Red;
                 break;
             case BlackjackGameResult.PlayerWinCount:
                 UpdateMessage(
-                    $"You win! {PlayerValue} to dealers' {DealerValue}. You win {_playerCurrentBet * 2} :coin: coins.");
+                    $"You win!", $"{PlayerValue} to dealers' {DealerValue}. You win {_playerCurrentBet * 2} :coin: coins.");
                 userAccountModification = +_playerCurrentBet;
                 break;
             case BlackjackGameResult.PlayerBust:
-                UpdateMessage($"You busted on {PlayerValue}! You lose {_playerCurrentBet} :coin: coins.");
+                UpdateMessage($"You busted on {PlayerValue}!", $"You lose {_playerCurrentBet} :coin: coins.");
                 //TemplateMessage.Embeds[0].Color = Color.Red;
                 userAccountModification = 0-_playerCurrentBet;
                 break;
             case BlackjackGameResult.DealerBust:
-                UpdateMessage($"Dealer busted on {DealerValue}! You win {_playerCurrentBet} :coin: coins.");
+                UpdateMessage($"Dealer busted on {DealerValue}!" ,$"You win {_playerCurrentBet} :coin: coins.");
                 userAccountModification = 0 + _playerCurrentBet;
                 break;
             case BlackjackGameResult.DealerBlackjack:
-                UpdateMessage($"Dealer blackjack with {_dealerCards.Count} cards. You lose {_playerCurrentBet} :coin: coins.");
+                UpdateMessage($"Dealer blackjack with {_dealerCards.Count} cards!", $"You lose {_playerCurrentBet} :coin: coins.");
                 userAccountModification = -_playerCurrentBet;
                 //TemplateMessage.Embeds[0].Color = Color.Red;
                 break;
             case BlackjackGameResult.PlayerBlackjack:
-                UpdateMessage($"Blackjack with {_playerCards.Count} cards! You win {_playerCurrentBet} :coin: coins.");
+                UpdateMessage($"Blackjack with {_playerCards.Count} cards!",$"You win {_playerCurrentBet} :coin: coins.");
                 userAccountModification = +_playerCurrentBet;
                 break;
             case BlackjackGameResult.DealerBlackjackNatural:
-                UpdateMessage($"Dealer got a natural blackjack. You lose {_playerCurrentBet} :coin: coins.");
+                UpdateMessage($"Dealer got a natural blackjack!", $"You lose {_playerCurrentBet} :coin: coins.");
                 userAccountModification = -_playerCurrentBet;
                 //TemplateMessage.Embeds[0].Color = Color.Red;
                 break;
             case BlackjackGameResult.PlayerBlackjackNatural:
-                UpdateMessage($"Natural blackjack! You win {_playerCurrentBet + (_playerCurrentBet * (decimal)1.5)} :coin: coins.");
+                UpdateMessage($"Natural blackjack!", $"You win {_playerCurrentBet + (_playerCurrentBet * (decimal)1.5)} :coin: coins.");
                 userAccountModification = +_playerCurrentBet + _playerCurrentBet * (decimal) 1.5;
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(result), result, null);
         }
 
-        // if (userAccountModification > 0)
-        // {
-        //     MessageTemplate = e => e.AddEmbed(new LocalEmbed().WithColor(Color.LightGreen));
-        // }
-        //
-        // if (userAccountModification < 0)
-        // {
-        //     MessageTemplate = e => e.AddEmbed(new LocalEmbed().WithColor(Color.Red));
-        // }
         ReportChanges();
 
         var account = await _database.GetUserAccountAsync(PlayerId);
@@ -255,11 +248,18 @@ public class BlackjackGame : AbyssSinglePlayerGameBase
             }
         }
 
-        MessageTemplate = e => e.AddEmbed(
-            new LocalEmbed().WithDescription($"Dealer's first card is {_dealerCards[0]}" +
-                                             "\n\n" +
-                                             $"Your cards are: {string.Join(", ", _playerCards)} ({BlackjackData.CalculateValueOfHand(_playerCards)})")
-                .WithFooter(new LocalEmbedFooter().WithText($"Current bet: {_playerCurrentBet}")));
+        MessageTemplate = e =>
+        {
+            e.AddEmbed(new LocalEmbed().WithTitle("Your move.").WithColor(Constants.Theme).WithFields(new List<LocalEmbedField>
+            {
+                new()
+                {
+                    Name = "Dealer", Value = _dealerCards[0] + " " + BlackjackData.CalculateCardValue(_dealerCards[0]), IsInline = true
+                },
+                new() { Name = "You", Value = $"{string.Join(", ", _playerCards)} ({PlayerValue})", IsInline = true }
+            }).WithFooter(new LocalEmbedFooter().WithText($"Current bet: {_playerCurrentBet}")));
+        };
+
         AddComponent(new ButtonViewComponent(Hit)
         {
             Label = "Hit",
