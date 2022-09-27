@@ -74,7 +74,7 @@ public class AdminModule : AbyssModuleBase
         }
     }
 
-    [SlashCommand("servers")]
+    //[SlashCommand("servers")]
     public async Task<IDiscordCommandResult> Servers()
     {
         return Response($"**List of all cached servers as of {Markdown.Timestamp(DateTimeOffset.Now, Markdown.TimestampFormat.ShortDateTime)}**" +

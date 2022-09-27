@@ -9,7 +9,7 @@ namespace Abyss.Modules;
 
 public class GuildModule : AbyssGuildModuleBase
 {
-    [SlashCommand("feature")]
+    //[SlashCommand("feature")]
     [Disqord.Bot.Commands.RequireGuildOwner]
     [Qmmands.Description("Enables or disables a guild feature.")]
     public async Task<DiscordInteractionResponseCommandResult> ToggleFeatureAsync([Name("Feature")] GuildFeature feature)
