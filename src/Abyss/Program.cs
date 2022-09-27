@@ -68,4 +68,6 @@ await using (var ctx = scope.ServiceProvider.GetRequiredService<AbyssDatabaseCon
     await ctx.Database.MigrateAsync();
     await ctx.Database.EnsureCreatedAsync();
 }
+
+var bot = scope.ServiceProvider.GetRequiredService<DiscordBot>();
 await host.RunAsync();

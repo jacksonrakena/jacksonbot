@@ -71,9 +71,9 @@ public class TriviaGame : AbyssSinglePlayerGameBase
         _currentQuestionIndex++;
         if (_currentQuestionIndex == _questions.Count)
         {
-            this.MessageTemplate = (e) =>
+            MessageTemplate = (e) =>
             {
-                new LocalMessage().WithContent(
+                e.WithContent(
                         $"You've finished all the questions! You got **{_correctAnswers}** correct out of **{_correctAnswers + _incorrectAnswers}** questions.")
                     .WithEmbeds(new List<LocalEmbed>());
             };
