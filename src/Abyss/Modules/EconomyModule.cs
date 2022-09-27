@@ -11,6 +11,7 @@ using Disqord.Bot.Commands.Application;
 using Disqord.Bot.Commands.Interaction;
 using Disqord.Extensions.Interactivity.Menus.Paged;
 using Disqord.Gateway;
+using Disqord.Rest;
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -88,11 +89,12 @@ public class EconomyModule : AbyssModuleBase
     {
         var players = await Context.Services.GetRequiredService<AbyssDatabaseContext>().UserAccounts
             .OrderByDescending(c => c.Coins).Take(5).ToListAsync();
+        var users = await Task.WhenAll(players.Select(d => Context.Bot.FetchUserAsync(d.Id)));
 
         return Response(new LocalEmbed()
             .WithTitle($"Richest users, as of {Markdown.Timestamp(DateTimeOffset.Now)}")
             .WithColor(Constants.Theme)
-            .WithDescription(string.Join("\n", players.Select((c, pos) => $"{pos + 1}) **{Context.Bot.GetUser(c.Id)}** - {c.Coins} coins")))
+            .WithDescription(string.Join("\n", users.Select((c, pos) => $"{pos + 1}) **{c?.Name}** - {players[pos].Coins} coins")))
         );
     }
         
