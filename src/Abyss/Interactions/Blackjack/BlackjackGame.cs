@@ -254,7 +254,7 @@ public class BlackjackGame : AbyssSinglePlayerGameBase
             {
                 new()
                 {
-                    Name = "Dealer", Value = _dealerCards[0] + " " + BlackjackData.CalculateCardValue(_dealerCards[0]), IsInline = true
+                    Name = "Dealer", Value = _dealerCards[0] + $" ({BlackjackData.CalculateCardValue(_dealerCards[0])})", IsInline = true
                 },
                 new() { Name = "You", Value = $"{string.Join(", ", _playerCards)} ({PlayerValue})", IsInline = true }
             }).WithFooter(new LocalEmbedFooter().WithText($"Current bet: {_playerCurrentBet}")));
