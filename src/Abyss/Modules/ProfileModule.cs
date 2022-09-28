@@ -18,7 +18,8 @@ public class ProfileModule : AbyssModuleBase
 {
     [SlashCommand("color")]
     [Description("Change your profile colour.")]
-    public async Task<DiscordInteractionResponseCommandResult> ColorSet(Color color)
+    public async Task<DiscordInteractionResponseCommandResult> ColorSet(
+        [Description("A color hex value, starting with a #.")] Color color)
     {
         var profile = await Database.GetUserAccountAsync(Context.Author.Id);
         profile.ColorR = color.R;
