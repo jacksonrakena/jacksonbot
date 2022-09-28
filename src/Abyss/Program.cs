@@ -11,6 +11,8 @@ using AbyssalSpotify;
 using Disqord;
 using Disqord.Bot;
 using Disqord.Bot.Commands;
+using Disqord.Bot.Commands.Application;
+using Disqord.Bot.Commands.Application.Default;
 using Disqord.Bot.Commands.Interaction;
 using Disqord.Bot.Hosting;
 using Disqord.Gateway;
@@ -21,6 +23,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using Qmmands;
+using Qmmands.Default;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
@@ -51,12 +54,14 @@ var host = new HostBuilder()
                 b.Configuration.GetSection("Secrets").GetSection("Spotify")["ClientSecret"]
             )
         );
+        s.AddSingleton<IApplicationCommandCacheProvider>(new NoopCacheProvider());
     })
     .ConfigureDiscordBot((ctx, bot) =>
     {
         bot.Token = ctx.Configuration.GetSection("Secrets").GetSection("Discord")["Token"];
         bot.Intents = GatewayIntents.Unprivileged;
         bot.Prefixes = new[] { "ad." };
+        
     })
     .Build();
 
@@ -69,3 +74,27 @@ await using (var ctx = scope.ServiceProvider.GetRequiredService<AbyssDatabaseCon
 
 var bot = scope.ServiceProvider.GetRequiredService<DiscordBot>();
 await host.RunAsync();
+
+public class NoopCache : IApplicationCommandCache
+{
+    public ValueTask DisposeAsync()
+    {
+        return ValueTask.CompletedTask;
+    }
+
+    public IApplicationCommandCacheChanges GetChanges(Snowflake? guildId, IEnumerable<LocalApplicationCommand> commands)
+    {
+        return new DefaultApplicationCommandCacheProvider.Changes(true);
+    }
+
+    public void ApplyChanges(Snowflake? guildId, IApplicationCommandCacheChanges changes, IEnumerable<IApplicationCommand> commands)
+    {
+    }
+}
+public class NoopCacheProvider : IApplicationCommandCacheProvider
+{
+    public async ValueTask<IApplicationCommandCache> GetCacheAsync(CancellationToken cancellationToken)
+    {
+        return new NoopCache();
+    }
+}
