@@ -79,11 +79,11 @@ bot.MessageReceived += async (m, e) =>
 {
     if (e.GuildId == 763970291675562004)
     {
-        if (random.NextDouble() <= 0.05)
+        if (random.NextDouble() <= 0.05 || e.Message.Content.Contains("💀"))
         {
             try
             {
-                await e.Message.AddReactionAsync(LocalEmoji.Unicode("💀"));
+                await e.Message.AddReactionAsync(LocalEmoji.FromString("💀"));
             }
             catch (Exception)
             {
