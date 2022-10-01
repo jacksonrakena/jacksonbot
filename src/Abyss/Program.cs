@@ -16,6 +16,7 @@ using Disqord.Bot.Commands.Application.Default;
 using Disqord.Bot.Commands.Interaction;
 using Disqord.Bot.Hosting;
 using Disqord.Gateway;
+using Disqord.Rest;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -59,7 +60,7 @@ var host = new HostBuilder()
     .ConfigureDiscordBot((ctx, bot) =>
     {
         bot.Token = ctx.Configuration.GetSection("Secrets").GetSection("Discord")["Token"];
-        bot.Intents = GatewayIntents.Unprivileged;
+        bot.Intents = GatewayIntents.MessageContent;
         bot.Prefixes = new[] { "ad." };
         
     })
@@ -73,28 +74,23 @@ await using (var ctx = scope.ServiceProvider.GetRequiredService<AbyssDatabaseCon
 }
 
 var bot = scope.ServiceProvider.GetRequiredService<DiscordBot>();
+var random = new Random();
+bot.MessageReceived += async (m, e) =>
+{
+    if (e.GuildId == 763970291675562004)
+    {
+        if (random.NextDouble() <= 0.05 || e.Message.Content.Contains("💀"))
+        {
+            try
+            {
+                await e.Message.AddReactionAsync(LocalEmoji.FromString("💀"));
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+    }
+};
+
 await host.RunAsync();
-
-public class NoopCache : IApplicationCommandCache
-{
-    public ValueTask DisposeAsync()
-    {
-        return ValueTask.CompletedTask;
-    }
-
-    public IApplicationCommandCacheChanges GetChanges(Snowflake? guildId, IEnumerable<LocalApplicationCommand> commands)
-    {
-        return new DefaultApplicationCommandCacheProvider.Changes(true);
-    }
-
-    public void ApplyChanges(Snowflake? guildId, IApplicationCommandCacheChanges changes, IEnumerable<IApplicationCommand> commands)
-    {
-    }
-}
-public class NoopCacheProvider : IApplicationCommandCacheProvider
-{
-    public async ValueTask<IApplicationCommandCache> GetCacheAsync(CancellationToken cancellationToken)
-    {
-        return new NoopCache();
-    }
-}
