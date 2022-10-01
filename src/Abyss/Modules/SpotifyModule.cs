@@ -2,6 +2,7 @@
 using Abyss.Modules.Abstract;
 using AbyssalSpotify;
 using Disqord;
+using Disqord.Bot.Commands;
 using Disqord.Bot.Commands.Application;
 using Disqord.Bot.Commands.Interaction;
 using Humanizer;
@@ -20,6 +21,7 @@ public class SpotifyModule : AbyssModuleBase
     }
 
     [SlashCommand("track")]
+    [RateLimit(1, 5, RateLimitMeasure.Seconds, RateLimitBucketType.User)]
     [Description("Shows your current song, or searches Spotify for a song.")]
     public async Task<DiscordInteractionResponseCommandResult> TrackAsync(
         [Name("Name")]
@@ -34,6 +36,26 @@ public class SpotifyModule : AbyssModuleBase
             return Response("Couldn't find a track by that name.");
         }
         return Response(CreateTrackEmbed(track));
+    }
+
+    [AutoComplete("track")]
+    public async Task TrackAutoComplete(AutoComplete<string> trackQuery)
+    {
+        if (trackQuery.IsFocused && trackQuery.RawArgument != null)
+        {
+            var tracks = await _spotify.SearchAsync(trackQuery.RawArgument, SearchType.Track).ConfigureAwait(false);
+            trackQuery.Choices.AddRange(tracks.Tracks.Items.Select(c => $"{c.Name}, by {c.Artists.FirstOrDefault()?.Name}"));
+        }
+    }
+
+    [AutoComplete("album")]
+    public async Task AlbumAutoComplete(AutoComplete<string> albumQuery)
+    {
+        if (albumQuery.IsFocused && albumQuery.RawArgument != null)
+        {
+            var tracks = await _spotify.SearchAsync(albumQuery.RawArgument, SearchType.Album).ConfigureAwait(false);
+            albumQuery.Choices.AddRange(tracks.Albums.Items.Select(c => $"{c.Name}, by {c.Artists.FirstOrDefault()?.Name}"));
+        }
     }
 
     [SlashCommand("album")]
@@ -63,16 +85,10 @@ public class SpotifyModule : AbyssModuleBase
             },
             Title = album.Name,
             ThumbnailUrl = album.Images.FirstOrDefault()?.Url,
-            Footer = new LocalEmbedFooter
-            {
-                Text = string.Join("\n",
-                    album.Copyrights.Distinct()
-                        .Select(a => 
-                            a.CopyrightType == AlbumCopyrightType.Copyright 
-                                ? a.CopyrightText 
-                                : $"Performance {a.CopyrightText}"))
-            }
         };
+        var copyright = album.Copyrights.Where(a => a.CopyrightType == AlbumCopyrightType.Copyright)
+            .Select(a => a.CopyrightText).FirstOrDefault();
+        if (copyright != null) embed.Footer = new LocalEmbedFooter().WithText(copyright);
 
         var tracks = album.Tracks.Items;
 
