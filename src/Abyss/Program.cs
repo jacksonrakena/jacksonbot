@@ -54,7 +54,7 @@ var host = new HostBuilder()
                 b.Configuration.GetSection("Secrets").GetSection("Spotify")["ClientSecret"]
             )
         );
-        s.AddSingleton<IApplicationCommandCacheProvider>(new NoopCacheProvider());
+        //s.AddSingleton<IApplicationCommandCacheProvider>(new NoopCacheProvider());
     })
     .ConfigureDiscordBot((ctx, bot) =>
     {

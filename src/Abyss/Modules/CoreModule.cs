@@ -25,6 +25,13 @@ namespace Abyss.Modules;
 [Name("Core")]
 public class CoreModule : AbyssModuleBase
 {
+    [SlashCommand("invite")]
+    [Description("Shows an invite link to add Abyss to your server.")]
+    public async Task<IDiscordCommandResult> Invite()
+    {
+        return Response(
+            $"You can add me to your server by clicking this link: https://discord.com/api/oauth2/authorize?client_id={Context.Bot.CurrentApplicationId}&permissions=0&scope=bot%20applications.commands");
+    }
     [SlashCommand("about")]
     [Description("Shows information about Abyss.")]
     public async Task<IDiscordCommandResult> About()
