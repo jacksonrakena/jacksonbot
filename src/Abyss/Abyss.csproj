@@ -29,7 +29,7 @@
     <ItemGroup>
       <Content Include="..\..\abyss.appsettings.json">
         <Link>abyss.appsettings.json</Link>
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
 
