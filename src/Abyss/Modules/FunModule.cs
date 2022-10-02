@@ -145,7 +145,11 @@ public class CatPageProvider : InfinitePageProvider
             ?.Value<string>("url");
         if (url == null) return null;
 
+        using var factr = await new HttpClient().GetAsync("https://catfact.ninja/fact?max_length=140");
+        var fact = JToken.Parse(await factr.Content.ReadAsStringAsync())?.Value<string>("fact");
+
         return new Page().WithEmbeds(new LocalEmbed()
+            .WithTitle(fact ?? "")
             .WithColor(Constants.Theme)
             .WithImageUrl(url)
         ); 

@@ -73,24 +73,4 @@ await using (var ctx = scope.ServiceProvider.GetRequiredService<AbyssDatabaseCon
     await ctx.Database.EnsureCreatedAsync();
 }
 
-var bot = scope.ServiceProvider.GetRequiredService<DiscordBot>();
-var random = new Random();
-bot.MessageReceived += async (m, e) =>
-{
-    if (e.GuildId == 763970291675562004)
-    {
-        if (random.NextDouble() <= 0.05 || e.Message.Content.Contains("💀"))
-        {
-            try
-            {
-                await e.Message.AddReactionAsync(LocalEmoji.FromString("💀"));
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-        }
-    }
-};
-
 await host.RunAsync();
