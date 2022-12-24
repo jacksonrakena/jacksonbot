@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,13 +38,14 @@ public class CoreModule : AbyssModuleBase
     public async Task<IDiscordCommandResult> About()
     {
         var app = await Context.Bot.FetchCurrentApplicationAsync();
+        var version = Assembly.GetExecutingAssembly().GetName().Version ?? new Version("1.0.0.0");
         return Response(new LocalEmbed()
             .WithColor(Constants.Theme)
             .WithAuthor("Abyss", Context.Bot.CurrentUser.GetAvatarUrl())
             .WithDescription(
                 $"Abyss is a bot made by <@255950165200994307> for fun.")
             .AddField("Owner",$"**{app.Owner}**", true)
-            .AddField("Version", "19.2.0-dev", true)
+            .AddField("Version", $"{version.Major}.{version.Minor}.{version.Build}", true)
             .AddField("Started", Markdown.Timestamp(Process.GetCurrentProcess().StartTime, Constants.TIMESTAMP_FORMAT), true)
             .AddField("Cached servers", Context.Bot.GetGuilds().Count, true)
             .AddField("Cached users", Context.Bot.GetGuilds().Sum(d => d.Value.MemberCount), true)
