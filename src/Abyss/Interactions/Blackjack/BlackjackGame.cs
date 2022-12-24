@@ -171,7 +171,7 @@ public class BlackjackGame : AbyssSinglePlayerGameBase
             
         AddComponent(new ButtonViewComponent(async e =>
         {
-            if (!await _transactions.CheckPlayerSufficientAmount(_playerInitialBet, PlayerId))
+            if (!await _transactions.DoesEntityHaveSufficientBalance(PlayerId, _playerInitialBet))
             {
                 MessageTemplate = e => e.AddEmbed(new LocalEmbed().WithColor(Color.Red)
                     .WithTitle("You don't have enough money to play again.").WithDescription(""));
@@ -270,7 +270,7 @@ public class BlackjackGame : AbyssSinglePlayerGameBase
             Label = "Stand",
             Style = LocalButtonComponentStyle.Secondary
         });
-        if (_playerCards.Count == 2 && await _transactions.CheckPlayerSufficientAmount(_playerCurrentBet*2, PlayerId))
+        if (_playerCards.Count == 2 && await _transactions.DoesEntityHaveSufficientBalance(PlayerId, _playerCurrentBet*2))
         {
             AddComponent(new ButtonViewComponent(DoubleDown)
             {

@@ -16,10 +16,19 @@ public class TransactionManager
         _context = context;
     }
 
-    public async Task<bool> CheckPlayerSufficientAmount(decimal amount, ulong accountId)
+    public async Task<bool> DoesEntityHaveSufficientBalance(ulong entityId, decimal amount)
     {
-        var account = await _context.GetUserAccountAsync(accountId);
-        return account.Coins >= amount;
+        if (entityId == SystemAccountId) return true;
+        var entity = await _context.GetUserAccountAsync(entityId);
+        return entity.Coins >= amount;
+    }
+
+    public async Task<bool> ValidateTransactionAsync(Transaction proposedTransaction)
+    {
+        if (proposedTransaction.IsFromSystem) return true;
+        if (proposedTransaction.Amount <= 0) return false;
+        var payer = await _context.GetUserAccountAsync(proposedTransaction.PayerId);
+        return payer.Coins >= proposedTransaction.Amount;
     }
 
     public async Task<Transaction> CreateTransactionBetweenAccounts(decimal amount, ulong to, ulong from, string source)
@@ -86,13 +95,11 @@ public class TransactionManager
 
     private async Task<bool> ProcessTransactionAsync(Transaction transaction)
     {
+        if (!await ValidateTransactionAsync(transaction)) return false;
+        
         // Subtract from payer
         if (!transaction.IsFromSystem)
         {
-            if (!await CheckPlayerSufficientAmount(transaction.Amount, transaction.PayerId))
-            {
-                return false;
-            }
             var account = await _context.GetUserAccountAsync(transaction.PayerId);
             account.Coins -= transaction.Amount;
         }

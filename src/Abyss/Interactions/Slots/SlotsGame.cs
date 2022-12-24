@@ -32,7 +32,7 @@ public class SlotsGame : AbyssSinglePlayerGameBase
     public async ValueTask Pull(ButtonEventArgs e)
     {
         ClearComponents();
-        if (!await _transactions.CheckPlayerSufficientAmount(_bet, PlayerId))
+        if (!await _transactions.DoesEntityHaveSufficientBalance(PlayerId, _bet))
         {
             MessageTemplate = e =>
             {
