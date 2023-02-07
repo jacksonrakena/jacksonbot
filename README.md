@@ -1,4 +1,5 @@
 <div align="center">
+  <img width="100" height="100" src="https://d.lu.je/avatar/679925967153922055" />
   <h1>Abyss </h1>
 A Discord chat and administration bot for the communities you love. <br />
 Built on top of <a href="https://github.com/Quahu/Disqord">Disqord</a> and <a href="https://github.com/Quahu/Qmmands">Qmmands</a>. <br /> 
