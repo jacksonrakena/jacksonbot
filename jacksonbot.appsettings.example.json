@@ -1,0 +1,22 @@
+{
+    "ConnectionStrings": {
+        "Database": "Host=localhost;UserName=jacksonbot;Password=jacksonbot;Database=jacksonbot"
+    },
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "System": "Information",
+            "Microsoft": "Information",
+            "Microsoft.EntityFrameworkCore.*": "Warning"
+        }
+    },
+    "Secrets": {
+        "Discord": {
+            "Token": ""
+        },
+        "Spotify": {
+            "ClientId": "",
+            "ClientSecret": ""
+        }
+    }
+}

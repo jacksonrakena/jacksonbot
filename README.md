@@ -1,15 +1,16 @@
 <div align="center">
   <img width="100" height="100" src="https://d.lu.je/avatar/679925967153922055" />
-  <h1>Abyss </h1>
-A Discord chat and administration bot for the communities you love. <br />
+  <h1>Jacksonbot </h1>
+A general-purpose Discord bot with some cool features. <br />
 Built on top of <a href="https://github.com/Quahu/Disqord">Disqord</a> and <a href="https://github.com/Quahu/Qmmands">Qmmands</a>. <br /> 
 
 <br />
 <br />
   
-| Prefix | Developer |  Library | Version | Platform |
-|-|-|-|-|-|
-| a. | [Abyssal](https://github.com/jacksonrakena) | [Disqord](https://github.com/Quahu/Disqord)  | 19 | .NET 5 |
+| Developer                                          |Library| Version | Platform |
+|----------------------------------------------------|-----|---------|----------|
+| [@jacksonrakena](https://github.com/jacksonrakena) |[Disqord](https://github.com/Quahu/Disqord)| 20      | .NET 7   |
+
 
 <br />
 </div>
@@ -23,7 +24,6 @@ Built on top of <a href="https://github.com/Quahu/Disqord">Disqord</a> and <a hr
 - DnD-style dice rolling & RNG, allowing users to roll custom dice (i.e. `d20+d48`)
 - Profile system with custom colours, descriptions, and earnable badges
 - (Coming soon) Experience system, with points gained through sending messages and engaging with servers
-- (Coming soon) [Web portal](https://bot.abyssal.gg) with control panel and statistics
 - (Coming soon) Powerful moderation functions, including massbans, warns, autoban, and customisable punishment thresholds 
 
   
@@ -32,8 +32,8 @@ Built on top of <a href="https://github.com/Quahu/Disqord">Disqord</a> and <a hr
 - A [Discord bot application](https://discordapp.com/developers/applications/) with registered user and token (app -> Bot -> Add Bot)
 - .NET 5.0 Runtime (SDK for building) or newer
 - PostgreSQL (tested with 13.1)
-    - Username `abyss`, password `abyss123`, empty `abyss` database (databases are migrated automatically) [configurable]
+    - Modify the connection string in `jacksonbot.appsettings.example.json` to your database
 
-You can use the `tools/abyss.service` file to run Abyss as a `systemd` service. 
+You can use the `tools/jacksonbot.service` file to run Jacksonbot as a `systemd` service. 
 
-Copyright &copy; 2015-2022 Abyssal under the MIT License, available at [the LICENSE file.](LICENSE.md)  
+Copyright &copy; 2015-2022 jacksonrakena under the MIT License, available at [the LICENSE file.](LICENSE.md)  
