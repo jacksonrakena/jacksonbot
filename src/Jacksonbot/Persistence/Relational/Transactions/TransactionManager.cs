@@ -8,7 +8,7 @@ public class TransactionManager
     public const ulong SystemAccountId = 0;
     public const decimal SystemAccountBalance = -1;
     private readonly BotDatabaseContext _context;
-        
+
     public TransactionManager(BotDatabaseContext context)
     {
         _context = context;
@@ -94,14 +94,14 @@ public class TransactionManager
     private async Task<bool> ProcessTransactionAsync(Transaction transaction)
     {
         if (!await ValidateTransactionAsync(transaction)) return false;
-        
+
         // Subtract from payer
         if (!transaction.IsFromSystem)
         {
             var account = await _context.GetUserAccountAsync(transaction.PayerId);
             account.Coins -= transaction.Amount;
         }
-            
+
         // Add to payee
         if (!transaction.IsToSystem)
         {

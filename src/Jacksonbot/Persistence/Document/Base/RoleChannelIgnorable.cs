@@ -6,7 +6,7 @@ public abstract class RoleChannelIgnorable : JsonEnabledState
 {
     public List<ulong> IgnoredRoles { get; set; } = new();
     public List<ulong> IgnoredChannels { get; set; } = new();
-        
+
     public IEnumerable<CachedTextChannel> GetIgnoredChannels(CachedGuild guild)
     {
         return IgnoredChannels.Select(channelUlong => guild.GetChannel(channelUlong) as CachedTextChannel);

@@ -31,7 +31,7 @@ public class CoreModule : BotModuleBase
             .WithAuthor("Jacksonbot", Context.Bot.CurrentUser.GetAvatarUrl())
             .WithDescription(
                 $"Jacksonbot is a bot made by <@255950165200994307> for fun.")
-            .AddField("Owner",$"**{app.Owner}**", true)
+            .AddField("Owner", $"**{app.Owner}**", true)
             .AddField("Version", $"{version.Major}.{version.Minor}.{version.Build}", true)
             .AddField("Started", Markdown.Timestamp(Process.GetCurrentProcess().StartTime, Constants.TIMESTAMP_FORMAT), true)
             .AddField("Cached servers", Context.Bot.GetGuilds().Count, true)

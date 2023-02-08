@@ -5,7 +5,7 @@ public class BlackjackData
     public static int CalculateCardValue(BlackjackCard card)
     {
         if (card is BlackjackCard.King or BlackjackCard.Queen or BlackjackCard.Jack) return 10;
-        return (int) card;
+        return (int)card;
     }
 
     public static int CalculateValueOfHand(List<BlackjackCard> hand)
@@ -36,7 +36,7 @@ public class BlackjackData
         for (var i = 0; i < types.Length; i++)
         {
             var c = (int)types.GetValue(i);
-            result.Add((BlackjackCard) c, 0x1F0C0+c);
+            result.Add((BlackjackCard)c, 0x1F0C0 + c);
         }
 
         return result;

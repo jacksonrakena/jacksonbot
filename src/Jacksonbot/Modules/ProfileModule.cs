@@ -22,7 +22,7 @@ public class ProfileModule : BotModuleBase
         await Database.SaveChangesAsync();
         return Response("Changed your color to " + color.ToString() + ".");
     }
-        
+
     [SlashCommand("bio")]
     [Description("Change your profile bio.")]
     public async Task<DiscordInteractionResponseCommandResult> Description(string bio)
@@ -32,7 +32,7 @@ public class ProfileModule : BotModuleBase
         await Database.SaveChangesAsync();
         return Response("Changed your description.");
     }
-        
+
     [SlashCommand("view")]
     [Description("Look at your profile.")]
     public async Task<DiscordInteractionResponseCommandResult> Profile(IUser? member = null)
@@ -44,14 +44,14 @@ public class ProfileModule : BotModuleBase
             .WithColor(profile.Color ?? Color.Pink)
             .WithAuthor(member)
             .WithThumbnailUrl(member.GetAvatarUrl(size: 1024));
-        embed.WithDescription(string.IsNullOrWhiteSpace(profile.Description) 
-            ? Context.Author.Id == member.Id ? "You haven't set your bio yet. Try `a.profile bio <bio>`." : "This user hasn't sent their bio yet." 
+        embed.WithDescription(string.IsNullOrWhiteSpace(profile.Description)
+            ? Context.Author.Id == member.Id ? "You haven't set your bio yet. Try `a.profile bio <bio>`." : "This user hasn't sent their bio yet."
             : profile.Description);
 
         embed.AddField(":coin: Coins", profile.Coins, true);
         if (profile.FirstInteraction != null)
             embed.AddField("First interaction", Markdown.Timestamp(profile.FirstInteraction.Value, Constants.TIMESTAMP_FORMAT));
-            
+
         if (profile.LatestInteraction != null)
             embed.AddField("Latest interaction", Markdown.Timestamp(profile.LatestInteraction.Value, Constants.TIMESTAMP_FORMAT));
 
@@ -75,14 +75,14 @@ public class User_ProfileModule : BotModuleBase
             .WithColor(profile.Color ?? Color.Pink)
             .WithAuthor(member)
             .WithThumbnailUrl(member.GetAvatarUrl(size: 1024));
-        embed.WithDescription(string.IsNullOrWhiteSpace(profile.Description) 
-            ? Context.Author.Id == member.Id ? "You haven't set your bio yet. Try `a.profile bio <bio>`." : "This user hasn't sent their bio yet." 
+        embed.WithDescription(string.IsNullOrWhiteSpace(profile.Description)
+            ? Context.Author.Id == member.Id ? "You haven't set your bio yet. Try `a.profile bio <bio>`." : "This user hasn't sent their bio yet."
             : profile.Description);
 
         embed.AddField(":coin: Coins", profile.Coins, true);
         if (profile.FirstInteraction != null)
             embed.AddField("First interaction", Markdown.Timestamp(profile.FirstInteraction.Value, Constants.TIMESTAMP_FORMAT));
-            
+
         if (profile.LatestInteraction != null)
             embed.AddField("Latest interaction", Markdown.Timestamp(profile.LatestInteraction.Value, Constants.TIMESTAMP_FORMAT));
 

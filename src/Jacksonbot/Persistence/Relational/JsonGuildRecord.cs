@@ -10,7 +10,7 @@ public class JsonGuildRecord<TData> : RelationalRootObject where TData : new()
 
     [Column(TypeName = "jsonb")] public TData Data { get; set; } = new();
 }
-    
+
 public class DocumentRecord<TPrimaryKey, TDocumentType> : RelationalRootObject where TDocumentType : new()
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]

@@ -58,7 +58,7 @@ public class UserModule : BotModuleBase
             .WithImageUrl(avatar)
             .WithDescription($"{pretext}{sizeString}\n{formatString}"));
     }
-        
+
     [SlashCommand("hex")]
     [Description("Parses a color.")]
     public async Task<DiscordInteractionResponseCommandResult> Command_ReadColourAsync([Name("Color")] Color color)

@@ -9,7 +9,7 @@ namespace Jacksonbot.Interactions.Slots;
 public class SlotsGame : SinglePlayerGameBase
 {
     private readonly decimal _bet;
-    public SlotsGame(decimal bet, IDiscordApplicationCommandContext context) : base(context, 
+    public SlotsGame(decimal bet, IDiscordApplicationCommandContext context) : base(context,
         (e) => e.WithEmbeds(
             new LocalEmbed()
                 .WithTitle("Slots")
@@ -55,7 +55,7 @@ public class SlotsGame : SinglePlayerGameBase
         var distinctSlotResults = results.Distinct().ToArray();
         if (distinctSlotResults.Length == 2)
         {
-            await _transactions.CreateTransactionFromSystem(_bet * (decimal) 1, PlayerId, "Slots (two symbols)",
+            await _transactions.CreateTransactionFromSystem(_bet * (decimal)1, PlayerId, "Slots (two symbols)",
                 TransactionType.SlotsWin);
             MessageTemplate = e =>
             {

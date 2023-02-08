@@ -18,7 +18,7 @@ public abstract class BotGeneralViewBase : ViewBase
 
     protected TransactionManager _transactions => _transactionsLazy ??= _services.GetRequiredService<TransactionManager>();
     private TransactionManager? _transactionsLazy;
-        
+
     protected BotDatabaseContext _database => _databaseLazy ??= _services.GetRequiredService<BotDatabaseContext>();
     private BotDatabaseContext? _databaseLazy;
 

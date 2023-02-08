@@ -13,7 +13,7 @@ public class ReminderService
     private readonly IActionScheduler _actionScheduler;
     private readonly IServiceProvider _services;
     private readonly DiscordBot _bot;
-    
+
     public ReminderService(IActionScheduler actionScheduler, IServiceProvider services, DiscordBot bot)
     {
         _actionScheduler = actionScheduler;
@@ -40,7 +40,7 @@ public class ReminderService
         ScheduleReminder(reminder);
         return reminder;
     }
-        
+
     public void ScheduleReminder(Reminder reminder)
     {
         var due = reminder.DueAt;
@@ -55,8 +55,8 @@ public class ReminderService
                 .WithColor(Constants.Theme)
                 .WithTitle("Reminder")
                 .WithDescription(reminder.Text + "\n\n" + $"This reminder was set at {Markdown.Timestamp(reminder.CreatedAt, Markdown.TimestampFormat.ShortDateTime)}.");
-                
-            await _bot.SendMessageAsync(reminder.ChannelId,  
+
+            await _bot.SendMessageAsync(reminder.ChannelId,
                 new LocalMessage()
                 .WithContent("<@" + reminder.CreatorId + ">")
                 .WithEmbeds(embed)

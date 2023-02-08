@@ -39,12 +39,12 @@ public class EvaluationHelper
 
     public static object ReadValue(FieldInfo prop, object obj)
     {
-        return ReadValue((object) prop, obj);
+        return ReadValue((object)prop, obj);
     }
 
     public static object ReadValue(PropertyInfo prop, object obj)
     {
-        return ReadValue((object) prop, obj);
+        return ReadValue((object)prop, obj);
     }
 
     private static string ReadValue(object prop, object obj)
@@ -69,7 +69,8 @@ public class EvaluationHelper
             {
                 var enu = e.Cast<object>().ToList();
                 return $"{enu.Count} [{enu.GetType().Name}]";
-            } else
+            }
+            else
             {
                 return value + $" [{value.GetType().Name}]";
             }

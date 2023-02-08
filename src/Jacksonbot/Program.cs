@@ -50,7 +50,7 @@ var host = new HostBuilder()
         bot.Token = ctx.Configuration.GetSection("Secrets").GetSection("Discord")["Token"];
         bot.Intents = GatewayIntents.MessageContent;
         bot.Prefixes = new[] { "ad." };
-        
+
     })
     .Build();
 

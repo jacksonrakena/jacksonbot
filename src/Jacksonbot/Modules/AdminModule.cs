@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using Disqord;
 using Disqord.Bot.Commands;
+using Disqord.Bot.Commands.Application;
 using Disqord.Extensions.Interactivity.Menus.Paged;
 using Disqord.Gateway;
 using HumanDateParser;
@@ -19,8 +20,8 @@ namespace Jacksonbot.Modules;
 
 public enum EvaluationLanguage
 {
-    CS,
-    Py
+    CSharp,
+    Python,
 }
 [Name("Admin")]
 public class AdminModule : BotModuleBase
@@ -30,7 +31,7 @@ public class AdminModule : BotModuleBase
     {
         Transactions = manager;
     }
-    
+
     //[SlashCommand("create")]
     public async Task<IDiscordCommandResult> Give(IMember member, decimal value)
     {
@@ -45,11 +46,11 @@ public class AdminModule : BotModuleBase
     {
         var transactionList = (await Transactions.GetLastTransactions(25, member?.Id))
             .Chunk(5)
-            .Select(d => new Page().WithContent(string.Join("\n", d.Select(t => 
+            .Select(d => new Page().WithContent(string.Join("\n", d.Select(t =>
                 $"[**{Markdown.Timestamp(t.Date, Constants.TIMESTAMP_FORMAT)}**] ({t.Type}) {(t.IsFromSystem ? "SYSTEM" : t.PayerId)} ({t.PayerBalanceBeforeTransaction}->{t.PayerBalanceAfterTransaction}) -> {(t.IsToSystem ? "SYSTEM" : t.PayeeId)} ({t.PayeeBalanceBeforeTransaction}->{t.PayeeBalanceAfterTransaction}) :coin: {t.Amount} - {t.Message} - {t.Source}"))));
         return Pages(transactionList);
     }
-        
+
     //[SlashCommand("timeinspect")]
     [Description("Provides information about a relative date.")]
     public async Task<IDiscordCommandResult> InspectTimeAsync(string time)
@@ -74,19 +75,19 @@ public class AdminModule : BotModuleBase
                      $"{string.Join("\n", Bot.GetGuilds().Values.Select(g => $"- {g.Name} ({g.MemberCount})"))}");
     }
 
-    //[SlashCommand("eval")]
-    [Description("Evaluates a piece of C# code.")]
+    [SlashCommand("eval")]
+    [Description("[admin only] Evaluates a piece of C#, Python, or Ruby code.")]
     [RequireAuthor(255950165200994307, Group = "Admin")]
     [RequireAuthor(952380738802688020, Group = "Admin")]
     public async Task<IDiscordCommandResult> Command_EvaluateAsync(
-        [Name("Language")] [Description("The language type.")] EvaluationLanguage lang,
+        [Name("Language")][Description("The language type.")] EvaluationLanguage lang,
         [Name("Code")] [Description("The code to execute.")] [Remainder]
         string script)
     {
         return lang switch
         {
-            EvaluationLanguage.Py => await EvaluatePythonAsync(new EvaluationHelper(Context), script),
-            EvaluationLanguage.CS => await EvaluateCsAsync(new EvaluationHelper(Context), script),
+            EvaluationLanguage.Python => await EvaluatePythonAsync(new EvaluationHelper(Context), script),
+            EvaluationLanguage.CSharp => await EvaluateCsAsync(new EvaluationHelper(Context), script),
             _ => throw new ArgumentOutOfRangeException(nameof(lang), lang, null)
         };
     }
@@ -94,7 +95,7 @@ public class AdminModule : BotModuleBase
     private async Task<IDiscordCommandResult> EvaluatePythonAsync(EvaluationHelper context, string script)
     {
         var engine = Python.CreateEngine();
-        var scope =  engine.CreateScope();
+        var scope = engine.CreateScope();
         scope.SetVariable("context", context);
         var source = engine.CreateScriptSourceFromString(script);
         CompiledCode compiled;
@@ -107,7 +108,7 @@ public class AdminModule : BotModuleBase
             compilationTime = (DateTimeOffset.Now - start).TotalMilliseconds;
         }
         catch (Exception e)
-        {    
+        {
             var embed = new LocalEmbed
             {
                 Title = "Scripting Result",
@@ -117,13 +118,13 @@ public class AdminModule : BotModuleBase
             embed.AddField("Exception", e.Message);
             return Response(embed);
         }
-            
+
         try
         {
             var start = DateTimeOffset.Now;
             var result = compiled.Execute(scope);
             runtimeTime = (DateTimeOffset.Now - start).TotalMilliseconds;
-            var output = (string) result.ToString();
+            var output = (string)result.ToString();
             try
             {
                 output = JsonSerializer.Serialize(result);
@@ -139,7 +140,7 @@ public class AdminModule : BotModuleBase
                 .WithFooter($"Compilation: {compilationTime}ms | Execution: {runtimeTime}ms"));
         }
         catch (Exception e)
-        {    
+        {
             var embed = new LocalEmbed
             {
                 Title = "Scripting Result",
@@ -150,7 +151,7 @@ public class AdminModule : BotModuleBase
             return Response(embed);
         }
     }
-        
+
     private async Task<IDiscordCommandResult> EvaluateCsAsync(EvaluationHelper context, string script)
     {
         var props = context;
@@ -258,7 +259,7 @@ public class AdminModule : BotModuleBase
             embed.AddField("Exception", $"``{result.Exception.GetType().Name}``: ``{result.Exception.Message}``");
         return Response(embed);
     }
-        
+
     private static string FormatEnumMember(Enum value)
     {
         return value.ToString().Replace(value.GetType().Name + ".", "");

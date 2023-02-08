@@ -66,7 +66,7 @@ public class EconomyModule : BotModuleBase
             })
         );
     }
-        
+
     [SlashCommand("send")]
     [Description("Send some of your coins to someone else.")]
     public async Task<IDiscordCommandResult> SendMoneyAsync(IMember user, decimal amount)
@@ -74,8 +74,8 @@ public class EconomyModule : BotModuleBase
 
         var txn = await Transactions.CreateTransactionBetweenAccounts(amount, user.Id, Context.Author.Id,
             Context.Author.ToString());
-        return Response(txn == null ? 
-            "You don't have enough money!" : 
+        return Response(txn == null ?
+            "You don't have enough money!" :
             $"You sent {amount} :coin: to {user.Mention}.");
     }
     [SlashCommand("top")]
@@ -92,7 +92,7 @@ public class EconomyModule : BotModuleBase
             .WithDescription(string.Join("\n", users.Select((c, pos) => $"{pos + 1}) **{c?.Name}** - {players[pos].Coins} coins")))
         );
     }
-        
+
     [SlashCommand("coins")]
     [Description("Shows how many coins you have.")]
     public async Task<IDiscordCommandResult> CoinsAsync()

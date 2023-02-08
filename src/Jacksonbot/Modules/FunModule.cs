@@ -19,7 +19,7 @@ public partial class FunModule : BotModuleBase
     {
         return View(new InfinitePageView(new CatPageProvider(this), e => { }));
     }
-        
+
     public class DiceRollView : ViewBase
     {
         private string _dice;
@@ -28,13 +28,13 @@ public partial class FunModule : BotModuleBase
         {
             return $"I rolled {DiceExpression.Evaluate(data)} on a **{data}** die.";
         }
-            
+
         public DiceRollView(string dice) : base(e => e.WithContent(Evaluate(dice)))
         {
             _dice = dice;
         }
-            
-        [Button(Label="Re-roll", Style = LocalButtonComponentStyle.Success)]
+
+        [Button(Label = "Re-roll", Style = LocalButtonComponentStyle.Success)]
         public ValueTask Reroll(ButtonEventArgs e)
         {
             MessageTemplate = e => e.WithContent(Evaluate(_dice));
@@ -94,7 +94,7 @@ public partial class FunModule : BotModuleBase
     //
     //     return Response(stringBuilder.ToString());
     // }
-        
+
     [SlashCommand("roll")]
     [Description("Rolls a dice of the supplied size.")]
     public async Task<IDiscordCommandResult> Command_DiceRollAsync(
@@ -110,7 +110,7 @@ public partial class FunModule : BotModuleBase
             }
 
             return View(new DiceRollView("d" + dice));
-        } 
+        }
 
         try
         {
@@ -144,6 +144,6 @@ public class CatPageProvider : InfinitePageProvider
             .WithTitle(fact ?? "")
             .WithColor(Constants.Theme)
             .WithImageUrl(url)
-        ); 
+        );
     }
 }

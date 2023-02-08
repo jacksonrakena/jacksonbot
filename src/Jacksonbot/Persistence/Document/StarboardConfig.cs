@@ -3,7 +3,7 @@ using Jacksonbot.Persistence.Document.Base;
 
 namespace Jacksonbot.Persistence.Document;
 
-public class StarboardConfig: RoleChannelIgnorable
+public class StarboardConfig : RoleChannelIgnorable
 {
     public ulong StarboardChannel { get; set; } = 0;
 

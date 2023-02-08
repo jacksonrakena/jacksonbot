@@ -9,14 +9,14 @@ public class BlackjackGameRecord : RelationalRootObject
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
-        
+
     public ulong PlayerId { get; set; }
     public DateTimeOffset DateGameFinish { get; set; }
-        
+
     public ulong ChannelId { get; set; }
-        
+
     public BlackjackGameResult Result { get; set; }
-        
+
     public decimal PlayerInitialBet { get; set; }
     public decimal PlayerFinalBet { get; set; }
     public decimal Adjustment { get; set; }

@@ -15,7 +15,7 @@ public class TriviaData
             .Prepend(new LocalSelectionComponentOption("All", "-1"))
             .ToList();
     }
-        
+
     public static async Task<List<TriviaQuestion>> GetQuestionsAsync(string category = null)
     {
         var http = new HttpClient();

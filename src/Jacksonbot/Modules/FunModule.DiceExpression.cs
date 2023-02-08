@@ -8,7 +8,7 @@ public partial class FunModule
     {
         private static readonly Regex NumberToken = new Regex("^[0-9]+$");
         private static readonly Regex DiceRollToken = new Regex("^([0-9]*)d([0-9]+|%)$");
-            
+
         public static readonly DiceExpression Zero = new DiceExpression("0");
 
         private readonly List<KeyValuePair<int, IDiceExpressionNode>> _nodes =
@@ -67,8 +67,8 @@ public partial class FunModule
             // Sort the nodes in an aesthetically-pleasing fashion.
             var diceRollNodes = _nodes.Where(pair => pair.Value.GetType() == typeof(DiceRollNode))
                 .OrderByDescending(node => node.Key)
-                .ThenByDescending(node => ((DiceRollNode) node.Value).DiceType)
-                .ThenByDescending(node => ((DiceRollNode) node.Value).NumberOfDice).ToList();
+                .ThenByDescending(node => ((DiceRollNode)node.Value).DiceType)
+                .ThenByDescending(node => ((DiceRollNode)node.Value).NumberOfDice).ToList();
             var numberNodes = _nodes.Where(pair => pair.Value.GetType() == typeof(NumberNode))
                 .OrderByDescending(node => node.Key)
                 .ThenByDescending(node => node.Value.Evaluate());
@@ -77,17 +77,17 @@ public partial class FunModule
             if (options == DiceExpressionOptions.SimplifyStringValue)
             {
                 var number = numberNodes.Sum(pair => pair.Key * pair.Value.Evaluate());
-                var diceTypes = diceRollNodes.Select(node => ((DiceRollNode) node.Value).DiceType).Distinct();
+                var diceTypes = diceRollNodes.Select(node => ((DiceRollNode)node.Value).DiceType).Distinct();
                 var normalizedDiceRollNodes = from type in diceTypes
-                    let numDiceOfThisType = diceRollNodes
-                        .Where(node => ((DiceRollNode) node.Value).DiceType == type).Sum(node =>
-                            node.Key * ((DiceRollNode) node.Value).NumberOfDice)
-                    where numDiceOfThisType != 0
-                    let multiplicand = numDiceOfThisType > 0 ? +1 : -1
-                    let absNumDice = Math.Abs(numDiceOfThisType)
-                    orderby multiplicand descending, type descending
-                    select new KeyValuePair<int, IDiceExpressionNode>(multiplicand,
-                        new DiceRollNode(absNumDice, type));
+                                              let numDiceOfThisType = diceRollNodes
+                                                  .Where(node => ((DiceRollNode)node.Value).DiceType == type).Sum(node =>
+                                                     node.Key * ((DiceRollNode)node.Value).NumberOfDice)
+                                              where numDiceOfThisType != 0
+                                              let multiplicand = numDiceOfThisType > 0 ? +1 : -1
+                                              let absNumDice = Math.Abs(numDiceOfThisType)
+                                              orderby multiplicand descending, type descending
+                                              select new KeyValuePair<int, IDiceExpressionNode>(multiplicand,
+                                                  new DiceRollNode(absNumDice, type));
 
                 _nodes = (number == 0
                         ? normalizedDiceRollNodes
@@ -103,7 +103,7 @@ public partial class FunModule
                 _nodes = diceRollNodes.Concat(numberNodes).ToList();
             }
         }
-            
+
         public enum DiceExpressionOptions
         {
             None,

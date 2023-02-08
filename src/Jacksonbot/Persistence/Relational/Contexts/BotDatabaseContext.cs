@@ -32,7 +32,7 @@ public static class DbSetExtensions
         var context = dbSet.GetService<BotDatabaseContext>();
         var rowResult = await dbSet.FirstOrDefaultAsync(x => x.Id.Equals(primaryKey));
         if (rowResult != null) return rowResult;
-        rowResult = new DocumentRecord<TIdentifier, TData>() {Id = primaryKey};
+        rowResult = new DocumentRecord<TIdentifier, TData>() { Id = primaryKey };
         if (rowResult.Data is IAsyncCreatable creatable)
             await creatable.OnCreatingAsync(context.Services);
         dbSet.Add(rowResult);
@@ -55,7 +55,7 @@ public static class DbSetExtensions
     }
 }
 
-public class BotDatabaseContext: DbContext
+public class BotDatabaseContext : DbContext
 {
     public DbSet<TriviaRecord> TriviaRecords { get; set; }
     public DbSet<DocumentRecord<ulong, GuildConfig>> GuildConfigurations { get; set; }
@@ -63,9 +63,9 @@ public class BotDatabaseContext: DbContext
     public DbSet<BlackjackGameRecord> BlackjackGames { get; set; }
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<Reminder> Reminders { get; set; }
-        
+
     public IServiceProvider Services { get; }
-        
+
     private readonly IConfiguration _configuration;
 
     public BotDatabaseContext(DbContextOptions<BotDatabaseContext> options, IConfiguration config, IServiceProvider provider) : base(options)
@@ -86,7 +86,7 @@ public class BotDatabaseContext: DbContext
     {
         var record = await TriviaRecords.Include(c => c.CategoryVoteRecords).FirstOrDefaultAsync(u => u.UserId == userId);
         if (record != null) return record;
-            
+
         record = new TriviaRecord
         {
             CorrectAnswers = 0,
@@ -99,7 +99,7 @@ public class BotDatabaseContext: DbContext
         await SaveChangesAsync();
         return record;
     }
-        
+
 
     public Task<GuildConfig> GetGuildConfigAsync(ulong guildId)
         => GuildConfigurations.GetOrCreateObjectAsync(guildId);
@@ -109,10 +109,10 @@ public class BotDatabaseContext: DbContext
         var obj = await UserAccounts.FindAsync(userId);
         if (obj != null) return obj;
 
-        obj = new UserAccount {Id = userId};
+        obj = new UserAccount { Id = userId };
         UserAccounts.Add(obj);
         await SaveChangesAsync();
-            
+
         return obj;
     }
 }

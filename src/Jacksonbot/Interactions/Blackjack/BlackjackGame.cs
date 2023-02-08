@@ -9,21 +9,21 @@ namespace Jacksonbot.Interactions.Blackjack;
 public class BlackjackGame : SinglePlayerGameBase
 {
     private readonly BlackjackSharedDeck _deck = new();
-        
+
     private readonly List<BlackjackCard> _playerCards = new();
     private readonly List<BlackjackCard> _dealerCards = new();
-        
+
     private readonly decimal _playerInitialBet;
     private decimal _playerCurrentBet;
 
     private int DealerValue =>
         BlackjackData.CalculateValueOfHand(_dealerCards);
     private int PlayerValue => BlackjackData.CalculateValueOfHand(_playerCards);
-        
+
     private bool _showingSecondCard;
     private bool _playerDoubleDowned;
-        
-    public BlackjackGame(decimal bet, IDiscordCommandContext context) : base(context, 
+
+    public BlackjackGame(decimal bet, IDiscordCommandContext context) : base(context,
         e => e.WithEmbeds(
                 new LocalEmbed()
                     .WithTitle("Blackjack")
@@ -85,7 +85,7 @@ public class BlackjackGame : SinglePlayerGameBase
         switch (result)
         {
             case BlackjackGameResult.Push:
-                UpdateMessage("Push!" , "You and the dealer both have 21. Bet returned.");
+                UpdateMessage("Push!", "You and the dealer both have 21. Bet returned.");
                 break;
             case BlackjackGameResult.DealerWinCount:
                 UpdateMessage(
@@ -101,10 +101,10 @@ public class BlackjackGame : SinglePlayerGameBase
             case BlackjackGameResult.PlayerBust:
                 UpdateMessage($"You busted on {PlayerValue}!", $"You lose {_playerCurrentBet} :coin: coins.");
                 //TemplateMessage.Embeds[0].Color = Color.Red;
-                userAccountModification = 0-_playerCurrentBet;
+                userAccountModification = 0 - _playerCurrentBet;
                 break;
             case BlackjackGameResult.DealerBust:
-                UpdateMessage($"Dealer busted on {DealerValue}!" ,$"You win {_playerCurrentBet} :coin: coins.");
+                UpdateMessage($"Dealer busted on {DealerValue}!", $"You win {_playerCurrentBet} :coin: coins.");
                 userAccountModification = 0 + _playerCurrentBet;
                 break;
             case BlackjackGameResult.DealerBlackjack:
@@ -113,7 +113,7 @@ public class BlackjackGame : SinglePlayerGameBase
                 //TemplateMessage.Embeds[0].Color = Color.Red;
                 break;
             case BlackjackGameResult.PlayerBlackjack:
-                UpdateMessage($"Blackjack with {_playerCards.Count} cards!",$"You win {_playerCurrentBet} :coin: coins.");
+                UpdateMessage($"Blackjack with {_playerCards.Count} cards!", $"You win {_playerCurrentBet} :coin: coins.");
                 userAccountModification = +_playerCurrentBet;
                 break;
             case BlackjackGameResult.DealerBlackjackNatural:
@@ -123,7 +123,7 @@ public class BlackjackGame : SinglePlayerGameBase
                 break;
             case BlackjackGameResult.PlayerBlackjackNatural:
                 UpdateMessage($"Natural blackjack!", $"You win {_playerCurrentBet + (_playerCurrentBet * (decimal)1.5)} :coin: coins.");
-                userAccountModification = +_playerCurrentBet + _playerCurrentBet * (decimal) 1.5;
+                userAccountModification = +_playerCurrentBet + _playerCurrentBet * (decimal)1.5;
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(result), result, null);
@@ -145,7 +145,7 @@ public class BlackjackGame : SinglePlayerGameBase
             PlayerInitialBet = _playerInitialBet,
             Adjustment = userAccountModification,
             DidPlayerDoubleDown = _playerDoubleDowned,
-            PlayerBalanceAfterGame = account.Coins+userAccountModification,
+            PlayerBalanceAfterGame = account.Coins + userAccountModification,
             DateGameFinish = DateTimeOffset.Now,
             PlayerBalanceBeforeGame = initialCoins
         };
@@ -164,7 +164,7 @@ public class BlackjackGame : SinglePlayerGameBase
 
         _database.BlackjackGames.Add(record);
         await _database.SaveChangesAsync();
-            
+
         AddComponent(new ButtonViewComponent(async e =>
         {
             if (!await _transactions.DoesEntityHaveSufficientBalance(PlayerId, _playerInitialBet))
@@ -209,38 +209,38 @@ public class BlackjackGame : SinglePlayerGameBase
                     await FinishGame(BlackjackGameResult.DealerBust);
                     return;
                 case 21:
-                {
-                    if (PlayerValue == 21)
                     {
-                        await FinishGame(BlackjackGameResult.Push);
-                    }
+                        if (PlayerValue == 21)
+                        {
+                            await FinishGame(BlackjackGameResult.Push);
+                        }
 
-                    await FinishGame(_dealerCards.Count == 2
-                        ? BlackjackGameResult.DealerBlackjackNatural
-                        : BlackjackGameResult.DealerBlackjack);
-                    return;
-                }
+                        await FinishGame(_dealerCards.Count == 2
+                            ? BlackjackGameResult.DealerBlackjackNatural
+                            : BlackjackGameResult.DealerBlackjack);
+                        return;
+                    }
                 case < 17:
                     _dealerCards.Add(_deck.DrawRandom());
                     await Recalculate();
                     return;
                 default:
-                {
-                    if (DealerValue > PlayerValue)
                     {
-                        await FinishGame(BlackjackGameResult.DealerWinCount);
-                        return;
-                    }
+                        if (DealerValue > PlayerValue)
+                        {
+                            await FinishGame(BlackjackGameResult.DealerWinCount);
+                            return;
+                        }
 
-                    if (DealerValue == PlayerValue)
-                    {
-                        await FinishGame(BlackjackGameResult.Push);
+                        if (DealerValue == PlayerValue)
+                        {
+                            await FinishGame(BlackjackGameResult.Push);
+                            return;
+                        }
+
+                        await FinishGame(BlackjackGameResult.PlayerWinCount);
                         return;
                     }
-                        
-                    await FinishGame(BlackjackGameResult.PlayerWinCount);
-                    return;
-                }
             }
         }
 
@@ -266,7 +266,7 @@ public class BlackjackGame : SinglePlayerGameBase
             Label = "Stand",
             Style = LocalButtonComponentStyle.Secondary
         });
-        if (_playerCards.Count == 2 && await _transactions.DoesEntityHaveSufficientBalance(PlayerId, _playerCurrentBet*2))
+        if (_playerCards.Count == 2 && await _transactions.DoesEntityHaveSufficientBalance(PlayerId, _playerCurrentBet * 2))
         {
             AddComponent(new ButtonViewComponent(DoubleDown)
             {
@@ -304,7 +304,7 @@ public class BlackjackGame : SinglePlayerGameBase
         var account = await _database.GetUserAccountAsync(PlayerId);
         if (account.Coins < _playerCurrentBet * 2)
         {
-            MessageTemplate = e => e.AddEmbed(new LocalEmbed().WithDescription( "You don't have enough money to double down."));
+            MessageTemplate = e => e.AddEmbed(new LocalEmbed().WithDescription("You don't have enough money to double down."));
             ClearComponents();
             return;
         }

@@ -24,7 +24,7 @@ public class SpotifyModule : BotModuleBase
     public async Task<DiscordInteractionResponseCommandResult> TrackAsync(
         [Name("Name")]
         [Description("The track to search for.")]
-        
+
         string trackQuery)
     {
         var tracks = await _spotify.SearchAsync(trackQuery, SearchType.Track).ConfigureAwait(false);
@@ -61,7 +61,7 @@ public class SpotifyModule : BotModuleBase
     public async Task<DiscordInteractionResponseCommandResult> Command_SearchAlbumAsync(
         [Name("Name")]
         [Description("The album name to search for.")]
-        
+
         string albumQuery)
     {
         SpotifyAlbum album;
@@ -97,11 +97,11 @@ public class SpotifyModule : BotModuleBase
             string text;
             if (track.Artists.Length == 1 && track.Artists[0].Id.ToString() == album.Artists[0].Id.ToString())
             {
-                text = $"{len+1} - {Markdown.Link(track.Name, track.Id.Url)} [{track.Duration:mm':'ss}]";
+                text = $"{len + 1} - {Markdown.Link(track.Name, track.Id.Url)} [{track.Duration:mm':'ss}]";
             }
             else
                 text =
-                    $"{len+1} - {Markdown.Link(track.Name, track.Id.Url)} by {track.Artists.Select(ab => ab.Name).Humanize()}";
+                    $"{len + 1} - {Markdown.Link(track.Name, track.Id.Url)} by {track.Artists.Select(ab => ab.Name).Humanize()}";
 
             return text;
         }).TakeWhile(d =>

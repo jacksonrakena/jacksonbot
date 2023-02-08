@@ -35,7 +35,7 @@ public class TriviaGame : SinglePlayerGameBase
             var record = await _database.GetTriviaRecordAsync(PlayerId);
             if (e.SelectedOptions[0].Value.HasValue)
             {
-                record.VoteForCategory(e.SelectedOptions[0].Value.Value, e.SelectedOptions[0].Label.Value);   
+                record.VoteForCategory(e.SelectedOptions[0].Value.Value, e.SelectedOptions[0].Label.Value);
                 await _database.SaveChangesAsync();
                 _selectedCategory = e.SelectedOptions[0].Value.Value;
                 if (_selectedCategory == "-1") _selectedCategory = null;
@@ -87,7 +87,7 @@ public class TriviaGame : SinglePlayerGameBase
         _correctOption = _currentQuestion.CorrectAnswer;
         _currentQuestionDifficulty = _currentQuestion.Difficulty;
         var random = new Random();
-        var allAnswers = new[] {_currentQuestion.CorrectAnswer, _currentQuestion.Answer1, _currentQuestion.Answer2};
+        var allAnswers = new[] { _currentQuestion.CorrectAnswer, _currentQuestion.Answer1, _currentQuestion.Answer2 };
         _optionA = allAnswers.Random(random);
         _optionB = allAnswers.Where(d => d != _optionA).ToArray().Random(random);
         _optionC = allAnswers.First(d => d != _optionA && d != _optionB);
@@ -105,7 +105,7 @@ public class TriviaGame : SinglePlayerGameBase
                     $"Question {_currentQuestionIndex + 1}/{_questions.Count} - Category: {_currentQuestion.Category} - Difficulty: {_currentQuestion.Difficulty}")
                 .WithDescription(content.ToString()));
         };
-            
+
         AddComponent(new ButtonViewComponent(SelectA) { Label = "A" });
         AddComponent(new ButtonViewComponent(SelectB) { Label = "B" });
         AddComponent(new ButtonViewComponent(SelectC) { Label = "C" });
@@ -140,12 +140,12 @@ public class TriviaGame : SinglePlayerGameBase
     {
         return ValidateOption(_optionA, e);
     }
-        
+
     public ValueTask SelectB(ButtonEventArgs e)
     {
         return ValidateOption(_optionB, e);
     }
-        
+
     public ValueTask SelectC(ButtonEventArgs e)
     {
         return ValidateOption(_optionC, e);

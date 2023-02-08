@@ -21,9 +21,9 @@ public sealed class ScriptingHelper
     public static readonly IReadOnlyList<string> Imports = new ReadOnlyCollection<string>(new List<string>
     {
         "System", "System.Math", "System.Linq", "System.Diagnostics", "System.Collections.Generic",
-        "Disqord", nameof(Jacksonbot), nameof(Jacksonbot.Modules), 
+        "Disqord", nameof(Jacksonbot), nameof(Jacksonbot)+"."+nameof(Modules),
         "Qmmands", "System.IO",
-        "Microsoft.Extensions.DependencyInjection", "System.Text", 
+        "Microsoft.Extensions.DependencyInjection", "System.Text",
         "System.Globalization", "System.Reflection"
     });
 

@@ -8,7 +8,7 @@ public class TriviaRecord : RelationalRootObject
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
     public ulong UserId { get; set; }
-        
+
     public int CorrectAnswers { get; set; }
     public int IncorrectAnswers { get; set; }
     public int TotalMatches { get; set; }
@@ -40,10 +40,10 @@ public class TriviaCategoryVoteRecord
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-        
+
     public TriviaRecord TriviaRecord { get; set; }
     public ulong TriviaRecordId { get; set; }
-        
+
     public string CategoryId { get; set; }
     public string CategoryName { get; set; }
     public int TimesPicked { get; set; }
