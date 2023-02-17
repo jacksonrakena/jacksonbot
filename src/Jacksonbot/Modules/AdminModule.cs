@@ -79,6 +79,7 @@ public class AdminModule : BotModuleBase
     [SlashCommand("eval")]
     [Description("[admin only] Evaluates a piece of C#, Python, or Ruby code.")]
     [RequireAuthor(255950165200994307, Group = "Admin")]
+    [RequireGuild]
     [RequireAuthor(952380738802688020, Group = "Admin")]
     public async Task<IDiscordCommandResult> Command_EvaluateAsync(
         [Name("Language")][Description("The language type.")] EvaluationLanguage lang,
@@ -88,8 +89,8 @@ public class AdminModule : BotModuleBase
         await Deferral();
         return lang switch
         {
-            EvaluationLanguage.Python => await EvaluatePythonAsync(new EvaluationHelper(Context), script),
-            EvaluationLanguage.CSharp => await EvaluateCsAsync(new EvaluationHelper(Context), script),
+            EvaluationLanguage.Python => await EvaluatePythonAsync(new EvaluationHelper(Context as IDiscordApplicationGuildCommandContext), script),
+            EvaluationLanguage.CSharp => await EvaluateCsAsync(new EvaluationHelper(Context as IDiscordApplicationGuildCommandContext), script),
             _ => throw new ArgumentOutOfRangeException(nameof(lang), lang, null)
         };
     }

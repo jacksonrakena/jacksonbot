@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Text;
 using Disqord.Bot;
+using Disqord.Bot.Commands.Application;
 using Disqord.Gateway;
 using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
@@ -10,11 +11,11 @@ namespace Jacksonbot.Helpers;
 
 public class EvaluationHelper
 {
-    public EvaluationHelper(ICommandContext context)
+    public EvaluationHelper(IDiscordApplicationGuildCommandContext context)
     {
         Context = context;
     }
-    public ICommandContext Context { get; }
+    public IDiscordApplicationGuildCommandContext Context { get; }
     public static string InspectMethods(object obj)
     {
         var type = obj as Type ?? obj.GetType();
