@@ -7,6 +7,7 @@ using Disqord.Bot.Commands.Application;
 using Disqord.Bot.Commands.Interaction;
 using Disqord.Extensions.Interactivity.Menus.Paged;
 using Disqord.Gateway;
+using Disqord.Rest;
 using HumanDateParser;
 using IronPython.Hosting;
 using Jacksonbot.Helpers;
