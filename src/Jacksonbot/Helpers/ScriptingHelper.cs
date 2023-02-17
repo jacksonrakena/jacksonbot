@@ -23,7 +23,7 @@ public sealed class ScriptingHelper
         "System", "System.Math", "System.Linq", "System.Diagnostics", "System.Collections.Generic",
         "Disqord", nameof(Jacksonbot), nameof(Jacksonbot)+"."+nameof(Modules),
         "Qmmands", "System.IO",
-        "Disqord.Gateway","Disqord.Rest"
+        "Disqord.Gateway","Disqord.Rest",
         "Microsoft.Extensions.DependencyInjection", "System.Text",
         "System.Globalization", "System.Reflection"
     });
