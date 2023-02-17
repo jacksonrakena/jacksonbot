@@ -4,6 +4,7 @@ using System.Text.Json;
 using Disqord;
 using Disqord.Bot.Commands;
 using Disqord.Bot.Commands.Application;
+using Disqord.Bot.Commands.Interaction;
 using Disqord.Extensions.Interactivity.Menus.Paged;
 using Disqord.Gateway;
 using HumanDateParser;
@@ -84,6 +85,7 @@ public class AdminModule : BotModuleBase
         [Name("Code")] [Description("The code to execute.")] [Remainder]
         string script)
     {
+        await Deferral();
         return lang switch
         {
             EvaluationLanguage.Python => await EvaluatePythonAsync(new EvaluationHelper(Context), script),
