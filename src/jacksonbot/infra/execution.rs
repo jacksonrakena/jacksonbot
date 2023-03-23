@@ -17,30 +17,34 @@ impl CommandContext {
         &self.interaction.data.options
     }
 
-    pub(crate) fn get_i64(&self, index: usize) -> &i64 {
-        let val = self.get_required(index);
-        if let CommandDataOptionValue::Integer(i) = val {
-            return i;
-        }
-        panic!("requested i64 for parameter {}, got: {:#?}", index, val);
+    pub(crate) fn get_i64(&self, index: usize) -> Option<i64> {
+        self.get_optional(index).and_then(|val| {
+            if let CommandDataOptionValue::Integer(i) = val {
+                Some(*i)
+            } else {
+                None
+            }
+        })
     }
 
-    pub(crate) fn get_string(&self, index: usize) -> &String {
-        let val = self.get_required(index);
-        if let CommandDataOptionValue::String(s) = val {
-            return s;
-        }
-        panic!("requested i64 for parameter {}, got: {:#?}", index, val);
+    pub(crate) fn get_string(&self, index: usize) -> Option<&String> {
+        self.get_optional(index).and_then(|val| {
+            if let CommandDataOptionValue::String(i) = val {
+                Some(i)
+            } else {
+                None
+            }
+        })
     }
 
     pub(crate) fn get_user(&self, index: usize) -> Option<&User> {
-        return match self.get_optional(index) {
-            Some(CommandDataOptionValue::User(user, member)) => {
-                return Some(user);
+        self.get_optional(index).and_then(|val| {
+            if let CommandDataOptionValue::User(u, m) = val {
+                Some(u)
+            } else {
+                None
             }
-            None => None,
-            _ => panic!("requested user for parameter {}", index),
-        };
+        })
     }
 
     pub(crate) fn get_member(&self, index: usize) -> Option<&PartialMember> {

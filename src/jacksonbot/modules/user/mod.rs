@@ -26,11 +26,8 @@ pub fn user_module() -> Module {
 }
 
 fn get_avatar(ctx: &mut CommandContext) {
-    let user = match ctx.get_user(0) {
-        Some(u) => u,
-        None => &ctx.interaction.user,
-    };
-    let avatar_url = make_avatar_url(user, &ImageFormat::Png, Some(4096));
+    let user = ctx.get_user(0).unwrap_or(&ctx.interaction.user);
+    let avatar_url = make_avatar_url(user, ImageFormat::Png, Some(4096));
     let sizes = make_sizes(&user);
     let title = format!("{}#{}", user.name, user.discriminator);
 
@@ -45,19 +42,19 @@ fn get_avatar(ctx: &mut CommandContext) {
 }
 fn make_sizes(user: &User) -> String {
     format!("**Sizes:** [128]({}) | [256]({}) | [1024]({}) | [2048]({}) \n **Formats:** [PNG]({}) | [JPG]({}) | [WEBP]({}) | [GIF]({})",
-            make_avatar_url(user, &ImageFormat::Png, Some(128)),
-            make_avatar_url(user, &ImageFormat::Png, Some(256)),
-            make_avatar_url(user, &ImageFormat::Png, Some(1024)),
-            make_avatar_url(user, &ImageFormat::Png, Some(2048)),
+        make_avatar_url(user, ImageFormat::Png, Some(128)),
+        make_avatar_url(user, ImageFormat::Png, Some(256)),
+        make_avatar_url(user, ImageFormat::Png, Some(1024)),
+        make_avatar_url(user, ImageFormat::Png, Some(2048)),
 
-            make_avatar_url(user, &ImageFormat::Png, Some(1024)),
-            make_avatar_url(user, &ImageFormat::Jpeg, Some(1024)),
-            make_avatar_url(user, &ImageFormat::WebP, Some(1024)),
-            make_avatar_url(user, &ImageFormat::Gif, Some(1024)),
+        make_avatar_url(user, ImageFormat::Png, Some(1024)),
+        make_avatar_url(user, ImageFormat::Jpeg, Some(1024)),
+        make_avatar_url(user, ImageFormat::WebP, Some(1024)),
+        make_avatar_url(user, ImageFormat::Gif, Some(1024)),
     )
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 enum ImageFormat {
     Png,
     Jpeg,
@@ -65,7 +62,7 @@ enum ImageFormat {
     Gif,
 }
 /// Generates an avatar URL for a user. Will check for an empty avatar, and will instead provide the URL for that user's default.
-fn make_avatar_url(user: &User, mut format: &ImageFormat, size: Option<u16>) -> String {
+fn make_avatar_url(user: &User, mut format: ImageFormat, size: Option<u16>) -> String {
     let size_str = match size {
         Some(t) => format!("?size={}", t),
         None => "".to_string(),
@@ -73,10 +70,10 @@ fn make_avatar_url(user: &User, mut format: &ImageFormat, size: Option<u16>) -> 
 
     if let Some(hash) = &user.avatar {
         if hash.starts_with("a_") {
-            format = &ImageFormat::Gif;
+            format = ImageFormat::Gif;
         }
-        if !hash.starts_with("a_") && *format == ImageFormat::Gif {
-            format = &ImageFormat::Png
+        if !hash.starts_with("a_") && format == ImageFormat::Gif {
+            format = ImageFormat::Png
         }
 
         return format!(

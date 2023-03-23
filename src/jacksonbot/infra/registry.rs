@@ -39,7 +39,7 @@ impl CommandRegistry {
         cmd.name(name).description(description);
         let exec = CommandExecutable {
             invoke,
-            manifest: Box::new(cmd),
+            manifest: cmd,
         };
         self.commands
             .insert(exec.manifest.0["name"].as_str().unwrap().to_string(), exec);
@@ -55,7 +55,7 @@ impl CommandRegistry {
         attributes(&mut cmd);
         let exec = CommandExecutable {
             invoke,
-            manifest: Box::new(cmd),
+            manifest: cmd,
         };
         self.commands
             .insert(exec.manifest.0["name"].as_str().unwrap().to_string(), exec);

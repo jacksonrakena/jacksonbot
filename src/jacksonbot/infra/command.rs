@@ -9,6 +9,6 @@ pub enum CommandResult {
 }
 
 pub struct CommandExecutable {
-    pub(crate) manifest: Box<CreateApplicationCommand>,
+    pub(crate) manifest: CreateApplicationCommand,
     pub(crate) invoke: CommandFunctionPtr,
 }

@@ -78,7 +78,7 @@ impl EventHandler for BotEventHandler {
                         .commands
                         .values()
                         .into_iter()
-                        .map(|c| *c.manifest.clone())
+                        .map(|c| c.manifest.clone())
                         .collect(),
                 );
                 cmds

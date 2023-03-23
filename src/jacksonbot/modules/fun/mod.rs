@@ -24,9 +24,9 @@ pub fn fun_module() -> Module {
 }
 
 fn roll_dice(ctx: &mut CommandContext) {
-    let i = ctx.get_i64(0);
-    let r: f32 = rand::thread_rng().gen();
-    let res = (*i as f32) * r;
+    let i = ctx.get_i64(0).unwrap();
+    let r: f32 = thread_rng().gen();
+    let res = (i as f32) * r;
     ctx.ok_embed(|emb| {
         emb.title("Dice roll")
             .description(format!("rolling {}", res.ceil()));
