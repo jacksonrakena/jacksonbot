@@ -1,8 +1,12 @@
+mod jacksonbot;
+
 use std::collections::HashMap;
 use std::env;
 use std::iter::Map;
 use std::sync::{Arc, Mutex};
+use serde_json::Value;
 
+use serenity::model::prelude::interaction::application_command::ApplicationCommandInteraction;
 use serenity::{
     async_trait,
     model::prelude::{
@@ -13,68 +17,124 @@ use serenity::{
     Client,
 };
 use serenity::builder::CreateApplicationCommand;
+use serenity::model::prelude::Embed;
+use serenity::model::prelude::interaction::InteractionResponseType;
+use crate::CommandResult::Text;
+use crate::jacksonbot::infra::module::Module;
+use crate::jacksonbot::modules::fun::fun_module;
 
 #[tokio::main]
 async fn main() {
-    let token = "NzkwMzkwNzE1ODg4NDM1MjMw.GNaDYo.nYfsQCCaI65fc2piyu2FMi8u8nUya6oEfacgDg";
+    let text = std::fs::read_to_string("jacksonbot.json").unwrap();
+    let config = serde_json::from_str::<Value>(&text).unwrap();
+    let token =  config["Secrets"]["Discord"]["Token"].as_str().unwrap();
 
-    let mut reg = CommandRegistry::new();
+    let mut handl = JacksonbotEventHandler { registry: CommandRegistry::new() };
+    handl.registry.register_simple("pingx", "Checks if I am not dead.", |cmd|{
+        cmd.response = Some(Text("hello! :crab:".to_string()));
+    });
+
+    handl.registry.register_module(fun_module());
+
     let mut client = Client::builder(token, GatewayIntents::empty())
-        .event_handler(JacksonbotEventHandler{registry: reg })
+        .event_handler(handl)
         .await
         .expect("error creating client");
 
     if let Err(why) = client.start().await {
         println!("Client error: {:?}", why);
     }
-
-    reg.register(make_cmd("ping", "Checks if I am not dead.", |cmd|{
-
-    }));
-
-    make_cmd("test","", |ctx| {
-
-    });
 }
 
-struct CommandExecContext;
+enum CommandResult {
+    Text(String),
+    Embed(Embed)
+}
+
+struct CommandExecContext {
+    interaction: ApplicationCommandInteraction,
+    response: Option<CommandResult>
+}
+impl CommandExecContext {
+    fn ok(&mut self, result: CommandResult) {
+        self.response = Some(result)
+    }
+}
 struct CommandExecutable {
     manifest: Box<CreateApplicationCommand>,
-    invoke: Box<dyn Fn(CommandExecContext) + Send + Sync>
-}
-fn make_cmd<F, D: ToString>(name: D, description: D, invoke: F) -> CommandExecutable where F: Fn(CommandExecContext) + Send + Sync{
-    let mut cmd = CreateApplicationCommand::default();
-    cmd.name(name).description(description);
-    let exec = CommandExecutable {
-        invoke: Box::new(invoke),
-        manifest: Box::new(cmd)
-    };
-    exec
+    invoke: Box<dyn Fn(&mut CommandExecContext) + Send + Sync>
 }
 
-struct CommandRegistry {
-    commands: HashMap<String, CommandExecutable>
+
+pub struct CommandRegistry {
+    commands: HashMap<String, CommandExecutable>,
+    modules: Vec<Module>
 }
 impl CommandRegistry {
     fn new() -> CommandRegistry {
-        let reg = CommandRegistry { commands: HashMap::<String,CommandExecutable>::new() };
+        let reg = CommandRegistry { commands: HashMap::<String,CommandExecutable>::new(), modules: vec!() };
         reg
     }
 
-    fn register(&mut self, exec: CommandExecutable) -> &CommandRegistry {
+    fn register_module(&mut self, module: Module) {
+        (module.registrant)(self);
+        self.modules.push(module);
+    }
+
+    fn register_simple<F, D: ToString>(&mut self, name: D, description: D, invoke: F) -> &CommandRegistry where F: Fn(&mut CommandExecContext) + Send + Sync + 'static  {
+        let mut cmd = CreateApplicationCommand::default();
+        cmd.name(name).description(description);
+        let exec = CommandExecutable {
+            invoke: Box::new(invoke),
+            manifest: Box::new(cmd)
+        };
         self.commands.insert(exec.manifest.0["name"].as_str().unwrap().to_string(), exec);
         self
     }
 
-    fn handle(&self, ctx:Context, interaction: Interaction) {
+    fn register_custom<E, F>(&mut self, attributes: E, invoke: F) -> &CommandRegistry where E: Fn(&mut CreateApplicationCommand), F: Fn(&mut CommandExecContext) + Send + Sync + 'static {
+        let mut cmd = CreateApplicationCommand::default();
+        attributes(&mut cmd);
+        let exec = CommandExecutable {
+            invoke: Box::new(invoke),
+            manifest: Box::new(cmd)
+        };
+        self.commands.insert(exec.manifest.0["name"].as_str().unwrap().to_string(), exec);
+        self
+    }
+
+    async fn handle(&self, ctx: Context, interaction: Interaction) {
         if let Interaction::ApplicationCommand(command) = interaction {
-            let name = command.data.name;
+            let name = command.data.name.clone();
+            println!("handling {}", name);
             match self.commands.get(name.as_str()) {
                 Some(exec) => {
-                    let command_ctx = CommandExecContext{};
-                    (exec.invoke)(command_ctx);
+                    let mut command_ctx = CommandExecContext{
+                        interaction: command,
+                        response: None
+                    };
+                    (exec.invoke)(&mut command_ctx);
+                    println!("executed {}", command_ctx.interaction.data.name);
+                    match command_ctx.response {
+                        None => {}
+                        Some(CommandResult::Text(text)) => {
+                            command_ctx.interaction.create_interaction_response(&ctx.http, |response| {
+                                response.kind(InteractionResponseType::ChannelMessageWithSource).interaction_response_data(|message| {
+                                    message.content(text.clone())
+                                })
+                            }).await;
+                            println!("sent '{}' as response to '{}'", text, command_ctx.interaction.data.name);
+                        }
+                        Some(CommandResult::Embed(embed)) => {}
+                    }
                 }
-                None => {}
+                None => {
+                    command.create_interaction_response(&ctx.http, |response|{
+                        response.kind(InteractionResponseType::ChannelMessageWithSource).interaction_response_data(|msg|{
+                            msg.content("unknown command :(".to_string())
+                        })
+                    }).await;
+                }
             }
         }
     }
@@ -93,9 +153,11 @@ impl EventHandler for JacksonbotEventHandler {
 
         let commands = guild_id
             .set_application_commands(&ctx.http, |cmds| {
-                cmds.create_application_command(|cmd| {
-                    cmd.name("ping").description("Checks if I'm alive.")
-                })
+                for entry in &self.registry.commands {
+                    // TODO don't clone this
+                    cmds.add_application_command(*entry.1.manifest.clone());
+                }
+                cmds
             })
             .await;
 
@@ -103,23 +165,6 @@ impl EventHandler for JacksonbotEventHandler {
     }
 
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
-        if let Interaction::ApplicationCommand(command) = interaction {
-            println!("RECV interaction {}", command.data.name);
-            let response = match command.data.name.as_str() {
-                "ping" => "Pong!".to_string(),
-                _ => "unknown command :(".to_string(),
-            };
-
-            if let Err(why) = command
-                .create_interaction_response(&ctx.http, |respo| {
-                    respo
-                        .kind(interaction::InteractionResponseType::ChannelMessageWithSource)
-                        .interaction_response_data(|msg| msg.content(response))
-                })
-                .await
-            {
-                println!("failed slash command response: {}", why);
-            }
-        }
+        self.registry.handle(ctx,interaction).await;
     }
 }
