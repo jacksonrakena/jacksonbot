@@ -1,11 +1,11 @@
 use crate::CommandRegistry;
 
-pub fn make_module<D: ToString, F: Fn(&mut CommandRegistry) + Send + Sync + 'static>(name: D, registry_accessor: F) -> Module {
+pub fn make_module<D: ToString>(name: D, registry_accessor: fn(&mut CommandRegistry)) -> Module {
     Module {
-        registrant: Box::new(registry_accessor)
+        registrant: registry_accessor
     }
 }
 
 pub struct Module {
-    pub(crate) registrant: Box<dyn Fn(&mut CommandRegistry) + Send + Sync + 'static>
+    pub(crate) registrant: fn(&mut CommandRegistry)
 }

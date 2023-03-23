@@ -1,7 +1,7 @@
-use crate::jacksonbot::infra::module::make_module;
+use crate::jacksonbot::infra::module::{make_module, Module};
 
-fn profile_module() {
+pub fn profile_module() -> Module {
     make_module("profile", |reg| {
         
-    });
+    })
 }
