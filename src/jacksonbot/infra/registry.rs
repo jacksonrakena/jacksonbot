@@ -1,22 +1,26 @@
-use std::collections::HashMap;
-use std::time::SystemTime;
-use serenity::builder::{CreateApplicationCommand, CreateEmbed};
-use serenity::model::prelude::interaction::{Interaction, InteractionResponseType};
-use serenity::model::prelude::interaction::application_command::ApplicationCommandInteraction;
-use serenity::prelude::Context;
-use crate::{CommandContext};
 use crate::jacksonbot::infra::command::{CommandExecutable, CommandFunctionPtr, CommandResult};
 use crate::jacksonbot::infra::module::Module;
+use crate::CommandContext;
+use serenity::builder::{CreateApplicationCommand, CreateEmbed};
+use serenity::model::prelude::interaction::application_command::ApplicationCommandInteraction;
+use serenity::model::prelude::interaction::{Interaction, InteractionResponseType};
+use serenity::prelude::Context;
+use std::collections::HashMap;
+use std::time::SystemTime;
 
 pub struct CommandRegistry {
     pub(crate) commands: HashMap<String, CommandExecutable>,
     modules: Vec<Module>,
-    ready: bool
+    ready: bool,
 }
 
 impl CommandRegistry {
     pub(crate) fn new() -> CommandRegistry {
-        let reg = CommandRegistry { commands: HashMap::<String,CommandExecutable>::new(), modules: vec!(), ready: false };
+        let reg = CommandRegistry {
+            commands: HashMap::<String, CommandExecutable>::new(),
+            modules: vec![],
+            ready: false,
+        };
         reg
     }
 
@@ -25,25 +29,36 @@ impl CommandRegistry {
         self.modules.push(module);
     }
 
-    pub(crate) fn register_simple<D: ToString>(&mut self, name: D, description: D, invoke: CommandFunctionPtr) -> &CommandRegistry  {
+    pub(crate) fn register_simple<D: ToString>(
+        &mut self,
+        name: D,
+        description: D,
+        invoke: CommandFunctionPtr,
+    ) -> &CommandRegistry {
         let mut cmd = CreateApplicationCommand::default();
         cmd.name(name).description(description);
         let exec = CommandExecutable {
             invoke,
-            manifest: Box::new(cmd)
+            manifest: Box::new(cmd),
         };
-        self.commands.insert(exec.manifest.0["name"].as_str().unwrap().to_string(), exec);
+        self.commands
+            .insert(exec.manifest.0["name"].as_str().unwrap().to_string(), exec);
         self
     }
 
-    pub(crate) fn register_custom(&mut self, attributes: fn(&mut CreateApplicationCommand), invoke: CommandFunctionPtr) -> &CommandRegistry {
+    pub(crate) fn register_custom(
+        &mut self,
+        attributes: fn(&mut CreateApplicationCommand),
+        invoke: CommandFunctionPtr,
+    ) -> &CommandRegistry {
         let mut cmd = CreateApplicationCommand::default();
         attributes(&mut cmd);
         let exec = CommandExecutable {
             invoke,
-            manifest: Box::new(cmd)
+            manifest: Box::new(cmd),
         };
-        self.commands.insert(exec.manifest.0["name"].as_str().unwrap().to_string(), exec);
+        self.commands
+            .insert(exec.manifest.0["name"].as_str().unwrap().to_string(), exec);
         self
     }
 
@@ -58,23 +73,40 @@ impl CommandRegistry {
                     info!("Executing '{}'", &name);
                     let mut command_ctx = CommandContext {
                         interaction: command,
-                        response: None
+                        response: None,
                     };
                     (exec.invoke)(&mut command_ctx);
-                    info!("Executed '{}' in {}μs", command_ctx.interaction.data.name, (SystemTime::now().duration_since(start).unwrap().as_micros()));
+                    info!(
+                        "Executed '{}' in {}μs",
+                        command_ctx.interaction.data.name,
+                        (SystemTime::now().duration_since(start).unwrap().as_micros())
+                    );
 
                     if let Some(to_send) = command_ctx.response {
-                        if let Err(why) = command_ctx.interaction.create_interaction_response(&ctx.http, |response| {
-                            response.kind(InteractionResponseType::ChannelMessageWithSource).interaction_response_data(|message| {
-                                return match to_send {
-                                    CommandResult::Text(text) => message.content(text),
-                                    CommandResult::Embed(e) => message.set_embed(e)
-                                }
+                        if let Err(why) = command_ctx
+                            .interaction
+                            .create_interaction_response(&ctx.http, |response| {
+                                response
+                                    .kind(InteractionResponseType::ChannelMessageWithSource)
+                                    .interaction_response_data(|message| {
+                                        return match to_send {
+                                            CommandResult::Text(text) => message.content(text),
+                                            CommandResult::Embed(e) => message.set_embed(e),
+                                        };
+                                    })
                             })
-                        }).await {
-                            error!("Failed to send response for '{}': {}", command_ctx.interaction.data.name, why);
+                            .await
+                        {
+                            error!(
+                                "Failed to send response for '{}': {}",
+                                command_ctx.interaction.data.name, why
+                            );
                         }
-                        info!("Finished '{}' in {}ms", command_ctx.interaction.data.name, (SystemTime::now().duration_since(start).unwrap().as_millis()));
+                        info!(
+                            "Finished '{}' in {}ms",
+                            command_ctx.interaction.data.name,
+                            (SystemTime::now().duration_since(start).unwrap().as_millis())
+                        );
                     }
                 }
                 None => {

@@ -1,7 +1,5 @@
 use crate::jacksonbot::infra::module::{make_module, Module};
 
 pub fn profile_module() -> Module {
-    make_module("profile", |reg| {
-        
-    })
+    make_module("profile", |reg| {})
 }
