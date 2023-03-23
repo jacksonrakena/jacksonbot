@@ -4,6 +4,9 @@ use std::collections::HashMap;
 use std::env;
 use std::iter::Map;
 use std::sync::{Arc, Mutex};
+use std::time::SystemTime;
+use log::LevelFilter;
+use pretty_env_logger::env_logger::{Builder, Target};
 use serde_json::Value;
 
 use serenity::model::prelude::interaction::application_command::ApplicationCommandInteraction;
@@ -22,9 +25,16 @@ use serenity::model::prelude::interaction::InteractionResponseType;
 use crate::CommandResult::Text;
 use crate::jacksonbot::infra::module::Module;
 use crate::jacksonbot::modules::fun::fun_module;
+extern crate pretty_env_logger;
+#[macro_use] extern crate log;
 
 #[tokio::main]
 async fn main() {
+    //pretty_env_logger::init();
+    let mut log = Builder::from_default_env();
+    log.target(Target::Stdout);
+    log.filter_module("jacksonbot", LevelFilter::Info);
+    log.init();
     let text = std::fs::read_to_string("jacksonbot.json").unwrap();
     let config = serde_json::from_str::<Value>(&text).unwrap();
     let token =  config["Secrets"]["Discord"]["Token"].as_str().unwrap();
@@ -42,7 +52,7 @@ async fn main() {
         .expect("error creating client");
 
     if let Err(why) = client.start().await {
-        println!("Client error: {:?}", why);
+        error!("Client error: {:?}", why);
     }
 }
 
@@ -68,11 +78,12 @@ struct CommandExecutable {
 
 pub struct CommandRegistry {
     commands: HashMap<String, CommandExecutable>,
-    modules: Vec<Module>
+    modules: Vec<Module>,
+    ready: bool
 }
 impl CommandRegistry {
     fn new() -> CommandRegistry {
-        let reg = CommandRegistry { commands: HashMap::<String,CommandExecutable>::new(), modules: vec!() };
+        let reg = CommandRegistry { commands: HashMap::<String,CommandExecutable>::new(), modules: vec!(), ready: false };
         reg
     }
 
@@ -106,7 +117,8 @@ impl CommandRegistry {
     async fn handle(&self, ctx: Context, interaction: Interaction) {
         if let Interaction::ApplicationCommand(command) = interaction {
             let name = command.data.name.clone();
-            println!("handling {}", name);
+            info!("Handling {}", name);
+            let start = SystemTime::now();
             match self.commands.get(name.as_str()) {
                 Some(exec) => {
                     let mut command_ctx = CommandExecContext{
@@ -114,7 +126,7 @@ impl CommandRegistry {
                         response: None
                     };
                     (exec.invoke)(&mut command_ctx);
-                    println!("executed {}", command_ctx.interaction.data.name);
+                    info!("Executed '{}' in {}ms", command_ctx.interaction.data.name, (SystemTime::now().duration_since(start).unwrap().as_millis()));
                     match command_ctx.response {
                         None => {}
                         Some(CommandResult::Text(text)) => {
@@ -123,7 +135,7 @@ impl CommandRegistry {
                                     message.content(text.clone())
                                 })
                             }).await;
-                            println!("sent '{}' as response to '{}'", text, command_ctx.interaction.data.name);
+                            info!("Finished '{}' in {}ms", command_ctx.interaction.data.name, (SystemTime::now().duration_since(start).unwrap().as_millis()));
                         }
                         Some(CommandResult::Embed(embed)) => {}
                     }
@@ -148,10 +160,10 @@ struct JacksonbotEventHandler {
 #[async_trait]
 impl EventHandler for JacksonbotEventHandler {
     async fn ready(&self, ctx: Context, ready: Ready) {
-        println!("ready.");
+        info!("Ready.");
         let guild_id = GuildId(679929597982539778);
 
-        let commands = guild_id
+        match guild_id
             .set_application_commands(&ctx.http, |cmds| {
                 for entry in &self.registry.commands {
                     // TODO don't clone this
@@ -159,9 +171,14 @@ impl EventHandler for JacksonbotEventHandler {
                 }
                 cmds
             })
-            .await;
-
-        println!("updated commands");
+            .await {
+            Ok(commands) => {
+                info!("Uploaded {} commands.", commands.len());
+            }
+            Err(why) => {
+                error!("Failed to update commands: {:#?}", why);
+            }
+        }
     }
 
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
