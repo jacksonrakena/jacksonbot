@@ -20,15 +20,15 @@ pub(crate) fn get_avatar(ctx: &mut CommandContext) -> CommandOutput {
 }
 fn make_sizes(user: &User) -> String {
     format!("**Sizes:** [128]({}) | [256]({}) | [1024]({}) | [2048]({}) \n **Formats:** [PNG]({}) | [JPG]({}) | [WEBP]({}) | [GIF]({})",
-            make_avatar_url(user, ImageFormat::Png, Some(128)),
-            make_avatar_url(user, ImageFormat::Png, Some(256)),
-            make_avatar_url(user, ImageFormat::Png, Some(1024)),
-            make_avatar_url(user, ImageFormat::Png, Some(2048)),
+        make_avatar_url(user, ImageFormat::Png, Some(128)),
+        make_avatar_url(user, ImageFormat::Png, Some(256)),
+        make_avatar_url(user, ImageFormat::Png, Some(1024)),
+        make_avatar_url(user, ImageFormat::Png, Some(2048)),
 
-            make_avatar_url(user, ImageFormat::Png, Some(1024)),
-            make_avatar_url(user, ImageFormat::Jpeg, Some(1024)),
-            make_avatar_url(user, ImageFormat::WebP, Some(1024)),
-            make_avatar_url(user, ImageFormat::Gif, Some(1024)),
+        make_avatar_url(user, ImageFormat::Png, Some(1024)),
+        make_avatar_url(user, ImageFormat::Jpeg, Some(1024)),
+        make_avatar_url(user, ImageFormat::WebP, Some(1024)),
+        make_avatar_url(user, ImageFormat::Gif, Some(1024)),
     )
 }
 

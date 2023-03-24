@@ -55,6 +55,14 @@ async fn main() {
         .as_str()
         .expect("expected a token at Secrets->Discord->Token");
 
+    info!(
+        "Loaded configuration in {}ms",
+        SystemTime::now()
+            .duration_since(startup)
+            .unwrap()
+            .as_millis()
+    );
+
     let mut handler = BotEventHandler {
         registry: CommandRegistry::new(),
     };
