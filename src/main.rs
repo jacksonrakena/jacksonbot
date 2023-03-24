@@ -1,5 +1,7 @@
-mod jacksonbot;
+pub mod infra;
+pub mod modules;
 
+use chrono::{DateTime, Utc};
 use log::LevelFilter;
 use pretty_env_logger::env_logger::{Builder, Target};
 use serde_json::Value;
@@ -9,11 +11,11 @@ use std::iter::Map;
 use std::sync::{Arc, Mutex};
 use std::time::SystemTime;
 
-use crate::jacksonbot::infra::execution::CommandContext;
-use crate::jacksonbot::infra::registry::CommandRegistry;
-use crate::jacksonbot::modules::fun::fun_module;
-use crate::jacksonbot::modules::profile::meta::profile_module;
-use crate::jacksonbot::modules::user::user_module;
+use crate::infra::execution::CommandContext;
+use crate::infra::registry::CommandRegistry;
+use crate::modules::fun::fun_module;
+use crate::modules::profile::meta::profile_module;
+use crate::modules::user::user_module;
 use serenity::builder::{CreateApplicationCommand, CreateEmbed};
 use serenity::model::prelude::interaction::application_command::{
     ApplicationCommandInteraction, CommandDataOptionValue,
@@ -34,14 +36,24 @@ extern crate log;
 
 #[tokio::main]
 async fn main() {
+    let startup = SystemTime::now();
+    let date: DateTime<Utc> = startup.into();
+    println!("Starting Jacksonbot 21.0.1 at {}", date.format("%+"));
+
     //pretty_env_logger::init();
     let mut log = Builder::from_default_env();
     log.target(Target::Stdout);
     log.filter_module("jacksonbot", LevelFilter::Info);
     log.init();
-    let text = std::fs::read_to_string("jacksonbot.json").unwrap();
-    let config = serde_json::from_str::<Value>(&text).unwrap();
-    let token = config["Secrets"]["Discord"]["Token"].as_str().unwrap();
+
+    let text = std::fs::read_to_string("jacksonbot.json")
+        .unwrap_or_else(|why| panic!("couldn't find jacksonbot.json: {why}"));
+    let config = serde_json::from_str::<Value>(&text).unwrap_or_else(|why| {
+        panic!("couldn't read jacksonbot.json: {why}");
+    });
+    let token = config["Secrets"]["Discord"]["Token"]
+        .as_str()
+        .expect("expected a token at Secrets->Discord->Token");
 
     let mut handler = BotEventHandler {
         registry: CommandRegistry::new(),
@@ -55,6 +67,14 @@ async fn main() {
         .event_handler(handler)
         .await
         .expect("error creating client");
+
+    info!(
+        "Built client in {}ms",
+        SystemTime::now()
+            .duration_since(startup)
+            .unwrap()
+            .as_millis()
+    );
 
     if let Err(why) = client.start().await {
         error!("Client error: {:?}", why);

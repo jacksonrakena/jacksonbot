@@ -1,7 +1,7 @@
-use crate::jacksonbot::infra::command::CommandOutput;
-use crate::jacksonbot::infra::module::{make_module, Module};
-use crate::jacksonbot::modules::user::avatar::get_avatar;
-use crate::jacksonbot::modules::user::hex::get_hex;
+use crate::infra::command::CommandOutput;
+use crate::infra::module::{make_module, Module};
+use crate::modules::user::avatar::get_avatar;
+use crate::modules::user::hex::get_hex;
 use crate::CommandContext;
 use log::Level::Debug;
 use rand::prelude::*;

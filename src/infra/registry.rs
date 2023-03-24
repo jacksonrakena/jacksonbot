@@ -1,7 +1,5 @@
-use crate::jacksonbot::infra::command::{
-    CommandExecutable, CommandFunctionPtr, CommandOutput, CommandResult,
-};
-use crate::jacksonbot::infra::module::Module;
+use crate::infra::command::{CommandExecutable, CommandFunctionPtr, CommandOutput, CommandResult};
+use crate::infra::module::Module;
 use crate::CommandContext;
 use serenity::builder::{CreateApplicationCommand, CreateEmbed, CreateInteractionResponse};
 use serenity::model::prelude::interaction::application_command::ApplicationCommandInteraction;

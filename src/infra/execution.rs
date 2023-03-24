@@ -1,8 +1,6 @@
-use crate::jacksonbot::infra::command::CommandResult::{Embed, Text};
-use crate::jacksonbot::infra::command::{
-    CommandError, CommandExecutable, CommandOutput, CommandResult,
-};
-use crate::jacksonbot::infra::registry::CommandRegistry;
+use crate::infra::command::CommandResult::{Embed, Text};
+use crate::infra::command::{CommandError, CommandExecutable, CommandOutput, CommandResult};
+use crate::infra::registry::CommandRegistry;
 use serenity::builder::CreateEmbed;
 use serenity::model::prelude::interaction::application_command::{
     ApplicationCommandInteraction, CommandDataOption, CommandDataOptionValue,

@@ -1,5 +1,5 @@
-use crate::jacksonbot::infra::command::CommandOutput;
-use crate::jacksonbot::infra::execution::CommandContext;
+use crate::infra::command::CommandOutput;
+use crate::infra::execution::CommandContext;
 use serenity::builder::CreateEmbedAuthor;
 use serenity::model::prelude::User;
 

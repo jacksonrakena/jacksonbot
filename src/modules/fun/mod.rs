@@ -1,6 +1,6 @@
-use crate::jacksonbot::infra::command::CommandOutput;
-use crate::jacksonbot::infra::command::CommandResult::Text;
-use crate::jacksonbot::infra::module::{make_module, Module};
+use crate::infra::command::CommandOutput;
+use crate::infra::command::CommandResult::Text;
+use crate::infra::module::{make_module, Module};
 use crate::CommandContext;
 use rand::prelude::*;
 use serenity::model::application::command::CommandOptionType;

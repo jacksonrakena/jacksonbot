@@ -1,4 +1,4 @@
-use crate::jacksonbot::infra::execution::CommandContext;
+use crate::infra::execution::CommandContext;
 use serenity::builder::{CreateApplicationCommand, CreateEmbed};
 use std::error::Error;
 use std::fmt;

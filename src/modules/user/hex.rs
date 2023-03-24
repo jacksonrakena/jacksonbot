@@ -1,5 +1,5 @@
-use crate::jacksonbot::infra::command::{CommandError, CommandOutput};
-use crate::jacksonbot::infra::execution::CommandContext;
+use crate::infra::command::{CommandError, CommandOutput};
+use crate::infra::execution::CommandContext;
 use serenity::builder::CreateEmbed;
 
 pub(crate) fn get_hex(ctx: &mut CommandContext) -> CommandOutput {
