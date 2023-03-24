@@ -1,7 +1,9 @@
-use crate::jacksonbot::infra::command::{CommandExecutable, CommandFunctionPtr, CommandResult};
+use crate::jacksonbot::infra::command::{
+    CommandExecutable, CommandFunctionPtr, CommandOutput, CommandResult,
+};
 use crate::jacksonbot::infra::module::Module;
 use crate::CommandContext;
-use serenity::builder::{CreateApplicationCommand, CreateEmbed};
+use serenity::builder::{CreateApplicationCommand, CreateEmbed, CreateInteractionResponse};
 use serenity::model::prelude::interaction::application_command::ApplicationCommandInteraction;
 use serenity::model::prelude::interaction::{Interaction, InteractionResponseType};
 use serenity::prelude::Context;
@@ -73,41 +75,64 @@ impl CommandRegistry {
                     info!("Executing '{}'", &name);
                     let mut command_ctx = CommandContext {
                         interaction: command,
-                        response: None,
+                        command: exec,
                     };
-                    (exec.invoke)(&mut command_ctx);
+                    let m = (exec.invoke)(&mut command_ctx);
                     info!(
                         "Executed '{}' in {}μs",
                         command_ctx.interaction.data.name,
                         (SystemTime::now().duration_since(start).unwrap().as_micros())
                     );
 
-                    if let Some(to_send) = command_ctx.response {
-                        if let Err(why) = command_ctx
-                            .interaction
-                            .create_interaction_response(&ctx.http, |response| {
-                                response
-                                    .kind(InteractionResponseType::ChannelMessageWithSource)
-                                    .interaction_response_data(|message| {
-                                        return match to_send {
-                                            CommandResult::Text(text) => message.content(text),
-                                            CommandResult::Embed(e) => message.set_embed(e),
-                                        };
-                                    })
-                            })
-                            .await
-                        {
-                            error!(
-                                "Failed to send response for '{}': {}",
-                                command_ctx.interaction.data.name, why
-                            );
+                    match m {
+                        Ok(res) => {
+                            command_ctx
+                                .interaction
+                                .create_interaction_response(&ctx.http, |response| {
+                                    response
+                                        .kind(InteractionResponseType::ChannelMessageWithSource)
+                                        .interaction_response_data(|message| {
+                                            return match res {
+                                                CommandResult::Text(text) => message.content(text),
+                                                CommandResult::Embed(e) => message.set_embed(e),
+                                            };
+                                        })
+                                })
+                                .await
+                                .unwrap_or_else(|why| {
+                                    error!(
+                                        "Failed to send response for '{}': {}",
+                                        command_ctx.interaction.data.name, why
+                                    );
+                                });
                         }
-                        info!(
-                            "Finished '{}' in {}ms",
-                            command_ctx.interaction.data.name,
-                            (SystemTime::now().duration_since(start).unwrap().as_millis())
-                        );
+                        Err(why) => {
+                            command_ctx
+                                .interaction
+                                .create_interaction_response(&ctx.http, |response| {
+                                    response
+                                        .kind(InteractionResponseType::ChannelMessageWithSource)
+                                        .interaction_response_data(|msg| {
+                                            msg.content(format!(
+                                                ":warning: error: `{}`",
+                                                why.to_string(&command_ctx)
+                                            ))
+                                        })
+                                })
+                                .await
+                                .unwrap_or_else(|why| {
+                                    error!(
+                                        "Failed to send response for '{}': {}",
+                                        command_ctx.interaction.data.name, why
+                                    );
+                                });
+                        }
                     }
+                    info!(
+                        "Finished '{}' in {}ms",
+                        command_ctx.interaction.data.name,
+                        (SystemTime::now().duration_since(start).unwrap().as_millis())
+                    );
                 }
                 None => {
                     info!("Unknown command '{}'", name.as_str());

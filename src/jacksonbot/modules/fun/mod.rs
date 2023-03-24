@@ -1,3 +1,5 @@
+use crate::jacksonbot::infra::command::CommandOutput;
+use crate::jacksonbot::infra::command::CommandResult::Text;
 use crate::jacksonbot::infra::module::{make_module, Module};
 use crate::CommandContext;
 use rand::prelude::*;
@@ -23,12 +25,14 @@ pub fn fun_module() -> Module {
     })
 }
 
-fn roll_dice(ctx: &mut CommandContext) {
-    let i = ctx.get_i64(0).unwrap();
+fn roll_dice(ctx: &mut CommandContext) -> CommandOutput {
+    let dice_size = ctx.get_i64(0).unwrap();
     let r: f32 = thread_rng().gen();
-    let res = (i as f32) * r;
-    ctx.ok_embed(|emb| {
-        emb.title("Dice roll")
-            .description(format!("rolling {}", res.ceil()));
-    });
+    let res = (dice_size as f32) * r;
+
+    Ok(Text(format!(
+        ":game_die: I rolled {} on a **{}**-sided die.",
+        res.ceil(),
+        dice_size
+    )))
 }

@@ -1,5 +1,7 @@
-use crate::jacksonbot::infra::command::CommandResult;
 use crate::jacksonbot::infra::command::CommandResult::{Embed, Text};
+use crate::jacksonbot::infra::command::{
+    CommandError, CommandExecutable, CommandOutput, CommandResult,
+};
 use crate::jacksonbot::infra::registry::CommandRegistry;
 use serenity::builder::CreateEmbed;
 use serenity::model::prelude::interaction::application_command::{
@@ -8,11 +10,11 @@ use serenity::model::prelude::interaction::application_command::{
 use serenity::model::prelude::PartialMember;
 use serenity::model::prelude::User;
 
-pub struct CommandContext {
+pub struct CommandContext<'a> {
     pub(crate) interaction: ApplicationCommandInteraction,
-    pub(crate) response: Option<CommandResult>,
+    pub(crate) command: &'a CommandExecutable,
 }
-impl CommandContext {
+impl<'a> CommandContext<'a> {
     fn arguments(&self) -> &Vec<CommandDataOption> {
         &self.interaction.data.options
     }
@@ -79,18 +81,22 @@ impl CommandContext {
             .as_ref()
             .unwrap();
     }
-}
 
-impl CommandContext {
-    pub(crate) fn ok_str<D: ToString>(&mut self, text: D) {
-        self.response = Some(Text(text.to_string()))
+    pub(crate) fn text<D: ToString>(text: D) -> CommandOutput {
+        Ok(Text(text.to_string()))
     }
-    pub(crate) fn ok_embed<F>(&mut self, editor: F)
+
+    pub(crate) fn embed<F>(&self, editor: F) -> CommandOutput
     where
         F: Fn(&mut CreateEmbed),
     {
         let mut embed = CreateEmbed::default();
         (editor)(&mut embed);
-        self.response = Some(Embed(embed))
+        Ok(Embed(embed))
+    }
+
+    pub(crate) fn err<F: ToString>(&self, message: F) -> CommandOutput {
+        let err = CommandError::new(message);
+        Err(err)
     }
 }
