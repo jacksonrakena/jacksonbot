@@ -96,7 +96,10 @@ struct BotEventHandler {
 #[async_trait]
 impl EventHandler for BotEventHandler {
     async fn ready(&self, ctx: Context, ready: Ready) {
-        info!("Ready.");
+        info!(
+            "Ready. Connected as {}#{} ({})",
+            ready.user.name, ready.user.discriminator, ready.user.id
+        );
         let guild_id = GuildId(679929597982539778);
 
         match guild_id

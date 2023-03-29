@@ -63,7 +63,7 @@ impl<'a> CommandContext<'a> {
     pub(crate) fn get_optional(&self, index: usize) -> Option<&CommandDataOptionValue> {
         let data = self.interaction.data.options.get(index);
         if data.is_none() || data.unwrap().resolved.is_none() {
-            return Option::None;
+            return None;
         }
         return data.unwrap().resolved.as_ref();
     }
