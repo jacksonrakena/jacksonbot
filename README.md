@@ -33,7 +33,7 @@ pub fn fun_module(registry: &mut CommandRegistrar) {
 ```
 where `roll_dice` is the name of a function with signature `roll_dice(&ctx: CommandContext, dice: i64) -> CommandOutput`.
 
-Jacksonbot's macro system will automatically re-interpret the signature provided to `commmand!` and 
+Jacksonbot's macro system will automatically re-interpret the signature provided to `command!` and 
 rewrite the command to provide those values at runtime, as well as passing the attributes `[description=, max_value=]` to 
 Discord when registering commands.
 
