@@ -1,31 +1,17 @@
 pub mod infra;
 pub mod modules;
-
+use crate::infra::registry2::CommandRegistrar;
+use crate::modules::fun::fun_module;
+use crate::modules::user::user_module;
 use chrono::{DateTime, Utc};
 use log::LevelFilter;
 use pretty_env_logger::env_logger::{Builder, Target};
 use serde_json::Value;
-use std::collections::HashMap;
-use std::env;
-use std::iter::Map;
-use std::sync::{Arc, Mutex};
 use std::time::SystemTime;
 
-use crate::infra::execution::CommandContext;
-use crate::infra::registry::CommandRegistry;
-use crate::modules::fun::fun_module;
-use crate::modules::profile::meta::profile_module;
-use crate::modules::user::user_module;
-use serenity::builder::{CreateApplicationCommand, CreateEmbed};
-use serenity::model::prelude::interaction::application_command::{
-    ApplicationCommandInteraction, CommandDataOptionValue,
-};
 use serenity::{
     async_trait,
-    model::prelude::{
-        interaction::{self, Interaction},
-        GuildId, Ready,
-    },
+    model::prelude::{interaction::Interaction, GuildId, Ready},
     prelude::{Context, EventHandler, GatewayIntents},
     Client,
 };
@@ -38,13 +24,21 @@ extern crate log;
 async fn main() {
     let startup = SystemTime::now();
     let date: DateTime<Utc> = startup.into();
-    println!("Starting Jacksonbot 21.0.1 at {}", date.format("%+"));
+    println!("Starting Jacksonbot 21.1.0 at {}", date.format("%+"));
 
     //pretty_env_logger::init();
     let mut log = Builder::from_default_env();
     log.target(Target::Stdout);
     log.filter_module("jacksonbot", LevelFilter::Info);
     log.init();
+
+    info!(
+        "Initialised logging services in {}µs",
+        SystemTime::now()
+            .duration_since(startup)
+            .unwrap()
+            .as_micros()
+    );
 
     let text = std::fs::read_to_string("jacksonbot.json")
         .unwrap_or_else(|why| panic!("couldn't find jacksonbot.json: {why}"));
@@ -56,20 +50,22 @@ async fn main() {
         .expect("expected a token at Secrets->Discord->Token");
 
     info!(
-        "Loaded configuration in {}ms",
+        "Loaded configuration in {}µs",
         SystemTime::now()
             .duration_since(startup)
             .unwrap()
-            .as_millis()
+            .as_micros()
     );
 
     let mut handler = BotEventHandler {
-        registry: CommandRegistry::new(),
+        registry: CommandRegistrar::default(),
     };
 
-    handler.registry.register_module(fun_module());
-    handler.registry.register_module(profile_module());
-    handler.registry.register_module(user_module());
+    user_module(&mut handler.registry);
+    fun_module(&mut handler.registry);
+    // handler.registry.register_module(fun_module());
+    // handler.registry.register_module(profile_module());
+    // handler.registry.register_module(user_module());
 
     let mut client = Client::builder(token, GatewayIntents::empty())
         .event_handler(handler)
@@ -90,7 +86,7 @@ async fn main() {
 }
 
 struct BotEventHandler {
-    registry: CommandRegistry,
+    registry: CommandRegistrar,
 }
 
 #[async_trait]
@@ -109,7 +105,7 @@ impl EventHandler for BotEventHandler {
                         .commands
                         .values()
                         .into_iter()
-                        .map(|c| c.manifest.clone())
+                        .map(|c| (*c).1.clone())
                         .collect(),
                 );
                 cmds

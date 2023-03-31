@@ -1,46 +1,18 @@
-use crate::infra::command::CommandOutput;
-use crate::infra::module::{make_module, Module};
+use crate::infra::registry2::{command, commands, CommandRegistrar};
 use crate::modules::user::avatar::get_avatar;
 use crate::modules::user::hex::get_hex;
-use crate::CommandContext;
-use log::Level::Debug;
-use rand::prelude::*;
-use serenity::builder::CreateEmbedAuthor;
-use serenity::model::application::command::CommandOptionType;
-use serenity::model::prelude::interaction::application_command::CommandDataOptionValue;
 use serenity::model::user::User;
 
 mod avatar;
 mod hex;
 
-pub fn user_module() -> Module {
-    make_module("user", |reg| {
-        reg.register_custom(
-            |attr| {
-                attr.name("avatar")
-                    .description("Grabs the avatar for a user.")
-                    .create_option(|opt| {
-                        opt.name("user")
-                            .description("The user who you wish to get the avatar for.")
-                            .kind(CommandOptionType::Integer)
-                            .required(true)
-                    });
-            },
-            get_avatar,
-        );
-
-        reg.register_custom(
-            |attr| {
-                attr.name("hex")
-                    .description("Parses a color.")
-                    .create_option(|col| {
-                        col.name("color")
-                            .description("A hex value, like #C21ABF.")
-                            .required(true)
-                            .kind(CommandOptionType::String)
-                    });
-            },
-            get_hex,
-        );
-    })
+pub fn user_module(registry: &mut CommandRegistrar) {
+    commands!({
+        registry.register(command!(
+            [description="Shows an avatar for a user."] avatar, 
+            [description="The user you wish to get the avatar for."] user User, @get_avatar));
+        registry.register(command!(
+                [description="Shows a color from a hex value."] hex, 
+                [description="A hex value, like #C21ABF."] color String, @get_hex));
+    });
 }

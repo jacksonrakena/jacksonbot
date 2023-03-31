@@ -1,16 +1,12 @@
-use crate::infra::command::{CommandError, CommandOutput};
-use crate::infra::execution::CommandContext;
-use serenity::builder::CreateEmbed;
+use crate::infra::command::{embed, err, CommandError, CommandOutput};
 
-pub(crate) fn get_hex(ctx: &mut CommandContext) -> CommandOutput {
-    let val = ctx.get_string(0).unwrap().trim_start_matches("#");
-
-    match i32::from_str_radix(val, 16) {
-        Ok(i) => ctx.embed(|emb| {
+pub(crate) fn get_hex(val: String) -> CommandOutput {
+    match i32::from_str_radix(val.trim_start_matches("#"), 16) {
+        Ok(i) => embed(|emb| {
             emb.title(format!("Color: #{}", val))
                 .image(format!("https://singlecolorimage.com/get/{}/200x200", val))
                 .color(i);
         }),
-        Err(why) => ctx.err("can't parse that color"),
+        Err(_) => err!("can't parse that color"),
     }
 }

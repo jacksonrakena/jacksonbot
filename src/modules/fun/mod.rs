@@ -1,32 +1,19 @@
 use crate::infra::command::CommandOutput;
 use crate::infra::command::CommandResult::Text;
-use crate::infra::module::{make_module, Module};
-use crate::CommandContext;
 use rand::prelude::*;
-use serenity::model::application::command::CommandOptionType;
-use serenity::model::prelude::interaction::application_command::CommandDataOptionValue;
-use std::ptr::null;
 
-pub fn fun_module() -> Module {
-    make_module("fun", |reg| {
-        reg.register_custom(
-            |attr| {
-                attr.name("roll")
-                    .description("Rolls a dice.")
-                    .create_option(|opt| {
-                        opt.name("dice")
-                            .description("The dice you want to roll")
-                            .kind(CommandOptionType::Integer)
-                            .required(true)
-                    });
-            },
-            roll_dice,
-        );
-    })
+use crate::infra::registry2::{command, commands, CommandRegistrar};
+
+pub fn fun_module(registry: &mut CommandRegistrar) {
+    commands!({
+        registry.register(command!(
+            [description="Roll some dice."] roll,
+            [description="The dice you'd like to roll." max_value=60] dice i64,
+            @roll_dice));
+    });
 }
 
-fn roll_dice(ctx: &mut CommandContext) -> CommandOutput {
-    let dice_size = ctx.get_i64(0).unwrap();
+fn roll_dice(dice_size: i64) -> CommandOutput {
     let r: f32 = thread_rng().gen();
     let res = (dice_size as f32) * r;
 
