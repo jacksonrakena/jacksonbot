@@ -1,6 +1,7 @@
 use crate::infra::command::{embed, err, CommandError, CommandOutput};
+use crate::infra::execution::CommandContext;
 
-pub(crate) fn get_hex(val: String) -> CommandOutput {
+pub(crate) fn get_hex(_ctx: &CommandContext, val: String) -> CommandOutput {
     match i32::from_str_radix(val.trim_start_matches("#"), 16) {
         Ok(i) => embed(|emb| {
             emb.title(format!("Color: #{}", val))

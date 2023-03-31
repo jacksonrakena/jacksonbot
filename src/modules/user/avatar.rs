@@ -1,12 +1,14 @@
 use crate::infra::command::CommandOutput;
 use crate::infra::command::CommandResult::Embed;
+use crate::infra::execution::CommandContext;
 use serenity::builder::{CreateEmbed, CreateEmbedAuthor};
 use serenity::model::prelude::User;
 
-pub(crate) fn get_avatar(user: User) -> CommandOutput {
-    let avatar_url = make_avatar_url(&user, ImageFormat::Png, Some(4096));
-    let sizes = make_sizes(&user);
-    let title = format!("{}#{}", user.name, user.discriminator);
+pub(crate) fn get_avatar(ctx: &CommandContext, user: Option<User>) -> CommandOutput {
+    let u = user.as_ref().unwrap_or(&ctx.interaction.user);
+    let avatar_url = make_avatar_url(u, ImageFormat::Png, Some(4096));
+    let sizes = make_sizes(u);
+    let title = format!("{}#{}", u.name, u.discriminator);
 
     let mut emb = CreateEmbed::default();
 

@@ -11,6 +11,7 @@ use std::time::SystemTime;
 macro_rules! commands {
     ($block: block) => {
         use crate::infra::command::CommandOutput;
+        use crate::infra::execution::CommandContext;
         use crate::infra::make_command::make_command;
         use crate::infra::registry2::{CommandMap, CommandParameter, CommandRegistration};
         #[allow(dead_code, unused, unused_variables)]
@@ -56,8 +57,8 @@ macro_rules! command {
             )*
 
             let cmd = make_command(stringify!($cmd_name), cmd_attrs, params);
-            fn $cmd_name (map: &CommandMap) -> CommandOutput {
-                $block($(map.get::<$param_type>(stringify!($param_name)),)*)
+            fn $cmd_name (ctx: &CommandContext, map: &CommandMap) -> CommandOutput {
+                $block(ctx, $(map.get::<$param_type>(stringify!($param_name)),)*)
             }
             CommandRegistration { name: stringify!($cmd_name), generated_invoke: $cmd_name, manifest: cmd }
         }
@@ -68,7 +69,7 @@ pub(crate) use command;
 
 pub struct CommandRegistration {
     pub(crate) name: &'static str,
-    pub(crate) generated_invoke: fn(&CommandMap) -> CommandOutput,
+    pub(crate) generated_invoke: fn(&CommandContext, &CommandMap) -> CommandOutput,
     pub(crate) manifest: CreateApplicationCommand,
 }
 
@@ -112,7 +113,7 @@ impl CommandRegistrar {
                         interaction: command,
                         command: exec.manifest.clone(),
                     };
-                    let m = (exec.generated_invoke)(&map);
+                    let m = (exec.generated_invoke)(&command_ctx, &map);
                     info!(
                         "Executed '{}' in {}μs",
                         command_ctx.interaction.data.name,
@@ -149,7 +150,7 @@ impl CommandRegistrar {
                                         .kind(InteractionResponseType::ChannelMessageWithSource)
                                         .interaction_response_data(|msg| {
                                             msg.content(format!(
-                                                ":warning: error: `{}`",
+                                                ":warning: `{}`",
                                                 why.to_string(&command_ctx)
                                             ))
                                         })

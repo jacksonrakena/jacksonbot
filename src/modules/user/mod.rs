@@ -10,7 +10,7 @@ pub fn user_module(registry: &mut CommandRegistrar) {
     commands!({
         registry.register(command!(
             [description="Shows an avatar for a user."] avatar, 
-            [description="The user you wish to get the avatar for."] user User, @get_avatar));
+            [description="The user you wish to get the avatar for."] user Option<User>, @get_avatar));
         registry.register(command!(
                 [description="Shows a color from a hex value."] hex, 
                 [description="A hex value, like #C21ABF."] color String, @get_hex));

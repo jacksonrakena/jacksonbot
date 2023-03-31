@@ -1,5 +1,6 @@
 use crate::infra::command::CommandOutput;
 use crate::infra::command::CommandResult::Text;
+use crate::infra::execution::CommandContext;
 use rand::prelude::*;
 
 use crate::infra::registry2::{command, commands, CommandRegistrar};
@@ -13,7 +14,7 @@ pub fn fun_module(registry: &mut CommandRegistrar) {
     });
 }
 
-fn roll_dice(dice_size: i64) -> CommandOutput {
+fn roll_dice(_ctx: &CommandContext, dice_size: i64) -> CommandOutput {
     let r: f32 = thread_rng().gen();
     let res = (dice_size as f32) * r;
 
