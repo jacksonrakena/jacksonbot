@@ -7,21 +7,18 @@ use std::collections::HashMap;
 
 pub fn make_command(
     intended_name: &'static str,
+    description: &'static str,
     cmd_attrs: HashMap<&'static str, String>,
     params: Vec<CommandParameter>,
     ptr: CommandInvokePtr,
 ) -> CommandRegistration {
     let mut command = CreateApplicationCommand::default();
     let mut real_name = intended_name.to_string();
+    command.description(description);
 
     // parse command attributes
-    let mut description_added = false;
     for (attr_name, attr_value) in cmd_attrs {
         match attr_name {
-            "description" => {
-                command.description(attr_value);
-                description_added = true;
-            }
             "name" => {
                 real_name = attr_value;
             }
@@ -35,10 +32,6 @@ pub fn make_command(
     }
 
     command.name(real_name.clone());
-
-    if !description_added {
-        panic!("no description attribute found for command '{}'", real_name);
-    }
 
     // parse parameters
     for param in params {

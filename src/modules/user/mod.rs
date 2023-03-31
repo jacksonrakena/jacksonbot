@@ -9,9 +9,9 @@ mod hex;
 
 pub fn user_module(registry: &mut CommandRegistrar) {
     registry.register(command!(
-        [description="Shows an avatar for a user."] avatar, 
+        "avatar", "Shows an avatar for a user.",
         [description="The user you wish to get the avatar for."] user Option<User>, @get_avatar));
     registry.register(command!(
-            [description="Shows a color from a hex value."] hex, 
+            "hex", "Shows a color from a hex value.",
             [description="A hex value, like #C21ABF."] color String, @get_hex));
 }
