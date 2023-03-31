@@ -1,9 +1,7 @@
 use crate::infra::command::{CommandOutput, CommandResult};
 use crate::infra::execution::CommandContext;
 use serenity::builder::CreateApplicationCommand;
-use serenity::model::prelude::interaction::application_command::{
-    CommandDataOption, CommandDataOptionValue,
-};
+use serenity::model::prelude::interaction::application_command::CommandDataOption;
 use serenity::model::prelude::interaction::{Interaction, InteractionResponseType};
 use serenity::prelude::Context;
 #[allow(dead_code, unused, unused_variables)]

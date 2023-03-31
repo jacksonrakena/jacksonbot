@@ -1,7 +1,6 @@
 use crate::infra::command::CommandOutput;
 use crate::infra::command::CommandResult::Text;
 use rand::prelude::*;
-use std::fs::File;
 
 use crate::infra::registry2::{command, commands, CommandRegistrar};
 
