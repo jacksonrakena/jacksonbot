@@ -8,7 +8,7 @@ macro_rules! command {
             use crate::infra::command::CommandOutput;
             use crate::infra::execution::CommandContext;
             use crate::infra::make_command::make_command;
-            use crate::infra::registry2::{CommandMap, CommandParameter};
+            use crate::infra::registry::{CommandMap, CommandParameter};
             use std::collections::HashMap;
 
             // This ignores when cmd_attrs is empty (no attributes)

@@ -4,7 +4,7 @@ use crate::infra::execution::CommandContext;
 use crate::infra::macros::command;
 use rand::prelude::*;
 
-use crate::infra::registry2::CommandRegistrar;
+use crate::infra::registry::CommandRegistrar;
 
 pub fn fun_module(registry: &mut CommandRegistrar) {
     registry.register(command!(

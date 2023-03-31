@@ -1,5 +1,5 @@
 use crate::infra::macros::command;
-use crate::infra::registry2::CommandRegistrar;
+use crate::infra::registry::CommandRegistrar;
 use crate::modules::user::avatar::get_avatar;
 use crate::modules::user::hex::get_hex;
 use serenity::model::user::User;

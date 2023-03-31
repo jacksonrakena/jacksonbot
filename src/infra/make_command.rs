@@ -1,4 +1,4 @@
-use crate::infra::registry2::{CommandInvokePtr, CommandParameter, CommandRegistration};
+use crate::infra::registry::{CommandInvokePtr, CommandParameter, CommandRegistration};
 use lazy_static::lazy_static;
 use regex::Regex;
 use serenity::builder::{CreateApplicationCommand, CreateApplicationCommandOption};

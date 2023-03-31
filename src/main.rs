@@ -1,6 +1,6 @@
 pub mod infra;
 pub mod modules;
-use crate::infra::registry2::CommandRegistrar;
+use crate::infra::registry::CommandRegistrar;
 use crate::modules::fun::fun_module;
 use crate::modules::user::user_module;
 use chrono::{DateTime, Utc};
