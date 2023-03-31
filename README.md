@@ -27,7 +27,7 @@ pub fn fun_module(registry: &mut CommandRegistrar) {
         registry.register(
             command!(
                 "roll", "Roll some dice." // Name, description
-                [description="The dice you'd like to roll." max_value=60] dice i64, // First parameter
+                [description="The dice you'd like to roll." max_value=60] dice: i64, // First parameter
                 @roll_dice // Pointer to function
             )
         );

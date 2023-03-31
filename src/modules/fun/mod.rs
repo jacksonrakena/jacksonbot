@@ -9,7 +9,7 @@ use crate::infra::registry::CommandRegistrar;
 pub fn fun_module(registry: &mut CommandRegistrar) {
     registry.register(command!(
         "roll", "Roll some dice.",
-        [description="The dice you'd like to roll." max_value=60] dice i64,
+        [description="The dice you'd like to roll." max_value=60] dice: i64,
         @roll_dice));
 }
 

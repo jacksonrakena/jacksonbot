@@ -2,7 +2,7 @@ macro_rules! command {
     (
         $([  $($cmd_attr_name:ident=$cmd_attr_value:expr)*  ])? $cmd_name: literal,
         $description: literal,
-        $( $([  $($param_attr_name:ident=$param_attr_value:expr)*  ])?  $param_name:ident $param_type:ty,)*
+        $( $([  $($param_attr_name:ident=$param_attr_value:expr)*  ])?  $param_name:ident: $param_type:ty,)*
         @$block: ident) => {
         {
             use crate::infra::command::CommandOutput;
