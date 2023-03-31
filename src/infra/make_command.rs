@@ -24,7 +24,6 @@ pub fn make_command(
             }
             "name" => {
                 real_name = attr_value;
-                description_added = true;
             }
             rest => {
                 panic!(
