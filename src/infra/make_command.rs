@@ -5,6 +5,12 @@ use serenity::builder::{CreateApplicationCommand, CreateApplicationCommandOption
 use serenity::model::prelude::command::CommandOptionType;
 use std::collections::HashMap;
 
+/// Called by the command! macro with the compiled name, description, command attributes,
+/// parameters, parameter attributes for each parameter, and the pointer to the generated
+/// caller function, which calls the function provided by the developer.
+///
+/// Returns a CommandRegistration containing all the semantic information and final
+/// manifest to be sent to Discord.
 pub fn make_command(
     intended_name: &'static str,
     description: &'static str,
