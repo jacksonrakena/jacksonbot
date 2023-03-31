@@ -1,17 +1,16 @@
 use crate::infra::command::CommandOutput;
 use crate::infra::command::CommandResult::Text;
 use crate::infra::execution::CommandContext;
+use crate::infra::macros::command;
 use rand::prelude::*;
 
-use crate::infra::registry2::{command, commands, CommandRegistrar};
+use crate::infra::registry2::CommandRegistrar;
 
 pub fn fun_module(registry: &mut CommandRegistrar) {
-    commands!({
-        registry.register(command!(
-            [description="Roll some dice."] roll,
-            [description="The dice you'd like to roll." max_value=60] dice i64,
-            @roll_dice));
-    });
+    registry.register(command!(
+        [description="Roll some dice."] roll,
+        [description="The dice you'd like to roll." max_value=60] dice i64,
+        @roll_dice));
 }
 
 fn roll_dice(_ctx: &CommandContext, dice_size: i64) -> CommandOutput {

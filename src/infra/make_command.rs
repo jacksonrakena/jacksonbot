@@ -1,4 +1,4 @@
-use crate::infra::registry2::CommandParameter;
+use crate::infra::registry2::{CommandInvokePtr, CommandParameter, CommandRegistration};
 use lazy_static::lazy_static;
 use regex::Regex;
 use serenity::builder::{CreateApplicationCommand, CreateApplicationCommandOption};
@@ -6,36 +6,50 @@ use serenity::model::prelude::command::CommandOptionType;
 use std::collections::HashMap;
 
 pub fn make_command(
-    name: &'static str,
+    intended_name: &'static str,
     cmd_attrs: HashMap<&'static str, String>,
     params: Vec<CommandParameter>,
-) -> CreateApplicationCommand {
+    ptr: CommandInvokePtr,
+) -> CommandRegistration {
     let mut command = CreateApplicationCommand::default();
-    command.name(name);
+    let mut real_name = intended_name.to_string();
 
     // parse command attributes
     let mut description_added = false;
     for (attr_name, attr_value) in cmd_attrs {
-        if attr_name == "description" {
-            command.description(attr_value);
-            description_added = true;
-        } else {
-            panic!(
-                "unknown command attribute '{}' on command '{}'",
-                attr_name, name
-            );
+        match attr_name {
+            "description" => {
+                command.description(attr_value);
+                description_added = true;
+            }
+            "name" => {
+                real_name = attr_value;
+                description_added = true;
+            }
+            rest => {
+                panic!(
+                    "unknown command attribute '{}' on command '{}'",
+                    rest, real_name
+                );
+            }
         }
     }
 
+    command.name(real_name.clone());
+
     if !description_added {
-        panic!("no description attribute found for command '{}'", name);
+        panic!("no description attribute found for command '{}'", real_name);
     }
 
     // parse parameters
     for param in params {
-        command.add_option(make_parameter(name, param));
+        command.add_option(make_parameter(&real_name, param));
     }
-    command
+    CommandRegistration {
+        name: real_name,
+        manifest: command,
+        generated_invoke: ptr,
+    }
 }
 
 fn make_parameter(command_name: &str, param: CommandParameter) -> CreateApplicationCommandOption {
