@@ -1,5 +1,5 @@
-use commands_lib::command::{embed, err, CommandError, CommandOutput};
-use commands_lib::execution::CommandContext;
+use commands_lib::command::err;
+use commands_lib::execution::{CommandContext, CommandError, CommandOutput, embed};
 
 pub(crate) fn get_hex(_ctx: &CommandContext, val: String) -> CommandOutput {
     match i32::from_str_radix(val.trim_start_matches("#"), 16) {

@@ -1,13 +1,13 @@
 use crate::modules::user::avatar::get_avatar;
 use crate::modules::user::hex::get_hex;
 use commands_lib::macros::command;
-use commands_lib::registry::CommandRegistrar;
+use commands_lib::registry::CommandRegistry;
 use serenity::model::user::User;
 
 mod avatar;
 mod hex;
 
-pub fn user_module(registry: &mut CommandRegistrar) {
+pub fn user_module(registry: &mut CommandRegistry) {
     registry.register(command!(
         "avatar", "Shows an avatar for a user.",
         [description="The user you wish to get the avatar for."] user: Option<User>, @get_avatar));

@@ -1,4 +1,6 @@
 use crate::command::CommandRegistration;
+use crate::registry::CommandMap;
+use serenity::builder::CreateEmbed;
 use serenity::model::prelude::interaction::application_command::ApplicationCommandInteraction;
 use std::fmt::{Display, Formatter};
 
@@ -10,6 +12,9 @@ pub struct CommandContext<'a> {
 
     /// The command that was invoked
     pub(crate) command: &'a CommandRegistration,
+
+    /// The command map, containing the mapped values.
+    pub map: CommandMap,
 }
 
 impl<'a> Display for CommandContext<'a> {
@@ -25,3 +30,50 @@ impl<'a> Display for CommandContext<'a> {
         )
     }
 }
+
+/// Represents the response to a successful command invocation.
+#[derive(Debug)]
+pub enum CommandResponse {
+    Text(String),
+    Embed(CreateEmbed),
+}
+
+/// Represents a failure from a command.
+#[derive(Clone, Debug)]
+pub struct CommandError {
+    message: String,
+}
+
+impl CommandError {
+    pub fn new<F: ToString>(message: F) -> CommandError {
+        CommandError {
+            message: message.to_string(),
+        }
+    }
+
+    pub fn to_string(&self, ctx: &CommandContext) -> String {
+        format!(
+            "error in {}: {}",
+            ctx.command
+                .manifest
+                .0
+                .get("name")
+                .unwrap()
+                .as_str()
+                .unwrap(),
+            self.message
+        )
+    }
+}
+
+pub fn embed<T>(activate: T) -> CommandOutput
+where
+    T: FnOnce(&mut CreateEmbed),
+{
+    let mut emb = CreateEmbed::default();
+    (activate)(&mut emb);
+    Ok(CommandResponse::Embed(emb))
+}
+
+/// Represents a possible successful or failure command invocation.
+pub type CommandOutput = Result<CommandResponse, CommandError>;

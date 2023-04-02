@@ -1,5 +1,5 @@
-use crate::command::{CommandRegistration, CommandResponse};
-use crate::execution::CommandContext;
+use crate::command::CommandRegistration;
+use crate::execution::{CommandContext, CommandResponse};
 use crate::parameter_value::ParameterValue;
 use log::{error, info, trace};
 use serenity::builder::CreateApplicationCommand;
@@ -10,6 +10,7 @@ use serenity::prelude::Context;
 use std::collections::HashMap;
 use std::time::SystemTime;
 
+#[derive(Debug)]
 pub struct CommandMap {
     options: Vec<CommandDataOption>,
 }
@@ -28,14 +29,22 @@ impl CommandMap {
     }
 }
 
-pub struct CommandRegistrar {
+/// The command registry contains all commands and their names, and is responsible
+/// for handling interactions as they are received.
+pub struct CommandRegistry {
+    /// A map of command names to their registration objects.
     pub commands: HashMap<&'static str, CommandRegistration>,
 }
-impl CommandRegistrar {
+impl CommandRegistry {
+    /// Registers a command.
     pub fn register(&mut self, info: CommandRegistration) {
         self.commands.insert(info.name, info);
     }
 
+    /// Converts the internal command mapping into a vector of manifest objects,
+    /// which can be sent to Discord to register commands.
+    ///
+    /// This command clones the command manifests.
     pub fn make_commands(&self) -> Vec<CreateApplicationCommand> {
         self.commands
             .values()
@@ -44,98 +53,80 @@ impl CommandRegistrar {
             .collect()
     }
 
+    /// Handles an incoming Discord interaction.  
+    /// This method consumes the interaction and will respond to it based on the detected command.
     pub async fn handle(&self, ctx: Context, interaction: Interaction) {
-        if let Interaction::ApplicationCommand(command) = interaction {
-            let name = command.data.name.clone();
-            trace!("Handling {}", name);
-            let start = SystemTime::now();
+        let Interaction::ApplicationCommand(command) = interaction else { return };
 
-            match self.commands.get(name.as_str()) {
-                Some(exec) => {
-                    trace!("Executing '{}'", &name);
-                    let map = CommandMap {
-                        options: command.data.options.clone(),
-                    };
-                    let command_ctx = CommandContext {
-                        interaction: command,
-                        command: exec,
-                    };
-                    let m = (exec.generated_invoke)(&command_ctx, &map);
-                    trace!(
-                        "Executed '{}' in {}μs",
-                        command_ctx.interaction.data.name,
-                        (SystemTime::now().duration_since(start).unwrap().as_micros())
-                    );
+        let name = command.data.name.clone();
+        trace!("Handling {}", name);
+        let start = SystemTime::now();
 
-                    match m {
-                        Ok(res) => {
-                            command_ctx
-                                .interaction
-                                .create_interaction_response(&ctx.http, |response| {
-                                    response
-                                        .kind(InteractionResponseType::ChannelMessageWithSource)
-                                        .interaction_response_data(|message| {
-                                            return match res {
-                                                CommandResponse::Text(text) => {
-                                                    message.content(text)
-                                                }
-                                                CommandResponse::Embed(e) => message.set_embed(e),
-                                            };
-                                        })
-                                })
-                                .await
-                                .unwrap_or_else(|why| {
-                                    error!(
-                                        "Failed to send response for '{}': {}",
-                                        command_ctx.interaction.data.name, why
-                                    );
-                                });
-                        }
-                        Err(why) => {
-                            command_ctx
-                                .interaction
-                                .create_interaction_response(&ctx.http, |response| {
-                                    response
-                                        .kind(InteractionResponseType::ChannelMessageWithSource)
-                                        .interaction_response_data(|msg| {
-                                            msg.content(format!(
-                                                ":warning: `{}`",
-                                                why.to_string(&command_ctx)
-                                            ))
-                                        })
-                                })
-                                .await
-                                .unwrap_or_else(|why| {
-                                    error!(
-                                        "Failed to send response for '{}': {}",
-                                        command_ctx.interaction.data.name, why
-                                    );
-                                });
-                        }
-                    }
-                    info!(
-                        "Finished in {}ms: {}",
-                        (SystemTime::now().duration_since(start).unwrap().as_millis()),
-                        command_ctx,
-                    );
-                }
-                None => {
-                    error!("Unknown command '{}'", name.as_str());
-                    if let Err(why) = command.create_interaction_response(&ctx.http, |response|{
+        match self.commands.get(name.as_str()) {
+            Some(exec) => {
+                trace!("Executing '{}'", &name);
+                let opts = command.data.options.clone();
+                let command_ctx = CommandContext {
+                    interaction: command,
+                    command: exec,
+                    map: CommandMap { options: opts },
+                };
+
+                let command_output = (exec.generated_invoke)(&command_ctx);
+                trace!(
+                    "Executed '{}' in {}μs",
+                    command_ctx.interaction.data.name,
+                    (SystemTime::now().duration_since(start).unwrap().as_micros())
+                );
+
+                command_ctx
+                    .interaction
+                    .create_interaction_response(&ctx.http, |response| {
+                        response
+                            .kind(InteractionResponseType::ChannelMessageWithSource)
+                            .interaction_response_data(|msg| match command_output {
+                                Ok(res) => {
+                                    return match res {
+                                        CommandResponse::Text(text) => msg.content(text),
+                                        CommandResponse::Embed(e) => msg.set_embed(e),
+                                    };
+                                }
+                                Err(why) => msg.content(format!(
+                                    ":warning: `{}`",
+                                    why.to_string(&command_ctx)
+                                )),
+                            })
+                    })
+                    .await
+                    .unwrap_or_else(|why| {
+                        error!(
+                            "Failed to send response for '{}': {}",
+                            command_ctx.interaction.data.name, why
+                        );
+                    });
+
+                info!(
+                    "Finished in {}ms: {}",
+                    (SystemTime::now().duration_since(start).unwrap().as_millis()),
+                    command_ctx,
+                );
+            }
+            None => {
+                error!("Unknown command '{}'", name.as_str());
+                if let Err(why) = command.create_interaction_response(&ctx.http, |response|{
                         response.kind(InteractionResponseType::ChannelMessageWithSource).interaction_response_data(|msg|{
                             msg.content("I do not know a command by that name. Discord may be out of date. Please check back later.".to_string())
                         })
                     }).await {
                         error!("Failed to send unknown command response: {}", why);
                     }
-                }
             }
         }
     }
 }
-impl Default for CommandRegistrar {
+impl Default for CommandRegistry {
     fn default() -> Self {
-        CommandRegistrar {
+        CommandRegistry {
             commands: HashMap::new(),
         }
     }

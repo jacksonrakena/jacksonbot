@@ -6,8 +6,7 @@ macro_rules! command {
         $( $([  $($param_attr_name:ident=$param_attr_value:expr)*  ])?  $param_name:ident: $param_type:ty,)*
         @$block: ident) => {
         {
-            use commands_lib::command::CommandOutput;
-            use commands_lib::execution::CommandContext;
+            use commands_lib::execution::{CommandContext,CommandOutput};
             use commands_lib::make_command::make_command;
             use commands_lib::command::CommandParameter;
             use commands_lib::registry::CommandMap;
@@ -41,8 +40,8 @@ macro_rules! command {
                 });
             )*
 
-            fn invoke (ctx: &CommandContext, map: &CommandMap) -> CommandOutput {
-                $block(ctx, $(map.get::<$param_type>(stringify!($param_name)),)*)
+            fn invoke (ctx: &CommandContext) -> CommandOutput {
+                $block(ctx, $(ctx.map.get::<$param_type>(stringify!($param_name)),)*)
             }
             make_command($cmd_name, $description, cmd_attrs, params, invoke)
         }

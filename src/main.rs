@@ -3,7 +3,7 @@ pub mod modules;
 use crate::modules::fun::fun_module;
 use crate::modules::user::user_module;
 use chrono::{DateTime, Utc};
-use commands_lib::registry::CommandRegistrar;
+use commands_lib::registry::CommandRegistry;
 use log::LevelFilter;
 use pretty_env_logger::env_logger::{Builder, Target};
 use serde_json::Value;
@@ -30,7 +30,7 @@ async fn main() {
     let mut log = Builder::from_default_env();
     log.target(Target::Stdout);
     log.filter_module(stringify!(jacksonbot), LevelFilter::Info);
-    log.filter_module(stringify!(commands_lib), LevelFilter::Info);
+    log.filter_module(stringify!(commands_lib), LevelFilter::Trace);
     log.init();
 
     info!(
@@ -64,7 +64,7 @@ async fn main() {
     let commands_load_start = SystemTime::now();
 
     let mut handler = BotEventHandler {
-        registry: CommandRegistrar::default(),
+        registry: CommandRegistry::default(),
     };
 
     user_module(&mut handler.registry);
@@ -92,7 +92,7 @@ async fn main() {
 }
 
 struct BotEventHandler {
-    registry: CommandRegistrar,
+    registry: CommandRegistry,
 }
 
 #[async_trait]
