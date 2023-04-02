@@ -1,6 +1,7 @@
-use crate::infra::command::{CommandOutput, CommandResult};
-use crate::infra::execution::CommandContext;
-use crate::infra::types::CommandValueCoercable;
+use crate::command::{CommandOutput, CommandResult};
+use crate::execution::CommandContext;
+use crate::types::CommandValueCoercable;
+use log::{error, info};
 use serenity::builder::CreateApplicationCommand;
 use serenity::model::prelude::interaction::application_command::CommandDataOption;
 use serenity::model::prelude::interaction::{Interaction, InteractionResponseType};
@@ -43,10 +44,19 @@ pub struct CommandRegistrar {
     pub commands: HashMap<String, CommandRegistration>,
 }
 impl CommandRegistrar {
-    pub(crate) fn register(&mut self, info: CommandRegistration) {
+    pub fn register(&mut self, info: CommandRegistration) {
         self.commands.insert(info.name.clone(), info);
     }
-    pub(crate) async fn handle(&self, ctx: Context, interaction: Interaction) {
+
+    pub fn make_commands(&self) -> Vec<CreateApplicationCommand> {
+        self.commands
+            .values()
+            .into_iter()
+            .map(|c| c.manifest.clone())
+            .collect()
+    }
+
+    pub async fn handle(&self, ctx: Context, interaction: Interaction) {
         if let Interaction::ApplicationCommand(command) = interaction {
             let name = command.data.name.clone();
             info!("Handling {}", name);

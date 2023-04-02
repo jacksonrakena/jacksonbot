@@ -1,3 +1,4 @@
+#[macro_export]
 macro_rules! command {
     (
         $([  $($cmd_attr_name:ident=$cmd_attr_value:expr)*  ])? $cmd_name: literal,
@@ -5,10 +6,10 @@ macro_rules! command {
         $( $([  $($param_attr_name:ident=$param_attr_value:expr)*  ])?  $param_name:ident: $param_type:ty,)*
         @$block: ident) => {
         {
-            use crate::infra::command::CommandOutput;
-            use crate::infra::execution::CommandContext;
-            use crate::infra::make_command::make_command;
-            use crate::infra::registry::{CommandMap, CommandParameter};
+            use commands_lib::command::CommandOutput;
+            use commands_lib::execution::CommandContext;
+            use commands_lib::make_command::make_command;
+            use commands_lib::registry::{CommandMap, CommandParameter};
             use std::collections::HashMap;
 
             // This ignores when cmd_attrs is empty (no attributes)
@@ -46,4 +47,4 @@ macro_rules! command {
         }
     }
 }
-pub(crate) use command;
+pub use command;

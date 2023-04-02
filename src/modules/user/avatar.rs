@@ -1,6 +1,6 @@
-use crate::infra::command::CommandOutput;
-use crate::infra::command::CommandResult::Embed;
-use crate::infra::execution::CommandContext;
+use commands_lib::command::CommandOutput;
+use commands_lib::command::CommandResult::Embed;
+use commands_lib::execution::CommandContext;
 use serenity::builder::{CreateEmbed, CreateEmbedAuthor};
 use serenity::model::prelude::User;
 

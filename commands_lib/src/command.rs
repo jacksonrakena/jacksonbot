@@ -1,4 +1,4 @@
-use crate::infra::execution::CommandContext;
+use crate::execution::CommandContext;
 use serenity::builder::CreateEmbed;
 
 pub enum CommandResult {
@@ -12,13 +12,13 @@ pub struct CommandError {
 }
 
 impl CommandError {
-    pub(crate) fn new<F: ToString>(message: F) -> CommandError {
+    pub fn new<F: ToString>(message: F) -> CommandError {
         CommandError {
             message: message.to_string(),
         }
     }
 
-    pub(crate) fn to_string(&self, ctx: &CommandContext) -> String {
+    pub fn to_string(&self, ctx: &CommandContext) -> String {
         format!(
             "error in {}: {}",
             ctx.command.0.get("name").unwrap().as_str().unwrap(),
@@ -27,12 +27,13 @@ impl CommandError {
     }
 }
 
+#[macro_export]
 macro_rules! err {
     ($($t:tt)*) => {{
         Err(CommandError::new(format!($($t)*)))
     }};
 }
-pub(crate) use err;
+pub use err;
 
 pub fn embed<T>(activate: T) -> CommandOutput
 where

@@ -1,9 +1,9 @@
-pub mod infra;
 pub mod modules;
-use crate::infra::registry::CommandRegistrar;
+
 use crate::modules::fun::fun_module;
 use crate::modules::user::user_module;
 use chrono::{DateTime, Utc};
+use commands_lib::registry::CommandRegistrar;
 use log::LevelFilter;
 use pretty_env_logger::env_logger::{Builder, Target};
 use serde_json::Value;
@@ -42,9 +42,11 @@ async fn main() {
 
     let text = std::fs::read_to_string("jacksonbot.json")
         .unwrap_or_else(|why| panic!("couldn't find jacksonbot.json: {why}"));
+
     let config = serde_json::from_str::<Value>(&text).unwrap_or_else(|why| {
         panic!("couldn't read jacksonbot.json: {why}");
     });
+
     let token = config["Secrets"]["Discord"]["Token"]
         .as_str()
         .expect("expected a token at Secrets->Discord->Token");
@@ -100,14 +102,7 @@ impl EventHandler for BotEventHandler {
 
         match guild_id
             .set_application_commands(&ctx.http, |cmds| {
-                cmds.set_application_commands(
-                    self.registry
-                        .commands
-                        .values()
-                        .into_iter()
-                        .map(|c| c.manifest.clone())
-                        .collect(),
-                );
+                cmds.set_application_commands(self.registry.make_commands());
                 cmds
             })
             .await

@@ -1,7 +1,7 @@
-use crate::infra::macros::command;
-use crate::infra::registry::CommandRegistrar;
 use crate::modules::user::avatar::get_avatar;
 use crate::modules::user::hex::get_hex;
+use commands_lib::macros::command;
+use commands_lib::registry::CommandRegistrar;
 use serenity::model::user::User;
 
 mod avatar;

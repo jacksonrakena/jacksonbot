@@ -1,10 +1,10 @@
-use crate::infra::command::CommandOutput;
-use crate::infra::command::CommandResult::Text;
-use crate::infra::execution::CommandContext;
-use crate::infra::macros::command;
+use commands_lib::command::CommandOutput;
+use commands_lib::command::CommandResult::Text;
+use commands_lib::execution::CommandContext;
+use commands_lib::macros::command;
 use rand::prelude::*;
 
-use crate::infra::registry::CommandRegistrar;
+use commands_lib::registry::CommandRegistrar;
 
 pub fn fun_module(registry: &mut CommandRegistrar) {
     registry.register(command!(
