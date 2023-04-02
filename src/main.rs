@@ -40,6 +40,7 @@ async fn main() {
             .as_micros()
     );
 
+    let config_load_start = SystemTime::now();
     let text = std::fs::read_to_string("jacksonbot.json")
         .unwrap_or_else(|why| panic!("couldn't find jacksonbot.json: {why}"));
 
@@ -54,10 +55,12 @@ async fn main() {
     info!(
         "Loaded configuration in {}µs",
         SystemTime::now()
-            .duration_since(startup)
+            .duration_since(config_load_start)
             .unwrap()
             .as_micros()
     );
+
+    let commands_load_start = SystemTime::now();
 
     let mut handler = BotEventHandler {
         registry: CommandRegistrar::default(),
@@ -75,9 +78,9 @@ async fn main() {
         .expect("error creating client");
 
     info!(
-        "Built client in {}ms",
+        "Built client and commands in {}ms",
         SystemTime::now()
-            .duration_since(startup)
+            .duration_since(commands_load_start)
             .unwrap()
             .as_millis()
     );

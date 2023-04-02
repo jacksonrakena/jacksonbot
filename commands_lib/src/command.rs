@@ -35,6 +35,14 @@ macro_rules! err {
 }
 pub use err;
 
+#[macro_export]
+macro_rules! text {
+    ($($t:tt)*) => {{
+        Ok(Text(format!($($t)*)))
+    }};
+}
+pub use text;
+
 pub fn embed<T>(activate: T) -> CommandOutput
 where
     T: FnOnce(&mut CreateEmbed),
