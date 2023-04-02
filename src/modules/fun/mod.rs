@@ -1,5 +1,5 @@
 use commands_lib::command::CommandOutput;
-use commands_lib::command::CommandResult::Text;
+use commands_lib::command::CommandResponse::Text;
 use commands_lib::execution::CommandContext;
 use commands_lib::macros::command;
 use rand::prelude::*;

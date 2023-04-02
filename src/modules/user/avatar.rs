@@ -1,5 +1,5 @@
 use commands_lib::command::CommandOutput;
-use commands_lib::command::CommandResult::Embed;
+use commands_lib::command::CommandResponse::Embed;
 use commands_lib::execution::CommandContext;
 use serenity::builder::{CreateEmbed, CreateEmbedAuthor};
 use serenity::model::prelude::User;

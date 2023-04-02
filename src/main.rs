@@ -29,7 +29,8 @@ async fn main() {
     //pretty_env_logger::init();
     let mut log = Builder::from_default_env();
     log.target(Target::Stdout);
-    log.filter_module("jacksonbot", LevelFilter::Info);
+    log.filter_module(stringify!(jacksonbot), LevelFilter::Info);
+    log.filter_module(stringify!(commands_lib), LevelFilter::Info);
     log.init();
 
     info!(

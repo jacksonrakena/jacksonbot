@@ -9,7 +9,8 @@ macro_rules! command {
             use commands_lib::command::CommandOutput;
             use commands_lib::execution::CommandContext;
             use commands_lib::make_command::make_command;
-            use commands_lib::registry::{CommandMap, CommandParameter};
+            use commands_lib::command::CommandParameter;
+            use commands_lib::registry::CommandMap;
             use std::collections::HashMap;
 
             // This ignores when cmd_attrs is empty (no attributes)
@@ -34,7 +35,7 @@ macro_rules! command {
                     )*
                 )?
                 params.push(CommandParameter {
-                    ty: stringify!($param_type),
+                    rust_type: stringify!($param_type),
                     attrs: attrs,
                     name: stringify!($param_name)
                 });

@@ -1,4 +1,4 @@
-use crate::registry::{CommandInvokePtr, CommandParameter, CommandRegistration};
+use crate::command::{CommandInvokePtr, CommandParameter, CommandRegistration};
 use lazy_static::lazy_static;
 use regex::Regex;
 use serenity::builder::{CreateApplicationCommand, CreateApplicationCommandOption};
@@ -12,45 +12,41 @@ use std::collections::HashMap;
 /// Returns a CommandRegistration containing all the semantic information and final
 /// manifest to be sent to Discord.
 pub fn make_command(
-    intended_name: &'static str,
+    name: &'static str,
     description: &'static str,
     cmd_attrs: HashMap<&'static str, String>,
     params: Vec<CommandParameter>,
     ptr: CommandInvokePtr,
 ) -> CommandRegistration {
     let mut command = CreateApplicationCommand::default();
-    let mut real_name = intended_name.to_string();
     command.description(description);
 
     // parse command attributes
-    for (attr_name, attr_value) in cmd_attrs {
+    for (attr_name, _attr_value) in cmd_attrs {
         match attr_name {
-            "name" => {
-                real_name = attr_value;
-            }
             rest => {
-                panic!(
-                    "unknown command attribute '{}' on command '{}'",
-                    rest, real_name
-                );
+                panic!("unknown command attribute '{}' on command '{}'", rest, name);
             }
         }
     }
 
-    command.name(real_name.clone());
+    command.name(name.to_string());
 
     // parse parameters
     for param in params {
-        command.add_option(make_parameter(&real_name, param));
+        command.add_option(make_parameter(name, param));
     }
     CommandRegistration {
-        name: real_name,
+        name,
         manifest: command,
         generated_invoke: ptr,
     }
 }
 
-fn make_parameter(command_name: &str, param: CommandParameter) -> CreateApplicationCommandOption {
+fn make_parameter(
+    command_name: &'static str,
+    param: CommandParameter,
+) -> CreateApplicationCommandOption {
     lazy_static! {
         static ref OPTIONAL_TYPE_REGEX: Regex = Regex::new(r"Option<(.+)>").unwrap();
     }
@@ -63,10 +59,10 @@ fn make_parameter(command_name: &str, param: CommandParameter) -> CreateApplicat
 
     let attrs = &param.attrs;
 
-    let mut type_name = param.ty;
+    let mut type_name = param.rust_type;
 
     // Attempt to parse Option<T>
-    if let Some(m) = OPTIONAL_TYPE_REGEX.captures(param.ty) {
+    if let Some(m) = OPTIONAL_TYPE_REGEX.captures(param.rust_type) {
         type_name = m.get(1).unwrap().as_str();
         opt.required(false);
     }
@@ -78,7 +74,7 @@ fn make_parameter(command_name: &str, param: CommandParameter) -> CreateApplicat
         "f64" => CommandOptionType::Number,
         _ => panic!(
             "Invalid type '{}' for parameter '{}' in command '{}'",
-            param.ty, parameter_name, command_name
+            param.rust_type, parameter_name, command_name
         ),
     });
 
