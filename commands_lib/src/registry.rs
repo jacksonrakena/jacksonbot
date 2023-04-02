@@ -8,6 +8,7 @@ use serenity::model::prelude::interaction::{Interaction, InteractionResponseType
 use serenity::prelude::Context;
 #[allow(dead_code, unused, unused_variables)]
 use std::collections::HashMap;
+use std::fmt::{Debug, Display, Formatter};
 use std::time::SystemTime;
 
 #[derive(Debug)]
@@ -70,6 +71,7 @@ impl CommandRegistry {
                     interaction: command,
                     command: exec,
                     map: CommandMap { options: opts },
+                    registry: &self,
                 };
 
                 let command_output = (exec.generated_invoke)(&command_ctx);
@@ -129,5 +131,16 @@ impl Default for CommandRegistry {
         CommandRegistry {
             commands: HashMap::new(),
         }
+    }
+}
+
+impl Debug for CommandRegistry {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self)
+    }
+}
+impl Display for CommandRegistry {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[CommandRegistry, {} commands]", self.commands.len())
     }
 }

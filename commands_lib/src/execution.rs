@@ -1,5 +1,5 @@
 use crate::command::CommandRegistration;
-use crate::registry::CommandMap;
+use crate::registry::{CommandMap, CommandRegistry};
 use serenity::builder::CreateEmbed;
 use serenity::model::prelude::interaction::application_command::ApplicationCommandInteraction;
 use std::fmt::{Display, Formatter};
@@ -15,6 +15,9 @@ pub struct CommandContext<'a> {
 
     /// The command map, containing the mapped values.
     pub map: CommandMap,
+
+    /// The registry that handled this execution.
+    pub registry: &'a CommandRegistry,
 }
 
 impl<'a> Display for CommandContext<'a> {
