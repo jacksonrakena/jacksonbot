@@ -12,3 +12,6 @@ serde_json = "1.0.94"
 serenity = { version = "0.11", default-features = false, features = ["client", "gateway", "rustls_backend", "model"] }
 tokio = { version = "1.21.2", features = ["macros", "rt-multi-thread"] }
 commands_lib = { path = "commands_lib" }
+
+[workspace]
+members = [ "commands_lib" ]
