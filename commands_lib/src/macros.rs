@@ -1,4 +1,7 @@
 #[macro_export]
+/// Creates a CommandRegistration based on a dynamic command signature.
+///
+/// See the README for information about how to use this macro.
 macro_rules! command {
     (
         $([  $($cmd_attr_name:ident=$cmd_attr_value:expr)*  ])? $cmd_name: literal,

@@ -35,7 +35,10 @@ pub fn fun_module(registry: &mut CommandRegistrar) {
     });
 }
 ```
-where `roll_dice` is the name of a function with signature `roll_dice(&ctx: CommandContext, dice: i64) -> CommandOutput`.
+where `roll_dice` is the name of a function with signature `roll_dice(&ctx: CommandContext, dice: i64, kazoo: String) -> CommandOutput`.
+
+Note that if `rolL_dice`'s signature does not match `(&CommandContext, i64, String) -> CommandOutput`, the macro will fail to compile.
+The macro will also check parameter types, so only valid Discord parameter types (`i64`, `f64`, `String`, `User`, `bool`) are supported. 
 
 Jacksonbot's macro system will automatically re-interpret the signature provided to `command!` and 
 rewrite the command to provide those values at runtime, as well as passing the attributes `[description=, max_value=]` to 

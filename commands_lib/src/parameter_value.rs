@@ -10,10 +10,10 @@ use serenity::model::prelude::User;
 ///
 /// All other types (i32, String, etc) are guaranteed to be Some(T) because they are not
 /// optional.
-pub trait ParameterValue {
+pub trait FromCommandParameterValue {
     /// Returns a `Self` value from a wrapped `Option<CommandDataOptionValue>`.
     /// This method should panic if `Self` is not `Option<T>` and `value` is `None`.
-    fn get_value(value: Option<CommandDataOptionValue>) -> Self;
+    fn from_command_parameter_value(value: Option<CommandDataOptionValue>) -> Self;
 }
 
 fn parameter_value_guard<T>(name: &'static str) -> T {
@@ -23,20 +23,20 @@ fn parameter_value_guard<T>(name: &'static str) -> T {
     )
 }
 
-impl<T> ParameterValue for Option<T>
+impl<T> FromCommandParameterValue for Option<T>
 where
-    T: ParameterValue,
+    T: FromCommandParameterValue,
 {
-    fn get_value(value: Option<CommandDataOptionValue>) -> Self {
+    fn from_command_parameter_value(value: Option<CommandDataOptionValue>) -> Self {
         match value {
             None => None,
-            Some(x) => Some(T::get_value(Some(x))),
+            Some(x) => Some(T::from_command_parameter_value(Some(x))),
         }
     }
 }
 
-impl ParameterValue for String {
-    fn get_value(value: Option<CommandDataOptionValue>) -> Self {
+impl FromCommandParameterValue for String {
+    fn from_command_parameter_value(value: Option<CommandDataOptionValue>) -> Self {
         match value {
             Some(CommandDataOptionValue::String(t)) => t,
             _ => parameter_value_guard("String"),
@@ -44,8 +44,8 @@ impl ParameterValue for String {
     }
 }
 
-impl ParameterValue for i64 {
-    fn get_value(value: Option<CommandDataOptionValue>) -> Self {
+impl FromCommandParameterValue for i64 {
+    fn from_command_parameter_value(value: Option<CommandDataOptionValue>) -> Self {
         match value {
             Some(CommandDataOptionValue::Integer(t)) => t,
             _ => parameter_value_guard("i64"),
@@ -53,8 +53,8 @@ impl ParameterValue for i64 {
     }
 }
 
-impl ParameterValue for User {
-    fn get_value(value: Option<CommandDataOptionValue>) -> Self {
+impl FromCommandParameterValue for User {
+    fn from_command_parameter_value(value: Option<CommandDataOptionValue>) -> Self {
         match value {
             Some(CommandDataOptionValue::User(t, ..)) => t,
             _ => parameter_value_guard("User"),
@@ -62,8 +62,8 @@ impl ParameterValue for User {
     }
 }
 
-impl ParameterValue for bool {
-    fn get_value(value: Option<CommandDataOptionValue>) -> Self {
+impl FromCommandParameterValue for bool {
+    fn from_command_parameter_value(value: Option<CommandDataOptionValue>) -> Self {
         match value {
             Some(CommandDataOptionValue::Boolean(t, ..)) => t,
             _ => parameter_value_guard("bool"),

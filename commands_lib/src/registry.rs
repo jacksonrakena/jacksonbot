@@ -1,6 +1,6 @@
 use crate::command::CommandRegistration;
 use crate::execution::{CommandContext, CommandResponse};
-use crate::parameter_value::ParameterValue;
+use crate::parameter_value::FromCommandParameterValue;
 use log::{error, info, trace};
 use serenity::builder::CreateApplicationCommand;
 use serenity::model::prelude::interaction::application_command::CommandDataOption;
@@ -19,14 +19,14 @@ pub struct CommandMap {
 impl CommandMap {
     pub fn get<T>(&self, name: &'static str) -> T
     where
-        T: ParameterValue,
+        T: FromCommandParameterValue,
     {
         for opt in &self.options {
             if opt.name == name {
-                return T::get_value(opt.resolved.clone());
+                return T::from_command_parameter_value(opt.resolved.clone());
             }
         }
-        return T::get_value(None);
+        return T::from_command_parameter_value(None);
     }
 }
 
