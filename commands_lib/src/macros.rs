@@ -4,10 +4,19 @@
 /// See the README for information about how to use this macro.
 macro_rules! command {
     (
-        $([  $($cmd_attr_name:ident=$cmd_attr_value:expr)*  ])? $cmd_name: literal,
-        $description: literal,
-        $( $([  $($param_attr_name:ident=$param_attr_value:expr)*  ])?  $param_name:ident: $param_type:ty,)*
-        @$block: ident) => {
+        $([  $($cmd_attr_name:ident=$cmd_attr_value:expr)*  ])? // Attributes - [attr=value, attr=value]
+        $cmd_name: literal, // Name
+        $description: literal, // Description
+        $( { $($precondition_name:expr$(,)? )* }$(,)? )? // Preconditions
+        $( // Parameters
+            $([
+                $( { $($param_precondition_name:expr$(,)? )* }$(,)? )? // Parameter client preconditions
+                $($param_attr_name:ident=$param_attr_value:expr)*  // Parameter attributes
+            ])?
+            $param_name:ident: $param_type:ty, // Parameter name and type
+        )*
+        @$exec_target_fn: ident // Execution target
+    ) => {
         {
             use commands_lib::execution::{CommandContext,CommandOutput};
             use commands_lib::make_command::make_command;
@@ -44,7 +53,7 @@ macro_rules! command {
             )*
 
             fn invoke (ctx: &CommandContext) -> CommandOutput {
-                $block(ctx, $(ctx.map.get::<$param_type>(stringify!($param_name)),)*)
+                $exec_target_fn(ctx, $(ctx.map.get::<$param_type>(stringify!($param_name)),)*)
             }
             make_command($cmd_name, $description, cmd_attrs, params, invoke)
         }
