@@ -1,8 +1,9 @@
+use commands_lib::execution::CommandContext;
 use commands_lib::execution::CommandOutput;
 use commands_lib::execution::CommandResponse::Embed;
-use commands_lib::execution::CommandContext;
 use serenity::builder::{CreateEmbed, CreateEmbedAuthor};
 use serenity::model::prelude::User;
+use std::fmt::{Display, Formatter};
 
 pub(crate) fn get_avatar(ctx: &CommandContext, user: Option<User>) -> CommandOutput {
     let u = user.as_ref().unwrap_or(&ctx.interaction.user);
@@ -42,34 +43,41 @@ enum ImageFormat {
     WebP,
     Gif,
 }
+
+impl Display for ImageFormat {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", format!("{:?}", self).to_lowercase())
+    }
+}
+
 /// Generates an avatar URL for a user. Will check for an empty avatar, and will instead provide the URL for that user's default.
 fn make_avatar_url(user: &User, mut format: ImageFormat, size: Option<u16>) -> String {
-    let size_str = match size {
-        Some(t) => format!("?size={}", t),
-        None => "".to_string(),
-    };
+    let size_str = size.map_or("".to_string(), |size| format!("?size={}", size));
 
-    if let Some(hash) = &user.avatar {
-        if hash.starts_with("a_") {
-            format = ImageFormat::Gif;
-        }
-        if !hash.starts_with("a_") && format == ImageFormat::Gif {
-            format = ImageFormat::Png
-        }
+    match &user.avatar {
+        Some(hash) => {
+            if hash.starts_with("a_") {
+                format = ImageFormat::Gif;
+            }
+            if !hash.starts_with("a_") && format == ImageFormat::Gif {
+                format = ImageFormat::Png
+            }
 
-        return format!(
-            "https://cdn.discordapp.com/avatars/{}/{}.{}{}",
-            user.id.as_u64(),
-            hash,
-            format!("{:?}", format).to_lowercase(),
-            size_str
-        );
+            format!(
+                "https://cdn.discordapp.com/avatars/{}/{}.{}{}",
+                user.id.as_u64(),
+                hash,
+                format,
+                size_str
+            )
+        }
+        None => {
+            format!(
+                "https://cdn.discordapp.com/embed/avatars/{}.{}{}",
+                user.discriminator % 5,
+                format,
+                size_str
+            )
+        }
     }
-
-    format!(
-        "https://cdn.discordapp.com/embed/avatars/{}.{}{}",
-        user.discriminator % 5,
-        format!("{:?}", format).to_lowercase(),
-        size_str
-    )
 }

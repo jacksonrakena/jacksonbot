@@ -87,12 +87,8 @@ impl CommandRegistry {
                         response
                             .kind(InteractionResponseType::ChannelMessageWithSource)
                             .interaction_response_data(|msg| match command_output {
-                                Ok(res) => {
-                                    return match res {
-                                        CommandResponse::Text(text) => msg.content(text),
-                                        CommandResponse::Embed(e) => msg.set_embed(e),
-                                    };
-                                }
+                                Ok(CommandResponse::Text(text)) => msg.content(text),
+                                Ok(CommandResponse::Embed(e)) => msg.set_embed(e),
                                 Err(why) => msg.content(format!(
                                     ":warning: `{}`",
                                     why.to_string(&command_ctx)
