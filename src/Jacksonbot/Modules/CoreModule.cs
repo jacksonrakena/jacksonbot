@@ -34,8 +34,6 @@ public class CoreModule : BotModuleBase
             .AddField("Owner", $"**{app.Owner}**", true)
             .AddField("Version", $"{version.Major}.{version.Minor}.{version.Build}", true)
             .AddField("Started", Markdown.Timestamp(Process.GetCurrentProcess().StartTime, Constants.TIMESTAMP_FORMAT), true)
-            .AddField("Cached servers", Context.Bot.GetGuilds().Count, true)
-            .AddField("Cached users", Context.Bot.GetGuilds().Sum(d => d.Value.MemberCount), true)
             .WithTimestamp(DateTimeOffset.Now)
             .WithFooter("Session " + Constants.SessionId));
     }
